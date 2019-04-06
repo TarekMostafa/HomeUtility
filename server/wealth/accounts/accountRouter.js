@@ -13,7 +13,7 @@ router.get('/dropdown', function(req, res, next) {
 });
 
 router.get('/', function(req, res, next) {
-  account.getAccounts().then( accounts => {
+  account.getAccounts(req.query).then( accounts => {
     res.json(accounts);
   }).catch( err => {
     next(err);

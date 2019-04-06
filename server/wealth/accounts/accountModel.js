@@ -1,6 +1,7 @@
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection');
+const BankModel = require('../banks/bankModel');
 
 class AccountModel extends Model {}
 AccountModel.init({
@@ -18,6 +19,11 @@ AccountModel.init({
   createdAt: false,
   updatedAt: false,
   sequelize
+});
+
+AccountModel.belongsTo(BankModel, {
+  as: "bank",
+  foreignKey: 'accountBankCode'
 });
 
 module.exports = AccountModel;

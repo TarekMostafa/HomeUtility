@@ -9,6 +9,7 @@ function NavigationBar(props){
       <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
         <Nav>
           <NavDropdown title="Modules" id="basic-nav-dropdown">
+            <NavDropdown.Item href="/accounts">Accounts</NavDropdown.Item>
             <NavDropdown.Item href="/accountstransactions">Accounts Transactions</NavDropdown.Item>
           </NavDropdown>
         </Nav>

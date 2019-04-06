@@ -5,7 +5,8 @@ import Container from 'react-bootstrap/Container'
 
 import NavigationBar from './components/navigation/NavigationBar'
 import Home from './components/home/Home';
-import WealthTransactionSearch from './components/wealth/transactions/WealthTransactionSearch';
+import WealthAccountList from './components/wealth/accounts/WealthAccountList';
+import WealthTransactionList from './components/wealth/transactions/WealthTransactionList';
 
 class App extends Component {
   render() {
@@ -16,7 +17,8 @@ class App extends Component {
           <Router>
             <Switch>
               <Route path="/" exact component={Home}></Route>
-              <Route path="/accountstransactions" exact component={WealthTransactionSearch}></Route>
+              <Route path="/accounts" exact component={WealthAccountList}></Route>
+              <Route path="/accountstransactions" exact component={WealthTransactionList}></Route>
             </Switch>
           </Router>
         </Container>

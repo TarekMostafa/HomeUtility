@@ -21,7 +21,7 @@ const initialState = {
 
 const TRANSACTION_LIMIT = 10;
 
-class WealthTransactionSearch extends Component {
+class WealthTransactionList extends Component {
 
   state = {
     transactions: [],
@@ -68,7 +68,7 @@ class WealthTransactionSearch extends Component {
   render() {
     return (
       <React.Fragment>
-        <FormContainer title="Transactions">
+        <FormContainer title="Accounts Transactions">
           <Form>
           <Row>
             <Col>
@@ -100,7 +100,7 @@ class WealthTransactionSearch extends Component {
               <Form.Control type="input" placeholder="Narrative" size="sm" name="narrative"
               onChange={this.handleChange} value={this.state.narrative}/>
             </Col>
-            <Col xs={1}>
+            <Col xs={{offset:4, span:1}}>
               <Button variant="primary" size="sm" onClick={this.handleListClick}>List</Button>
             </Col>
             <Col xs={1}>
@@ -168,4 +168,4 @@ class WealthTransactionSearch extends Component {
 
 }
 
-export default WealthTransactionSearch;
+export default WealthTransactionList;

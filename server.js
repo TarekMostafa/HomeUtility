@@ -1,9 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const sequelize = require('./server/db/dbConnection');
+
 const transactionRouter = require('./server/wealth/transactions/transactionRouter');
 const accountRouter = require('./server/wealth/accounts/accountRouter');
 const transactionTypesRouter = require('./server/wealth/transactionTypes/transactionTypeRouter');
+const bankRouter = require('./server/wealth/banks/bankRouter');
 
 const port = 5000;
 
@@ -13,6 +15,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use('/api/wealth/transactions', transactionRouter);
 app.use('/api/wealth/accounts', accountRouter);
 app.use('/api/wealth/transactiontypes', transactionTypesRouter);
+app.use('/api/wealth/banks', bankRouter);
 app.use(function(err, req, res, next){
   console.error(err);
   res.status(500).send(err.message);
