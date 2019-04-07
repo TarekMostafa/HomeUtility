@@ -1,8 +1,8 @@
-const Sequelize = require('sequelize');
+const SequelizeMySqlConnection = require('./SequelizeMySqlConnection');
 
-const sequelize = new Sequelize('homeutilitydb','root','123456Aa', {
-    host: 'localhost',
-    dialect: 'mysql'
-});
+const dbName = 'homeutilitydb';
+const dbUser = 'root';
+const dbPassword = '123456Aa';
+const dbHost = 'localhost';
 
-module.exports = sequelize;
+module.exports = new SequelizeMySqlConnection(dbName, dbUser, dbPassword, dbHost);

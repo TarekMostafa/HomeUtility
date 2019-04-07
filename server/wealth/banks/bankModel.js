@@ -1,6 +1,6 @@
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
-const sequelize = require('../../db/dbConnection');
+const sequelize = require('../../db/dbConnection').getSequelize();
 
 class BankModel extends Model {}
 BankModel.init({
