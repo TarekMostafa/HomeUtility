@@ -1,6 +1,6 @@
 const SequelizeMySqlConnection = require('./SequelizeMySqlConnection');
 
-const dbName = 'homeutilitydb';
+const dbName = 'homeutilitytestdb';
 const dbUser = 'root';
 const dbPassword = '123456Aa';
 const dbHost = 'localhost';

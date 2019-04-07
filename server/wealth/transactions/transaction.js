@@ -45,9 +45,9 @@ class Transaction {
       offset: _skip,
       limit: _limit,
       attributes: ['transactionId', 'transactionPostingDate', 'transactionAmount',
-        'transactionCRDR', 'transactionNarrative'],
+        'transactionCRDR', 'transactionNarrative', 'transactionRelatedTransactionId'],
       include: [
-        { model: AccountModel, as: 'account', attributes: ['accountNumber'] },
+        { model: AccountModel, as: 'account', attributes: ['accountNumber','acccountCurrency'] },
         { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeName'] }
       ],
       where: whereQuery,

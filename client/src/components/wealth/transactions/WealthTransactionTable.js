@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Table, OverlayTrigger, Tooltip, Button } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 
@@ -12,10 +12,12 @@ function WealthTransactionTable (props) {
           <th>Account Number</th>
           <th>Posting Date</th>
           <th>Amount</th>
+          <th>Currency</th>
           <th>Credit/Debit</th>
           <th>Type Name</th>
           <th>Narrative</th>
           <th>Id</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -26,6 +28,7 @@ function WealthTransactionTable (props) {
               <td>{transaction.account.accountNumber}</td>
               <td>{moment(transaction.transactionPostingDate).format('DD/MM/YYYY')}</td>
               <td>{new Intl.NumberFormat().format(transaction.transactionAmount)}</td>
+              <td>{transaction.account.acccountCurrency}</td>
               <td>{transaction.transactionCRDR}</td>
               <td>{transaction.transactionType.typeName}</td>
               <td>
@@ -39,6 +42,9 @@ function WealthTransactionTable (props) {
                 </OverlayTrigger>
               </td>
               <td>{transaction.transactionId}</td>
+              {/*<td>
+                {transaction.transactionRelatedTransactionId !== null ? <Button variant="link">Linked</Button> : null}
+              </td>*/}
             </tr>
           )
         })}
