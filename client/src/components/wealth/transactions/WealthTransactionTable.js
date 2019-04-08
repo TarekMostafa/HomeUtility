@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
+import _ from 'lodash';
 
 function WealthTransactionTable (props) {
   return (
@@ -30,7 +31,7 @@ function WealthTransactionTable (props) {
               <td>{new Intl.NumberFormat().format(transaction.transactionAmount)}</td>
               <td>{transaction.account.acccountCurrency}</td>
               <td>{transaction.transactionCRDR}</td>
-              <td>{transaction.transactionType.typeName}</td>
+              <td>{_.isNil(transaction.transactionType) ? '' : transaction.transactionType.typeName}</td>
               <td>
                 <OverlayTrigger placement="right"
                   delay={{ show: 250, hide: 400 }} overlay={(
