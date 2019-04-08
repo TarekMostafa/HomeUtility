@@ -21,7 +21,7 @@ function WealthAccountTable (props) {
       <tbody>
         {props.accounts && props.accounts.map( (account, index) => {
           return (
-            <tr key={account.accountId}>
+            <tr key={account.accountId} className={account.accountStatus==="CLOSED"?"table-danger":""}>
               <td>{index+1}</td>
               <td>{account.bank.bankName}</td>
               <td>{account.accountNumber}</td>

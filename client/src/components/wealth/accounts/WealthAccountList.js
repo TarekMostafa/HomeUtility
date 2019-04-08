@@ -7,7 +7,7 @@ import FormContainer from '../../common/FormContainer';
 import AccountRequest from '../../../axios/AccountRequest';
 
 const initialState = {
-  accountStatus: '',
+  accountStatus: 'ACTIVE',
   accountBank: '',
 }
 
