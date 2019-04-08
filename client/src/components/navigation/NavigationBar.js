@@ -1,6 +1,8 @@
 import React from 'react';
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import ModulesNavDropDown from './ModulesNavDropDown';
+import LookupsNavDropDown from './LookupsNavDropDown';
 
 function NavigationBar(props){
   return (
@@ -9,14 +11,10 @@ function NavigationBar(props){
       <Navbar.Toggle aria-controls="basic-navbar-nav"/>
       <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
         <Nav>
-          <NavDropdown title="Modules" id="basic-nav-dropdown">
-            <LinkContainer to="/accounts">
-              <NavDropdown.Item>Accounts</NavDropdown.Item>
-            </LinkContainer>
-            <LinkContainer to="/accountstransactions">
-              <NavDropdown.Item>Accounts Transactions</NavDropdown.Item>
-            </LinkContainer>
-          </NavDropdown>
+          <ModulesNavDropDown />
+        </Nav>
+        <Nav>
+          <LookupsNavDropDown />
         </Nav>
       </Navbar.Collapse>
     </Navbar>

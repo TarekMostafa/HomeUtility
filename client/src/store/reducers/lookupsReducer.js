@@ -3,6 +3,7 @@ const initState = {
   accounts: null,
   banks: null,
   accountStatuses: ['ACTIVE', 'CLOSED'],
+  activeCurrencies: null,
 }
 
 const lookupReducer = (state=initState, action) => {
@@ -22,6 +23,11 @@ const lookupReducer = (state=initState, action) => {
         ...state,
         banks: action.data
       };
+    case 'SET_ACTIVE_CURRENCIES':
+      return {
+        ...state,
+        activeCurrencies: action.data
+      }
     default:
       return state;
   }

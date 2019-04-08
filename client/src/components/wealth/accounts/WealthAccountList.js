@@ -99,7 +99,6 @@ class WealthAccountList extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
 	return {
 		banks: state.lookups.banks,
     accountStatuses: state.lookups.accountStatuses

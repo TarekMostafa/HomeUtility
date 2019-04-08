@@ -1,6 +1,7 @@
 import TransactionTypeRequest from '../../axios/TransactionTypeRequest';
 import AccountRequest from '../../axios/AccountRequest';
 import BankRequest from '../../axios/BankRequest';
+import CurrencyRequest from '../../axios/CurrencyRequest';
 
 export const getTransactionTypes = () => {
   return (dispatch, getState) => {
@@ -22,6 +23,14 @@ export const getBanks = () => {
   return (dispatch, getState) => {
     BankRequest.getBanks()
     .then( (banks) => dispatch({type: "SET_BANKS", data: banks}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
+
+export const getActiveCurrencies = () => {
+  return (dispatch, getState) => {
+    CurrencyRequest.getCurrencies("YES")
+    .then( (currencies) => dispatch({type: "SET_ACTIVE_CURRENCIES", data: currencies}) )
     .catch( () => dispatch({type: "ERROR"}) )
   }
 }
