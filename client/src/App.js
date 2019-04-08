@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
+
 import './App.css';
-import Container from 'react-bootstrap/Container'
 
 import NavigationBar from './components/navigation/NavigationBar'
 import Home from './components/home/Home';
@@ -12,16 +13,16 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <NavigationBar />
-        <Container>
-          <Router>
+        <Router>
+          <NavigationBar />
+          <Container>
             <Switch>
               <Route path="/" exact component={Home}></Route>
               <Route path="/accounts" exact component={WealthAccountList}></Route>
               <Route path="/accountstransactions" exact component={WealthTransactionList}></Route>
             </Switch>
-          </Router>
-        </Container>
+          </Container>
+        </Router>
       </div>
     );
   }

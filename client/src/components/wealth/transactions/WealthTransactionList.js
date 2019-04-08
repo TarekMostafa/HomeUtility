@@ -3,13 +3,12 @@ import { Form, Row, Col, Button } from 'react-bootstrap';
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
+import { connect } from 'react-redux';
 
 import WealthTransactionTable from './WealthTransactionTable';
 import FormContainer from '../../common/FormContainer';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
-import AccountRequest from '../../../axios/AccountRequest';
-import TransactionTypeRequest from '../../../axios/TransactionTypeRequest';
 
 const initialState = {
   account: '',
@@ -25,8 +24,6 @@ class WealthTransactionList extends Component {
 
   state = {
     transactions: [],
-    accounts: [],
-    transactionTypes: [],
     appearMoreButton: true,
     ...initialState,
   }
@@ -51,18 +48,6 @@ class WealthTransactionList extends Component {
 
   componentDidMount() {
     this.loadTransctions(TRANSACTION_LIMIT, 0, false);
-    AccountRequest.getAccountsForDropDown()
-    .then( (accounts) => {
-      this.setState({
-        accounts
-      });
-    });
-    TransactionTypeRequest.getTransactionTypesForDropDown()
-    .then( (transactionTypes) => {
-      this.setState({
-        transactionTypes
-      });
-    });
   }
 
   render() {
@@ -118,7 +103,7 @@ class WealthTransactionList extends Component {
   }// end of render
 
   listAccounts = () => {
-    return this.state.accounts && this.state.accounts.map( (account) => {
+    return this.props.accounts && this.props.accounts.map( (account) => {
       return (
         <option key={account.accountId} value={account.accountId}>{account.accountNumber}</option>
       )
@@ -126,7 +111,7 @@ class WealthTransactionList extends Component {
   }
 
   listTransactionTypes = () => {
-    return this.state.transactionTypes && this.state.transactionTypes.map( (transactionType) => {
+    return this.props.transactionTypes && this.props.transactionTypes.map( (transactionType) => {
       return (
         <option key={transactionType.typeId} value={transactionType.typeId}>
           {transactionType.typeName}</option>
@@ -168,4 +153,11 @@ class WealthTransactionList extends Component {
 
 }
 
-export default WealthTransactionList;
+const mapStateToProps = (state) => {
+	return {
+		transactionTypes: state.lookups.transactionTypes,
+    accounts: state.lookups.accounts
+	}
+}
+
+export default connect(mapStateToProps)(WealthTransactionList);

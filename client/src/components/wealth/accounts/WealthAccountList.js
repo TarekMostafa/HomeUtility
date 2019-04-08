@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
-
+import { connect } from 'react-redux';
 import WealthAccountTable from './WealthAccountTable';
 import FormContainer from '../../common/FormContainer';
 
-import BankRequest from '../../../axios/BankRequest';
 import AccountRequest from '../../../axios/AccountRequest';
 
 const initialState = {
@@ -14,8 +13,6 @@ const initialState = {
 
 class WealthAccountList extends Component {
   state = {
-    accountStatuses: ['ACTIVE', 'CLOSED'],
-    banks: [],
     accounts: [],
     ...initialState,
   }
@@ -31,12 +28,6 @@ class WealthAccountList extends Component {
 
   componentDidMount() {
     this.loadAccounts();
-    BankRequest.getBanks()
-    .then( (banks) => {
-      this.setState({
-        banks
-      });
-    });
   }
 
   render() {
@@ -74,7 +65,7 @@ class WealthAccountList extends Component {
   }//end of render
 
   listAccountStatuses = () => {
-    return this.state.accountStatuses && this.state.accountStatuses.map( (status) => {
+    return this.props.accountStatuses && this.props.accountStatuses.map( (status) => {
       return (
         <option key={status} value={status}>{status}</option>
       )
@@ -82,7 +73,7 @@ class WealthAccountList extends Component {
   }
 
   listBanks = () => {
-    return this.state.banks && this.state.banks.map( (bank) => {
+    return this.props.banks && this.props.banks.map( (bank) => {
       return (
         <option key={bank.bankCode} value={bank.bankCode}>{bank.bankName}</option>
       )
@@ -107,4 +98,12 @@ class WealthAccountList extends Component {
 
 }
 
-export default WealthAccountList;
+const mapStateToProps = (state) => {
+  console.log(state);
+	return {
+		banks: state.lookups.banks,
+    accountStatuses: state.lookups.accountStatuses
+	}
+}
+
+export default connect(mapStateToProps)(WealthAccountList);
