@@ -3,10 +3,11 @@ import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 import _ from 'lodash';
+import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthTransactionTable (props) {
   return (
-    <Table hover size="sm" responsive="sm">
+    <Table hover bordered size="sm" responsive="sm">
       <thead>
         <tr>
           <th>#</th>
@@ -22,13 +23,14 @@ function WealthTransactionTable (props) {
         </tr>
       </thead>
       <tbody>
-        {props.transactions && props.transactions.map( (transaction, index) => {
+        {
+          props.transactions && props.transactions.map( (transaction, index) => {
           return (
             <tr key={transaction.transactionId}>
               <td>{index+1}</td>
               <td>{transaction.account.accountNumber}</td>
               <td>{moment(transaction.transactionPostingDate).format('DD/MM/YYYY')}</td>
-              <td>{new Intl.NumberFormat().format(transaction.transactionAmount)}</td>
+              <td className="text-right">{amountFormatter(transaction.transactionAmount)}</td>
               <td>{transaction.account.acccountCurrency}</td>
               <td>{transaction.transactionCRDR}</td>
               <td>{_.isNil(transaction.transactionType) ? '' : transaction.transactionType.typeName}</td>

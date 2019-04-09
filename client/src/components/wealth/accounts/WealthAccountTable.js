@@ -1,10 +1,11 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
 import moment from 'moment';
+import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthAccountTable (props) {
   return (
-    <Table hover size="sm" responsive="sm">
+    <Table hover bordered size="sm" responsive="sm">
       <thead>
         <tr>
           <th>#</th>
@@ -26,9 +27,9 @@ function WealthAccountTable (props) {
               <td>{account.bank.bankName}</td>
               <td>{account.accountNumber}</td>
               <td>{account.acccountCurrency}</td>
-              <td>{new Intl.NumberFormat().format(account.accountStartBalance)}</td>
-              <td>{new Intl.NumberFormat().format(account.accountCurrentBalance)}</td>
-              <td>{new Intl.NumberFormat().format(account.accountCurrentBalance)}</td>
+              <td className="text-right">{amountFormatter(account.accountStartBalance)}</td>
+              <td className="text-right">{amountFormatter(account.accountCurrentBalance)}</td>
+              <td className="text-right">{amountFormatter(account.accountCurrentBalance)}</td>
               <td>{account.accountStatus}</td>
               <td>{moment(account.accountLastBalanceUpdate).format('DD/MM/YYYY HH:mm:ss')}</td>
             </tr>
