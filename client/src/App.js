@@ -9,6 +9,7 @@ import Home from './components/home/Home';
 import WealthAccountList from './components/wealth/accounts/WealthAccountList';
 import WealthTransactionList from './components/wealth/transactions/WealthTransactionList';
 import CurrencyList from './components/currencies/CurrencyList';
+import AppSettings from './components/settings/AppSettings';
 
 class App extends Component {
   render() {
@@ -22,6 +23,7 @@ class App extends Component {
               <Route path="/accounts" exact component={WealthAccountList}></Route>
               <Route path="/accountstransactions" exact component={WealthTransactionList}></Route>
               <Route path="/currencies" exact component={CurrencyList}></Route>
+              <Route path="/appsettings" exact component={AppSettings}></Route>
             </Switch>
           </Container>
         </Router>

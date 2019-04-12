@@ -1,7 +1,12 @@
 const CurrencyCodes = require('currency-codes');
+const _ = require('lodash');
 
 const CurrencyModel = require('./currencyModel');
 const Common = require('../common/common');
+const AppSettings = require('../appSettings/appSettings');
+const currencyConversion = require('./currencyConversion');
+
+const appSettings = new AppSettings();
 
 class Currency {
 
@@ -52,6 +57,30 @@ class Currency {
     currency.currencyActive = 'NO';
     await currency.save();
     return Common.getAPIResponse(true, 'This currency has been successfully deactivated');
+  }
+
+  async updateRates() {
+    // Get Base Currency
+    const _appSettings = await appSettings.getAppSettings();
+    if(_.isNil(_appSettings.baseCurrency))
+    {
+      return Common.getAPIResponse(false, `There is no base currency in the application settings`);
+    }
+    // Get list of active currencies
+    const currencies = await this.getCurrencies({active:true});
+    // Create promises array to get all rates based on base currency
+    let promises = currencies.map( (currency) => {
+      return new Promise( (resolve) => {
+        currencyConversion(currency.currencyCode, _appSettings.baseCurrency, function(err, amt){
+          currency.currencyRateAgainstBase = amt;
+          resolve(currency);
+        });
+      });
+    });
+    // Wait for rates and update database
+    return await Promise.all(promises).then( (data) => {
+      return data.map( currency => currency.save());
+    });
   }
 }
 

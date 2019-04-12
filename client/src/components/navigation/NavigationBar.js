@@ -3,6 +3,7 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import ModulesNavDropDown from './ModulesNavDropDown';
 import LookupsNavDropDown from './LookupsNavDropDown';
+import AppNavDropDown from './AppNavDropDown';
 
 function NavigationBar(props){
   return (
@@ -10,12 +11,9 @@ function NavigationBar(props){
       <LinkContainer to="/"><Navbar.Brand>Home Utility</Navbar.Brand></LinkContainer>
       <Navbar.Toggle aria-controls="basic-navbar-nav"/>
       <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
-        <Nav>
-          <ModulesNavDropDown />
-        </Nav>
-        <Nav>
-          <LookupsNavDropDown />
-        </Nav>
+        <Nav><ModulesNavDropDown /></Nav>
+        <Nav><LookupsNavDropDown /></Nav>
+        <Nav><AppNavDropDown /></Nav>
       </Navbar.Collapse>
     </Navbar>
   )

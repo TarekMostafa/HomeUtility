@@ -61,4 +61,12 @@ router.put('/deactivate', function(req, res, next){
   })
 })
 
+router.put('/updaterates', function(req, res, next){
+  currency.updateRates().then( () => {
+      res.status(200).send('Rates have been successfully updated');
+  }).catch( err => {
+    next(err);
+  })
+})
+
 module.exports = router;

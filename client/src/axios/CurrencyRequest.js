@@ -40,6 +40,10 @@ class CurrencyRequest {
     });
     return response.data;
   }
+
+  static async updateRates() {
+    return await axios.put('/api/currencies/updaterates');
+  }
 }
 
 export default CurrencyRequest;
