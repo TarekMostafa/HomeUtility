@@ -11,7 +11,8 @@ function WealthBankList (props) {
       <FormContainer title="Banks">
         <WealthBankAddForm onAddBank={() => props.getBanks()}/>
       </FormContainer>
-      <WealthBankTable banks={props.banks} onEditBank={() => props.getBanks()}/>
+      <WealthBankTable banks={props.banks} onEditBank={() => props.getBanks()}
+      onDeleteBank={() => props.getBanks()}/>
     </React.Fragment>
   )
 }

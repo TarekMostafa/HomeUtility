@@ -14,10 +14,13 @@ class BankRequest {
   }
 
   static async updateBank(code, name) {
-    return await axios.put('/api/wealth/banks', {
-      bankCode: code,
+    return await axios.put('/api/wealth/banks/'+code, {
       bankName: name,
     });
+  }
+
+  static async deleteBank(code) {
+    return await axios.delete('/api/wealth/banks/'+code);
   }
 }
 

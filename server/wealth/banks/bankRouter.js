@@ -32,8 +32,20 @@ router.post('/', function(req, res, next) {
   })
 });
 
-router.put('/', function(req, res, next) {
-  bank.updateBank(req.body).then( result => {
+router.put('/:id', function(req, res, next) {
+  bank.updateBank(req.params.id, req.body).then( result => {
+    if(result.status) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+});
+
+router.delete('/:id', function(req, res, next) {
+  bank.deleteBank(req.params.id).then( result => {
     if(result.status) {
       res.status(200).send(result.message);
     } else {

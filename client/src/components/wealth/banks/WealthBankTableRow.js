@@ -10,7 +10,8 @@ class WealthBankTableRow extends Component {
     bankName: this.props.bank.bankName,
     messageClass: '',
     message: '',
-    isLoading: false,
+    isEditLoading: false,
+    isDeleteLoading: false
   }
   render () {
     const { bank, index } = this.props;
@@ -29,11 +30,21 @@ class WealthBankTableRow extends Component {
           <Row>
             <Col xs={2}>
               <Button variant="primary" size="sm" name={'btnEdit'+bank.bankCode}
-              onClick={this.handleEditClick} disabled={this.state.isLoading}>
+              onClick={this.handleEditClick} disabled={this.state.isEditLoading}>
               {
-                this.state.isLoading?
+                this.state.isEditLoading?
                 <Spinner as="span" animation="border" size="sm" role="status"
                 aria-hidden="true"/> : this.state.editMode?'Save':'Edit'
+              }
+              </Button>
+            </Col>
+            <Col xs={2}>
+              <Button variant="danger" size="sm" name={'btndelete'+bank.bankCode}
+              onClick={this.handleDeleteClick} disabled={this.state.isDeleteLoading}>
+              {
+                this.state.isDeleteLoading?
+                <Spinner as="span" animation="border" size="sm" role="status"
+                aria-hidden="true"/> : 'Delete'
               }
               </Button>
             </Col>
@@ -48,7 +59,7 @@ class WealthBankTableRow extends Component {
 
   handleEditClick = () => {
     if(this.state.editMode) {
-      this.setState({isLoading: true});
+      this.setState({isEditLoading: true});
       BankRequest.updateBank(this.props.bank.bankCode, this.state.bankName)
       .then((result) => {
         if (typeof this.props.onEditBank=== 'function') {
@@ -58,14 +69,14 @@ class WealthBankTableRow extends Component {
           editMode: false,
           message: 'Done',
           messageClass: 'text-success',
-          isLoading: false
+          isEditLoading: false
         });
       })
       .catch( err => {
         this.setState({
           message: err.response.data,
           messageClass: 'text-danger',
-          isLoading: false
+          isEditLoading: false
         })
       })
     } else {
@@ -77,6 +88,28 @@ class WealthBankTableRow extends Component {
     }
   }
 
+  handleDeleteClick = () => {
+    this.setState({isDeleteLoading: true});
+    BankRequest.deleteBank(this.props.bank.bankCode)
+    .then((result) => {
+      if (typeof this.props.onDeleteBank=== 'function') {
+        this.props.onDeleteBank();
+      }
+      this.setState({
+        message: '',
+        messageClass: '',
+        isDeleteLoading: false
+      });
+    })
+    .catch( err => {
+      this.setState({
+        message: err.response.data,
+        messageClass: 'text-danger',
+        isDeleteLoading: false
+      })
+    })
+  }
+
   handleChange = (event) => {
     this.setState({
       [event.target.name] : event.target.value
@@ -86,6 +119,7 @@ class WealthBankTableRow extends Component {
 
 WealthBankTableRow.propTypes = {
   onEditBank: PropTypes.func,
+  onDeleteBank: PropTypes.func
 }
 
 export default WealthBankTableRow;
