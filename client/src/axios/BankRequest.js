@@ -12,6 +12,13 @@ class BankRequest {
       bankName: name,
     });
   }
+
+  static async updateBank(code, name) {
+    return await axios.put('/api/wealth/banks', {
+      bankCode: code,
+      bankName: name,
+    });
+  }
 }
 
 export default BankRequest;

@@ -13,7 +13,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/:id', function(req, res, next) {
-  bank.getBank({id:req.params.id}).then( bank => {
+  bank.getBank(req.params.id).then( bank => {
     res.json(bank);
   }).catch( err => {
     next(err);
@@ -22,6 +22,18 @@ router.get('/:id', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
   bank.addBank(req.body).then( result => {
+    if(result.status) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+});
+
+router.put('/', function(req, res, next) {
+  bank.updateBank(req.body).then( result => {
     if(result.status) {
       res.status(200).send(result.message);
     } else {
