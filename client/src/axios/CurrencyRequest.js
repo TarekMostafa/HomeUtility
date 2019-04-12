@@ -10,18 +10,35 @@ class CurrencyRequest {
     return response.data;
   }
 
+  static async addCurrency(code, name, decimalPlace) {
+    return await axios.post('/api/currencies/', {
+      currencyCode: code,
+      currencyName: name,
+      currencyActive: 'YES',
+      currencyRateAgainstBase: '1',
+      currencyDecimalPlace: decimalPlace,
+    });
+  }
+
   static async activateCurrency(code) {
-    const response = await axios.post('/api/currencies/activate', {
+    return await axios.put('/api/currencies/activate', {
       code
     });
-    console.log(response);
   }
 
   static async deactivateCurrency(code) {
-    const response = await axios.post('/api/currencies/deactivate', {
+    return await axios.put('/api/currencies/deactivate', {
       code
     });
-    console.log(response);
+  }
+
+  static async getCurrencyInfoByCurrencyCode(code) {
+    const response = await axios.get('/api/currencies/currencyInfo', {
+      params: {
+        code
+      }
+    });
+    return response.data;
   }
 }
 

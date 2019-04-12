@@ -26,6 +26,13 @@ class Common {
       return defaultValue;
     }
   }
+
+  static getAPIResponse(status, message) {
+    return {
+      status,
+      message
+    }
+  }
 }
 
 module.exports = Common;

@@ -1,4 +1,5 @@
 const express = require('express');
+const _ = require('lodash');
 const Currency = require('./currency');
 
 const router = express.Router();
@@ -12,17 +13,49 @@ router.get('/', function(req, res, next) {
   })
 });
 
-router.post('/activate', function(req, res, next){
-  currency.activateCurrency(req.body).then( () => {
-    res.sendStatus(200);
+router.post('/', function(req, res, next){
+  currency.addCurrency(req.body).then( (result) => {
+    if(result.status) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
   }).catch( err => {
     next(err);
   })
 })
 
-router.post('/deactivate', function(req, res, next){
-  currency.deactivateCurrency(req.body).then( () => {
-    res.sendStatus(200);
+router.get('/currencyInfo', function(req, res, next) {
+  currency.getCurrencyInfoFromThirdParty(req.query).then( currency => {
+    if(_.isNil(currency)) {
+      res.status(400).send('Invalid Currency Code');
+    } else {
+      res.json(currency);
+    }
+  }).catch( err => {
+    next(err);
+  })
+});
+
+router.put('/activate', function(req, res, next){
+  currency.activateCurrency(req.body).then( (result) => {
+    if(result.status) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+})
+
+router.put('/deactivate', function(req, res, next){
+  currency.deactivateCurrency(req.body).then( (result) => {
+    if(result.status) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
   }).catch( err => {
     next(err);
   })
