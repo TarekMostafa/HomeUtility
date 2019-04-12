@@ -10,6 +10,7 @@ import WealthAccountList from './components/wealth/accounts/WealthAccountList';
 import WealthTransactionList from './components/wealth/transactions/WealthTransactionList';
 import WealthBankList from './components/wealth/banks/WealthBankList';
 import CurrencyList from './components/currencies/CurrencyList';
+import WealthTransactionTypeList from './components/wealth/transactiontypes/WealthTransactionTypeList';
 import AppSettings from './components/settings/AppSettings';
 
 class App extends Component {
@@ -25,6 +26,7 @@ class App extends Component {
               <Route path="/accountstransactions" exact component={WealthTransactionList}></Route>
               <Route path="/banks" exact component={WealthBankList}></Route>
               <Route path="/currencies" exact component={CurrencyList}></Route>
+              <Route path="/transactiontypes" exact component={WealthTransactionTypeList}></Route>
               <Route path="/appsettings" exact component={AppSettings}></Route>
             </Switch>
           </Container>
