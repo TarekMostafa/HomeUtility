@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 //import { Form, Row, Col, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import WealthBankTable from './WealthBankTable';
+import WealthBankAddForm from './WealthBankAddForm';
 import FormContainer from '../../common/FormContainer';
-
+import { getBanks } from '../../../store/actions/lookupsAction';
 //const initialState = {
 //}
 
@@ -14,11 +15,17 @@ class WealthBankList extends Component {
   render() {
     return (
       <React.Fragment>
-        <FormContainer title="Banks" />
+        <FormContainer title="Banks">
+          <WealthBankAddForm onAddBank={this.handleAddBank}/>
+        </FormContainer>
         <WealthBankTable banks={this.props.banks}/>
       </React.Fragment>
     )
   }//end of render
+
+  handleAddBank = () => {
+    this.props.getBanks();
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -27,4 +34,10 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps)(WealthBankList);
+const mapDispatchToProps = (dispatch) => {
+	return {
+    getBanks: () => dispatch(getBanks()),
+	}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(WealthBankList);

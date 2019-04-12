@@ -5,6 +5,13 @@ class BankRequest {
     const response = await axios.get('/api/wealth/banks');
     return response.data;
   }
+
+  static async addBank(code, name) {
+    return await axios.post('/api/wealth/banks', {
+      bankCode: code,
+      bankName: name,
+    });
+  }
 }
 
 export default BankRequest;
