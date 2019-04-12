@@ -14,7 +14,7 @@ export const getAppSettings = () => {
 
 export const getTransactionTypes = () => {
   return (dispatch, getState) => {
-    TransactionTypeRequest.getTransactionTypesForDropDown()
+    TransactionTypeRequest.getTransactionTypes()
     .then( (transactionTypes) => dispatch({type: "SET_TRANSACTION_TYPES", data: transactionTypes}) )
     .catch( () => dispatch({type: "ERROR"}) )
   }

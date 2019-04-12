@@ -1,24 +1,21 @@
-import React, { Component } from 'react';
-//import { Form, Row, Col, Button } from 'react-bootstrap';
+import React from 'react';
 import { connect } from 'react-redux';
 import WealthTransactionTypeTable from './WealthTransactionTypeTable';
+import WealthTransactionTypeAddForm from './WealthTransactionTypeAddForm';
 import FormContainer from '../../common/FormContainer';
+import { getTransactionTypes } from '../../../store/actions/lookupsAction';
 
-//const initialState = {
-//}
-
-class WealthTransactionTypeList extends Component {
-  state = {
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        <FormContainer title="Transaction Types" />
-        <WealthTransactionTypeTable transactionTypes={this.props.transactionTypes}/>
-      </React.Fragment>
-    )
-  }//end of render
+function WealthTransactionTypeList(props) {
+  return (
+    <React.Fragment>
+      <FormContainer title="Transaction Types">
+        <WealthTransactionTypeAddForm onAddTransactionType={() => props.getTransactionTypes()}/>
+      </FormContainer>
+      <WealthTransactionTypeTable transactionTypes={props.transactionTypes}
+      onEditTransactionType={() => props.getTransactionTypes()}
+      onDeleteTransactionType={() => props.getTransactionTypes()}/>
+    </React.Fragment>
+  )
 }
 
 const mapStateToProps = (state) => {
@@ -27,4 +24,10 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps)(WealthTransactionTypeList);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		getTransactionTypes: () => dispatch(getTransactionTypes()),
+	}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(WealthTransactionTypeList);
