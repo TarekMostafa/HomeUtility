@@ -8,6 +8,7 @@ import NavigationBar from './components/navigation/NavigationBar'
 import Home from './components/home/Home';
 import WealthAccountList from './components/wealth/accounts/WealthAccountList';
 import WealthTransactionList from './components/wealth/transactions/WealthTransactionList';
+import WealthBankList from './components/wealth/banks/WealthBankList';
 import CurrencyList from './components/currencies/CurrencyList';
 import AppSettings from './components/settings/AppSettings';
 
@@ -22,6 +23,7 @@ class App extends Component {
               <Route path="/" exact component={Home}></Route>
               <Route path="/accounts" exact component={WealthAccountList}></Route>
               <Route path="/accountstransactions" exact component={WealthTransactionList}></Route>
+              <Route path="/banks" exact component={WealthBankList}></Route>
               <Route path="/currencies" exact component={CurrencyList}></Route>
               <Route path="/appsettings" exact component={AppSettings}></Route>
             </Switch>
