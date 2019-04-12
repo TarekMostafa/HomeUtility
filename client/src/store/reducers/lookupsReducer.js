@@ -1,4 +1,5 @@
 const initState = {
+  appSettings: null,
   transactionTypes: null,
   accounts: null,
   banks: null,
@@ -8,6 +9,11 @@ const initState = {
 
 const lookupReducer = (state=initState, action) => {
   switch (action.type) {
+    case 'SET_APP_SETTINGS':
+      return {
+        ...state,
+        appSettings: action.data
+      };
     case 'SET_TRANSACTION_TYPES':
       return {
         ...state,
@@ -27,7 +33,7 @@ const lookupReducer = (state=initState, action) => {
       return {
         ...state,
         activeCurrencies: action.data
-      }
+      };
     default:
       return state;
   }

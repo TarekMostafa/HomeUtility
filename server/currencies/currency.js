@@ -2,11 +2,9 @@ const CurrencyCodes = require('currency-codes');
 const _ = require('lodash');
 
 const CurrencyModel = require('./currencyModel');
+const AppSettingsModel = require('../appSettings/appSettingsModel');
 const Common = require('../common/common');
-const AppSettings = require('../appSettings/appSettings');
 const currencyConversion = require('./currencyConversion');
-
-const appSettings = new AppSettings();
 
 class Currency {
 
@@ -61,8 +59,8 @@ class Currency {
 
   async updateRates() {
     // Get Base Currency
-    const _appSettings = await appSettings.getAppSettings();
-    if(_.isNil(_appSettings.baseCurrency))
+    const appSettings = await AppSettingsModel.findByPk('APP');
+    if(_.isNil(appSettings.baseCurrency))
     {
       return Common.getAPIResponse(false, `There is no base currency in the application settings`);
     }
@@ -71,7 +69,7 @@ class Currency {
     // Create promises array to get all rates based on base currency
     let promises = currencies.map( (currency) => {
       return new Promise( (resolve) => {
-        currencyConversion(currency.currencyCode, _appSettings.baseCurrency, function(err, amt){
+        currencyConversion(currency.currencyCode, appSettings.baseCurrency, function(err, amt){
           currency.currencyRateAgainstBase = amt;
           resolve(currency);
         });

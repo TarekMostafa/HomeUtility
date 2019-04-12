@@ -2,6 +2,7 @@ const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const BankModel = require('../banks/bankModel');
+const CurrencyModel = require('../../currencies/CurrencyModel');
 
 class AccountModel extends Model {}
 AccountModel.init({
@@ -24,6 +25,11 @@ AccountModel.init({
 AccountModel.belongsTo(BankModel, {
   as: "bank",
   foreignKey: 'accountBankCode'
+});
+
+AccountModel.belongsTo(CurrencyModel, {
+  as: "currency",
+  foreignKey: 'acccountCurrency'
 });
 
 module.exports = AccountModel;

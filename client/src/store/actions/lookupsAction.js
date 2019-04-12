@@ -2,6 +2,15 @@ import TransactionTypeRequest from '../../axios/TransactionTypeRequest';
 import AccountRequest from '../../axios/AccountRequest';
 import BankRequest from '../../axios/BankRequest';
 import CurrencyRequest from '../../axios/CurrencyRequest';
+import AppSettingsRequest from '../../axios/AppSettingsRequest';
+
+export const getAppSettings = () => {
+  return (dispatch, getState) => {
+    AppSettingsRequest.getAppSettings()
+    .then( (appSettings) => dispatch({type: "SET_APP_SETTINGS", data: appSettings}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
 
 export const getTransactionTypes = () => {
   return (dispatch, getState) => {

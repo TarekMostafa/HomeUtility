@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import WealthAccountTable from './WealthAccountTable';
+import WealthAccountTotalBalance from './WealthAccountTotalBalance';
 import FormContainer from '../../common/FormContainer';
 
 import AccountRequest from '../../../axios/AccountRequest';
@@ -60,6 +61,13 @@ class WealthAccountList extends Component {
           </Form>
         </FormContainer>
         <WealthAccountTable accounts={this.state.accounts}/>
+        <Row>
+          <Col xs={{offset:4, span:4}}>
+            {this.props.appSettings &&
+            <WealthAccountTotalBalance accounts={this.state.accounts}
+            baseCurrency={this.props.appSettings.baseCurrency}/>}
+          </Col>
+        </Row>
       </React.Fragment>
     )
   }//end of render
@@ -101,7 +109,8 @@ class WealthAccountList extends Component {
 const mapStateToProps = (state) => {
 	return {
 		banks: state.lookups.banks,
-    accountStatuses: state.lookups.accountStatuses
+    accountStatuses: state.lookups.accountStatuses,
+    appSettings: state.lookups.appSettings,
 	}
 }
 

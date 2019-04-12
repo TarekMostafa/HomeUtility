@@ -29,7 +29,9 @@ function WealthAccountTable (props) {
               <td>{account.acccountCurrency}</td>
               <td className="text-right">{amountFormatter(account.accountStartBalance)}</td>
               <td className="text-right">{amountFormatter(account.accountCurrentBalance)}</td>
-              <td className="text-right">{amountFormatter(account.accountCurrentBalance)}</td>
+              <td className="text-right">
+                {amountFormatter(account.accountCurrentBalance * account.currency.currencyRateAgainstBase)}
+              </td>
               <td>{account.accountStatus}</td>
               <td>{moment(account.accountLastBalanceUpdate).format('DD/MM/YYYY HH:mm:ss')}</td>
             </tr>

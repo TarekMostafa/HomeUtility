@@ -1,6 +1,7 @@
 const AccountModel = require('./accountModel');
 const Common = require('../../common/common');
 const BankModel = require('../banks/bankModel');
+const CurrencyModel = require('../../currencies/CurrencyModel');
 
 class Account {
   async getAccountsForDropDown() {
@@ -22,7 +23,8 @@ class Account {
     }
     return await AccountModel.findAll({
       include: [
-        { model: BankModel, as: 'bank', attributes: ['bankName'] }
+        { model: BankModel, as: 'bank', attributes: ['bankName'] },
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase'] }
       ],
       where: whereQuery
     });
