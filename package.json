@@ -17,6 +17,7 @@
     "express": "^4.16.4",
     "lodash": "^4.17.11",
     "mysql2": "^1.6.5",
-    "sequelize": "^5.2.9"
+    "sequelize": "^5.2.9",
+    "utf8-bytes": "0.0.1"
   }
 }
