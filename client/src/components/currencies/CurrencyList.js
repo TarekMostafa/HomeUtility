@@ -49,32 +49,14 @@ class CurrencyList extends Component {
     this.props.getActiveCurrencies();
   }
 
-  handleDeactivate = (code) => {
-    CurrencyRequest.deactivateCurrency(code)
-    .then( () => {
-      this.props.getActiveCurrencies();
-      this.loadInActiveCurrencies();
-    })
-    .catch( err => {
-      this.setState({
-        errorMessage: err.response.data
-      });
-      this.setErrorTimeout();
-    })
+  handleDeactivate = () => {
+    this.props.getActiveCurrencies();
+    this.loadInActiveCurrencies();
   }
 
-  handleActivate = (code) => {
-    CurrencyRequest.activateCurrency(code)
-    .then( () => {
-      this.props.getActiveCurrencies();
-      this.loadInActiveCurrencies();
-    })
-    .catch( err => {
-      this.setState({
-        errorMessage: err.response.data
-      });
-      this.setErrorTimeout();
-    })
+  handleActivate = () => {
+    this.props.getActiveCurrencies();
+    this.loadInActiveCurrencies();
   }
 
   setErrorTimeout = () => {

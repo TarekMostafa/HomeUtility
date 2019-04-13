@@ -52,6 +52,15 @@ class Currency {
     if(currency === null) {
       return Common.getAPIResponse(false, `This currency (${code}) does not exist in the database`);
     }
+    // Get Base Currency
+    const appSettings = await AppSettingsModel.findByPk('APP');
+    if(!_.isNil(appSettings.baseCurrency))
+    {
+      //Check base currency with the passed one
+      if(appSettings.baseCurrency === currency.currencyCode) {
+        return Common.getAPIResponse(false, `We can not deactivate the base currency (${code})`);
+      }
+    }
     currency.currencyActive = 'NO';
     await currency.save();
     return Common.getAPIResponse(true, 'This currency has been successfully deactivated');

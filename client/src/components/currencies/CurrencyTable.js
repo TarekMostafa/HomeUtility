@@ -1,5 +1,7 @@
 import React from 'react';
-import { Table, Button } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
+
+import CurrencyTableRow from './CurrencyTableRow';
 
 function CurrencyTable (props) {
   return (
@@ -17,22 +19,8 @@ function CurrencyTable (props) {
       <tbody>
         {props.currencies && props.currencies.map( (currency, index) => {
           return (
-            <tr key={currency.currencyCode}>
-              <td>{index+1}</td>
-              <td>{currency.currencyCode}</td>
-              <td>{currency.currencyName}</td>
-              <td>{currency.currencyRateAgainstBase}</td>
-              <td>{currency.currencyDecimalPlace}</td>
-              <td>
-                {
-                  currency.currencyActive === 'YES' ?
-                  <Button variant="danger" size="sm"
-                  onClick={ () => props.onDeactivate(currency.currencyCode)}>Deactivate</Button> :
-                  <Button variant="primary" size="sm"
-                  onClick={ () => props.onActivate(currency.currencyCode)}>Activate</Button>
-                }
-              </td>
-            </tr>
+            <CurrencyTableRow currency={currency} index={index} key={currency.currencyCode}
+            {...props}/>
           )
         })}
       </tbody>
