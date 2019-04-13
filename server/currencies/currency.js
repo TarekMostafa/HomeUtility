@@ -78,7 +78,8 @@ class Currency {
     // Create promises array to get all rates based on base currency
     let promises = currencies.map( (currency) => {
       return new Promise( (resolve) => {
-        currencyConversion(currency.currencyCode, appSettings.baseCurrency, function(err, amt){
+        currencyConversion(currency.currencyCode, appSettings.baseCurrency,
+          appSettings.currencyConversionAPIKey, function(err, amt){
           currency.currencyRateAgainstBase = amt;
           resolve(currency);
         });

@@ -1,10 +1,9 @@
 var https = require('https');
 
-module.exports = function currencyConversion(fromCurrency, toCurrency, cb) {
+module.exports = function currencyConversion(fromCurrency, toCurrency, apiKey, cb) {
   fromCurrency = encodeURIComponent(fromCurrency);
   toCurrency = encodeURIComponent(toCurrency);
   const query = fromCurrency + '_' + toCurrency;
-  const apiKey = 'c4c4b8c523066c50bfe2';
   const url = 'https://free.currencyconverterapi.com/api/v6/convert?q='
             + query + '&compact=ultra&apiKey=' + apiKey;
 

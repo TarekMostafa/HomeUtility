@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import FormContainer from '../common/FormContainer';
@@ -11,17 +11,24 @@ import { getActiveCurrencies, getAppSettings } from '../../store/actions/lookups
 const initialState = {
   message: '',
   messageClass: '',
+  isSaveRateLoading: false,
+  isUpdateRateLoading: false,
+  isDisabled: false,
 }
 
 class AppSettings extends Component {
   state = {
     baseCurrency: '',
+    apikey: '',
     ...initialState
   }
 
   static getDerivedStateFromProps(nextProps, prevState){
     if(nextProps.appSettings && prevState.baseCurrency === '') {
-      return {baseCurrency: nextProps.appSettings.baseCurrency}
+      return {
+        baseCurrency: nextProps.appSettings.baseCurrency,
+        apikey: nextProps.appSettings.currencyConversionAPIKey
+      }
     } else {
       return null
     }
@@ -33,10 +40,10 @@ class AppSettings extends Component {
         <FormContainer title="App Settings">
           <Form>
             <Row>
-              <Col xs={6}>
+              <Col xs={8}>
                 <Form.Group as={Row} controlId="formPlaintextEmail">
-                  <Form.Label column sm="4">Base Currency</Form.Label>
-                  <Col sm="8">
+                  <Form.Label column sm="6">Base Currency</Form.Label>
+                  <Col sm="6">
                     <Form.Control as="select" size="sm" name="baseCurrency" onChange={this.handleChange}
                       value={this.state.baseCurrency}>
                       <option value=''></option>
@@ -45,12 +52,37 @@ class AppSettings extends Component {
                   </Col>
                 </Form.Group>
               </Col>
-              <Col xs={{offset:1, span: 2}}>
-                <Button variant="primary" size="sm" onClick={this.handleSave}>Save & Update Rates</Button>
+            </Row>
+            <Row>
+              <Col xs={8}>
+                <Form.Group as={Row} controlId="formPlaintextEmail">
+                  <Form.Label column sm="6">Currency Conversion API Key</Form.Label>
+                  <Col sm="6">
+                    <Form.Control type="input" size="sm"
+                      value={this.state.apikey} name="apikey" readOnly/>
+                  </Col>
+                </Form.Group>
               </Col>
               <Col xs={2}>
-                <Button variant="primary" size="sm" onClick={this.handleUpdateRates}>
-                Update Rates ({this.props.appSettings && this.props.appSettings.baseCurrency})
+                <Button variant="primary" size="sm" onClick={this.handleSave}
+                disabled={this.state.isDisabled}>
+                {
+                  this.state.isSaveRateLoading?
+                  <Spinner as="span" animation="border" size="sm" role="status"
+                  aria-hidden="true"/> : 'Save & Update Rates'
+                }
+                </Button>
+              </Col>
+              <Col xs={2}>
+                <Button variant="primary" size="sm" onClick={this.handleUpdateRates}
+                disabled={this.state.isDisabled}>
+                {
+                  this.state.isUpdateRateLoading?
+                  <Spinner as="span" animation="border" size="sm" role="status"
+                  aria-hidden="true"/> :
+                  this.props.appSettings? 'Update Rates (' +
+                  this.props.appSettings.baseCurrency + ')' : 'Update Rates ()'
+                }
                 </Button>
               </Col>
             </Row>
@@ -84,38 +116,54 @@ class AppSettings extends Component {
     if(this.state.baseCurrency === this.props.appSettings.baseCurrency) {
       return;
     }
+    this.setState({
+      isSaveRateLoading: true,
+      isDisabled: true,
+    });
     AppSettingsRequest.updateAppSettings(this.state.baseCurrency)
     .then( (result) => {
       this.props.getAppSettings();
       this.setState({
         ...initialState,
         message: result.data,
-        messageClass: 'text-success'
+        messageClass: 'text-success',
+        isSaveRateLoading: false,
+        isDisabled: false,
       });
       this.props.getActiveCurrencies();
     })
     .catch( err => {
       this.setState({
         message: err.response.data,
-        messageClass: 'text-danger'
+        messageClass: 'text-danger',
+        isSaveRateLoading: false,
+        isDisabled: false,
       })
     })
   }
 
   handleUpdateRates = () => {
+    this.setState({
+      isUpdateRateLoading: true,
+      isDisabled: true,
+    });
     CurrencyRequest.updateRates()
     .then( (result) => {
       this.setState({
         ...initialState,
         message: result.data,
-        messageClass: 'text-success'
+        messageClass: 'text-success',
+        isUpdateRateLoading: false,
+        isDisabled: false,
       });
       this.props.getActiveCurrencies();
     })
     .catch( err => {
       this.setState({
         message: err.response.data,
-        messageClass: 'text-danger'
+        messageClass: 'text-danger',
+        isUpdateRateLoading: false,
+        isDisabled: false,
       })
     })
   }

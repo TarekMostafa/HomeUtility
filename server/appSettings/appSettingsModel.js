@@ -6,6 +6,7 @@ class AppSettingsModel extends Model {}
 AppSettingsModel.init({
   appCode: { type: Sequelize.STRING(3), primaryKey: true },
   baseCurrency: Sequelize.STRING(3),
+  currencyConversionAPIKey: Sequelize.STRING(50)
 }, {
   tableName: 'appsettings',
   createdAt: false,
