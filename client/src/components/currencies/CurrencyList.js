@@ -34,9 +34,13 @@ class CurrencyList extends Component {
         <FormContainer title="Active Currencies">
           <CurrencyAddForm onAddCurrency={this.handleAddCurrency}/>
         </FormContainer>
-        <CurrencyTable currencies={this.props.activeCurrencies} onDeactivate={this.handleDeactivate}/>
+        <FormContainer>
+          <CurrencyTable currencies={this.props.activeCurrencies} onDeactivate={this.handleDeactivate}/>
+        </FormContainer>
         <FormContainer title="Inactive Currencies" />
-        <CurrencyTable currencies={this.state.inActiveCurrencies} onActivate={this.handleActivate}/>
+        <FormContainer>
+          <CurrencyTable currencies={this.state.inActiveCurrencies} onActivate={this.handleActivate}/>
+        </FormContainer>
       </React.Fragment>
     )
   }//end of render

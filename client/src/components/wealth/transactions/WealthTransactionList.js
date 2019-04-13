@@ -94,10 +94,12 @@ class WealthTransactionList extends Component {
           </Row>
           </Form>
         </FormContainer>
-        <WealthTransactionTable transactions={this.state.transactions}/>
-        <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
-          hidden={!this.state.appearMoreButton}>
-          more...</Button>
+        <FormContainer>
+          <WealthTransactionTable transactions={this.state.transactions}/>
+          <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
+            hidden={!this.state.appearMoreButton}>
+            more...</Button>
+        </FormContainer>
       </React.Fragment>
     )
   }// end of render

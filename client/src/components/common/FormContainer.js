@@ -4,7 +4,9 @@ import { Card } from 'react-bootstrap';
 function FormContainer(props){
   return (
     <Card>
-      <Card.Header><h4>{props.title}</h4></Card.Header>
+      {
+        props.title && <Card.Header><h4>{props.title}</h4></Card.Header>
+      }
       {
         props.children && <Card.Body>{props.children}</Card.Body>
       }

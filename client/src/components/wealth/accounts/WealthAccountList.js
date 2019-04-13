@@ -60,14 +60,16 @@ class WealthAccountList extends Component {
             </Row>
           </Form>
         </FormContainer>
-        <WealthAccountTable accounts={this.state.accounts}/>
-        <Row>
-          <Col xs={{offset:4, span:4}}>
-            {this.props.appSettings &&
-            <WealthAccountTotalBalance accounts={this.state.accounts}
-            baseCurrency={this.props.appSettings.baseCurrency}/>}
-          </Col>
-        </Row>
+        <FormContainer>
+          <WealthAccountTable accounts={this.state.accounts}/>
+          <Row>
+            <Col xs={{offset:4, span:4}}>
+              {this.props.appSettings &&
+              <WealthAccountTotalBalance accounts={this.state.accounts}
+              baseCurrency={this.props.appSettings.baseCurrency}/>}
+            </Col>
+          </Row>
+        </FormContainer>
       </React.Fragment>
     )
   }//end of render

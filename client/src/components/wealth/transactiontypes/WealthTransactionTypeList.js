@@ -11,9 +11,11 @@ function WealthTransactionTypeList(props) {
       <FormContainer title="Transaction Types">
         <WealthTransactionTypeAddForm onAddTransactionType={() => props.getTransactionTypes()}/>
       </FormContainer>
-      <WealthTransactionTypeTable transactionTypes={props.transactionTypes}
-      onEditTransactionType={() => props.getTransactionTypes()}
-      onDeleteTransactionType={() => props.getTransactionTypes()}/>
+      <FormContainer>
+        <WealthTransactionTypeTable transactionTypes={props.transactionTypes}
+        onEditTransactionType={() => props.getTransactionTypes()}
+        onDeleteTransactionType={() => props.getTransactionTypes()}/>
+      </FormContainer>
     </React.Fragment>
   )
 }

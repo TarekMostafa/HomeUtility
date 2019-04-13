@@ -17,6 +17,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 //Routing Modules
+app.use('/resources', express.static('server/resources/images'));
 app.use('/api/wealth/transactions', transactionRouter);
 app.use('/api/wealth/accounts', accountRouter);
 app.use('/api/wealth/transactiontypes', transactionTypesRouter);
