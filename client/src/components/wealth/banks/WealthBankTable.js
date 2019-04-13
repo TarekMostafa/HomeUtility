@@ -17,7 +17,7 @@ function WealthBankTable(props) {
       <tbody>
         {props.banks && props.banks.map( (bank, index) => {
           return (
-            <WealthBankTableRow bank={bank} index={index} key={index}
+            <WealthBankTableRow bank={bank} index={index} key={bank.bankCode}
             {...props}/>
           )
         })}

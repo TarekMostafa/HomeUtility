@@ -17,7 +17,8 @@ function WealthTransactionTypeTable (props) {
       <tbody>
         {props.transactionTypes && props.transactionTypes.map( (transactionType, index) => {
           return (
-            <WealthTransactionTypeTableRow transactionType={transactionType} index={index} key={index}
+            <WealthTransactionTypeTableRow transactionType={transactionType} index={index}
+            key={transactionType.typeId}
             {...props}/>
           )
         })}

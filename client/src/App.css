@@ -9,5 +9,7 @@
 * {font-size: 15px;}
 
 body {
-  background-image: url("bg.jpg")
+  background-image: url("bg.jpg");
+  background-repeat: no-repeat;
+  background-color: #e0e0e0;
 }
