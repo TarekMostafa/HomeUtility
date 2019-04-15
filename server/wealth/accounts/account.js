@@ -1,13 +1,15 @@
 const AccountModel = require('./accountModel');
-const Common = require('../../common/common');
+const Common = require('../../utilities/common');
+const APIResponse = require('../../utilities/apiResponse');
 const BankModel = require('../banks/bankModel');
 const CurrencyModel = require('../../currencies/CurrencyModel');
 
 class Account {
   async getAccountsForDropDown() {
-    return await AccountModel.findAll({
+    const accounts = await AccountModel.findAll({
       attributes: ['accountId', 'accountNumber']
     });
+    return APIResponse.getAPIResponse(true, accounts);
   }
 
   async getAccounts({bank, status}) {
@@ -21,13 +23,14 @@ class Account {
     if(Common.getText(status, '') !== '') {
       whereQuery.accountStatus = status;
     }
-    return await AccountModel.findAll({
+    const accounts = await AccountModel.findAll({
       include: [
         { model: BankModel, as: 'bank', attributes: ['bankName'] },
         { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase'] }
       ],
       where: whereQuery
     });
+    return APIResponse.getAPIResponse(true, accounts);
   }
 }
 

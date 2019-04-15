@@ -6,16 +6,20 @@ const router = express.Router();
 const currency = new Currency();
 
 router.get('/', function(req, res, next) {
-  currency.getCurrencies(req.query).then( currencies => {
-    res.json(currencies);
+  currency.getCurrencies(req.query).then( result => {
+    if(result.success) {
+      res.json(result.payload);
+    } else {
+      res.status(400).send(result.message);
+    }
   }).catch( err => {
     next(err);
   })
 });
 
 router.post('/', function(req, res, next){
-  currency.addCurrency(req.body).then( (result) => {
-    if(result.status) {
+  currency.addCurrency(req.body).then( result => {
+    if(result.success) {
       res.status(200).send(result.message);
     } else {
       res.status(400).send(result.message);
@@ -26,11 +30,11 @@ router.post('/', function(req, res, next){
 })
 
 router.get('/currencyInfo', function(req, res, next) {
-  currency.getCurrencyInfoFromThirdParty(req.query).then( currency => {
-    if(_.isNil(currency)) {
-      res.status(400).send('Invalid Currency Code');
+  currency.getCurrencyInfoFromThirdParty(req.query).then( result => {
+    if(result.success) {
+      res.json(result.payload);
     } else {
-      res.json(currency);
+      res.status(400).send(result.message);
     }
   }).catch( err => {
     next(err);
@@ -38,8 +42,8 @@ router.get('/currencyInfo', function(req, res, next) {
 });
 
 router.put('/activate', function(req, res, next){
-  currency.activateCurrency(req.body).then( (result) => {
-    if(result.status) {
+  currency.activateCurrency(req.body).then( result => {
+    if(result.success) {
       res.status(200).send(result.message);
     } else {
       res.status(400).send(result.message);
@@ -50,8 +54,8 @@ router.put('/activate', function(req, res, next){
 })
 
 router.put('/deactivate', function(req, res, next){
-  currency.deactivateCurrency(req.body).then( (result) => {
-    if(result.status) {
+  currency.deactivateCurrency(req.body).then( result => {
+    if(result.success) {
       res.status(200).send(result.message);
     } else {
       res.status(400).send(result.message);
@@ -63,7 +67,7 @@ router.put('/deactivate', function(req, res, next){
 
 router.put('/updaterates', function(req, res, next){
   currency.updateRates().then( () => {
-      res.status(200).send('Rates have been successfully updated');
+    res.status(200).send('Rates have been successfully updated');
   }).catch( err => {
     next(err);
   })

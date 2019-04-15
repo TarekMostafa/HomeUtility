@@ -1,24 +1,29 @@
 const AppSettingsModel = require('./appSettingsModel');
 const Currency = require('../currencies/currency');
-const Common = require('../common/common');
+const APIResponse = require('../utilities/apiResponse');
 const APP_SETTING_KEY = 'APP';
 
 class AppSettings {
 
   async getAppSettings() {
-    return await AppSettingsModel.findByPk(APP_SETTING_KEY);
+    const appSettings = await AppSettingsModel.findByPk(APP_SETTING_KEY);
+    if(appSettings) {
+      return APIResponse.getAPIResponse(true, appSettings);
+    } else {
+      return APIResponse.getAPIResponse(false, null, '001');
+    }
   }
 
   async updateAppSettings({baseCurrency}) {
     let appSettings = await AppSettingsModel.findByPk(APP_SETTING_KEY);
-    if(appSettings === null) {
-      return Common.getAPIResponse(false, `An error occurred while retrieving application settings`);
+    if(!appSettings) {
+      return APIResponse.getAPIResponse(false, null, '001');
     }
     appSettings.baseCurrency = baseCurrency;
     await appSettings.save();
     const currency = new Currency();
     await currency.updateRates();
-    return Common.getAPIResponse(true, 'Application settings have been successfully updated');
+    return APIResponse.getAPIResponse(true, null, '002');
   }
 }
 

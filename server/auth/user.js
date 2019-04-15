@@ -1,13 +1,13 @@
 const UserModel = require('./userModel');
 const Authentication = require('./authentication');
-const Common = require('../common/common');
+const APIResponse = require('../utilities/apiResponse');
 
 class User {
   async authenticate({userName, password}) {
     // Check user in the database
     const user = await UserModel.findOne({where: {userName: userName}});
     if(user === null) {
-      return Common.getAPIResponse(false, 'Invalid User Name or Password');
+      return APIResponse.getAPIResponse(false, null, '003');
     }
     // Compare password with the one stored in the database
     const encryptedPass = await Authentication.encrypt(password);
@@ -19,13 +19,13 @@ class User {
         user.userActive = false;
       }
       await user.save();
-      return Common.getAPIResponse(false, 'Invalid User Name or Password');
+      return APIResponse.getAPIResponse(false, null, '003');
     }
     // Check user status
     if(!user.userActive) {
-      return Common.getAPIResponse(false, `User (${user.userName}) is inactive`);
+      return APIResponse.getAPIResponse(false, null, '004', user.userName);
     } else {
-      return Common.getAPIResponse(true, `authenticated`);
+      return APIResponse.getAPIResponse(true, user);
     }
   }
 }

@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
-const Common = require('../../common/common');
+const Common = require('../../utilities/common');
+const APIResponse = require('../../utilities/apiResponse');
 const TransactionModel = require('./transactionModel');
 const AccountModel = require('../accounts/accountModel');
 const TransactionTypeModel = require('../transactionTypes/transactionTypeModel');
@@ -41,7 +42,7 @@ class Transaction {
       }
     }
 
-    return await TransactionModel.findAll({
+    const transactions = await TransactionModel.findAll({
       offset: _skip,
       limit: _limit,
       attributes: ['transactionId', 'transactionPostingDate', 'transactionAmount',
@@ -53,6 +54,7 @@ class Transaction {
       where: whereQuery,
       order: [ ['transactionPostingDate', 'DESC'] , ['transactionId', 'DESC'] ]
     });
+    return APIResponse.getAPIResponse(true, transactions);
   }
 
 }

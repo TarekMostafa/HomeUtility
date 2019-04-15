@@ -3,7 +3,8 @@ const _ = require('lodash');
 
 const CurrencyModel = require('./currencyModel');
 const AppSettingsModel = require('../appSettings/appSettingsModel');
-const Common = require('../common/common');
+const Common = require('../utilities/common');
+const APIResponse = require('../utilities/apiResponse');
 const currencyConversion = require('./currencyConversion');
 
 class Currency {
@@ -15,9 +16,10 @@ class Currency {
     if(Common.getText(active, '') !== '') {
       whereQuery.currencyActive = active;
     }
-    return await CurrencyModel.findAll({
+    const currencies = await CurrencyModel.findAll({
       where: whereQuery
     });
+    return APIResponse.getAPIResponse(true, currencies);
   }
 
   async getCurrencyByCurrencyCode(code) {
@@ -25,32 +27,37 @@ class Currency {
   }
 
   async getCurrencyInfoFromThirdParty({code}){
-    return await CurrencyCodes.code(code);
+    const currency = await CurrencyCodes.code(code);
+    if(currency) {
+      return APIResponse.getAPIResponse(true, currency);
+    } else {
+      return APIResponse.getAPIResponse(false, null, '022');
+    }
   }
 
   async addCurrency(currency){
     const _currency = await this.getCurrencyByCurrencyCode(currency.currencyCode);
-    if(_currency !== null) {
-      return Common.getAPIResponse(false, 'This currency code already exists in the database');
+    if(_currency) {
+      return APIResponse.getAPIResponse(false, null, '005');
     }
     await CurrencyModel.build(currency).save();
-    return Common.getAPIResponse(true, 'This currency has been successfully saved');
+    return APIResponse.getAPIResponse(true, null, '006');
   }
 
   async activateCurrency({code}) {
     let currency = await this.getCurrencyByCurrencyCode(code);
-    if(currency === null) {
-      return Common.getAPIResponse(false, `This currency (${code}) does not exist in the database`);
+    if(!currency) {
+      return APIResponse.getAPIResponse(false, null, '007', code);
     }
     currency.currencyActive = 'YES';
     await currency.save();
-    return Common.getAPIResponse(true, 'This currency has been successfully activated');
+    return APIResponse.getAPIResponse(true, null, '008');
   }
 
   async deactivateCurrency({code}) {
     let currency = await this.getCurrencyByCurrencyCode(code);
-    if(currency === null) {
-      return Common.getAPIResponse(false, `This currency (${code}) does not exist in the database`);
+    if(!currency) {
+      return APIResponse.getAPIResponse(false, null, '007', code);
     }
     // Get Base Currency
     const appSettings = await AppSettingsModel.findByPk('APP');
@@ -58,12 +65,12 @@ class Currency {
     {
       //Check base currency with the passed one
       if(appSettings.baseCurrency === currency.currencyCode) {
-        return Common.getAPIResponse(false, `We can not deactivate the base currency (${code})`);
+        return APIResponse.getAPIResponse(false, null, '009', code);
       }
     }
     currency.currencyActive = 'NO';
     await currency.save();
-    return Common.getAPIResponse(true, 'This currency has been successfully deactivated');
+    return APIResponse.getAPIResponse(true, null, '010');
   }
 
   async updateRates() {
@@ -71,10 +78,12 @@ class Currency {
     const appSettings = await AppSettingsModel.findByPk('APP');
     if(_.isNil(appSettings.baseCurrency))
     {
-      return Common.getAPIResponse(false, `There is no base currency in the application settings`);
+      return APIResponse.getAPIResponse(false, null, '011');
     }
     // Get list of active currencies
-    const currencies = await this.getCurrencies({active:true});
+    const currencies = await CurrencyModel.findAll(
+      { where: {currencyActive:true} }
+    );
     // Create promises array to get all rates based on base currency
     let promises = currencies.map( (currency) => {
       return new Promise( (resolve) => {
@@ -86,9 +95,10 @@ class Currency {
       });
     });
     // Wait for rates and update database
-    return await Promise.all(promises).then( (data) => {
+    await Promise.all(promises).then( (data) => {
       return data.map( currency => currency.save());
     });
+    return APIResponse.getAPIResponse(true, null, '023');
   }
 }
 

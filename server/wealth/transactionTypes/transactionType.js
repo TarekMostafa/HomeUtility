@@ -1,12 +1,13 @@
 const TransactionTypeModel = require('./transactionTypeModel');
 const TranasctionModel = require('../transactions/transactionModel');
-const Common = require('../../common/common');
+const APIResponse = require('../../utilities/apiResponse');
 
 class TransactionType {
   async getTransactionTypes() {
-    return await TransactionTypeModel.findAll({
+    const transactionTypes = await TransactionTypeModel.findAll({
       attributes: ['typeId', 'typeName', 'typeCRDR']
     });
+    return APIResponse.getAPIResponse(true, transactionTypes);
   }
 
   async getTransactionType(id) {
@@ -15,13 +16,13 @@ class TransactionType {
 
   async addTransactionType(transactionType) {
     await TransactionTypeModel.build(transactionType).save();
-    return Common.getAPIResponse(true, 'This transaction type has been successfully saved');
+    return APIResponse.getAPIResponse(true, null, '017');
   }
 
   async updateTransactionType(id, transactionType) {
     const _transactionType = await this.getTransactionType(id);
     if(_transactionType === null) {
-      return Common.getAPIResponse(false, 'This transaction type does not exist in the database for update');
+      return APIResponse.getAPIResponse(false, null, '018');
     }
     // Check number of transactions used by transaction type
     // if there is a change in typeCRDR field
@@ -30,23 +31,22 @@ class TransactionType {
         where: {transactionTypeId: _transactionType.typeId}
       })
       if(count > 0) {
-        return Common.getAPIResponse(false,
-          `You can not update the Credit/Debit field as this transaction type is used in ${count} transaction(s)`);
+        return APIResponse.getAPIResponse(false, null, '019', count);
       }
     }
     _transactionType.typeName = transactionType.typeName;
     _transactionType.typeCRDR = transactionType.typeCRDR;
     await _transactionType.save();
-    return Common.getAPIResponse(true, 'This transaction type has been successfully updated');
+    return APIResponse.getAPIResponse(true, null, '020');
   }
 
   async deleteTransactionType(id) {
     const _transactionType = await this.getTransactionType(id);
     if(_transactionType === null) {
-      return Common.getAPIResponse(false, 'This transaction type does not exist in the database for deletion');
+      return APIResponse.getAPIResponse(false, null, '018');
     }
     await _transactionType.destroy();
-    return Common.getAPIResponse(true, 'This transaction type has been successfully deleted');
+    return APIResponse.getAPIResponse(true, null, '021');
   }
 }
 
