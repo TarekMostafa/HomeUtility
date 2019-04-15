@@ -33,7 +33,7 @@ class App extends Component {
                 <Route path="/appsettings" exact component={AppSettings}></Route>
               </Switch> :
               <Switch>
-                <Route path="/" exact component={Home}></Route>
+                <Route path="/" component={Home}></Route>
               </Switch>
             }
           </Container>
