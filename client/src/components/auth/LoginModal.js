@@ -3,17 +3,21 @@ import { Modal, Form, Button, Spinner } from 'react-bootstrap';
 
 import UserRequest from '../../axios/UserRequest';
 
+const initialState = {
+  userName: '',
+  password: '',
+  message: '',
+  isLoading: false,
+}
+
 class LoginModal extends Component {
   state = {
-    userName: '',
-    password: '',
-    message: '',
-    isLoading: false,
+    ...initialState
   }
   render () {
     return (
       <Modal aria-labelledby="contained-modal-title-vcenter"
-        centered {...this.props} backdrop={'static'}>
+        centered {...this.props} backdrop={'static'} onShow={this.handleOnShow}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             Login
@@ -53,16 +57,24 @@ class LoginModal extends Component {
     });
   }
 
+  handleOnShow = () => {
+    this.setState({
+      ...initialState
+    })
+  }
+
   handleClick = () => {
     // Validate Input
     if(this.state.userName === '') {
       this.setState({
         message: 'Invalid User Name, should not be empty'
       });
+      return;
     } else if(this.state.password === '') {
       this.setState({
         message: 'Invalid Password, should not be empty'
       });
+      return;
     } else {
       this.setState({
         message: '',
