@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Modal, Form, Button, Spinner } from 'react-bootstrap';
+import { connect } from 'react-redux';
 
 import UserRequest from '../../axios/UserRequest';
+import { setUser } from '../../store/actions/authActions';
 
 const initialState = {
   userName: '',
@@ -17,7 +19,8 @@ class LoginModal extends Component {
   render () {
     return (
       <Modal aria-labelledby="contained-modal-title-vcenter"
-        centered {...this.props} backdrop={'static'} onShow={this.handleOnShow}>
+        centered show={this.props.show} onHide={this.props.onHide}
+        backdrop={'static'} onShow={this.handleOnShow}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             Login
@@ -83,11 +86,9 @@ class LoginModal extends Component {
     }
     // Authenticate user name and password
     UserRequest.authenticate(this.state.userName, this.state.password)
-    .then( (result) => {
-      this.setState({
-        message: result.data,
-        isLoading: false,
-      })
+    .then( (response) => {
+      this.props.setUser(response.data);
+      this.props.onHide();
     })
     .catch( err => {
       this.setState({
@@ -98,4 +99,12 @@ class LoginModal extends Component {
   }
 }
 
-export default LoginModal;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setUser: (user) => {
+      dispatch(setUser(user));
+    }
+  }
+}
+
+export default connect(null, mapDispatchToProps)(LoginModal);

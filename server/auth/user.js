@@ -25,7 +25,7 @@ class User {
     if(!user.userActive) {
       return APIResponse.getAPIResponse(false, null, '004', user.userName);
     } else {
-      return APIResponse.getAPIResponse(true, user);
+      return APIResponse.getAPIResponse(true, {userId:user.userId, userName: user.userName});
     }
   }
 }

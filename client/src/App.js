@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
+import { connect } from 'react-redux';
 
 import './App.css';
 
@@ -20,15 +21,21 @@ class App extends Component {
         <Router>
           <NavigationBar />
           <Container>
-            <Switch>
-              <Route path="/" exact component={Home}></Route>
-              <Route path="/accounts" exact component={WealthAccountList}></Route>
-              <Route path="/accountstransactions" exact component={WealthTransactionList}></Route>
-              <Route path="/banks" exact component={WealthBankList}></Route>
-              <Route path="/currencies" exact component={CurrencyList}></Route>
-              <Route path="/transactiontypes" exact component={WealthTransactionTypeList}></Route>
-              <Route path="/appsettings" exact component={AppSettings}></Route>
-            </Switch>
+            {
+              this.props.user ?
+              <Switch>
+                <Route path="/" exact component={Home}></Route>
+                <Route path="/accounts" exact component={WealthAccountList}></Route>
+                <Route path="/accountstransactions" exact component={WealthTransactionList}></Route>
+                <Route path="/banks" exact component={WealthBankList}></Route>
+                <Route path="/currencies" exact component={CurrencyList}></Route>
+                <Route path="/transactiontypes" exact component={WealthTransactionTypeList}></Route>
+                <Route path="/appsettings" exact component={AppSettings}></Route>
+              </Switch> :
+              <Switch>
+                <Route path="/" exact component={Home}></Route>
+              </Switch>
+            }
           </Container>
         </Router>
       </div>
@@ -36,4 +43,10 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    user: state.auth.user
+  }
+}
+
+export default connect(mapStateToProps)(App);

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { Navbar, Button } from 'react-bootstrap';
+import { Navbar, Button, NavDropdown } from 'react-bootstrap';
+import { connect } from 'react-redux';
+
 import LoginModal from './LoginModal';
+import { setUser } from '../../store/actions/authActions';
 
 class Login extends Component {
   state = {
@@ -9,13 +12,26 @@ class Login extends Component {
   render() {
     return (
       <Navbar.Text>
-        <Button variant="link" onClick={this.handleClick}>Login</Button>
-        <LoginModal show={this.state.modalShow} onHide={this.handleHide}/>
+        {
+          this.props.user?
+          <NavDropdown title={this.props.user.userName} id="basic-nav-dropdown">
+            <NavDropdown.Item onClick={this.handleLogoutClick}>Logout</NavDropdown.Item>
+          </NavDropdown>
+          :
+          <React.Fragment>
+            <Button variant="link" onClick={this.handleLoginClick}>Login</Button>
+            <LoginModal show={this.state.modalShow} onHide={this.handleHide}/>
+          </React.Fragment>
+        }
       </Navbar.Text>
     );
   }//end for render
 
-  handleClick = () => {
+  handleLogoutClick = () => {
+    this.props.setUser(null);
+  }
+
+  handleLoginClick = () => {
     this.setState({modalShow: true});
   }
 
@@ -24,4 +40,18 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+  return {
+    user: state.auth.user
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setUser: (user) => {
+      dispatch(setUser(user));
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
