@@ -3,6 +3,7 @@ import { Button, Form, Spinner, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 import TransactionTypeRequest from '../../../axios/TransactionTypeRequest';
+import EditCancelButton from '../../common/EditCancelButton';
 
 class WealthTransactionTypeTableRow extends Component {
   state = {
@@ -12,7 +13,8 @@ class WealthTransactionTypeTableRow extends Component {
     messageClass: '',
     message: '',
     isEditLoading: false,
-    isDeleteLoading: false
+    isDeleteLoading: false,
+    isDisabled: false
   }
   render () {
     const { transactionType } = this.props;
@@ -38,19 +40,16 @@ class WealthTransactionTypeTableRow extends Component {
         </td>
         <td>
           <Row>
-            <Col xs={2}>
-              <Button variant="primary" size="sm" name={'btnEdit'+transactionType.typeId}
-              onClick={this.handleEditClick} disabled={this.state.isEditLoading}>
-              {
-                this.state.isEditLoading?
-                <Spinner as="span" animation="border" size="sm" role="status"
-                aria-hidden="true"/> : this.state.editMode?'Save':'Edit'
-              }
-              </Button>
+            <Col xs={6}>
+              <EditCancelButton onEditClick={this.handleEditClick}
+              onCancelClick={this.handleCancelClick}
+              disabled={this.state.isDisabled}
+              isLoading={this.state.isEditLoading}
+              editMode={this.state.editMode}/>
             </Col>
             <Col xs={2}>
               <Button variant="danger" size="sm" name={'btndelete'+transactionType.typeId}
-              onClick={this.handleDeleteClick} disabled={this.state.isDeleteLoading}>
+              onClick={this.handleDeleteClick} disabled={this.state.isDisabled}>
               {
                 this.state.isDeleteLoading?
                 <Spinner as="span" animation="border" size="sm" role="status"
@@ -67,9 +66,15 @@ class WealthTransactionTypeTableRow extends Component {
     )
   }//end of render
 
+  handleCancelClick = () => {
+    this.setState({
+      editMode: false
+    });
+  }
+
   handleEditClick = () => {
     if(this.state.editMode) {
-      this.setState({isEditLoading: true});
+      this.setState({isEditLoading: true, isDisabled: true});
       TransactionTypeRequest.updateTransactionType(this.props.transactionType.typeId,
         this.state.typeName, this.state.typeCRDR)
       .then((result) => {
@@ -80,14 +85,16 @@ class WealthTransactionTypeTableRow extends Component {
           editMode: false,
           message: 'Done',
           messageClass: 'text-success',
-          isEditLoading: false
+          isEditLoading: false,
+          isDisabled: false
         });
       })
       .catch( err => {
         this.setState({
           message: err.response.data,
           messageClass: 'text-danger',
-          isEditLoading: false
+          isEditLoading: false,
+          isDisabled: false
         })
       })
     } else {
@@ -100,7 +107,7 @@ class WealthTransactionTypeTableRow extends Component {
   }
 
   handleDeleteClick = () => {
-    this.setState({isDeleteLoading: true});
+    this.setState({isDeleteLoading: true, isDisabled: true});
     TransactionTypeRequest.deleteTransactionType(this.props.transactionType.typeId)
     .then((result) => {
       if (typeof this.props.onDeleteTransactionType=== 'function') {
@@ -109,14 +116,16 @@ class WealthTransactionTypeTableRow extends Component {
       this.setState({
         message: '',
         messageClass: '',
-        isDeleteLoading: false
+        isDeleteLoading: false,
+        isDisabled: false
       });
     })
     .catch( err => {
       this.setState({
         message: err.response.data,
         messageClass: 'text-danger',
-        isDeleteLoading: false
+        isDeleteLoading: false,
+        isDisabled: false
       })
     })
   }
