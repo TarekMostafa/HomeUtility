@@ -6,6 +6,11 @@ class AccountRequest {
     return response.data;
   }
 
+  static async getAccountStatuses () {
+    const response = await axios.get('/api/wealth/accounts/accountstatuses');
+    return response.data;
+  }
+
   static async getAccounts(bank, status) {
     const response = await axios.get('/api/wealth/accounts', {
       params: {

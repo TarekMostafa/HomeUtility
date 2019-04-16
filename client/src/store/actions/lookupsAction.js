@@ -28,6 +28,14 @@ export const getAccounts = () => {
   }
 }
 
+export const getAccountStatuses = () => {
+  return (dispatch, getState) => {
+    AccountRequest.getAccountStatuses()
+    .then( (accountStatuses) => dispatch({type: "SET_ACCOUNT_STATUSES", data: accountStatuses}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
+
 export const getBanks = () => {
   return (dispatch, getState) => {
     BankRequest.getBanks()

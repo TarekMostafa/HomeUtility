@@ -32,6 +32,11 @@ class Account {
     });
     return APIResponse.getAPIResponse(true, accounts);
   }
+
+  async getAccountStatuses() {
+    const accountStatuses = ['ACTIVE', 'CLOSED'];
+    return APIResponse.getAPIResponse(true, accountStatuses);
+  }
 }
 
 module.exports = Account;
