@@ -88,6 +88,7 @@ class LoginModal extends Component {
     UserRequest.authenticate(this.state.userName, this.state.password)
     .then( (response) => {
       this.props.setUser(response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
       this.props.onHide();
     })
     .catch( err => {

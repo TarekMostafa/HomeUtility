@@ -33,6 +33,7 @@ class Login extends Component {
 
   handleLogoutClick = () => {
     this.props.setUser(null);
+    localStorage.removeItem("user");
   }
 
   handleLoginClick = () => {
