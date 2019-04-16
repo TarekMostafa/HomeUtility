@@ -13,6 +13,7 @@ import WealthBankList from './components/wealth/banks/WealthBankList';
 import CurrencyList from './components/currencies/CurrencyList';
 import WealthTransactionTypeList from './components/wealth/transactiontypes/WealthTransactionTypeList';
 import AppSettings from './components/settings/AppSettings';
+import ChangePassword from './components/auth/ChangePassword';
 
 class App extends Component {
   render() {
@@ -31,6 +32,7 @@ class App extends Component {
                 <Route path="/currencies" exact component={CurrencyList}></Route>
                 <Route path="/transactiontypes" exact component={WealthTransactionTypeList}></Route>
                 <Route path="/appsettings" exact component={AppSettings}></Route>
+                <Route path="/changepassword" exact component={ChangePassword}></Route>
               </Switch> :
               <Switch>
                 <Route path="/" component={Home}></Route>

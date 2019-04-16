@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar, Button, NavDropdown } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import { connect } from 'react-redux';
 
 import LoginModal from './LoginModal';
@@ -15,6 +16,9 @@ class Login extends Component {
         {
           this.props.user?
           <NavDropdown title={this.props.user.userName} id="basic-nav-dropdown">
+            <LinkContainer to="/changepassword">
+              <NavDropdown.Item >Change Password</NavDropdown.Item>
+            </LinkContainer>
             <NavDropdown.Item onClick={this.handleLogoutClick}>Logout</NavDropdown.Item>
           </NavDropdown>
           :

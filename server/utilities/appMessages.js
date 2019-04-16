@@ -22,4 +22,5 @@ module.exports = {
   '021' : 'This transaction type has been successfully deleted',
   '022' : 'Invalid Currency Code',
   '023' : 'Rates have been successfully updated',
+  '024' : 'User password has been successfully changed',
 }

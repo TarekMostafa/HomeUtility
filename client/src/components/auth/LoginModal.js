@@ -30,12 +30,12 @@ class LoginModal extends Component {
           <Form>
             <Form.Group controlId="formBasicEmail">
               <Form.Label>User Name</Form.Label>
-              <Form.Control type="input" placeholder="User Name" maxLength={20}
+              <Form.Control type="input" maxLength={20}
               name="userName" value={this.state.userName} onChange={this.handleChange}/>
             </Form.Group>
             <Form.Group controlId="formBasicPassword">
               <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password"
+              <Form.Control type="password"
               name="password" value={this.state.password} onChange={this.handleChange}/>
             </Form.Group>
             <Form.Text className={'text-danger'}>{this.state.message}</Form.Text>
