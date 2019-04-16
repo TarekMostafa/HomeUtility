@@ -4,14 +4,12 @@ import { connect } from 'react-redux';
 import CurrencyTable from './CurrencyTable';
 import CurrencyAddForm from './CurrencyAddForm';
 import FormContainer from '../common/FormContainer';
-import AlertError from '../common/AlertError';
 import CurrencyRequest from '../../axios/CurrencyRequest';
 import { getActiveCurrencies } from '../../store/actions/lookupsAction';
 
 class CurrencyList extends Component {
   state = {
     inActiveCurrencies: [],
-    errorMessage: ''
   }
 
   loadInActiveCurrencies() {
@@ -30,7 +28,6 @@ class CurrencyList extends Component {
   render() {
     return (
       <React.Fragment>
-        <AlertError message={this.state.errorMessage}/>
         <FormContainer title="Active Currencies">
           <CurrencyAddForm onAddCurrency={this.handleAddCurrency}/>
         </FormContainer>
@@ -57,12 +54,6 @@ class CurrencyList extends Component {
   handleActivate = () => {
     this.props.getActiveCurrencies();
     this.loadInActiveCurrencies();
-  }
-
-  setErrorTimeout = () => {
-    setTimeout(() => {
-      this.setState({errorMessage:''});
-    },5000);
   }
 }
 
