@@ -44,7 +44,7 @@ class AccountRequest {
     });
   }
 
-  static async deleteAccount(id, accountNumber, startBalance, status){
+  static async deleteAccount(id){
     return await axios.delete('/api/wealth/accounts/'+id);
   }
 }

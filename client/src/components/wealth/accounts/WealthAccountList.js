@@ -6,6 +6,7 @@ import WealthAccountTable from './WealthAccountTable';
 import WealthAccountTotalBalance from './WealthAccountTotalBalance';
 import AddNewAccountModal from './AddNewAccountModal';
 import EditAccountModal from './EditAccountModal';
+import DeleteAccountModal from './DeleteAccountModal';
 import FormContainer from '../../common/FormContainer';
 
 import AccountRequest from '../../../axios/AccountRequest';
@@ -20,6 +21,7 @@ class WealthAccountList extends Component {
     accounts: [],
     modalAddShow: false,
     modalEditShow: false,
+    modalDeleteShow: false,
     accountId: '',
     ...initialState,
   }
@@ -69,7 +71,8 @@ class WealthAccountList extends Component {
           </Form>
         </FormContainer>
         <FormContainer>
-          <WealthAccountTable accounts={this.state.accounts} onEditAccount={this.handleEditAccount}/>
+          <WealthAccountTable accounts={this.state.accounts} onEditAccount={this.handleEditAccount}
+          onDeleteAccount={this.handleDeleteAccount}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings &&
@@ -86,6 +89,11 @@ class WealthAccountList extends Component {
           <EditAccountModal show={this.state.modalEditShow} onHide={() => this.handleHide('EDIT')}
           onSave={this.handleListClick} accountId={this.state.accountId}/>
         }
+        {
+          this.state.modalDeleteShow &&
+          <DeleteAccountModal show={this.state.modalDeleteShow} onHide={() => this.handleHide('DELETE')}
+          onDelete={this.handleListClick} accountId={this.state.accountId}/>
+        }
       </React.Fragment>
     )
   }//end of render
@@ -101,6 +109,13 @@ class WealthAccountList extends Component {
     });
   }
 
+  handleDeleteAccount = (accountId) => {
+    this.setState({
+      modalDeleteShow: true,
+      accountId
+    });
+  }
+
   handleHide = (type) => {
     switch(type) {
       case 'ADD':
@@ -108,6 +123,9 @@ class WealthAccountList extends Component {
         break;
       case 'EDIT':
         this.setState({modalEditShow: false});
+        break;
+      case 'DELETE':
+        this.setState({modalDeleteShow: false});
         break;
       default:
         break;
