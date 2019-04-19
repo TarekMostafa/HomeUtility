@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
+
 import WealthAccountTable from './WealthAccountTable';
 import WealthAccountTotalBalance from './WealthAccountTotalBalance';
+import AddNewAccountModal from './AddNewAccountModal';
 import FormContainer from '../../common/FormContainer';
 
 import AccountRequest from '../../../axios/AccountRequest';
@@ -15,6 +17,7 @@ const initialState = {
 class WealthAccountList extends Component {
   state = {
     accounts: [],
+    modalShow: false,
     ...initialState,
   }
 
@@ -34,7 +37,9 @@ class WealthAccountList extends Component {
   render() {
     return (
       <React.Fragment>
-        <FormContainer title="Accounts">
+        <FormContainer title="Accounts" toolbar={
+          <Button variant="info" size="sm" onClick={this.handleAddNewAccount}>Add New Account</Button>
+        }>
           <Form>
             <Row>
               <Col xs={3}>
@@ -52,10 +57,10 @@ class WealthAccountList extends Component {
                 </Form.Control>
               </Col>
               <Col xs={{offset:4, span:1}}>
-                <Button variant="primary" size="sm" onClick={this.handleListClick}>List</Button>
+                <Button variant="primary" size="sm" block onClick={this.handleListClick}>List</Button>
               </Col>
               <Col xs={1}>
-                <Button variant="secondary" size="sm" onClick={this.handleResetClick}>Reset</Button>
+                <Button variant="secondary" size="sm" block onClick={this.handleResetClick}>Reset</Button>
               </Col>
             </Row>
           </Form>
@@ -70,9 +75,19 @@ class WealthAccountList extends Component {
             </Col>
           </Row>
         </FormContainer>
+        <AddNewAccountModal show={this.state.modalShow} onHide={this.handleHide}
+        onSave={this.handleListClick}/>
       </React.Fragment>
     )
   }//end of render
+
+  handleAddNewAccount = () => {
+    this.setState({modalShow: true});
+  }
+
+  handleHide = () => {
+    this.setState({modalShow: false});
+  }
 
   listAccountStatuses = () => {
     return this.props.accountStatuses && this.props.accountStatuses.map( (status) => {

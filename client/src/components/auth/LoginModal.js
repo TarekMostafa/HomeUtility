@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
+import ModalContainer from '../common/ModalContainer'
 import UserRequest from '../../axios/UserRequest';
 import { setUser } from '../../store/actions/authActions';
 
@@ -18,30 +19,9 @@ class LoginModal extends Component {
   }
   render () {
     return (
-      <Modal aria-labelledby="contained-modal-title-vcenter"
-        centered show={this.props.show} onHide={this.props.onHide}
-        backdrop={'static'} onShow={this.handleOnShow}>
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Login
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group controlId="formBasicEmail">
-              <Form.Label>User Name</Form.Label>
-              <Form.Control type="input" maxLength={20}
-              name="userName" value={this.state.userName} onChange={this.handleChange}/>
-            </Form.Group>
-            <Form.Group controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password"
-              name="password" value={this.state.password} onChange={this.handleChange}/>
-            </Form.Group>
-            <Form.Text className={'text-danger'}>{this.state.message}</Form.Text>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
+      <ModalContainer title="Login" show={this.props.show}
+        onHide={this.props.onHide} onShow={this.handleOnShow}
+        footer={
           <Button variant="primary" block onClick={this.handleClick}>
           {
             this.state.isLoading?
@@ -49,8 +29,21 @@ class LoginModal extends Component {
             aria-hidden="true"/> : 'Login'
           }
           </Button>
-        </Modal.Footer>
-      </Modal>
+        }>
+        <Form>
+          <Form.Group controlId="formBasicEmail">
+            <Form.Label>User Name</Form.Label>
+            <Form.Control type="input" maxLength={20}
+            name="userName" value={this.state.userName} onChange={this.handleChange}/>
+          </Form.Group>
+          <Form.Group controlId="formBasicPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="password"
+            name="password" value={this.state.password} onChange={this.handleChange}/>
+          </Form.Group>
+          <Form.Text className={'text-danger'}>{this.state.message}</Form.Text>
+        </Form>
+      </ModalContainer>
     )
   }//end of render
 

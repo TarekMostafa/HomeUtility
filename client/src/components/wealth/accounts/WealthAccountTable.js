@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button, ButtonGroup } from 'react-bootstrap';
 import moment from 'moment';
 import amountFormatter from '../../../utilities/amountFormatter';
 
@@ -17,6 +17,7 @@ function WealthAccountTable (props) {
           <th>Equivalent Balance</th>
           <th>Status</th>
           <th>Balance Last Update</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -33,7 +34,19 @@ function WealthAccountTable (props) {
                 {amountFormatter(account.accountCurrentBalance * account.currency.currencyRateAgainstBase)}
               </td>
               <td>{account.accountStatus}</td>
-              <td>{moment(account.accountLastBalanceUpdate).format('DD/MM/YYYY HH:mm:ss')}</td>
+              <td>
+                {
+                  account.accountLastBalanceUpdate ?
+                  moment(account.accountLastBalanceUpdate).format('DD/MM/YYYY HH:mm:ss') :
+                  ''
+                }
+              </td>
+              <td>
+                <ButtonGroup>
+                  <Button variant="link" size="sm">Edit</Button>
+                  <Button variant="link" size="sm">Delete</Button>
+                </ButtonGroup>
+              </td>
             </tr>
           )
         })}

@@ -5,7 +5,13 @@ function FormContainer(props){
   return (
     <Card>
       {
-        props.title && <Card.Header><h4>{props.title}</h4></Card.Header>
+        props.title &&
+        <Card.Header>
+          <span className="h4">{props.title}</span>
+          {
+            props.toolbar && <span className="float-right">{props.toolbar}</span>
+          }
+        </Card.Header>
       }
       {
         props.children && <Card.Body>{props.children}</Card.Body>

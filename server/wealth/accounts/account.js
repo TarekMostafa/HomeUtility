@@ -37,6 +37,14 @@ class Account {
     const accountStatuses = ['ACTIVE', 'CLOSED'];
     return APIResponse.getAPIResponse(true, accountStatuses);
   }
+
+  async addNewAccount(account) {
+    account.accountCurrentBalance = account.accountStartBalance;
+    account.accountStatus = 'ACTIVE';
+    console.log(account);
+    await AccountModel.build(account).save();
+    return APIResponse.getAPIResponse(true, null, '025');
+  }
 }
 
 module.exports = Account;

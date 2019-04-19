@@ -20,6 +20,16 @@ class AccountRequest {
     });
     return response.data;
   }
+
+  static async addNewAccount(bankCode, accountNumber, currencyCode, startBalance, userId){
+    return await axios.post('/api/wealth/accounts', {
+      accountNumber: accountNumber,
+      accountStartBalance: startBalance,
+      accountBankCode: bankCode,
+      acccountCurrency: currencyCode,
+      accountUser: userId,
+    });
+  }
 }
 
 export default AccountRequest;

@@ -21,7 +21,7 @@ class App extends Component {
       <div className="App">
         <Router>
           <NavigationBar />
-          <Container>
+          <Container fluid>
             {
               this.props.user ?
               <Switch>

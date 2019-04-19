@@ -23,4 +23,5 @@ module.exports = {
   '022' : 'Invalid Currency Code',
   '023' : 'Rates have been successfully updated',
   '024' : 'User password has been successfully changed',
+  '025' : 'This account has been successfully created',
 }
