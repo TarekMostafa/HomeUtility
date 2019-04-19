@@ -45,6 +45,35 @@ class Account {
     await AccountModel.build(account).save();
     return APIResponse.getAPIResponse(true, null, '025');
   }
+
+  async getAccount(id) {
+    const account = await AccountModel.findByPk(id);
+    return APIResponse.getAPIResponse(true, account);
+  }
+
+  async editAccount(id, account) {
+    const _account = await AccountModel.findByPk(id);
+    if(_account === null) {
+      return APIResponse.getAPIResponse(false, null, '026');
+    }
+    _account.accountNumber = account.accountNumber;
+    // CurrentBalance = PreviousCurrentBalance - PreviousStartBalance + StartBalance
+    _account.accountCurrentBalance = _account.accountCurrentBalance -
+            _account.accountStartBalance + eval(account.accountStartBalance);
+    _account.accountStartBalance = account.accountStartBalance;
+    _account.accountStatus = account.accountStatus;
+    await _account.save();
+    return APIResponse.getAPIResponse(true, null, '027');
+  }
+
+  async deleteAccount(id)  {
+    const _account = await AccountModel.findByPk(id);
+    if(_account === null) {
+      return APIResponse.getAPIResponse(false, null, '026');
+    }
+    await _account.destroy();
+    return APIResponse.getAPIResponse(true, null, '028');
+  }
 }
 
 module.exports = Account;

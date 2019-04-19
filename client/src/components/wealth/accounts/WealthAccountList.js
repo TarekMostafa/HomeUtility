@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import WealthAccountTable from './WealthAccountTable';
 import WealthAccountTotalBalance from './WealthAccountTotalBalance';
 import AddNewAccountModal from './AddNewAccountModal';
+import EditAccountModal from './EditAccountModal';
 import FormContainer from '../../common/FormContainer';
 
 import AccountRequest from '../../../axios/AccountRequest';
@@ -17,7 +18,9 @@ const initialState = {
 class WealthAccountList extends Component {
   state = {
     accounts: [],
-    modalShow: false,
+    modalAddShow: false,
+    modalEditShow: false,
+    accountId: '',
     ...initialState,
   }
 
@@ -66,7 +69,7 @@ class WealthAccountList extends Component {
           </Form>
         </FormContainer>
         <FormContainer>
-          <WealthAccountTable accounts={this.state.accounts}/>
+          <WealthAccountTable accounts={this.state.accounts} onEditAccount={this.handleEditAccount}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings &&
@@ -76,18 +79,39 @@ class WealthAccountList extends Component {
             </Col>
           </Row>
         </FormContainer>
-        <AddNewAccountModal show={this.state.modalShow} onHide={this.handleHide}
+        <AddNewAccountModal show={this.state.modalAddShow} onHide={() => this.handleHide('ADD')}
         onSave={this.handleListClick}/>
+        {
+          this.state.modalEditShow &&
+          <EditAccountModal show={this.state.modalEditShow} onHide={() => this.handleHide('EDIT')}
+          onSave={this.handleListClick} accountId={this.state.accountId}/>
+        }
       </React.Fragment>
     )
   }//end of render
 
   handleAddNewAccount = () => {
-    this.setState({modalShow: true});
+    this.setState({modalAddShow: true});
   }
 
-  handleHide = () => {
-    this.setState({modalShow: false});
+  handleEditAccount = (accountId) => {
+    this.setState({
+      modalEditShow: true,
+      accountId
+    });
+  }
+
+  handleHide = (type) => {
+    switch(type) {
+      case 'ADD':
+        this.setState({modalAddShow: false});
+        break;
+      case 'EDIT':
+        this.setState({modalEditShow: false});
+        break;
+      default:
+        break;
+    }
   }
 
   listAccountStatuses = () => {

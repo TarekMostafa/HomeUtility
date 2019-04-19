@@ -24,4 +24,7 @@ module.exports = {
   '023' : 'Rates have been successfully updated',
   '024' : 'User password has been successfully changed',
   '025' : 'This account has been successfully created',
+  '026' : 'This account does not exist in the database',
+  '027' : 'This account has been successfully updated',
+  '028' : 'This account has been successfully deleted',
 }

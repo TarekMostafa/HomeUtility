@@ -21,6 +21,11 @@ class AccountRequest {
     return response.data;
   }
 
+  static async getAccount(id) {
+    const response = await axios.get('/api/wealth/accounts/'+id);
+    return response.data;
+  }
+
   static async addNewAccount(bankCode, accountNumber, currencyCode, startBalance, userId){
     return await axios.post('/api/wealth/accounts', {
       accountNumber: accountNumber,
@@ -29,6 +34,18 @@ class AccountRequest {
       acccountCurrency: currencyCode,
       accountUser: userId,
     });
+  }
+
+  static async updateAccount(id, accountNumber, startBalance, status){
+    return await axios.put('/api/wealth/accounts/'+id, {
+      accountNumber: accountNumber,
+      accountStartBalance: startBalance,
+      accountStatus: status
+    });
+  }
+
+  static async deleteAccount(id, accountNumber, startBalance, status){
+    return await axios.delete('/api/wealth/accounts/'+id);
   }
 }
 

@@ -50,7 +50,7 @@ function WealthAccountTable (props) {
               </td>
               <td>
                 <ButtonGroup>
-                  <Button variant="link" size="sm">Edit</Button>
+                  <Button variant="link" size="sm" onClick={() => props.onEditAccount(account.accountId)}>Edit</Button>
                   <Button variant="link" size="sm">Delete</Button>
                 </ButtonGroup>
               </td>
