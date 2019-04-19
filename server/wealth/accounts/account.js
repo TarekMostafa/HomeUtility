@@ -61,6 +61,10 @@ class Account {
     _account.accountCurrentBalance = _account.accountCurrentBalance -
             _account.accountStartBalance + eval(account.accountStartBalance);
     _account.accountStartBalance = account.accountStartBalance;
+    // Don't close account with current balance
+    if(account.accountStatus === 'CLOSED'  && _account.accountCurrentBalance !== 0) {
+      return APIResponse.getAPIResponse(false, null, '029');
+    }
     _account.accountStatus = account.accountStatus;
     await _account.save();
     return APIResponse.getAPIResponse(true, null, '027');

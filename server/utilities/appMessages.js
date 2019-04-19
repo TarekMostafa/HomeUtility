@@ -27,4 +27,5 @@ module.exports = {
   '026' : 'This account does not exist in the database',
   '027' : 'This account has been successfully updated',
   '028' : 'This account has been successfully deleted',
+  '029' : 'Account can not be closed because it has credit',
 }
