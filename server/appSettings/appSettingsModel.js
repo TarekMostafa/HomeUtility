@@ -1,6 +1,7 @@
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../db/dbConnection').getSequelize();
+const CurrencyModel = require('../currencies/CurrencyModel');
 
 class AppSettingsModel extends Model {}
 AppSettingsModel.init({
@@ -12,6 +13,11 @@ AppSettingsModel.init({
   createdAt: false,
   updatedAt: false,
   sequelize
+});
+
+AppSettingsModel.belongsTo(CurrencyModel, {
+  as: "currency",
+  foreignKey: 'baseCurrency'
 });
 
 module.exports = AppSettingsModel;

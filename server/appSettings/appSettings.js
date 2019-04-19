@@ -1,12 +1,17 @@
 const AppSettingsModel = require('./appSettingsModel');
 const Currency = require('../currencies/currency');
+const CurrencyModel = require('../currencies/CurrencyModel');
 const APIResponse = require('../utilities/apiResponse');
 const APP_SETTING_KEY = 'APP';
 
 class AppSettings {
 
   async getAppSettings() {
-    const appSettings = await AppSettingsModel.findByPk(APP_SETTING_KEY);
+    const appSettings = await AppSettingsModel.findByPk(APP_SETTING_KEY, {
+      include: [
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 'currencyDecimalPlace'] }
+      ]
+    });
     if(appSettings) {
       return APIResponse.getAPIResponse(true, appSettings);
     } else {

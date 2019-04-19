@@ -30,7 +30,9 @@ function WealthTransactionTable (props) {
               <td>{index+1}</td>
               <td>{transaction.account.accountNumber}</td>
               <td>{moment(transaction.transactionPostingDate).format('DD/MM/YYYY')}</td>
-              <td className="text-right">{amountFormatter(transaction.transactionAmount)}</td>
+              <td className="text-right">
+                {amountFormatter(transaction.transactionAmount, transaction.account.currency.currencyDecimalPlace)}
+              </td>
               <td>{transaction.account.acccountCurrency}</td>
               <td>{transaction.transactionCRDR}</td>
               <td>{_.isNil(transaction.transactionType) ? '' : transaction.transactionType.typeName}</td>

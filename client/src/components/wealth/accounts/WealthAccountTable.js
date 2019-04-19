@@ -1,6 +1,8 @@
 import React from 'react';
 import { Table, Button, ButtonGroup } from 'react-bootstrap';
 import moment from 'moment';
+import { connect } from 'react-redux';
+
 import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthAccountTable (props) {
@@ -28,10 +30,15 @@ function WealthAccountTable (props) {
               <td>{account.bank.bankName}</td>
               <td>{account.accountNumber}</td>
               <td>{account.acccountCurrency}</td>
-              <td className="text-right">{amountFormatter(account.accountStartBalance)}</td>
-              <td className="text-right">{amountFormatter(account.accountCurrentBalance)}</td>
               <td className="text-right">
-                {amountFormatter(account.accountCurrentBalance * account.currency.currencyRateAgainstBase)}
+                {amountFormatter(account.accountStartBalance, account.currency.currencyDecimalPlace)}
+              </td>
+              <td className="text-right">
+                {amountFormatter(account.accountCurrentBalance, account.currency.currencyDecimalPlace)}
+              </td>
+              <td className="text-right">
+                {amountFormatter(account.accountCurrentBalance * account.currency.currencyRateAgainstBase,
+                props.appSettings.currency.currencyDecimalPlace)}
               </td>
               <td>{account.accountStatus}</td>
               <td>
@@ -55,4 +62,10 @@ function WealthAccountTable (props) {
   )
 }
 
-export default WealthAccountTable;
+const mapStateToProps = (state) => {
+	return {
+    appSettings: state.lookups.appSettings,
+	}
+}
+
+export default connect(mapStateToProps)(WealthAccountTable);

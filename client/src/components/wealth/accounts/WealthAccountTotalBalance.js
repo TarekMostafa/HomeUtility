@@ -14,7 +14,7 @@ function WealthAccountTotalBalance (props) {
             props.accounts && amountFormatter(props.accounts.reduce( (result, account) => {
               result += account.accountCurrentBalance * account.currency.currencyRateAgainstBase
               return result;
-            }, 0)) + ' ' + props.baseCurrency
+            }, 0), props.decimalPlace) + ' ' + props.baseCurrency
           }
         </Card.Text>
       </Card.Body>
@@ -24,12 +24,14 @@ function WealthAccountTotalBalance (props) {
 
 WealthAccountTotalBalance.propTypes = {
   accounts: PropTypes.arrayOf(PropTypes.object),
-  baseCurrency: PropTypes.string
+  baseCurrency: PropTypes.string,
+  decimalPlace: PropTypes.number,
 };
 
 WealthAccountTotalBalance.defaultProps = {
   accounts: [],
-  baseCurrency: ''
+  baseCurrency: '',
+  decimalPlace: 2,
 }
 
 export default WealthAccountTotalBalance;

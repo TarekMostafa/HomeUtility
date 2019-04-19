@@ -26,7 +26,7 @@ class Account {
     const accounts = await AccountModel.findAll({
       include: [
         { model: BankModel, as: 'bank', attributes: ['bankName'] },
-        { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase'] }
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 'currencyDecimalPlace'] }
       ],
       where: whereQuery
     });

@@ -3,6 +3,7 @@ const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const TransactionModel = require('./transactionModel');
 const AccountModel = require('../accounts/accountModel');
+const CurrencyModel = require('../../currencies/currencyModel');
 const TransactionTypeModel = require('../transactionTypes/transactionTypeModel');
 
 const Op = Sequelize.Op;
@@ -48,7 +49,11 @@ class Transaction {
       attributes: ['transactionId', 'transactionPostingDate', 'transactionAmount',
         'transactionCRDR', 'transactionNarrative', 'transactionRelatedTransactionId'],
       include: [
-        { model: AccountModel, as: 'account', attributes: ['accountNumber','acccountCurrency'] },
+        { model: AccountModel, as: 'account', attributes: ['accountNumber','acccountCurrency'],
+          include: [
+            { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 'currencyDecimalPlace'] }
+          ]
+        },
         { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeName'] }
       ],
       where: whereQuery,

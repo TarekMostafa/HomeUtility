@@ -71,7 +71,8 @@ class WealthAccountList extends Component {
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings &&
               <WealthAccountTotalBalance accounts={this.state.accounts}
-              baseCurrency={this.props.appSettings.baseCurrency}/>}
+              baseCurrency={this.props.appSettings.baseCurrency}
+              decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>}
             </Col>
           </Row>
         </FormContainer>
