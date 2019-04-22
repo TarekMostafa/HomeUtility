@@ -77,12 +77,14 @@ class Transaction {
     } else {
       return APIResponse.getAPIResponse(false, null, '033');
     }
+    // Update date for field balance last update
+    account.accountLastBalanceUpdate = sequelize.fn('NOW');
     // Save transaction and account
     let dbTransaction;
     try{
       dbTransaction = await sequelize.transaction();
-      await TransactionModel.build(transaction).save();
-      await account.save();
+      await TransactionModel.build(transaction).save({transaction: dbTransaction});
+      await account.save({transaction: dbTransaction});
       await dbTransaction.commit();
       return APIResponse.getAPIResponse(true, null, '030');
     } catch (err) {
