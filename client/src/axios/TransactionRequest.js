@@ -16,6 +16,17 @@ class TransctionRequest {
     });
     return response.data;
   }
+
+  static async addSingleTransaction (account, postingDate, amount, crdr, type, narrative) {
+    return await axios.post('/api/wealth/transactions/single', {
+      transactionAmount: amount,
+      transactionNarrative: narrative,
+      transactionPostingDate: postingDate,
+      transactionCRDR: crdr,
+      transactionAccount: account,
+      transactionTypeId: type,
+    });
+  }
 }
 
 export default TransctionRequest;

@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
-import { connect } from 'react-redux';
 
 import WealthTransactionTable from './WealthTransactionTable';
 import FormContainer from '../../common/FormContainer';
+import AccountsDropDown from '../accounts/AccountsDropDown';
+import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
+import AddSingleTransactionModal from './AddSingleTransactionModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -25,6 +27,7 @@ class WealthTransactionList extends Component {
   state = {
     transactions: [],
     appearMoreButton: true,
+    modalAddSingleShow: false,
     ...initialState,
   }
 
@@ -53,21 +56,30 @@ class WealthTransactionList extends Component {
   render() {
     return (
       <React.Fragment>
-        <FormContainer title="Accounts Transactions">
+        <FormContainer title="Accounts Transactions" toolbar={
+          <ButtonToolbar aria-label="Toolbar with button groups">
+            <ButtonGroup className="mr-2" aria-label="First group">
+              <Button variant="info" size="sm" onClick={this.handleAddSingleTransaction}>Add Single Transaction</Button>
+            </ButtonGroup>
+            <ButtonGroup className="mr-2" aria-label="Second group">
+              <Button variant="info" size="sm">Add Internal Transaction</Button>
+            </ButtonGroup>
+          </ButtonToolbar>
+        }>
           <Form>
           <Row>
             <Col>
               <Form.Control as="select" size="sm" name="account" onChange={this.handleChange}
                 value={this.state.account}>
                 <option value=''>Accounts</option>
-                { this.listAccounts() }
+                <AccountsDropDown />
               </Form.Control>
             </Col>
             <Col>
               <Form.Control as="select" size="sm" name="transactionType"
                 onChange={this.handleChange} value={this.state.transactionType}>
                 <option value=''>Transaction Types</option>
-                { this.listTransactionTypes() }
+                <TransactionTypesDropDown />
               </Form.Control>
             </Col>
             <Col>
@@ -86,10 +98,10 @@ class WealthTransactionList extends Component {
               onChange={this.handleChange} value={this.state.narrative}/>
             </Col>
             <Col xs={{offset:4, span:1}}>
-              <Button variant="primary" size="sm" onClick={this.handleListClick}>List</Button>
+              <Button variant="primary" size="sm" block onClick={this.handleListClick}>List</Button>
             </Col>
             <Col xs={1}>
-              <Button variant="secondary" size="sm" onClick={this.handleResetClick}>Reset</Button>
+              <Button variant="secondary" size="sm" block onClick={this.handleResetClick}>Reset</Button>
             </Col>
           </Row>
           </Form>
@@ -100,26 +112,11 @@ class WealthTransactionList extends Component {
             hidden={!this.state.appearMoreButton}>
             more...</Button>
         </FormContainer>
+        <AddSingleTransactionModal show={this.state.modalAddSingleShow} onHide={() => this.handleHide('ADD')}
+        onSave={this.handleListClick}/>
       </React.Fragment>
     )
   }// end of render
-
-  listAccounts = () => {
-    return this.props.accounts && this.props.accounts.map( (account) => {
-      return (
-        <option key={account.accountId} value={account.accountId}>{account.accountNumber}</option>
-      )
-    });
-  }
-
-  listTransactionTypes = () => {
-    return this.props.transactionTypes && this.props.transactionTypes.map( (transactionType) => {
-      return (
-        <option key={transactionType.typeId} value={transactionType.typeId}>
-          {transactionType.typeName}</option>
-      )
-    });
-  }
 
   handleListClick = () => {
     this.loadTransctions(TRANSACTION_LIMIT, 0, false);
@@ -153,13 +150,18 @@ class WealthTransactionList extends Component {
     });
   }
 
+  handleAddSingleTransaction = () => {
+    this.setState({
+      modalAddSingleShow: true
+    });
+  }
+
+  handleHide = () => {
+    this.setState({
+      modalAddSingleShow: false,
+    });
+  }
+
 }
 
-const mapStateToProps = (state) => {
-	return {
-		transactionTypes: state.lookups.transactionTypes,
-    accounts: state.lookups.accounts
-	}
-}
-
-export default connect(mapStateToProps)(WealthTransactionList);
+export default WealthTransactionList;

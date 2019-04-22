@@ -28,4 +28,8 @@ module.exports = {
   '027' : 'This account has been successfully updated',
   '028' : 'This account has been successfully deleted',
   '029' : 'Account can not be closed because it has credit',
+  '030' : 'This transaction has been successfully added',
+  '031' : 'Failed to add this transaction',
+  '032' : 'Invalid account',
+  '033' : 'Invalid transaction type',
 }

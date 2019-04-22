@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Table, OverlayTrigger, Tooltip, ButtonGroup, Button, Badge } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 import _ from 'lodash';
@@ -46,10 +46,21 @@ function WealthTransactionTable (props) {
                   </span>
                 </OverlayTrigger>
               </td>
-              <td>{transaction.transactionId}</td>
-              {/*<td>
-                {transaction.transactionRelatedTransactionId !== null ? <Button variant="link">Linked</Button> : null}
-              </td>*/}
+              <td>
+                {transaction.transactionId}
+                {
+                  transaction.transactionRelatedTransactionId &&
+                  <Badge pill variant="success">{transaction.transactionRelatedTransactionId}</Badge>
+                }
+              </td>
+              <td>
+                <ButtonGroup>
+                  <Button variant="link" size="sm"
+                  onClick={() => props.onEditTransaction(transaction.transactionId)}>Edit</Button>
+                  <Button variant="link" size="sm"
+                  onClick={() => props.onDeleteTransaction(transaction.transactionId)}>Delete</Button>
+                </ButtonGroup>
+              </td>
             </tr>
           )
         })}

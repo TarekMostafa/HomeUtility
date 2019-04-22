@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const sequelize = require('../../db/dbConnection').getSequelize();
 const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const TransactionModel = require('./transactionModel');
@@ -60,6 +61,34 @@ class Transaction {
       order: [ ['transactionPostingDate', 'DESC'] , ['transactionId', 'DESC'] ]
     });
     return APIResponse.getAPIResponse(true, transactions);
+  }
+
+  async addSingleTransaction(transaction) {
+    // Get account related to this transaction
+    let account = await AccountModel.findByPk(transaction.transactionAccount);
+    if(!account){
+      return APIResponse.getAPIResponse(false, null, '032');
+    }
+    //Increase/Decrease account balance depending on transaction CRDR field
+    if(transaction.transactionCRDR === 'Credit') {
+      account.accountCurrentBalance = eval(account.accountCurrentBalance) + eval(transaction.transactionAmount);
+    } else if(transaction.transactionCRDR === 'Debit') {
+      account.accountCurrentBalance = eval(account.accountCurrentBalance) - eval(transaction.transactionAmount);
+    } else {
+      return APIResponse.getAPIResponse(false, null, '033');
+    }
+    // Save transaction and account
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      await TransactionModel.build(transaction).save();
+      await account.save();
+      await dbTransaction.commit();
+      return APIResponse.getAPIResponse(true, null, '030');
+    } catch (err) {
+      await dbTransaction.rollback();
+      return APIResponse.getAPIResponse(false, null, '031');
+    }
   }
 
 }
