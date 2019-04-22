@@ -9,6 +9,7 @@ import FormContainer from '../../common/FormContainer';
 import AccountsDropDown from '../accounts/AccountsDropDown';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
 import AddSingleTransactionModal from './AddSingleTransactionModal';
+import EditSingleTransactionModal from './EditSingleTransactionModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -28,6 +29,9 @@ class WealthTransactionList extends Component {
     transactions: [],
     appearMoreButton: true,
     modalAddSingleShow: false,
+    modalEditSingleShow: false,
+    modalDeleteSingleShow: false,
+    transactionId: '',
     ...initialState,
   }
 
@@ -107,13 +111,20 @@ class WealthTransactionList extends Component {
           </Form>
         </FormContainer>
         <FormContainer>
-          <WealthTransactionTable transactions={this.state.transactions}/>
+          <WealthTransactionTable transactions={this.state.transactions}
+          onEditTransaction={this.handleEditTransaction}
+          onDeleteTransaction={this.handleDeleteTransaction}/>
           <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
             hidden={!this.state.appearMoreButton}>
             more...</Button>
         </FormContainer>
-        <AddSingleTransactionModal show={this.state.modalAddSingleShow} onHide={() => this.handleHide('ADD')}
+        <AddSingleTransactionModal show={this.state.modalAddSingleShow} onHide={this.handleHide}
         onSave={this.handleListClick}/>
+        {
+          this.state.modalEditSingleShow &&
+          <EditSingleTransactionModal show={this.state.modalEditSingleShow} onHide={this.handleHide}
+          onSave={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
       </React.Fragment>
     )
   }// end of render
@@ -159,6 +170,21 @@ class WealthTransactionList extends Component {
   handleHide = () => {
     this.setState({
       modalAddSingleShow: false,
+      modalEditSingleShow: false,
+    });
+  }
+
+  handleEditTransaction = (transactionId) => {
+    this.setState({
+      modalEditSingleShow: true,
+      transactionId
+    });
+  }
+
+  handleDeleteTransaction = (transactionId) => {
+    this.setState({
+      modalDeleteSingleShow: true,
+      transactionId
     });
   }
 

@@ -45,7 +45,7 @@ class WealthAccountList extends Component {
     return (
       <React.Fragment>
         <FormContainer title="Accounts" toolbar={
-          <Button variant="info" size="sm" onClick={this.handleAddNewAccount}>Add New Account</Button>
+          <Button variant="info" size="sm" onClick={this.handleAddNewAccount}>Create New Account</Button>
         }>
           <Form>
             <Row>
@@ -84,16 +84,16 @@ class WealthAccountList extends Component {
             </Col>
           </Row>
         </FormContainer>
-        <AddNewAccountModal show={this.state.modalAddShow} onHide={() => this.handleHide('ADD')}
+        <AddNewAccountModal show={this.state.modalAddShow} onHide={this.handleHide}
         onSave={this.handleListClick}/>
         {
           this.state.modalEditShow &&
-          <EditAccountModal show={this.state.modalEditShow} onHide={() => this.handleHide('EDIT')}
+          <EditAccountModal show={this.state.modalEditShow} onHide={this.handleHide}
           onSave={this.handleListClick} accountId={this.state.accountId}/>
         }
         {
           this.state.modalDeleteShow &&
-          <DeleteAccountModal show={this.state.modalDeleteShow} onHide={() => this.handleHide('DELETE')}
+          <DeleteAccountModal show={this.state.modalDeleteShow} onHide={this.handleHide}
           onDelete={this.handleListClick} accountId={this.state.accountId}/>
         }
       </React.Fragment>
@@ -118,20 +118,12 @@ class WealthAccountList extends Component {
     });
   }
 
-  handleHide = (type) => {
-    switch(type) {
-      case 'ADD':
-        this.setState({modalAddShow: false});
-        break;
-      case 'EDIT':
-        this.setState({modalEditShow: false});
-        break;
-      case 'DELETE':
-        this.setState({modalDeleteShow: false});
-        break;
-      default:
-        break;
-    }
+  handleHide = () => {
+    this.setState({
+      modalAddShow: false,
+      modalEditShow: false,
+      modalDeleteShow: false
+    });
   }
 
   handleChange = (event) => {

@@ -21,27 +21,48 @@ const initialState = {
   isLoading: false,
 }
 
-class AddSingleTransactionModal extends Component {
+class EditSingleTransactionModal extends Component {
   state = {
     ...initialState
   }
+
+  componentDidMount() {
+    if(!this.props.transactionId)
+      return;
+    TransactionRequest.getSingleTransaction(this.props.transactionId)
+    .then( (transaction) => {
+      this.setState({
+        account: transaction.transactionAccount,
+        postingDate: transaction.transactionPostingDate,
+        amount: transaction.transactionAmount,
+        crdr: transaction.transactionCRDR,
+        type: transaction.transactionTypeId,
+        narrative: transaction.transactionNarrative,
+      });
+    })
+    .catch( (err) => {
+      this.setState({message: 'Error occured while loading account information'});
+    })
+  }
+
   render () {
     return (
-      <ModalContainer title="Add Single Transaction" show={this.props.show}
+      <ModalContainer title="Edit Single Transaction" show={this.props.show}
         onHide={this.props.onHide} onShow={this.handleOnShow}
         footer={
           <Button variant="primary" block onClick={this.handleClick}>
           {
             this.state.isLoading?
             <Spinner as="span" animation="border" size="sm" role="status"
-            aria-hidden="true"/> : 'Add'
+            aria-hidden="true"/> : 'Save'
           }
           </Button>
         }>
         <Form>
           <Form.Group controlId="account">
             <Form.Label>Account</Form.Label>
-            <Form.Control as="select" name="account" onChange={this.handleChange}>
+            <Form.Control as="select" name="account" onChange={this.handleChange}
+            value={this.state.account}>
               <option value=''></option>
               <AccountsDropDown />
             </Form.Control>
@@ -62,16 +83,19 @@ class AddSingleTransactionModal extends Component {
                 <Form.Label>Credit/Debit</Form.Label>
               </Col>
               <Col>
-                <Form.Check inline type="radio" label="Credit" value="Credit" name="crdr" onChange={this.handleChange}/>
+                <Form.Check inline type="radio" label="Credit" value="Credit"
+                name="crdr" onChange={this.handleChange} checked={this.state.crdr==='Credit'}/>
               </Col>
               <Col>
-                <Form.Check inline type="radio" label="Debit" name="crdr"  value="Debit" onChange={this.handleChange}/>
+                <Form.Check inline type="radio" label="Debit" value="Debit"
+                name="crdr" onChange={this.handleChange} checked={this.state.crdr==='Debit'}/>
               </Col>
             </Row>
           </Form.Group>
           <Form.Group controlId="type">
             <Form.Label>Type</Form.Label>
-            <Form.Control as="select" name="type" onChange={this.handleChange}>
+            <Form.Control as="select" name="type" onChange={this.handleChange}
+            value={this.state.type}>
               <option value=''></option>
               <TransactionTypesDropDown />
             </Form.Control>
@@ -128,8 +152,9 @@ class AddSingleTransactionModal extends Component {
         isLoading: true,
       });
     }
-    // Add single transaction
-    TransactionRequest.addSingleTransaction(this.state.account, this.state.postingDate,
+    // update single transaction
+    TransactionRequest.updateSingleTransaction(this.props.transactionId,
+    this.state.account, this.state.postingDate,
     this.state.amount, this.state.crdr, this.state.type, this.state.narrative)
     .then( (response) => {
       if (typeof this.props.onSave=== 'function') {
@@ -147,4 +172,4 @@ class AddSingleTransactionModal extends Component {
   }
 }
 
-export default AddSingleTransactionModal;
+export default EditSingleTransactionModal;

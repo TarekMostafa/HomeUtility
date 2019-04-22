@@ -93,6 +93,78 @@ class Transaction {
     }
   }
 
+  async getSingleTransaction(id) {
+    const transaction = await TransactionModel.findByPk(id);
+    return APIResponse.getAPIResponse(true, transaction);
+  }
+
+  async editSingleTransaction(id, transaction) {
+    // Get Saved transaction that want to be updated
+    let _transaction = await TransactionModel.findByPk(id);
+    if(!_transaction) {
+      return APIResponse.getAPIResponse(false, null, '034');
+    }
+    // Get account related to saved transaction
+    let _account = await AccountModel.findByPk(_transaction.transactionAccount);
+    if(!_account){
+      return APIResponse.getAPIResponse(false, null, '032');
+    }
+    // Rollback
+    if(_transaction.transactionCRDR === 'Credit') {
+      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) - eval(_transaction.transactionAmount);
+    } else if(_transaction.transactionCRDR === 'Debit') {
+      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + eval(_transaction.transactionAmount);
+    } else {
+      return APIResponse.getAPIResponse(false, null, '033');
+    }
+    // Get account related to passed transaction
+    let account = await AccountModel.findByPk(transaction.transactionAccount);
+    if(!account){
+      return APIResponse.getAPIResponse(false, null, '032');
+    }
+    //Compare if there is any change in the account
+    if(_account.accountId === account.accountId) {
+      //Increase/Decrease account balance depending on transaction CRDR field
+      if(transaction.transactionCRDR === 'Credit') {
+        _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + eval(transaction.transactionAmount);
+      } else if(transaction.transactionCRDR === 'Debit') {
+        _account.accountCurrentBalance = eval(_account.accountCurrentBalance) - eval(transaction.transactionAmount);
+      } else {
+        return APIResponse.getAPIResponse(false, null, '033');
+      }
+    } else {
+      //Increase/Decrease account balance depending on transaction CRDR field
+      if(transaction.transactionCRDR === 'Credit') {
+        account.accountCurrentBalance = eval(account.accountCurrentBalance) + eval(transaction.transactionAmount);
+      } else if(transaction.transactionCRDR === 'Debit') {
+        account.accountCurrentBalance = eval(account.accountCurrentBalance) - eval(transaction.transactionAmount);
+      } else {
+        return APIResponse.getAPIResponse(false, null, '033');
+      }
+    }
+    // update transaction
+    _transaction.transactionAmount = transaction.transactionAmount;
+    _transaction.transactionNarrative = transaction.transactionNarrative;
+    _transaction.transactionPostingDate = transaction.transactionPostingDate;
+    _transaction.transactionCRDR = transaction.transactionCRDR;
+    _transaction.transactionAccount = transaction.transactionAccount;
+    _transaction.transactionTypeId = transaction.transactionTypeId;
+    // Save transaction and account
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      await _transaction.save({transaction: dbTransaction});
+      await _account.save({transaction: dbTransaction});
+      if(_account.accountId !== account.accountId) {
+        await account.save({transaction: dbTransaction});
+      }
+      await dbTransaction.commit();
+      return APIResponse.getAPIResponse(true, null, '035');
+    } catch (err) {
+      await dbTransaction.rollback();
+      return APIResponse.getAPIResponse(false, null, '036');
+    }
+  }
 }
 
 module.exports = Transaction;

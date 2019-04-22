@@ -32,4 +32,7 @@ module.exports = {
   '031' : 'Failed to add this transaction',
   '032' : 'Invalid account',
   '033' : 'Invalid transaction type',
+  '034' : 'This transaction does not exist in the database',
+  '035' : 'This transaction has been successfully updated',
+  '036' : 'Failed to update this transaction',
 }
