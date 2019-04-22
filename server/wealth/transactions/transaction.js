@@ -165,6 +165,39 @@ class Transaction {
       return APIResponse.getAPIResponse(false, null, '036');
     }
   }
+
+  async deleteSingleTransaction(id) {
+    // Get Saved transaction that want to be deleted
+    let _transaction = await TransactionModel.findByPk(id);
+    if(!_transaction) {
+      return APIResponse.getAPIResponse(false, null, '034');
+    }
+    // Get account related to saved transaction
+    let _account = await AccountModel.findByPk(_transaction.transactionAccount);
+    if(!_account){
+      return APIResponse.getAPIResponse(false, null, '032');
+    }
+    // Rollback
+    if(_transaction.transactionCRDR === 'Credit') {
+      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) - eval(_transaction.transactionAmount);
+    } else if(_transaction.transactionCRDR === 'Debit') {
+      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + eval(_transaction.transactionAmount);
+    } else {
+      return APIResponse.getAPIResponse(false, null, '033');
+    }
+    // delete transaction and update account
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      await _transaction.destroy({transaction: dbTransaction});
+      await _account.save({transaction: dbTransaction});
+      await dbTransaction.commit();
+      return APIResponse.getAPIResponse(true, null, '037');
+    } catch (err) {
+      await dbTransaction.rollback();
+      return APIResponse.getAPIResponse(false, null, '038');
+    }
+  }
 }
 
 module.exports = Transaction;

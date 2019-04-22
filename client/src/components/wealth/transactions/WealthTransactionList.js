@@ -10,6 +10,7 @@ import AccountsDropDown from '../accounts/AccountsDropDown';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
 import AddSingleTransactionModal from './AddSingleTransactionModal';
 import EditSingleTransactionModal from './EditSingleTransactionModal';
+import DeleteSingleTransactionModal from './DeleteSingleTransactionModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -125,6 +126,11 @@ class WealthTransactionList extends Component {
           <EditSingleTransactionModal show={this.state.modalEditSingleShow} onHide={this.handleHide}
           onSave={this.handleListClick} transactionId={this.state.transactionId}/>
         }
+        {
+          this.state.modalDeleteSingleShow &&
+          <DeleteSingleTransactionModal show={this.state.modalDeleteSingleShow} onHide={this.handleHide}
+          onDelete={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
       </React.Fragment>
     )
   }// end of render
@@ -171,6 +177,7 @@ class WealthTransactionList extends Component {
     this.setState({
       modalAddSingleShow: false,
       modalEditSingleShow: false,
+      modalDeleteSingleShow: false
     });
   }
 

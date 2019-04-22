@@ -110,12 +110,6 @@ class DeleteAccountModal extends Component {
     )
   }//end of render
 
-  handleChange = (event) => {
-    this.setState({
-      [event.target.name] : event.target.value
-    });
-  }
-
   handleOnShow = () => {
     this.setState({
       ...initialState

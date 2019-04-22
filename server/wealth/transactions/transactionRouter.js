@@ -52,4 +52,16 @@ router.put('/single/:id', function(req, res, next) {
   })
 })
 
+router.delete('/single/:id', function(req, res, next) {
+  transaction.deleteSingleTransaction(req.params.id).then( result => {
+    if(result.success) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+})
+
 module.exports = router;

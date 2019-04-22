@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Button, Spinner, Row, Col } from 'react-bootstrap';
-
-import 'moment/locale/en-gb.js';
-import { DatePickerInput } from 'rc-datepicker';
-import 'rc-datepicker/lib/style.css';
-
+import moment from 'moment';
 import ModalContainer from '../../common/ModalContainer';
 import AccountsDropDown from '../accounts/AccountsDropDown';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
@@ -21,7 +17,7 @@ const initialState = {
   isLoading: false,
 }
 
-class EditSingleTransactionModal extends Component {
+class DeleteSingleTransactionModal extends Component {
   state = {
     ...initialState
   }
@@ -47,21 +43,21 @@ class EditSingleTransactionModal extends Component {
 
   render () {
     return (
-      <ModalContainer title="Edit Single Transaction" show={this.props.show}
+      <ModalContainer title="Delete Single Transaction" show={this.props.show}
         onHide={this.props.onHide} onShow={this.handleOnShow}
         footer={
-          <Button variant="primary" block onClick={this.handleClick}>
+          <Button variant="danger" block onClick={this.handleClick}>
           {
             this.state.isLoading?
             <Spinner as="span" animation="border" size="sm" role="status"
-            aria-hidden="true"/> : 'Save'
+            aria-hidden="true"/> : 'Delete'
           }
           </Button>
         }>
         <Form>
           <Form.Group controlId="account">
             <Form.Label>Account</Form.Label>
-            <Form.Control as="select" name="account" onChange={this.handleChange}
+            <Form.Control as="select" name="account" readOnly
             value={this.state.account}>
               <option value=''></option>
               <AccountsDropDown />
@@ -69,13 +65,13 @@ class EditSingleTransactionModal extends Component {
           </Form.Group>
           <Form.Group controlId="postingDate">
             <Form.Label>Posting Date</Form.Label>
-            <DatePickerInput value={this.state.postingDate}
-            onChange={this.handlePostingDateChange} readOnly/>
+            <Form.Control type="input"
+            name="postingDate" value={moment(this.state.postingDate).format('DD/MM/YYYY')} readOnly/>
           </Form.Group>
           <Form.Group controlId="amount">
             <Form.Label>Amount</Form.Label>
             <Form.Control type="number"
-            name="amount" value={this.state.amount} onChange={this.handleChange}/>
+            name="amount" value={this.state.amount} readOnly/>
           </Form.Group>
           <Form.Group controlId="crdr">
             <Row>
@@ -84,17 +80,17 @@ class EditSingleTransactionModal extends Component {
               </Col>
               <Col>
                 <Form.Check inline type="radio" label="Credit" value="Credit"
-                name="crdr" onChange={this.handleChange} checked={this.state.crdr==='Credit'}/>
+                name="crdr" readOnly checked={this.state.crdr==='Credit'}/>
               </Col>
               <Col>
                 <Form.Check inline type="radio" label="Debit" value="Debit"
-                name="crdr" onChange={this.handleChange} checked={this.state.crdr==='Debit'}/>
+                name="crdr" readOnly checked={this.state.crdr==='Debit'}/>
               </Col>
             </Row>
           </Form.Group>
           <Form.Group controlId="type">
             <Form.Label>Type</Form.Label>
-            <Form.Control as="select" name="type" onChange={this.handleChange}
+            <Form.Control as="select" name="type" readOnly
             value={this.state.type}>
               <option value=''></option>
               <TransactionTypesDropDown />
@@ -103,7 +99,7 @@ class EditSingleTransactionModal extends Component {
           <Form.Group controlId="narrative">
             <Form.Label>Narrative</Form.Label>
             <Form.Control type="input" maxLength={200}
-            name="narrative" value={this.state.narrative} onChange={this.handleChange}/>
+            name="narrative" value={this.state.narrative} readOnly/>
           </Form.Group>
           <Form.Text className='text-danger'>{this.state.message}</Form.Text>
         </Form>
@@ -111,54 +107,22 @@ class EditSingleTransactionModal extends Component {
     )
   }//end of render
 
-  handleChange = (event) => {
-    this.setState({
-      [event.target.name] : event.target.value
-    });
-  }
-
   handleOnShow = () => {
     this.setState({
       ...initialState
     })
   }
 
-  handlePostingDateChange = (jsDate, date) => {
-    this.setState({
-      postingDate: date
-    });
-  }
-
   handleClick = () => {
-    // Validate Input
-    if(!this.state.account) {
-      this.setState({message: 'Invalid account, should not be empty'});
-      return;
-    } else if(!this.state.postingDate) {
-      this.setState({message: 'Invalid posting date, should not be empty'});
-      return;
-    } else if(!this.state.amount) {
-      this.setState({message: 'Invalid amount, should not be zero'});
-      return;
-    } else if(!this.state.crdr) {
-      this.setState({message: 'Invalid crdr, should not be empty'});
-      return;
-    } else if(!this.state.type) {
-      this.setState({message: 'Invalid type, should not be empty'});
-      return;
-    } else {
-      this.setState({
-        message: '',
-        isLoading: true,
-      });
-    }
+    this.setState({
+      message: '',
+      isLoading: true,
+    });
     // update single transaction
-    TransactionRequest.updateSingleTransaction(this.props.transactionId,
-    this.state.account, this.state.postingDate,
-    this.state.amount, this.state.crdr, this.state.type, this.state.narrative)
+    TransactionRequest.deleteSingleTransaction(this.props.transactionId)
     .then( (response) => {
-      if (typeof this.props.onSave=== 'function') {
-        this.props.onSave();
+      if (typeof this.props.onDelete=== 'function') {
+        this.props.onDelete();
       }
       this.setState({isLoading: false});
       this.props.onHide();
@@ -172,4 +136,4 @@ class EditSingleTransactionModal extends Component {
   }
 }
 
-export default EditSingleTransactionModal;
+export default DeleteSingleTransactionModal;

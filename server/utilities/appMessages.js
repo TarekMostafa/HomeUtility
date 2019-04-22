@@ -35,4 +35,6 @@ module.exports = {
   '034' : 'This transaction does not exist in the database',
   '035' : 'This transaction has been successfully updated',
   '036' : 'Failed to update this transaction',
+  '037' : 'This transaction has been successfully deleted',
+  '038' : 'Failed to delete this transaction',
 }

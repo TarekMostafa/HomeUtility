@@ -39,6 +39,10 @@ class TransctionRequest {
     });
   }
 
+  static async deleteSingleTransaction(id) {
+    return await axios.delete('/api/wealth/transactions/single/'+id);
+  }
+
   static async getSingleTransaction(id) {
     const response = await axios.get('/api/wealth/transactions/single/'+id);
     return response.data;
