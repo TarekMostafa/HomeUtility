@@ -8,6 +8,8 @@ import AddNewAccountModal from './AddNewAccountModal';
 import EditAccountModal from './EditAccountModal';
 import DeleteAccountModal from './DeleteAccountModal';
 import FormContainer from '../../common/FormContainer';
+import BanksDropDown from '../banks/BanksDropDown';
+import AccountStatusesDropDown from './AccountStatusesDropDown';
 
 import AccountRequest from '../../../axios/AccountRequest';
 
@@ -51,14 +53,14 @@ class WealthAccountList extends Component {
                 <Form.Control as="select" size="sm" name="accountBank" onChange={this.handleChange}
                   value={this.state.accountBank}>
                   <option value=''>Banks</option>
-                  { this.listBanks() }
+                  <BanksDropDown />
                 </Form.Control>
               </Col>
               <Col xs={3}>
                 <Form.Control as="select" size="sm" name="accountStatus" onChange={this.handleChange}
                   value={this.state.accountStatus}>
                   <option value=''>Account Statuses</option>
-                  { this.listAccountStatuses() }
+                  <AccountStatusesDropDown />
                 </Form.Control>
               </Col>
               <Col xs={{offset:4, span:1}}>
@@ -132,22 +134,6 @@ class WealthAccountList extends Component {
     }
   }
 
-  listAccountStatuses = () => {
-    return this.props.accountStatuses && this.props.accountStatuses.map( (status) => {
-      return (
-        <option key={status} value={status}>{status}</option>
-      )
-    });
-  }
-
-  listBanks = () => {
-    return this.props.banks && this.props.banks.map( (bank) => {
-      return (
-        <option key={bank.bankCode} value={bank.bankCode}>{bank.bankName}</option>
-      )
-    });
-  }
-
   handleChange = (event) => {
     this.setState({
       [event.target.name] : event.target.value
@@ -168,8 +154,6 @@ class WealthAccountList extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		banks: state.lookups.banks,
-    accountStatuses: state.lookups.accountStatuses,
     appSettings: state.lookups.appSettings,
 	}
 }

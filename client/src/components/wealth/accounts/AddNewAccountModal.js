@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Form, Button, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
-import ModalContainer from '../../common/ModalContainer'
+import ModalContainer from '../../common/ModalContainer';
+import BanksDropDown from '../banks/BanksDropDown';
+import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import AccountRequest from '../../../axios/AccountRequest';
 import { getAccounts } from '../../../store/actions/lookupsAction';
 
@@ -37,7 +39,7 @@ class AddNewAccountModal extends Component {
             <Form.Label>Account Bank</Form.Label>
             <Form.Control as="select" name="accountBank" onChange={this.handleChange}>
               <option value=''></option>
-              { this.listBanks() }
+              <BanksDropDown />
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="accountNumber">
@@ -49,7 +51,7 @@ class AddNewAccountModal extends Component {
             <Form.Label>Account Currency</Form.Label>
             <Form.Control as="select" name="accountCurrency" onChange={this.handleChange}>
               <option value=''></option>
-              { this.listCurrencies() }
+              <CurrenciesDropDown />
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="accountStartBalance">
@@ -110,30 +112,10 @@ class AddNewAccountModal extends Component {
       })
     })
   }
-
-  listBanks = () => {
-    return this.props.banks && this.props.banks.map( (bank) => {
-      return (
-        <option key={bank.bankCode} value={bank.bankCode}>{bank.bankName}</option>
-      )
-    });
-  }
-
-  listCurrencies = () => {
-    return this.props.currencies && this.props.currencies.map( (currency) => {
-      return (
-        <option key={currency.currencyCode} value={currency.currencyCode}>
-          {currency.currencyCode + ' ' + currency.currencyName}
-        </option>
-      )
-    });
-  }
 }
 
 const mapStateToProps = (state) => {
   return {
-    banks: state.lookups.banks,
-    currencies: state.lookups.activeCurrencies,
     user: state.auth.user,
   }
 }

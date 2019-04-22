@@ -3,6 +3,7 @@ import { Form, Row, Col, Button, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import FormContainer from '../common/FormContainer';
+import CurrenciesDropDown from '../currencies/CurrenciesDropDown';
 import AppSettingsRequest from '../../axios/AppSettingsRequest';
 import CurrencyRequest from '../../axios/CurrencyRequest';
 
@@ -47,7 +48,7 @@ class AppSettings extends Component {
                     <Form.Control as="select" size="sm" name="baseCurrency" onChange={this.handleChange}
                       value={this.state.baseCurrency}>
                       <option value=''></option>
-                      { this.listCurrencies() }
+                      <CurrenciesDropDown />
                     </Form.Control>
                   </Col>
                 </Form.Group>
@@ -101,14 +102,6 @@ class AppSettings extends Component {
     this.setState({
       [event.target.name] : event.target.value
     })
-  }
-
-  listCurrencies = () => {
-    return this.props.currencies && this.props.currencies.map( (currency) => {
-      return (
-        <option key={currency.currencyCode} value={currency.currencyCode}>{currency.currencyName}</option>
-      )
-    });
   }
 
   handleSave = () => {
@@ -171,7 +164,6 @@ class AppSettings extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		currencies: state.lookups.activeCurrencies,
     appSettings: state.lookups.appSettings
 	}
 }

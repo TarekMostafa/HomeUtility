@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { Form, Button, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
-import ModalContainer from '../../common/ModalContainer'
+import ModalContainer from '../../common/ModalContainer';
+import BanksDropDown from '../banks/BanksDropDown';
+import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
+import AccountStatusesDropDown from './AccountStatusesDropDown';
 import AccountRequest from '../../../axios/AccountRequest';
 import { getAccounts } from '../../../store/actions/lookupsAction';
 
@@ -58,7 +61,7 @@ class EditAccountModal extends Component {
             <Form.Control as="select" name="accountBank"
             value={this.state.accountBank} readOnly>
               <option value=''></option>
-              { this.listBanks() }
+              <BanksDropDown />
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="accountNumber">
@@ -71,7 +74,7 @@ class EditAccountModal extends Component {
             <Form.Control as="select" name="accountCurrency"
             value={this.state.accountCurrency} readOnly>
               <option value=''></option>
-              { this.listCurrencies() }
+              <CurrenciesDropDown />
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="accountStartBalance">
@@ -84,7 +87,7 @@ class EditAccountModal extends Component {
             <Form.Control as="select" name="accountStatus" onChange={this.handleChange}
             value={this.state.accountStatus}>
               <option value=''></option>
-              { this.listAccountStatuses() }
+              <AccountStatusesDropDown />
             </Form.Control>
           </Form.Group>
           <Form.Text className='text-danger'>{this.state.message}</Form.Text>
@@ -143,40 +146,10 @@ class EditAccountModal extends Component {
       })
     })
   }
-
-  listBanks = () => {
-    return this.props.banks && this.props.banks.map( (bank) => {
-      return (
-        <option key={bank.bankCode} value={bank.bankCode}>{bank.bankName}</option>
-      )
-    });
-  }
-
-  listCurrencies = () => {
-    return this.props.currencies && this.props.currencies.map( (currency) => {
-      return (
-        <option key={currency.currencyCode} value={currency.currencyCode}>
-          {currency.currencyCode + ' ' + currency.currencyName}
-        </option>
-      )
-    });
-  }
-
-  listAccountStatuses = () => {
-    return this.props.accountStatuses && this.props.accountStatuses.map( (status) => {
-      return (
-        <option key={status} value={status}>{status}</option>
-      )
-    });
-  }
-
 }
 
 const mapStateToProps = (state) => {
   return {
-    banks: state.lookups.banks,
-    currencies: state.lookups.activeCurrencies,
-    accountStatuses: state.lookups.accountStatuses,
     user: state.auth.user,
   }
 }
