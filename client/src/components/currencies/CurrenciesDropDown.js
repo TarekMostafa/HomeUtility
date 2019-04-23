@@ -4,7 +4,10 @@ import { connect } from 'react-redux';
 function CurrenciesDropDown(props) {
   return props.currencies && props.currencies.map( (currency) => {
     return (
-      <option key={currency.currencyCode} value={currency.currencyCode}>{currency.currencyName}</option>
+      <option key={currency.currencyCode} value={currency.currencyCode}
+      decimalplaces={currency.currencyDecimalPlace}>
+        {currency.currencyName}
+      </option>
     )
   });
 }

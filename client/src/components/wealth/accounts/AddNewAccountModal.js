@@ -13,6 +13,7 @@ const initialState = {
   accountNumber: '',
   accountCurrency: '',
   accountStartBalance: 0,
+  decimalPlaces: 0,
   message: '',
   isLoading: false,
 }
@@ -49,7 +50,7 @@ class AddNewAccountModal extends Component {
           </Form.Group>
           <Form.Group controlId="accountCurrency">
             <Form.Label>Account Currency</Form.Label>
-            <Form.Control as="select" name="accountCurrency" onChange={this.handleChange}>
+            <Form.Control as="select" name="accountCurrency" onChange={this.handleCurrencyChange}>
               <option value=''></option>
               <CurrenciesDropDown />
             </Form.Control>
@@ -57,13 +58,23 @@ class AddNewAccountModal extends Component {
           <Form.Group controlId="accountStartBalance">
             <Form.Label>Start Balance</Form.Label>
             <Form.Control type="number" maxLength={20}
-            name="accountStartBalance" value={this.state.accountStartBalance} onChange={this.handleChange}/>
+            name="accountStartBalance"
+            value={Number(this.state.accountStartBalance).toFixed(this.state.decimalPlaces)}
+            onChange={this.handleChange}/>
           </Form.Group>
           <Form.Text className='text-danger'>{this.state.message}</Form.Text>
         </Form>
       </ModalContainer>
     )
   }//end of render
+
+  handleCurrencyChange = (event) => {
+    const decimalPlaces = event.target[event.target.selectedIndex].getAttribute('decimalplaces');
+    this.setState({
+      accountCurrency : event.target.value,
+      decimalPlaces
+    });
+  }
 
   handleChange = (event) => {
     this.setState({

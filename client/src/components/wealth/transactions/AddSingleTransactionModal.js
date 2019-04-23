@@ -17,6 +17,7 @@ const initialState = {
   crdr: 0,
   type: '',
   narrative: '',
+  decimalPlaces: 0,
   message: '',
   isLoading: false,
 }
@@ -41,7 +42,7 @@ class AddSingleTransactionModal extends Component {
         <Form>
           <Form.Group controlId="account">
             <Form.Label>Account</Form.Label>
-            <Form.Control as="select" name="account" onChange={this.handleChange}>
+            <Form.Control as="select" name="account" onChange={this.handleAccountChange}>
               <option value=''></option>
               <AccountsDropDown />
             </Form.Control>
@@ -54,7 +55,8 @@ class AddSingleTransactionModal extends Component {
           <Form.Group controlId="amount">
             <Form.Label>Amount</Form.Label>
             <Form.Control type="number"
-            name="amount" value={this.state.amount} onChange={this.handleChange}/>
+            name="amount" value={Number(this.state.amount).toFixed(this.state.decimalPlaces)} 
+            onChange={this.handleChange}/>
           </Form.Group>
           <Form.Group controlId="crdr">
             <Row>
@@ -86,6 +88,14 @@ class AddSingleTransactionModal extends Component {
       </ModalContainer>
     )
   }//end of render
+
+  handleAccountChange = (event) => {
+    const decimalPlaces = event.target[event.target.selectedIndex].getAttribute('decimalplaces');
+    this.setState({
+      account : event.target.value,
+      decimalPlaces
+    });
+  }
 
   handleChange = (event) => {
     this.setState({

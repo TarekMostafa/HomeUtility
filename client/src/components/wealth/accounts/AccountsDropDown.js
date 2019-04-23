@@ -4,7 +4,10 @@ import { connect } from 'react-redux';
 function AccountsDropDown(props) {
   return props.accounts && props.accounts.map( (account) => {
     return (
-      <option key={account.accountId} value={account.accountId}>{account.accountNumber}</option>
+      <option key={account.accountId} value={account.accountId}
+      decimalplaces={account.currency.currencyDecimalPlace}>
+      {account.accountNumber}
+      </option>
     )
   });
 }
