@@ -17,7 +17,8 @@ const initialState = {
   crdr: 0,
   type: '',
   narrative: '',
-  accountCurrencyDecimalPlaces: 0,
+  decimalPlaces: 0,
+  typecrdr: '',
   message: '',
   isLoading: false,
 }
@@ -39,7 +40,7 @@ class EditSingleTransactionModal extends Component {
         crdr: transaction.transactionCRDR,
         type: transaction.transactionTypeId,
         narrative: transaction.transactionNarrative,
-        accountCurrencyDecimalPlaces: transaction.account.currency.currencyDecimalPlace,
+        decimalPlaces: transaction.account.currency.currencyDecimalPlace,
       });
     })
     .catch( (err) => {
@@ -63,7 +64,7 @@ class EditSingleTransactionModal extends Component {
         <Form>
           <Form.Group controlId="account">
             <Form.Label>Account</Form.Label>
-            <Form.Control as="select" name="account" onChange={this.handleChange}
+            <Form.Control as="select" name="account" onChange={this.handleAccountChange}
             value={this.state.account}>
               <option value=''></option>
               <AccountsDropDown />
@@ -78,7 +79,7 @@ class EditSingleTransactionModal extends Component {
             <Form.Label>Amount</Form.Label>
             <Form.Control type="number"
             name="amount"
-            value={Number(this.state.amount).toFixed(this.state.accountCurrencyDecimalPlaces)}
+            value={Number(this.state.amount).toFixed(this.state.decimalPlaces)}
             onChange={this.handleChange}/>
           </Form.Group>
           <Form.Group controlId="crdr">
@@ -98,7 +99,7 @@ class EditSingleTransactionModal extends Component {
           </Form.Group>
           <Form.Group controlId="type">
             <Form.Label>Type</Form.Label>
-            <Form.Control as="select" name="type" onChange={this.handleChange}
+            <Form.Control as="select" name="type" onChange={this.handleTypeChange}
             value={this.state.type}>
               <option value=''></option>
               <TransactionTypesDropDown />
@@ -114,6 +115,22 @@ class EditSingleTransactionModal extends Component {
       </ModalContainer>
     )
   }//end of render
+
+  handleAccountChange = (event) => {
+    const decimalPlaces = event.target[event.target.selectedIndex].getAttribute('decimalplaces');
+    this.setState({
+      account : event.target.value,
+      decimalPlaces
+    });
+  }
+
+  handleTypeChange = (event) => {
+    const typecrdr = event.target[event.target.selectedIndex].getAttribute('crdr');
+    this.setState({
+      type : event.target.value,
+      typecrdr
+    });
+  }
 
   handleChange = (event) => {
     this.setState({
@@ -149,6 +166,9 @@ class EditSingleTransactionModal extends Component {
       return;
     } else if(!this.state.type) {
       this.setState({message: 'Invalid type, should not be empty'});
+      return;
+    } else if(this.state.typecrdr !== this.state.crdr) {
+      this.setState({message: 'Invalid Credit/Debit as it does not match transaction type Credit/Debit'});
       return;
     } else {
       this.setState({

@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 function TransactionTypesDropDown(props) {
   return props.transactionTypes && props.transactionTypes.map( (transactionType) => {
     return (
-      <option key={transactionType.typeId} value={transactionType.typeId}>
-        {transactionType.typeName}</option>
+      <option key={transactionType.typeId} value={transactionType.typeId}
+      crdr={transactionType.typeCRDR}>
+        {transactionType.typeName}
+      </option>
     )
   });
 }
