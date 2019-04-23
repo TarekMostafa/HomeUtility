@@ -31,7 +31,7 @@ class AccountRequest {
       accountNumber: accountNumber,
       accountStartBalance: startBalance,
       accountBankCode: bankCode,
-      acccountCurrency: currencyCode,
+      accountCurrency: currencyCode,
       accountUser: userId,
     });
   }

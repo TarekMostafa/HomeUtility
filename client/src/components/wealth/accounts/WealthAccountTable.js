@@ -29,7 +29,7 @@ function WealthAccountTable (props) {
               <td>{index+1}</td>
               <td>{account.bank.bankName}</td>
               <td>{account.accountNumber}</td>
-              <td>{account.acccountCurrency}</td>
+              <td>{account.accountCurrency}</td>
               <td className="text-right">
                 {amountFormatter(account.accountStartBalance, account.currency.currencyDecimalPlace)}
               </td>

@@ -7,6 +7,7 @@ import BanksDropDown from '../banks/BanksDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import AccountStatusesDropDown from './AccountStatusesDropDown';
 import AccountRequest from '../../../axios/AccountRequest';
+import amountFormatter from '../../../utilities/amountFormatter';
 import { getAccounts } from '../../../store/actions/lookupsAction';
 
 const initialState = {
@@ -17,6 +18,7 @@ const initialState = {
   accountCurrentBalance: 0,
   accountStatus: '',
   accountLastBalanceUpdate: '',
+  accountCurrencyDecimalPlaces: 0,
   message: '',
   isLoading: false,
 }
@@ -34,11 +36,12 @@ class DeleteAccountModal extends Component {
       this.setState({
         accountBank: account.accountBankCode,
         accountNumber: account.accountNumber,
-        accountCurrency: account.acccountCurrency,
+        accountCurrency: account.accountCurrency,
         accountStartBalance: account.accountStartBalance,
         accountStatus: account.accountStatus,
         accountCurrentBalance: account.accountCurrentBalance,
         accountLastBalanceUpdate: account.accountLastBalanceUpdate,
+        accountCurrencyDecimalPlaces: account.currency.currencyDecimalPlace,
       });
     })
     .catch( (err) => {
@@ -83,13 +86,17 @@ class DeleteAccountModal extends Component {
           </Form.Group>
           <Form.Group controlId="accountStartBalance">
             <Form.Label>Start Balance</Form.Label>
-            <Form.Control type="number"
-            name="accountStartBalance" value={this.state.accountStartBalance} readOnly/>
+            <Form.Control type="input"
+            name="accountStartBalance"
+            value={amountFormatter(this.state.accountStartBalance, this.state.accountCurrencyDecimalPlaces)}
+            readOnly/>
           </Form.Group>
           <Form.Group controlId="accountCurrentBalance">
             <Form.Label>Current Balance</Form.Label>
-            <Form.Control type="number"
-            name="accountCurrentBalance" value={this.state.accountCurrentBalance} readOnly/>
+            <Form.Control type="input"
+            name="accountCurrentBalance"
+            value={amountFormatter(this.state.accountCurrentBalance, this.state.accountCurrencyDecimalPlaces)}
+            readOnly/>
           </Form.Group>
           <Form.Group controlId="accountStatus">
             <Form.Label>Account Status</Form.Label>

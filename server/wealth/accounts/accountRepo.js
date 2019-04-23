@@ -20,7 +20,11 @@ class AccountRepo {
   }
 
   static async getAccount(id) {
-    return await AccountModel.findByPk(id);
+    return await AccountModel.findByPk(id, {
+      include: [
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] }
+      ]
+    });
   }
 
   static async addAccount(account) {

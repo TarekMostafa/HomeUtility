@@ -13,7 +13,7 @@ AccountModel.init({
   accountStartBalance: Sequelize.DECIMAL(18, 3),
   accountStatus: Sequelize.ENUM('ACTIVE', 'CLOSED'),
   accountBankCode: Sequelize.STRING(3),
-  acccountCurrency: Sequelize.STRING(3),
+  accountCurrency: Sequelize.STRING(3),
   accountUser: Sequelize.INTEGER,
 }, {
   tableName: 'accounts',
@@ -29,7 +29,7 @@ AccountModel.belongsTo(BankModel, {
 
 AccountModel.belongsTo(CurrencyModel, {
   as: "currency",
-  foreignKey: 'acccountCurrency'
+  foreignKey: 'accountCurrency'
 });
 
 module.exports = AccountModel;

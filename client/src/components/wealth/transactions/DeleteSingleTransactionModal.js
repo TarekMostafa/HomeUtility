@@ -5,6 +5,7 @@ import ModalContainer from '../../common/ModalContainer';
 import AccountsDropDown from '../accounts/AccountsDropDown';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
 import TransactionRequest from '../../../axios/TransactionRequest';
+import amountFormatter from '../../../utilities/amountFormatter';
 
 const initialState = {
   account: '',
@@ -13,6 +14,7 @@ const initialState = {
   crdr: 0,
   type: '',
   narrative: '',
+  accountCurrencyDecimalPlaces: 0,
   message: '',
   isLoading: false,
 }
@@ -34,6 +36,7 @@ class DeleteSingleTransactionModal extends Component {
         crdr: transaction.transactionCRDR,
         type: transaction.transactionTypeId,
         narrative: transaction.transactionNarrative,
+        accountCurrencyDecimalPlaces: transaction.account.currency.currencyDecimalPlace,
       });
     })
     .catch( (err) => {
@@ -70,8 +73,10 @@ class DeleteSingleTransactionModal extends Component {
           </Form.Group>
           <Form.Group controlId="amount">
             <Form.Label>Amount</Form.Label>
-            <Form.Control type="number"
-            name="amount" value={this.state.amount} readOnly/>
+            <Form.Control type="input"
+            name="amount"
+            value={amountFormatter(this.state.amount, this.state.accountCurrencyDecimalPlaces)}
+            readOnly/>
           </Form.Group>
           <Form.Group controlId="crdr">
             <Row>

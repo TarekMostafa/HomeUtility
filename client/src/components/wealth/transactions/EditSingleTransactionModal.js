@@ -17,6 +17,7 @@ const initialState = {
   crdr: 0,
   type: '',
   narrative: '',
+  accountCurrencyDecimalPlaces: 0,
   message: '',
   isLoading: false,
 }
@@ -38,6 +39,7 @@ class EditSingleTransactionModal extends Component {
         crdr: transaction.transactionCRDR,
         type: transaction.transactionTypeId,
         narrative: transaction.transactionNarrative,
+        accountCurrencyDecimalPlaces: transaction.account.currency.currencyDecimalPlace,
       });
     })
     .catch( (err) => {
@@ -75,7 +77,9 @@ class EditSingleTransactionModal extends Component {
           <Form.Group controlId="amount">
             <Form.Label>Amount</Form.Label>
             <Form.Control type="number"
-            name="amount" value={this.state.amount} onChange={this.handleChange}/>
+            name="amount"
+            value={Number(this.state.amount).toFixed(this.state.accountCurrencyDecimalPlaces)}
+            onChange={this.handleChange}/>
           </Form.Group>
           <Form.Group controlId="crdr">
             <Row>

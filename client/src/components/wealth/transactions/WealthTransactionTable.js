@@ -33,7 +33,7 @@ function WealthTransactionTable (props) {
               <td className="text-right">
                 {amountFormatter(transaction.transactionAmount, transaction.account.currency.currencyDecimalPlace)}
               </td>
-              <td>{transaction.account.acccountCurrency}</td>
+              <td>{transaction.account.accountCurrency}</td>
               <td>{transaction.transactionCRDR}</td>
               <td>{_.isNil(transaction.transactionType) ? '' : transaction.transactionType.typeName}</td>
               <td>

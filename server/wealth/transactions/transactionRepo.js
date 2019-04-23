@@ -11,7 +11,7 @@ class TransactionRepo {
       attributes: ['transactionId', 'transactionPostingDate', 'transactionAmount',
         'transactionCRDR', 'transactionNarrative', 'transactionRelatedTransactionId'],
       include: [
-        { model: AccountModel, as: 'account', attributes: ['accountNumber','acccountCurrency'],
+        { model: AccountModel, as: 'account', attributes: ['accountNumber','accountCurrency'],
           include: [
             { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 'currencyDecimalPlace'] }
           ]
@@ -24,7 +24,15 @@ class TransactionRepo {
   }
 
   static async getTransaction(id) {
-    return await TransactionModel.findByPk(id);
+    return await TransactionModel.findByPk(id, {
+      include: [
+        { model: AccountModel, as: 'account', attributes: ['accountCurrency'],
+          include: [
+            { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] }
+          ]
+        }
+      ]
+    });
   }
 
   static async addTransaction(transaction, dbTransaction) {
