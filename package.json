@@ -6,7 +6,8 @@
   "scripts": {
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
-    "both": "concurrently \"npm run server\" \"npm run client\""
+    "both": "concurrently \"npm run server\" \"npm run client\"",
+    "test": "mocha server/test/index.test.js"
   },
   "author": "Tarek Mostafa",
   "license": "ISC",
@@ -17,7 +18,11 @@
     "express": "^4.16.4",
     "lodash": "^4.17.11",
     "mysql2": "^1.6.5",
-    "sequelize": "^5.2.9",
+    "sequelize": "^5.7.4",
     "utf8-bytes": "0.0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4"
   }
 }

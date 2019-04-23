@@ -1,11 +1,11 @@
-const UserModel = require('./userModel');
+const UserRepo = require('./userRepo');
 const Authentication = require('./authentication');
 const APIResponse = require('../utilities/apiResponse');
 
 class User {
   async authenticate({userName, password}) {
     // Check user in the database
-    const user = await UserModel.findOne({where: {userName: userName}});
+    const user = await UserRepo.getUserByUserName(userName);
     if(!user) {
       return APIResponse.getAPIResponse(false, null, '003');
     }
@@ -33,7 +33,7 @@ class User {
 
   async changePassword({userId, oldPassword, newPassword}){
     // Check user in the database
-    const user = await UserModel.findByPk(userId);
+    const user = await UserRepo.getUser(userId);
     if(!user) {
       return APIResponse.getAPIResponse(false, null, '003');
     }

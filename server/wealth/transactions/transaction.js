@@ -2,10 +2,8 @@ const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
-const TransactionModel = require('./transactionModel');
-const AccountModel = require('../accounts/accountModel');
-const CurrencyModel = require('../../currencies/currencyModel');
-const TransactionTypeModel = require('../transactionTypes/transactionTypeModel');
+const TransactionRepo = require('./transactionRepo');
+const AccountRepo = require('../accounts/accountRepo');
 
 const Op = Sequelize.Op;
 
@@ -44,46 +42,30 @@ class Transaction {
       }
     }
 
-    const transactions = await TransactionModel.findAll({
-      offset: _skip,
-      limit: _limit,
-      attributes: ['transactionId', 'transactionPostingDate', 'transactionAmount',
-        'transactionCRDR', 'transactionNarrative', 'transactionRelatedTransactionId'],
-      include: [
-        { model: AccountModel, as: 'account', attributes: ['accountNumber','acccountCurrency'],
-          include: [
-            { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 'currencyDecimalPlace'] }
-          ]
-        },
-        { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeName'] }
-      ],
-      where: whereQuery,
-      order: [ ['transactionPostingDate', 'DESC'] , ['transactionId', 'DESC'] ]
-    });
+    const transactions = await TransactionRepo.getTransactions(_skip, _limit, whereQuery);
     return APIResponse.getAPIResponse(true, transactions);
   }
 
   async addSingleTransaction(transaction) {
     // Get account related to this transaction
-    let account = await AccountModel.findByPk(transaction.transactionAccount);
+    let account = await AccountRepo.getAccount(transaction.transactionAccount);
     if(!account){
       return APIResponse.getAPIResponse(false, null, '032');
     }
     //Increase/Decrease account balance depending on transaction CRDR field
-    if(transaction.transactionCRDR === 'Credit') {
-      account.accountCurrentBalance = eval(account.accountCurrentBalance) + eval(transaction.transactionAmount);
-    } else if(transaction.transactionCRDR === 'Debit') {
-      account.accountCurrentBalance = eval(account.accountCurrentBalance) - eval(transaction.transactionAmount);
-    } else {
+    const amount = this.evalTransactionAmount(transaction.transactionAmount,
+      transaction.transactionCRDR, false);
+    if(!amount) {
       return APIResponse.getAPIResponse(false, null, '033');
     }
+    account.accountCurrentBalance = eval(account.accountCurrentBalance) + amount;
     // Update date for field balance last update
     account.accountLastBalanceUpdate = sequelize.fn('NOW');
     // Save transaction and account
     let dbTransaction;
     try{
       dbTransaction = await sequelize.transaction();
-      await TransactionModel.build(transaction).save({transaction: dbTransaction});
+      await TransactionRepo.addTransaction(transaction, dbTransaction);
       await account.save({transaction: dbTransaction});
       await dbTransaction.commit();
       return APIResponse.getAPIResponse(true, null, '030');
@@ -94,53 +76,44 @@ class Transaction {
   }
 
   async getSingleTransaction(id) {
-    const transaction = await TransactionModel.findByPk(id);
+    const transaction = await TransactionRepo.getTransaction(id);
     return APIResponse.getAPIResponse(true, transaction);
   }
 
   async editSingleTransaction(id, transaction) {
     // Get Saved transaction that want to be updated
-    let _transaction = await TransactionModel.findByPk(id);
+    let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
       return APIResponse.getAPIResponse(false, null, '034');
     }
     // Get account related to saved transaction
-    let _account = await AccountModel.findByPk(_transaction.transactionAccount);
+    let _account = await AccountRepo.getAccount(_transaction.transactionAccount);
     if(!_account){
       return APIResponse.getAPIResponse(false, null, '032');
     }
     // Rollback
-    if(_transaction.transactionCRDR === 'Credit') {
-      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) - eval(_transaction.transactionAmount);
-    } else if(_transaction.transactionCRDR === 'Debit') {
-      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + eval(_transaction.transactionAmount);
-    } else {
+    let amount = this.evalTransactionAmount(_transaction.transactionAmount,
+      _transaction.transactionCRDR, true);
+    if(!amount) {
       return APIResponse.getAPIResponse(false, null, '033');
     }
+    _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + amount;
     // Get account related to passed transaction
-    let account = await AccountModel.findByPk(transaction.transactionAccount);
+    let account = await AccountRepo.getAccount(transaction.transactionAccount);
     if(!account){
       return APIResponse.getAPIResponse(false, null, '032');
     }
+    //Increase/Decrease account balance depending on transaction CRDR field
+    amount = this.evalTransactionAmount(transaction.transactionAmount,
+      transaction.transactionCRDR, false);
+    if(!amount) {
+      return APIResponse.getAPIResponse(false, null, '033');
+    }
     //Compare if there is any change in the account
     if(_account.accountId === account.accountId) {
-      //Increase/Decrease account balance depending on transaction CRDR field
-      if(transaction.transactionCRDR === 'Credit') {
-        _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + eval(transaction.transactionAmount);
-      } else if(transaction.transactionCRDR === 'Debit') {
-        _account.accountCurrentBalance = eval(_account.accountCurrentBalance) - eval(transaction.transactionAmount);
-      } else {
-        return APIResponse.getAPIResponse(false, null, '033');
-      }
+      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + amount;
     } else {
-      //Increase/Decrease account balance depending on transaction CRDR field
-      if(transaction.transactionCRDR === 'Credit') {
-        account.accountCurrentBalance = eval(account.accountCurrentBalance) + eval(transaction.transactionAmount);
-      } else if(transaction.transactionCRDR === 'Debit') {
-        account.accountCurrentBalance = eval(account.accountCurrentBalance) - eval(transaction.transactionAmount);
-      } else {
-        return APIResponse.getAPIResponse(false, null, '033');
-      }
+      account.accountCurrentBalance = eval(account.accountCurrentBalance) + amount
     }
     // update transaction
     _transaction.transactionAmount = transaction.transactionAmount;
@@ -168,23 +141,22 @@ class Transaction {
 
   async deleteSingleTransaction(id) {
     // Get Saved transaction that want to be deleted
-    let _transaction = await TransactionModel.findByPk(id);
+    let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
       return APIResponse.getAPIResponse(false, null, '034');
     }
     // Get account related to saved transaction
-    let _account = await AccountModel.findByPk(_transaction.transactionAccount);
+    let _account = await AccountRepo.getAccount(_transaction.transactionAccount);
     if(!_account){
       return APIResponse.getAPIResponse(false, null, '032');
     }
     // Rollback
-    if(_transaction.transactionCRDR === 'Credit') {
-      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) - eval(_transaction.transactionAmount);
-    } else if(_transaction.transactionCRDR === 'Debit') {
-      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + eval(_transaction.transactionAmount);
-    } else {
+    const amount = this.evalTransactionAmount(_transaction.transactionAmount,
+      _transaction.transactionCRDR, true);
+    if(!amount) {
       return APIResponse.getAPIResponse(false, null, '033');
     }
+    _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + amount;
     // delete transaction and update account
     let dbTransaction;
     try{
@@ -198,6 +170,17 @@ class Transaction {
       return APIResponse.getAPIResponse(false, null, '038');
     }
   }
+
+  evalTransactionAmount(amount, type, isRollback) {
+    if( (!isRollback && type === 'Debit') || (isRollback  && type === 'Credit') ) {
+      return amount * -1;
+    } else if ( (isRollback && type === 'Debit') || (!isRollback  && type === 'Credit') ) {
+      return amount * 1;
+    } else {
+      return null;
+    }
+  }
+
 }
 
 module.exports = Transaction;

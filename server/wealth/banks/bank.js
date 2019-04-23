@@ -1,28 +1,24 @@
-const BankModel = require('./bankModel');
+const BankRepo = require('./bankRepo');
 const APIResponse = require('../../utilities/apiResponse');
 
 class Bank {
   async getBanks() {
-    const banks = await BankModel.findAll({});
+    const banks = await BankRepo.getBanks();
     return APIResponse.getAPIResponse(true, banks);
   }
 
-  async getBank(id) {
-    return await BankModel.findByPk(id);
-  }
-
   async addBank(bank) {
-    const _bank = await this.getBank(bank.bankCode);
-    if(_bank !== null) {
+    const _bank = await BankRepo.getBank(bank.bankCode);
+    if(_bank) {
       return APIResponse.getAPIResponse(false, null, '012');
     }
-    await BankModel.build(bank).save();
+    await BankRepo.addBank(bank);
     return APIResponse.getAPIResponse(true, null, '013');
   }
 
   async updateBank(id, bank) {
-    const _bank = await this.getBank(id);
-    if(_bank === null) {
+    const _bank = await BankRepo.getBank(id);
+    if(!_bank) {
       return APIResponse.getAPIResponse(false, null, '014');
     }
     _bank.bankName = bank.bankName;
@@ -31,8 +27,8 @@ class Bank {
   }
 
   async deleteBank(id) {
-    const _bank = await this.getBank(id);
-    if(_bank === null) {
+    const _bank = await BankRepo.getBank(id);
+    if(!_bank) {
       return APIResponse.getAPIResponse(false, null, '014');
     }
     await _bank.destroy();

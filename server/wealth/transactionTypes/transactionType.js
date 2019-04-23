@@ -1,35 +1,27 @@
-const TransactionTypeModel = require('./transactionTypeModel');
-const TranasctionModel = require('../transactions/transactionModel');
+const TransactionTypeRepo = require('./transactionTypeRepo');
+const TranasctionRepo = require('../transactions/transactionRepo');
 const APIResponse = require('../../utilities/apiResponse');
 
 class TransactionType {
   async getTransactionTypes() {
-    const transactionTypes = await TransactionTypeModel.findAll({
-      attributes: ['typeId', 'typeName', 'typeCRDR']
-    });
+    const transactionTypes = await TransactionTypeRepo.getTransactionTypes();
     return APIResponse.getAPIResponse(true, transactionTypes);
   }
 
-  async getTransactionType(id) {
-    return await TransactionTypeModel.findByPk(id);
-  }
-
   async addTransactionType(transactionType) {
-    await TransactionTypeModel.build(transactionType).save();
+    await TransactionTypeRepo.addTransactionType(transactionType);
     return APIResponse.getAPIResponse(true, null, '017');
   }
 
   async updateTransactionType(id, transactionType) {
-    const _transactionType = await this.getTransactionType(id);
-    if(_transactionType === null) {
+    const _transactionType = await TransactionTypeRepo.getTransactionType(id);
+    if(!_transactionType) {
       return APIResponse.getAPIResponse(false, null, '018');
     }
     // Check number of transactions used by transaction type
     // if there is a change in typeCRDR field
     if(_transactionType.typeCRDR !== transactionType.typeCRDR) {
-      const count = await TranasctionModel.count({
-        where: {transactionTypeId: _transactionType.typeId}
-      })
+      const count = await TranasctionRepo.getTransactionsCountByTransactionType(_transactionType.typeId);
       if(count > 0) {
         return APIResponse.getAPIResponse(false, null, '019', count);
       }
@@ -41,8 +33,8 @@ class TransactionType {
   }
 
   async deleteTransactionType(id) {
-    const _transactionType = await this.getTransactionType(id);
-    if(_transactionType === null) {
+    const _transactionType = await TransactionTypeRepo.getTransactionType(id);
+    if(!_transactionType) {
       return APIResponse.getAPIResponse(false, null, '018');
     }
     await _transactionType.destroy();

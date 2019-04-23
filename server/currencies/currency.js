@@ -1,8 +1,8 @@
 const CurrencyCodes = require('currency-codes');
 const _ = require('lodash');
 
-const CurrencyModel = require('./currencyModel');
-const AppSettingsModel = require('../appSettings/appSettingsModel');
+const CurrencyRepo = require('./currencyRepo');
+const AppSettingsRepo = require('../appSettings/appSettingsRepo');
 const Common = require('../utilities/common');
 const APIResponse = require('../utilities/apiResponse');
 const currencyConversion = require('./currencyConversion');
@@ -16,14 +16,8 @@ class Currency {
     if(Common.getText(active, '') !== '') {
       whereQuery.currencyActive = active;
     }
-    const currencies = await CurrencyModel.findAll({
-      where: whereQuery
-    });
+    const currencies = await CurrencyRepo.getCurrencies(whereQuery);
     return APIResponse.getAPIResponse(true, currencies);
-  }
-
-  async getCurrencyByCurrencyCode(code) {
-    return await CurrencyModel.findByPk(code);
   }
 
   async getCurrencyInfoFromThirdParty({code}){
@@ -36,16 +30,16 @@ class Currency {
   }
 
   async addCurrency(currency){
-    const _currency = await this.getCurrencyByCurrencyCode(currency.currencyCode);
+    const _currency = await CurrencyRepo.getCurrency(currency.currencyCode);
     if(_currency) {
       return APIResponse.getAPIResponse(false, null, '005');
     }
-    await CurrencyModel.build(currency).save();
+    await CurrencyRepo.addCurrency(currency);
     return APIResponse.getAPIResponse(true, null, '006');
   }
 
   async activateCurrency({code}) {
-    let currency = await this.getCurrencyByCurrencyCode(code);
+    let currency = await CurrencyRepo.getCurrency(code);
     if(!currency) {
       return APIResponse.getAPIResponse(false, null, '007', code);
     }
@@ -55,12 +49,12 @@ class Currency {
   }
 
   async deactivateCurrency({code}) {
-    let currency = await this.getCurrencyByCurrencyCode(code);
+    let currency = await CurrencyRepo.getCurrency(code);
     if(!currency) {
       return APIResponse.getAPIResponse(false, null, '007', code);
     }
     // Get Base Currency
-    const appSettings = await AppSettingsModel.findByPk('APP');
+    const appSettings = await AppSettingsRepo.getAppSettings();
     if(!_.isNil(appSettings.baseCurrency))
     {
       //Check base currency with the passed one
@@ -75,15 +69,13 @@ class Currency {
 
   async updateRates() {
     // Get Base Currency
-    const appSettings = await AppSettingsModel.findByPk('APP');
+    const appSettings = await AppSettingsRepo.getAppSettings();
     if(_.isNil(appSettings.baseCurrency))
     {
       return APIResponse.getAPIResponse(false, null, '011');
     }
     // Get list of active currencies
-    const currencies = await CurrencyModel.findAll(
-      { where: {currencyActive:true} }
-    );
+    const currencies = await CurrencyRepo.getActiveCurrencies();
     // Create promises array to get all rates based on base currency
     let promises = currencies.map( (currency) => {
       return new Promise( (resolve) => {

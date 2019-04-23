@@ -1,14 +1,10 @@
-const AccountModel = require('./accountModel');
+const AccountRepo = require('./accountRepo');
 const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
-const BankModel = require('../banks/bankModel');
-const CurrencyModel = require('../../currencies/CurrencyModel');
 
 class Account {
   async getAccountsForDropDown() {
-    const accounts = await AccountModel.findAll({
-      attributes: ['accountId', 'accountNumber']
-    });
+    const accounts = await AccountRepo.getSimpleAccounts();
     return APIResponse.getAPIResponse(true, accounts);
   }
 
@@ -23,13 +19,7 @@ class Account {
     if(Common.getText(status, '') !== '') {
       whereQuery.accountStatus = status;
     }
-    const accounts = await AccountModel.findAll({
-      include: [
-        { model: BankModel, as: 'bank', attributes: ['bankName'] },
-        { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 'currencyDecimalPlace'] }
-      ],
-      where: whereQuery
-    });
+    const accounts = await AccountRepo.getAccounts(whereQuery);
     return APIResponse.getAPIResponse(true, accounts);
   }
 
@@ -42,17 +32,17 @@ class Account {
     account.accountCurrentBalance = account.accountStartBalance;
     account.accountStatus = 'ACTIVE';
     console.log(account);
-    await AccountModel.build(account).save();
+    await AccountRepo.addAccount(account);
     return APIResponse.getAPIResponse(true, null, '025');
   }
 
   async getAccount(id) {
-    const account = await AccountModel.findByPk(id);
+    const account = await AccountRepo.getAccount(id);
     return APIResponse.getAPIResponse(true, account);
   }
 
   async editAccount(id, account) {
-    const _account = await AccountModel.findByPk(id);
+    const _account = await AccountRepo.getAccount(id);
     if(_account === null) {
       return APIResponse.getAPIResponse(false, null, '026');
     }
@@ -71,7 +61,7 @@ class Account {
   }
 
   async deleteAccount(id)  {
-    const _account = await AccountModel.findByPk(id);
+    const _account = await AccountRepo.getAccount(id);
     if(_account === null) {
       return APIResponse.getAPIResponse(false, null, '026');
     }
