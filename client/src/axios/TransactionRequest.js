@@ -28,6 +28,17 @@ class TransctionRequest {
     });
   }
 
+  static async addInternalTransaction (accountFrom, typeFrom, postingDate, amount, accountTo, typeTo) {
+    return await axios.post('/api/wealth/transactions/internal', {
+      accountFrom,
+      typeFrom,
+      postingDate,
+      amount,
+      accountTo,
+      typeTo
+    });
+  }
+
   static async updateSingleTransaction (id, account, postingDate, amount, crdr, type, narrative) {
     return await axios.put('/api/wealth/transactions/single/'+id, {
       transactionAmount: amount,

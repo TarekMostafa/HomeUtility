@@ -4,6 +4,7 @@ const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const TransactionRepo = require('./transactionRepo');
 const AccountRepo = require('../accounts/accountRepo');
+const RelatedTransactionRepo = require('./relatedTransactionRepo');
 
 const Op = Sequelize.Op;
 
@@ -99,6 +100,56 @@ class Transaction {
     } catch (err) {
       await dbTransaction.rollback();
       return APIResponse.getAPIResponse(false, null, '038');
+    }
+  }
+
+  async addInternalTransaction(internalTransaction) {
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      // Related Transaction
+      let relatedTransaction = {
+        relatedTransactionType: 'IAT',
+        relatedTransactionDesc: ''
+      }
+      relatedTransaction = await RelatedTransactionRepo.addRelatedTransaction(relatedTransaction, dbTransaction);
+      console.log(relatedTransaction);
+      // Debit Side
+      let transactionDR = {
+        transactionAmount: internalTransaction.amount,
+        transactionNarrative: '',
+        transactionPostingDate: internalTransaction.postingDate,
+        transactionCRDR: 'Debit',
+        transactionAccount: internalTransaction.accountFrom,
+        transactionTypeId: internalTransaction.typeFrom,
+        transactionRelatedTransactionId: relatedTransaction.relatedTransactionsId
+      }
+      let result = await this.addTransaction(transactionDR, dbTransaction);
+      if(!result.success){
+        await dbTransaction.rollback();
+        return result;
+      }
+      // Credit Side
+      let transactionCR = {
+        transactionAmount: internalTransaction.amount,
+        transactionNarrative: '',
+        transactionPostingDate: internalTransaction.postingDate,
+        transactionCRDR: 'Credit',
+        transactionAccount: internalTransaction.accountTo,
+        transactionTypeId: internalTransaction.typeTo,
+        transactionRelatedTransactionId: relatedTransaction.relatedTransactionsId
+      }
+      result = await this.addTransaction(transactionCR, dbTransaction);
+      if(result.success) {
+        await dbTransaction.commit();
+      } else {
+        await dbTransaction.rollback();
+      }
+      return result;
+    } catch (err) {
+      console.log(err);
+      await dbTransaction.rollback();
+      return APIResponse.getAPIResponse(false, null, '031');
     }
   }
 

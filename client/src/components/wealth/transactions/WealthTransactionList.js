@@ -9,6 +9,7 @@ import FormContainer from '../../common/FormContainer';
 import AccountsDropDown from '../accounts/AccountsDropDown';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
 import AddSingleTransactionModal from './AddSingleTransactionModal';
+import AddInternalTransactionModal from './AddInternalTransactionModal';
 import EditSingleTransactionModal from './EditSingleTransactionModal';
 import DeleteSingleTransactionModal from './DeleteSingleTransactionModal';
 
@@ -30,6 +31,7 @@ class WealthTransactionList extends Component {
     transactions: [],
     appearMoreButton: true,
     modalAddSingleShow: false,
+    modalAddInternalShow: false,
     modalEditSingleShow: false,
     modalDeleteSingleShow: false,
     transactionId: '',
@@ -67,7 +69,7 @@ class WealthTransactionList extends Component {
               <Button variant="info" size="sm" onClick={this.handleAddSingleTransaction}>Add Single Transaction</Button>
             </ButtonGroup>
             <ButtonGroup className="mr-2" aria-label="Second group">
-              <Button variant="info" size="sm">Add Internal Transaction</Button>
+              <Button variant="info" size="sm" onClick={this.handleAddInternalTransaction}>Add Internal Transaction</Button>
             </ButtonGroup>
           </ButtonToolbar>
         }>
@@ -121,6 +123,8 @@ class WealthTransactionList extends Component {
         </FormContainer>
         <AddSingleTransactionModal show={this.state.modalAddSingleShow} onHide={this.handleHide}
         onSave={this.handleListClick}/>
+        <AddInternalTransactionModal show={this.state.modalAddInternalShow} onHide={this.handleHide}
+        onSave={this.handleListClick}/>
         {
           this.state.modalEditSingleShow &&
           <EditSingleTransactionModal show={this.state.modalEditSingleShow} onHide={this.handleHide}
@@ -173,9 +177,16 @@ class WealthTransactionList extends Component {
     });
   }
 
+  handleAddInternalTransaction = () => {
+    this.setState({
+      modalAddInternalShow: true
+    });
+  }
+
   handleHide = () => {
     this.setState({
       modalAddSingleShow: false,
+      modalAddInternalShow: false,
       modalEditSingleShow: false,
       modalDeleteSingleShow: false
     });

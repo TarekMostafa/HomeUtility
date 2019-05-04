@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button, Spinner, Row, Col } from 'react-bootstrap';
+import { Form, Button, Spinner } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
@@ -11,24 +11,24 @@ import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDo
 import TransactionRequest from '../../../axios/TransactionRequest';
 
 const initialState = {
-  account: '',
+  accountFrom: '',
+  typeFrom: '',
   postingDate: '',
   amount: 0,
-  crdr: '',
-  type: '',
-  narrative: '',
+  accountTo: '',
+  typeTo: '',
   decimalPlaces: 0,
   message: '',
   isLoading: false,
 }
 
-class AddSingleTransactionModal extends Component {
+class AddInternalTransactionModal extends Component {
   state = {
     ...initialState
   }
   render () {
     return (
-      <ModalContainer title="Add Single Transaction" show={this.props.show}
+      <ModalContainer title="Add Internal Transaction" show={this.props.show}
         onHide={this.props.onHide} onShow={this.handleOnShow}
         footer={
           <Button variant="primary" block onClick={this.handleClick}>
@@ -40,11 +40,18 @@ class AddSingleTransactionModal extends Component {
           </Button>
         }>
         <Form>
-          <Form.Group controlId="account">
-            <Form.Label>Account</Form.Label>
-            <Form.Control as="select" name="account" onChange={this.handleAccountChange}>
+          <Form.Group controlId="accountFrom">
+            <Form.Label>Account From</Form.Label>
+            <Form.Control as="select" name="accountFrom" onChange={this.handleAccountChange}>
               <option value=''></option>
               <AccountsDropDown />
+            </Form.Control>
+          </Form.Group>
+          <Form.Group controlId="typeFrom">
+            <Form.Label>Type From</Form.Label>
+            <Form.Control as="select" name="typeFrom" onChange={this.handleChange}>
+              <option value=''></option>
+              <TransactionTypesDropDown typeCRDR="Debit"/>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="postingDate">
@@ -58,30 +65,19 @@ class AddSingleTransactionModal extends Component {
             name="amount" value={Number(this.state.amount).toFixed(this.state.decimalPlaces)}
             onChange={this.handleChange}/>
           </Form.Group>
-          <Form.Group controlId="crdr">
-            <Row>
-              <Col>
-                <Form.Label>Credit/Debit</Form.Label>
-              </Col>
-              <Col>
-                <Form.Check inline type="radio" label="Credit" name="crdr" value="Credit" onChange={this.handleCRDRChange}/>
-              </Col>
-              <Col>
-                <Form.Check inline type="radio" label="Debit" name="crdr"  value="Debit" onChange={this.handleCRDRChange}/>
-              </Col>
-            </Row>
-          </Form.Group>
-          <Form.Group controlId="type">
-            <Form.Label>Type</Form.Label>
-            <Form.Control as="select" name="type" onChange={this.handleChange} value={this.state.type}>
+          <Form.Group controlId="accountTo">
+            <Form.Label>Account To</Form.Label>
+            <Form.Control as="select" name="accountTo" onChange={this.handleChange}>
               <option value=''></option>
-              <TransactionTypesDropDown typeCRDR={this.state.crdr}/>
+              <AccountsDropDown />
             </Form.Control>
           </Form.Group>
-          <Form.Group controlId="narrative">
-            <Form.Label>Narrative</Form.Label>
-            <Form.Control type="input" maxLength={200}
-            name="narrative" value={this.state.narrative} onChange={this.handleChange}/>
+          <Form.Group controlId="typeTo">
+            <Form.Label>Type To</Form.Label>
+            <Form.Control as="select" name="typeTo" onChange={this.handleChange}>
+              <option value=''></option>
+              <TransactionTypesDropDown typeCRDR="Credit"/>
+            </Form.Control>
           </Form.Group>
           <Form.Text className='text-danger'>{this.state.message}</Form.Text>
         </Form>
@@ -92,7 +88,7 @@ class AddSingleTransactionModal extends Component {
   handleAccountChange = (event) => {
     const decimalPlaces = event.target[event.target.selectedIndex].getAttribute('decimalplaces');
     this.setState({
-      account : event.target.value,
+      accountFrom : event.target.value,
       decimalPlaces
     });
   }
@@ -103,19 +99,6 @@ class AddSingleTransactionModal extends Component {
     });
   }
 
-  handleCRDRChange = (event) => {
-    this.setState({
-      [event.target.name] : event.target.value,
-      type: ''
-    });
-  }
-
-  handleOnShow = () => {
-    this.setState({
-      ...initialState
-    })
-  }
-
   handlePostingDateChange = (jsDate, date) => {
     this.setState({
       postingDate: date
@@ -124,8 +107,11 @@ class AddSingleTransactionModal extends Component {
 
   handleClick = () => {
     // Validate Input
-    if(!this.state.account) {
-      this.setState({message: 'Invalid account, should not be empty'});
+    if(!this.state.accountFrom) {
+      this.setState({message: 'Invalid account from, should not be empty'});
+      return;
+    } else if(!this.state.typeFrom) {
+      this.setState({message: 'Invalid type from, should not be empty'});
       return;
     } else if(!this.state.postingDate) {
       this.setState({message: 'Invalid posting date, should not be empty'});
@@ -133,11 +119,11 @@ class AddSingleTransactionModal extends Component {
     } else if(!this.state.amount) {
       this.setState({message: 'Invalid amount, should not be zero'});
       return;
-    } else if(!this.state.crdr) {
-      this.setState({message: 'Invalid crdr, should not be empty'});
+    } else if(!this.state.accountTo) {
+      this.setState({message: 'Invalid account to, should not be empty'});
       return;
-    } else if(!this.state.type) {
-      this.setState({message: 'Invalid type, should not be empty'});
+    } else if(!this.state.typeTo) {
+      this.setState({message: 'Invalid type To, should not be empty'});
       return;
     } else {
       this.setState({
@@ -145,9 +131,9 @@ class AddSingleTransactionModal extends Component {
         isLoading: true,
       });
     }
-    // Add single transaction
-    TransactionRequest.addSingleTransaction(this.state.account, this.state.postingDate,
-    this.state.amount, this.state.crdr, this.state.type, this.state.narrative)
+    // Add internal transaction
+    TransactionRequest.addInternalTransaction(this.state.accountFrom, this.state.typeFrom,
+    this.state.postingDate, this.state.amount, this.state.accountTo, this.state.typeTo)
     .then( (response) => {
       if (typeof this.props.onSave=== 'function') {
         this.props.onSave();
@@ -164,4 +150,4 @@ class AddSingleTransactionModal extends Component {
   }
 }
 
-export default AddSingleTransactionModal;
+export default AddInternalTransactionModal;

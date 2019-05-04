@@ -28,6 +28,18 @@ router.post('/single', function(req, res, next) {
   })
 })
 
+router.post('/internal', function(req, res, next) {
+  transaction.addInternalTransaction(req.body).then( result => {
+    if(result.success) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+})
+
 router.get('/single/:id', function(req, res, next) {
   transaction.getSingleTransaction(req.params.id).then( result => {
     if(result.success) {

@@ -98,7 +98,7 @@ class DeleteSingleTransactionModal extends Component {
             <Form.Control as="select" name="type" readOnly
             value={this.state.type}>
               <option value=''></option>
-              <TransactionTypesDropDown />
+              <TransactionTypesDropDown typeCRDR={this.state.crdr}/>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="narrative">

@@ -18,7 +18,6 @@ const initialState = {
   type: '',
   narrative: '',
   decimalPlaces: 0,
-  typecrdr: '',
   message: '',
   isLoading: false,
 }
@@ -40,8 +39,7 @@ class EditSingleTransactionModal extends Component {
         crdr: transaction.transactionCRDR,
         type: transaction.transactionTypeId,
         narrative: transaction.transactionNarrative,
-        decimalPlaces: transaction.account.currency.currencyDecimalPlace,
-        typecrdr: transaction.transactionType.typeCRDR
+        decimalPlaces: transaction.account.currency.currencyDecimalPlace
       });
     })
     .catch( (err) => {
@@ -90,20 +88,20 @@ class EditSingleTransactionModal extends Component {
               </Col>
               <Col>
                 <Form.Check inline type="radio" label="Credit" value="Credit"
-                name="crdr" onChange={this.handleChange} checked={this.state.crdr==='Credit'}/>
+                name="crdr" onChange={this.handleCRDRChange} checked={this.state.crdr==='Credit'}/>
               </Col>
               <Col>
                 <Form.Check inline type="radio" label="Debit" value="Debit"
-                name="crdr" onChange={this.handleChange} checked={this.state.crdr==='Debit'}/>
+                name="crdr" onChange={this.handleCRDRChange} checked={this.state.crdr==='Debit'}/>
               </Col>
             </Row>
           </Form.Group>
           <Form.Group controlId="type">
             <Form.Label>Type</Form.Label>
-            <Form.Control as="select" name="type" onChange={this.handleTypeChange}
+            <Form.Control as="select" name="type" onChange={this.handleChange}
             value={this.state.type}>
               <option value=''></option>
-              <TransactionTypesDropDown />
+              <TransactionTypesDropDown typeCRDR={this.state.crdr}/>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="narrative">
@@ -125,17 +123,16 @@ class EditSingleTransactionModal extends Component {
     });
   }
 
-  handleTypeChange = (event) => {
-    const typecrdr = event.target[event.target.selectedIndex].getAttribute('crdr');
-    this.setState({
-      type : event.target.value,
-      typecrdr
-    });
-  }
-
   handleChange = (event) => {
     this.setState({
       [event.target.name] : event.target.value
+    });
+  }
+
+  handleCRDRChange = (event) => {
+    this.setState({
+      [event.target.name] : event.target.value,
+      type: ''
     });
   }
 
@@ -167,9 +164,6 @@ class EditSingleTransactionModal extends Component {
       return;
     } else if(!this.state.type) {
       this.setState({message: 'Invalid type, should not be empty'});
-      return;
-    } else if(this.state.typecrdr !== this.state.crdr) {
-      this.setState({message: 'Invalid Credit/Debit as it does not match transaction type Credit/Debit'});
       return;
     } else {
       this.setState({
