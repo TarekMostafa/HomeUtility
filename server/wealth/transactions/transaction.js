@@ -47,6 +47,72 @@ class Transaction {
   }
 
   async addSingleTransaction(transaction) {
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      const result = await this.addTransaction(transaction, dbTransaction);
+      if(result.success) {
+        await dbTransaction.commit();
+      } else {
+        await dbTransaction.rollback();
+      }
+      return result;
+    } catch (err) {
+      await dbTransaction.rollback();
+      return APIResponse.getAPIResponse(false, null, '031');
+    }
+  }
+
+  async getSingleTransaction(id) {
+    const transaction = await TransactionRepo.getTransaction(id);
+    return APIResponse.getAPIResponse(true, transaction);
+  }
+
+  async editSingleTransaction(id, transaction) {
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      let result = await this.editTransaction(id, transaction, dbTransaction);
+      if(result.success) {
+        await dbTransaction.commit();
+      } else {
+        await dbTransaction.rollback();
+      }
+      return result;
+    } catch (err) {
+      await dbTransaction.rollback();
+      return APIResponse.getAPIResponse(false, null, '036');
+    }
+  }
+
+  async deleteSingleTransaction(id) {
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      const result = await this.deleteTransaction(id, dbTransaction);
+      if(result.success) {
+        await dbTransaction.commit();
+      } else {
+        await dbTransaction.rollback();
+      }
+      return result;
+    } catch (err) {
+      await dbTransaction.rollback();
+      return APIResponse.getAPIResponse(false, null, '038');
+    }
+  }
+
+  evalTransactionAmount(amount, type, isRollback) {
+    if( (!isRollback && type === 'Debit') || (isRollback  && type === 'Credit') ) {
+      return amount * -1;
+    } else if ( (isRollback && type === 'Debit') || (!isRollback  && type === 'Credit') ) {
+      return amount * 1;
+    } else {
+      return null;
+    }
+  }
+
+  async addTransaction(transaction, dbTransaction) {
     // Get account related to this transaction
     let account = await AccountRepo.getAccount(transaction.transactionAccount);
     if(!account){
@@ -61,26 +127,39 @@ class Transaction {
     account.accountCurrentBalance = eval(account.accountCurrentBalance) + amount;
     // Update date for field balance last update
     account.accountLastBalanceUpdate = sequelize.fn('NOW');
-    // Save transaction and account
-    let dbTransaction;
-    try{
-      dbTransaction = await sequelize.transaction();
-      await TransactionRepo.addTransaction(transaction, dbTransaction);
-      await account.save({transaction: dbTransaction});
-      await dbTransaction.commit();
-      return APIResponse.getAPIResponse(true, null, '030');
-    } catch (err) {
-      await dbTransaction.rollback();
-      return APIResponse.getAPIResponse(false, null, '031');
+    // Save Transaction
+    await TransactionRepo.addTransaction(transaction, dbTransaction);
+    // Update Account
+    await account.save({transaction: dbTransaction});
+    return APIResponse.getAPIResponse(true, null, '030');
+  }
+
+  async deleteTransaction(id, dbTransaction) {
+    // Get Saved transaction that want to be deleted
+    let _transaction = await TransactionRepo.getTransaction(id);
+    if(!_transaction) {
+      return APIResponse.getAPIResponse(false, null, '034');
     }
+    // Get account related to saved transaction
+    let _account = await AccountRepo.getAccount(_transaction.transactionAccount);
+    if(!_account){
+      return APIResponse.getAPIResponse(false, null, '032');
+    }
+    // Rollback
+    const amount = this.evalTransactionAmount(_transaction.transactionAmount,
+      _transaction.transactionCRDR, true);
+    if(!amount) {
+      return APIResponse.getAPIResponse(false, null, '033');
+    }
+    _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + amount;
+    // Delete Transaction
+    await _transaction.destroy({transaction: dbTransaction});
+    // Update Account
+    await _account.save({transaction: dbTransaction});
+    return APIResponse.getAPIResponse(true, null, '037');
   }
 
-  async getSingleTransaction(id) {
-    const transaction = await TransactionRepo.getTransaction(id);
-    return APIResponse.getAPIResponse(true, transaction);
-  }
-
-  async editSingleTransaction(id, transaction) {
+  async editTransaction(id, transaction, dbTransaction) {
     // Get Saved transaction that want to be updated
     let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
@@ -122,63 +201,12 @@ class Transaction {
     _transaction.transactionCRDR = transaction.transactionCRDR;
     _transaction.transactionAccount = transaction.transactionAccount;
     _transaction.transactionTypeId = transaction.transactionTypeId;
-    // Save transaction and account
-    let dbTransaction;
-    try{
-      dbTransaction = await sequelize.transaction();
-      await _transaction.save({transaction: dbTransaction});
-      await _account.save({transaction: dbTransaction});
-      if(_account.accountId !== account.accountId) {
-        await account.save({transaction: dbTransaction});
-      }
-      await dbTransaction.commit();
-      return APIResponse.getAPIResponse(true, null, '035');
-    } catch (err) {
-      await dbTransaction.rollback();
-      return APIResponse.getAPIResponse(false, null, '036');
+    await _transaction.save({transaction: dbTransaction});
+    await _account.save({transaction: dbTransaction});
+    if(_account.accountId !== account.accountId) {
+      await account.save({transaction: dbTransaction});
     }
-  }
-
-  async deleteSingleTransaction(id) {
-    // Get Saved transaction that want to be deleted
-    let _transaction = await TransactionRepo.getTransaction(id);
-    if(!_transaction) {
-      return APIResponse.getAPIResponse(false, null, '034');
-    }
-    // Get account related to saved transaction
-    let _account = await AccountRepo.getAccount(_transaction.transactionAccount);
-    if(!_account){
-      return APIResponse.getAPIResponse(false, null, '032');
-    }
-    // Rollback
-    const amount = this.evalTransactionAmount(_transaction.transactionAmount,
-      _transaction.transactionCRDR, true);
-    if(!amount) {
-      return APIResponse.getAPIResponse(false, null, '033');
-    }
-    _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + amount;
-    // delete transaction and update account
-    let dbTransaction;
-    try{
-      dbTransaction = await sequelize.transaction();
-      await _transaction.destroy({transaction: dbTransaction});
-      await _account.save({transaction: dbTransaction});
-      await dbTransaction.commit();
-      return APIResponse.getAPIResponse(true, null, '037');
-    } catch (err) {
-      await dbTransaction.rollback();
-      return APIResponse.getAPIResponse(false, null, '038');
-    }
-  }
-
-  evalTransactionAmount(amount, type, isRollback) {
-    if( (!isRollback && type === 'Debit') || (isRollback  && type === 'Credit') ) {
-      return amount * -1;
-    } else if ( (isRollback && type === 'Debit') || (!isRollback  && type === 'Credit') ) {
-      return amount * 1;
-    } else {
-      return null;
-    }
+    return APIResponse.getAPIResponse(true, null, '035');
   }
 
 }
