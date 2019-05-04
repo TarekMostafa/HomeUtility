@@ -1,4 +1,5 @@
 const AccountRepo = require('./accountRepo');
+const AppSettingsRepo = require('../../appSettings/appSettingsRepo');
 const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 
@@ -29,9 +30,13 @@ class Account {
   }
 
   async addNewAccount(account) {
+    const appSettings = await AppSettingsRepo.getAppSettings();
+    if(!appSettings || !appSettings.baseCurrency)
+    {
+      return APIResponse.getAPIResponse(false, null, '039');
+    }
     account.accountCurrentBalance = account.accountStartBalance;
     account.accountStatus = 'ACTIVE';
-    console.log(account);
     await AccountRepo.addAccount(account);
     return APIResponse.getAPIResponse(true, null, '025');
   }

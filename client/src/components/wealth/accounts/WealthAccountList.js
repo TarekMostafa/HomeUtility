@@ -77,7 +77,7 @@ class WealthAccountList extends Component {
           onDeleteAccount={this.handleDeleteAccount}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
-              {this.props.appSettings &&
+              {this.props.appSettings && this.props.appSettings.baseCurrency &&
               <WealthAccountTotalBalance accounts={this.state.accounts}
               baseCurrency={this.props.appSettings.baseCurrency}
               decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>}
