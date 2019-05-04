@@ -1,3 +1,4 @@
+const sequelize = require('../../db/dbConnection').getSequelize();
 const AccountRepo = require('./accountRepo');
 const AppSettingsRepo = require('../../appSettings/appSettingsRepo');
 const Common = require('../../utilities/common');
@@ -51,17 +52,17 @@ class Account {
     if(_account === null) {
       return APIResponse.getAPIResponse(false, null, '026');
     }
-    _account.accountNumber = account.accountNumber;
-    // CurrentBalance = PreviousCurrentBalance - PreviousStartBalance + StartBalance
-    _account.accountCurrentBalance = _account.accountCurrentBalance -
-            _account.accountStartBalance + eval(account.accountStartBalance);
-    _account.accountStartBalance = account.accountStartBalance;
     // Don't close account with current balance
     if(account.accountStatus === 'CLOSED'  && _account.accountCurrentBalance !== 0) {
       return APIResponse.getAPIResponse(false, null, '029');
     }
-    _account.accountStatus = account.accountStatus;
-    await _account.save();
+    await _account.update({
+      accountNumber: account.accountNumber,
+      accountStartBalance: account.accountStartBalance,
+      accountStatus: account.accountStatus,
+      accountCurrentBalance: sequelize.literal('accountCurrentBalance-'+ _account.accountStartBalance+'+'
+        +account.accountStartBalance)
+    });
     return APIResponse.getAPIResponse(true, null, '027');
   }
 

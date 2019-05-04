@@ -175,13 +175,13 @@ class Transaction {
     if(!amount) {
       return APIResponse.getAPIResponse(false, null, '033');
     }
-    account.accountCurrentBalance = eval(account.accountCurrentBalance) + amount;
-    // Update date for field balance last update
-    account.accountLastBalanceUpdate = sequelize.fn('NOW');
     // Save Transaction
     await TransactionRepo.addTransaction(transaction, dbTransaction);
-    // Update Account
-    await account.save({transaction: dbTransaction});
+    // Update Account Current Balance & Last Balance Update
+    await account.update(
+      {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amount),
+      accountLastBalanceUpdate: sequelize.fn('NOW')},
+      {transaction: dbTransaction});
     return APIResponse.getAPIResponse(true, null, '030');
   }
 
@@ -202,11 +202,12 @@ class Transaction {
     if(!amount) {
       return APIResponse.getAPIResponse(false, null, '033');
     }
-    _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + amount;
     // Delete Transaction
     await _transaction.destroy({transaction: dbTransaction});
     // Update Account
-    await _account.save({transaction: dbTransaction});
+    await _account.update(
+      {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amount)},
+      {transaction: dbTransaction});
     return APIResponse.getAPIResponse(true, null, '037');
   }
 
@@ -222,28 +223,21 @@ class Transaction {
       return APIResponse.getAPIResponse(false, null, '032');
     }
     // Rollback
-    let amount = this.evalTransactionAmount(_transaction.transactionAmount,
+    let amountRollback = this.evalTransactionAmount(_transaction.transactionAmount,
       _transaction.transactionCRDR, true);
-    if(!amount) {
+    if(!amountRollback) {
       return APIResponse.getAPIResponse(false, null, '033');
     }
-    _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + amount;
     // Get account related to passed transaction
     let account = await AccountRepo.getAccount(transaction.transactionAccount);
     if(!account){
       return APIResponse.getAPIResponse(false, null, '032');
     }
     //Increase/Decrease account balance depending on transaction CRDR field
-    amount = this.evalTransactionAmount(transaction.transactionAmount,
+    let amount = this.evalTransactionAmount(transaction.transactionAmount,
       transaction.transactionCRDR, false);
     if(!amount) {
       return APIResponse.getAPIResponse(false, null, '033');
-    }
-    //Compare if there is any change in the account
-    if(_account.accountId === account.accountId) {
-      _account.accountCurrentBalance = eval(_account.accountCurrentBalance) + amount;
-    } else {
-      account.accountCurrentBalance = eval(account.accountCurrentBalance) + amount
     }
     // update transaction
     _transaction.transactionAmount = transaction.transactionAmount;
@@ -253,13 +247,20 @@ class Transaction {
     _transaction.transactionAccount = transaction.transactionAccount;
     _transaction.transactionTypeId = transaction.transactionTypeId;
     await _transaction.save({transaction: dbTransaction});
-    await _account.save({transaction: dbTransaction});
     if(_account.accountId !== account.accountId) {
-      await account.save({transaction: dbTransaction});
+      await _account.update(
+        {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amountRollback)},
+        {transaction: dbTransaction});
+      await account.update(
+        {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amount)},
+        {transaction: dbTransaction});
+    } else {
+      await _account.update(
+        {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amountRollback+'+'+amount)},
+        {transaction: dbTransaction});
     }
     return APIResponse.getAPIResponse(true, null, '035');
   }
-
 }
 
 module.exports = Transaction;
