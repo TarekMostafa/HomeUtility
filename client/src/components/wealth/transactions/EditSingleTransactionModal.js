@@ -41,6 +41,7 @@ class EditSingleTransactionModal extends Component {
         type: transaction.transactionTypeId,
         narrative: transaction.transactionNarrative,
         decimalPlaces: transaction.account.currency.currencyDecimalPlace,
+        typecrdr: transaction.transactionType.typeCRDR
       });
     })
     .catch( (err) => {

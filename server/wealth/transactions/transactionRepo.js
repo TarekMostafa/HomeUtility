@@ -30,7 +30,8 @@ class TransactionRepo {
           include: [
             { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] }
           ]
-        }
+        },
+        { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeCRDR'] }
       ]
     });
   }
