@@ -37,5 +37,7 @@ module.exports = {
   '036' : 'Failed to update this transaction',
   '037' : 'This transaction has been successfully deleted',
   '038' : 'Failed to delete this transaction',
-  '039' : 'Invalid base currency in the application settings'
+  '039' : 'Invalid base currency in the application settings',
+  '040' : 'Account From must not be equal to Account To',
+  '041' : 'Account From currency must be equal to Account To Currency',
 }

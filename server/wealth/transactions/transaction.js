@@ -104,6 +104,24 @@ class Transaction {
   }
 
   async addInternalTransaction(internalTransaction) {
+    // Validation
+    // Account From must not be equal to Account To
+    if(internalTransaction.accountFrom === internalTransaction.accountTo) {
+      return APIResponse.getAPIResponse(false, null, '040');
+    }
+    // Account From Currency must be equal to Account To Currency
+    let accountFrom = await AccountRepo.getAccount(internalTransaction.accountFrom);
+    if(!accountFrom){
+      return APIResponse.getAPIResponse(false, null, '032');
+    }
+    let accountTo = await AccountRepo.getAccount(internalTransaction.accountTo);
+    if(!accountTo){
+      return APIResponse.getAPIResponse(false, null, '032');
+    }
+    if(accountFrom.accountCurrency !== accountTo.accountCurrency) {
+      return APIResponse.getAPIResponse(false, null, '041');
+    }
+    // Begin Transaction
     let dbTransaction;
     try{
       dbTransaction = await sequelize.transaction();
@@ -113,7 +131,6 @@ class Transaction {
         relatedTransactionDesc: ''
       }
       relatedTransaction = await RelatedTransactionRepo.addRelatedTransaction(relatedTransaction, dbTransaction);
-      console.log(relatedTransaction);
       // Debit Side
       let transactionDR = {
         transactionAmount: internalTransaction.amount,
@@ -147,7 +164,6 @@ class Transaction {
       }
       return result;
     } catch (err) {
-      console.log(err);
       await dbTransaction.rollback();
       return APIResponse.getAPIResponse(false, null, '031');
     }
@@ -178,10 +194,7 @@ class Transaction {
     // Save Transaction
     await TransactionRepo.addTransaction(transaction, dbTransaction);
     // Update Account Current Balance & Last Balance Update
-    await account.update(
-      {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amount),
-      accountLastBalanceUpdate: sequelize.fn('NOW')},
-      {transaction: dbTransaction});
+    await this.accountCurrentBalanceUpdate(account, amount, dbTransaction);
     return APIResponse.getAPIResponse(true, null, '030');
   }
 
@@ -205,9 +218,7 @@ class Transaction {
     // Delete Transaction
     await _transaction.destroy({transaction: dbTransaction});
     // Update Account
-    await _account.update(
-      {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amount)},
-      {transaction: dbTransaction});
+    await this.accountCurrentBalanceUpdate(_account, amount, dbTransaction);
     return APIResponse.getAPIResponse(true, null, '037');
   }
 
@@ -248,18 +259,19 @@ class Transaction {
     _transaction.transactionTypeId = transaction.transactionTypeId;
     await _transaction.save({transaction: dbTransaction});
     if(_account.accountId !== account.accountId) {
-      await _account.update(
-        {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amountRollback)},
-        {transaction: dbTransaction});
-      await account.update(
-        {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amount)},
-        {transaction: dbTransaction});
+      await this.accountCurrentBalanceUpdate(_account, amountRollback, dbTransaction);
+      await this.accountCurrentBalanceUpdate(account, amount, dbTransaction);
     } else {
-      await _account.update(
-        {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amountRollback+'+'+amount)},
-        {transaction: dbTransaction});
+      await this.accountCurrentBalanceUpdate(_account, amountRollback+amount, dbTransaction);
     }
     return APIResponse.getAPIResponse(true, null, '035');
+  }
+
+  async accountCurrentBalanceUpdate(account, amount, dbTransaction) {
+    await account.update(
+      {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amount),
+      accountLastBalanceUpdate: sequelize.fn('NOW')},
+      {transaction: dbTransaction});
   }
 }
 
