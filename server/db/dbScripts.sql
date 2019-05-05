@@ -36,7 +36,7 @@ CREATE TABLE `accounts` (
   CONSTRAINT `accountBank_fk` FOREIGN KEY (`accountBankCode`) REFERENCES `banks` (`bankCode`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `accountCurrency_fk` FOREIGN KEY (`accountCurrency`) REFERENCES `currencies` (`currencyCode`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `accountUser_fk` FOREIGN KEY (`accountUser`) REFERENCES `users` (`userId`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +134,7 @@ CREATE TABLE `relatedtransactions` (
   `relatedTransactionType` varchar(3) NOT NULL,
   `relatedTransactionDesc` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`relatedTransactionsId`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,7 +169,7 @@ CREATE TABLE `transactions` (
   CONSTRAINT `transactionAccountfk` FOREIGN KEY (`transactionAccount`) REFERENCES `accounts` (`accountId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `transactionRelatedTransactionfk` FOREIGN KEY (`transactionRelatedTransactionId`) REFERENCES `relatedtransactions` (`relatedTransactionsId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `transactiontypefk` FOREIGN KEY (`transactionTypeId`) REFERENCES `transactiontypes` (`typeId`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2136 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -193,7 +193,7 @@ CREATE TABLE `transactiontypes` (
   `typeName` varchar(45) NOT NULL,
   `typeCRDR` enum('Credit','Debit') NOT NULL,
   PRIMARY KEY (`typeId`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,7 +220,7 @@ CREATE TABLE `users` (
   `userAttempt` int(11) NOT NULL,
   PRIMARY KEY (`userId`),
   UNIQUE KEY `userName_UNIQUE` (`userName`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
