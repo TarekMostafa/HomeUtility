@@ -10,6 +10,7 @@ const bankRouter = require('./server/wealth/banks/bankRouter');
 const currencyRouter = require('./server/currencies/currencyRouter');
 const appSettingsRouter = require('./server/appSettings/appSettingsRouter');
 const userRouter = require('./server/auth/userRouter');
+const reportRouter = require('./server/wealth/transactionReports/reportRouter');
 //Constant Variables
 const port = 5000;
 //Start Express Application
@@ -26,6 +27,7 @@ app.use('/api/wealth/banks', bankRouter);
 app.use('/api/currencies', currencyRouter);
 app.use('/api/appsettings', appSettingsRouter);
 app.use('/api/users', userRouter);
+app.use('/api/wealth/reports', reportRouter);
 //Middleware for Errors
 app.use(function(err, req, res, next){
   console.error(err);

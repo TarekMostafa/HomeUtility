@@ -5,6 +5,7 @@ const APIResponse = require('../../utilities/apiResponse');
 const TransactionRepo = require('./transactionRepo');
 const AccountRepo = require('../accounts/accountRepo');
 const RelatedTransactionRepo = require('./relatedTransactionRepo');
+const ReportRepo = require('../transactionReports/reportRepo');
 
 const Op = Sequelize.Op;
 
@@ -45,6 +46,54 @@ class Transaction {
 
     const transactions = await TransactionRepo.getTransactions(_skip, _limit, whereQuery);
     return APIResponse.getAPIResponse(true, transactions);
+  }
+
+  async getTotalTransactionsByType({reportId, postingDateFrom, postingDateTo}) {
+    // Construct Where Condition
+    let whereQuery = {};
+    // Check Posting Date from and Posting Date To
+    const _dateFrom = Common.getDate(postingDateFrom, '', false);
+    const _dateTo = Common.getDate(postingDateTo, '', true);
+    if( _dateFrom === '' || _dateTo === '') {
+      return APIResponse.getAPIResponse(false, null, '043');
+    }
+    // Get Report Information
+    const report = await ReportRepo.getReport(reportId);
+    if(!report) {
+      return APIResponse.getAPIResponse(false, null, '044');
+    }
+    const reportdetails = report.reportdetails;
+    // Format Result
+    const result = [];
+    let from = null;
+    let to = null;
+    do {
+      if(from) {
+        from = new Date(from.getFullYear(), from.getMonth()+1, 1);
+      } else {
+        from = new Date(_dateFrom);
+      }
+      to = new Date(from.getFullYear(), from.getMonth()+1, 0);
+      if(to > new Date(_dateTo)){
+        to = new Date(_dateTo);
+      }
+      whereQuery.transactionPostingDate = { [Op.between] : [from.setHours(0,0,0,0), to.setHours(24,0,0,0)] };
+      let resultDetails = {};
+      resultDetails.fromDate = from;
+      resultDetails.toDate = to;
+      resultDetails.monthlyStatistics = [];
+      for(let counter = 0; counter < reportdetails.length; counter++) {
+        whereQuery.transactionTypeId = { [Op.in] : reportdetails[counter].detailTypes.split(',') };
+        const details = await TransactionRepo.getTotalTransactionsGroupByType(whereQuery);
+        resultDetails.monthlyStatistics.push({
+          detailName: reportdetails[counter].detailName,
+          details
+        });
+      }
+      result.push(resultDetails);
+    } while(to < new Date(_dateTo))
+
+    return APIResponse.getAPIResponse(true, result);
   }
 
   async addSingleTransaction(transaction) {

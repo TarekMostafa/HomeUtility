@@ -53,7 +53,7 @@ class Account {
       return APIResponse.getAPIResponse(false, null, '026');
     }
     // Don't close account with current balance
-    if(account.accountStatus === 'CLOSED'  && _account.accountCurrentBalance !== 0) {
+    if(account.accountStatus === 'CLOSED'  && _account.accountCurrentBalance != 0) {
       return APIResponse.getAPIResponse(false, null, '029');
     }
     await _account.update({

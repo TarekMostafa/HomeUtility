@@ -17,6 +17,17 @@ class TransctionRequest {
     return response.data;
   }
 
+  static async getMonthlyStatistics (postingDateFrom, postingDateTo, reportId) {
+    const response = await axios.get('/api/wealth/transactions/monthlystatistics', {
+      params: {
+        postingDateFrom,
+        postingDateTo,
+        reportId
+      }
+    });
+    return response.data;
+  }
+
   static async addSingleTransaction (account, postingDate, amount, crdr, type, narrative) {
     return await axios.post('/api/wealth/transactions/single', {
       transactionAmount: amount,

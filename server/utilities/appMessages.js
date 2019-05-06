@@ -41,4 +41,6 @@ module.exports = {
   '040' : 'Account From must not be equal to Account To',
   '041' : 'Account From currency must be equal to Account To Currency',
   '042' : 'User name has been successfully changed',
+  '043' : 'Posting Date from and Posting Date to must be correct dates',
+  '044' : 'Invalid Report Id',
 }

@@ -16,6 +16,18 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/monthlystatistics', function(req, res, next) {
+  transaction.getTotalTransactionsByType(req.query).then( result => {
+    if(result.success) {
+      res.json(result.payload);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+});
+
 router.post('/single', function(req, res, next) {
   transaction.addSingleTransaction(req.body).then( result => {
     if(result.success) {

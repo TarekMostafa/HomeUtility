@@ -11,6 +11,9 @@ function ModulesNavDropDown(props) {
       <LinkContainer to="/accountstransactions">
         <NavDropdown.Item>Accounts Transactions</NavDropdown.Item>
       </LinkContainer>
+      <LinkContainer to="/statistics">
+        <NavDropdown.Item>Statistics</NavDropdown.Item>
+      </LinkContainer>
     </NavDropdown>
   )
 }

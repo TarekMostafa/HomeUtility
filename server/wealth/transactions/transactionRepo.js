@@ -1,3 +1,4 @@
+const sequelize = require('../../db/dbConnection').getSequelize();
 const TransactionModel = require('./transactionModel');
 const AccountModel = require('../accounts/accountModel');
 const CurrencyModel = require('../../currencies/currencyModel');
@@ -42,6 +43,23 @@ class TransactionRepo {
   static async getTransactionsCountByTransactionType(typeId) {
     return await TransactionModel.count({
       where: {transactionTypeId: typeId}
+    });
+  }
+
+  static async getTotalTransactionsGroupByType(whereQuery) {
+    return await TransactionModel.findAll({
+      attributes: [
+        [sequelize.fn('sum', sequelize.literal('Round(transactionAmount*currencyRateAgainstBase,3)')), "total"]],
+      include: [
+        { model: AccountModel, as: 'account', attributes: [],
+          include: [
+            { model: CurrencyModel, as: 'currency', attributes: [] }
+          ]
+        },
+        { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeName'] }
+      ],
+      group: ['transactionType.typeName'],
+      where: whereQuery,
     });
   }
 }
