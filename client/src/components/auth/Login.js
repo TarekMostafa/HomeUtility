@@ -16,6 +16,9 @@ class Login extends Component {
         {
           this.props.user?
           <NavDropdown title={this.props.user.userName} id="basic-nav-dropdown">
+            <LinkContainer to="/changeusername">
+              <NavDropdown.Item >Change User Name</NavDropdown.Item>
+            </LinkContainer>
             <LinkContainer to="/changepassword">
               <NavDropdown.Item >Change Password</NavDropdown.Item>
             </LinkContainer>

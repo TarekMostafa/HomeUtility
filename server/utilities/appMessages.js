@@ -40,4 +40,5 @@ module.exports = {
   '039' : 'Invalid base currency in the application settings',
   '040' : 'Account From must not be equal to Account To',
   '041' : 'Account From currency must be equal to Account To Currency',
+  '042' : 'User name has been successfully changed',
 }

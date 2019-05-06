@@ -4,39 +4,32 @@ import { connect } from 'react-redux';
 
 import FormContainer from '../common/FormContainer';
 import UserRequest from '../../axios/UserRequest';
+import { setUser } from '../../store/actions/authActions';
 
 const initialState = {
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: '',
+  userName: '',
   isLoading: false,
   messageClass: '',
   message: '',
 }
 
-class ChangePassword extends Component {
+class ChangeUserName extends Component {
   state = {
     ...initialState
   }
+
+  constructor(props) {
+    super(props);
+    this.state.userName = props.user.userName;
+  }
+
   render() {
     return (
-      <FormContainer title="Change Password">
-        <Form.Group controlId="formBasicCurrentPassword">
-          <Form.Label>Current Password</Form.Label>
-          <Form.Control type="password"
-          name="currentPassword" value={this.state.currentPassword}
-          onChange={this.handleChange}/>
-        </Form.Group>
-        <Form.Group controlId="formBasicNewPassword">
-          <Form.Label>New Password</Form.Label>
-          <Form.Control type="password"
-          name="newPassword" value={this.state.newPassword}
-          onChange={this.handleChange}/>
-        </Form.Group>
-        <Form.Group controlId="formBasicConfirmPassword">
-          <Form.Label>Confirm Password</Form.Label>
-          <Form.Control type="password"
-          name="confirmPassword" value={this.state.confirmPassword}
+      <FormContainer title="Change User Name">
+        <Form.Group controlId="formBasicUserName">
+          <Form.Label>User Name</Form.Label>
+          <Form.Control type="input"
+          name="userName" value={this.state.userName}
           onChange={this.handleChange}/>
         </Form.Group>
         <Form.Text className={this.state.messageClass}>{this.state.message}</Form.Text>
@@ -52,22 +45,24 @@ class ChangePassword extends Component {
   }//end for render
 
   handleClick = () => {
-    if(this.state.newPassword !== this.state.confirmPassword) {
+    if(!this.state.userName) {
       this.setState({
         messageClass: 'text-danger',
-        message: 'Confirm password must be equal to New password',
+        message: 'Invalid user name, must not be empty',
       });
       return;
     }
     this.setState({isLoading: true});
-    UserRequest.changePassword(this.props.user.userId, this.state.currentPassword,
-    this.state.newPassword)
+    UserRequest.changeUserName(this.props.user.userId, this.state.userName)
     .then( (result) => {
       this.setState({
         message: result.data,
         messageClass: 'text-success',
         isLoading: false
       });
+      let _user = {...this.props.user};
+      _user.userName = this.state.userName;
+      this.props.setUser(_user);
     })
     .catch( err => {
       this.setState({
@@ -91,4 +86,12 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(ChangePassword);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setUser: (user) => {
+      dispatch(setUser(user));
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChangeUserName);

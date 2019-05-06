@@ -12,6 +12,12 @@ class UserRequest {
       userId, oldPassword, newPassword
     });
   }
+
+  static async changeUserName(userId, userName) {
+    return await axios.post('/api/users/changeusername', {
+      userId, userName
+    });
+  }
 }
 
 export default UserRequest;

@@ -48,6 +48,17 @@ class User {
     await user.save();
     return APIResponse.getAPIResponse(true, null, '024');
   }
+
+  async changeUserName({userId, userName}){
+    // Check user in the database
+    const user = await UserRepo.getUser(userId);
+    if(!user) {
+      return APIResponse.getAPIResponse(false, null, '003');
+    }
+    user.userName = userName;
+    await user.save();
+    return APIResponse.getAPIResponse(true, null, '042');
+  }
 }
 
 module.exports = User;

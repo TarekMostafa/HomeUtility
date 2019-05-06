@@ -28,4 +28,16 @@ router.post('/changepassword', function(req, res, next){
   })
 })
 
+router.post('/changeusername', function(req, res, next){
+  user.changeUserName(req.body).then( result => {
+    if(result.success) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+})
+
 module.exports = router;
