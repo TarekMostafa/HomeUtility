@@ -147,6 +147,57 @@ LOCK TABLES `relatedtransactions` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `reportdetails`
+--
+
+DROP TABLE IF EXISTS `reportdetails`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `reportdetails` (
+  `detailId` int(11) NOT NULL AUTO_INCREMENT,
+  `detailReportId` int(11) NOT NULL,
+  `detailName` varchar(45) NOT NULL,
+  `detailTypes` varchar(200) NOT NULL,
+  PRIMARY KEY (`detailId`),
+  KEY `reportDetails_fk_idx` (`detailReportId`),
+  CONSTRAINT `reportDetails_fk` FOREIGN KEY (`detailReportId`) REFERENCES `reports` (`reportId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reportdetails`
+--
+
+LOCK TABLES `reportdetails` WRITE;
+/*!40000 ALTER TABLE `reportdetails` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reportdetails` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reports`
+--
+
+DROP TABLE IF EXISTS `reports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `reports` (
+  `reportId` int(11) NOT NULL AUTO_INCREMENT,
+  `reportName` varchar(45) NOT NULL,
+  `reportActive` enum('YES','NO') NOT NULL,
+  PRIMARY KEY (`reportId`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reports`
+--
+
+LOCK TABLES `reports` WRITE;
+/*!40000 ALTER TABLE `reports` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reports` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `transactions`
 --
 
