@@ -21,7 +21,7 @@ class Common {
     if(!_.isNil(value)) {
       const parsedDate = Date.parse(value);
       return _.isNaN(parsedDate) ? defaultValue :
-        (next? new Date(parsedDate).setHours(24,0,0,0) : new Date(parsedDate).setHours(0,0,0,0));
+        (next? new Date(parsedDate).setHours(23,59,59) : new Date(parsedDate).setHours(0,0,0));
     } else {
       return defaultValue;
     }

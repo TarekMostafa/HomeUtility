@@ -30,7 +30,7 @@ class MonthlyStatistics extends Component {
     this.state.postingDateTo = new Date(new Date().toString().split('GMT')[0]+' UTC').toISOString();
     let fromDate = new Date();
     fromDate.setMonth(fromDate.getMonth() - 2);
-    fromDate.setDate(1);
+    fromDate.setDate(0);
     this.state.postingDateFrom = new Date(fromDate.toString().split('GMT')[0]+' UTC').toISOString();
   }
 
@@ -89,7 +89,7 @@ class MonthlyStatistics extends Component {
           {
             this.state.stat.map( (data, index) => {
               return (
-                <Col key={index} style={{ marginTop: 10}}>
+                <Col key={index} style={{ marginTop: 10}} xs={4}>
                   <MonthlyDetails data={data} decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>
                 </Col>
               )

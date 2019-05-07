@@ -60,6 +60,7 @@ class MonthlyDetails extends Component {
               <strong>Total</strong>
             </Col>
             <Col>
+              {amountFormatter(getTotalMonthlyStatistics(this.props.data.monthlyStatistics), this.props.decimalPlace)}
             </Col>
           </Row>
         </Card.Footer>
@@ -85,7 +86,9 @@ function getTotalMonthlyStatistics (monthlyStatistics) {
   const details = monthlyStatistics.map( (ms) => {
     return getTotalItems(ms.details);
   });
-  console.log(details);
+  return details.reduce( (prv, total) => {
+    return Math.round((prv + total)*100) / 100;
+  }, 0)
 }
 
 MonthlyDetails.propTypes = {
