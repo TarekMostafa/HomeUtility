@@ -6,8 +6,8 @@ import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthAccountTotalBalance (props) {
   return (
-    <Card className="text-center" bg="primary" text="white" style={{ width: '18rem' }}>
-      <Card.Header>Total Current Balance</Card.Header>
+    <Card className="text-center" border="primary" style={{ width: '18rem' }}>
+      <Card.Header><strong>Total Current Balance</strong></Card.Header>
       <Card.Body>
         <Card.Text>
           {
