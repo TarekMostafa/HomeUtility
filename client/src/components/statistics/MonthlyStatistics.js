@@ -25,6 +25,15 @@ class MonthlyStatistics extends Component {
     ...initialState,
   }
 
+  constructor(props) {
+    super(props);
+    this.state.postingDateTo = new Date(new Date().toString().split('GMT')[0]+' UTC').toISOString();
+    let fromDate = new Date();
+    fromDate.setMonth(fromDate.getMonth() - 2);
+    fromDate.setDate(1);
+    this.state.postingDateFrom = new Date(fromDate.toString().split('GMT')[0]+' UTC').toISOString();
+  }
+
   componentDidMount() {
     ReportRequest.getReportsForDropDown()
     .then( (reports) => {
@@ -80,8 +89,8 @@ class MonthlyStatistics extends Component {
           {
             this.state.stat.map( (data, index) => {
               return (
-                <Col>
-                  <MonthlyDetails key={index} data={data} />
+                <Col key={index} style={{ marginTop: 10}}>
+                  <MonthlyDetails data={data} decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>
                 </Col>
               )
             })

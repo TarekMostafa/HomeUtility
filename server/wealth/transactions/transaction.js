@@ -77,7 +77,7 @@ class Transaction {
       if(to > new Date(_dateTo)){
         to = new Date(_dateTo);
       }
-      whereQuery.transactionPostingDate = { [Op.between] : [from.setHours(0,0,0,0), to.setHours(24,0,0,0)] };
+      whereQuery.transactionPostingDate = { [Op.between] : [from.setHours(0,0,0,0), to.setHours(23,59,59,99)] };
       let resultDetails = {};
       resultDetails.fromDate = from;
       resultDetails.toDate = to;

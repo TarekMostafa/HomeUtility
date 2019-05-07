@@ -1,42 +1,99 @@
-import React from 'react';
-import { Card, ListGroup, Badge } from 'react-bootstrap';
+import React, { Component } from 'react';
+import { Card, Row, Col, Button, Collapse } from 'react-bootstrap';
+import moment from 'moment';
+import PropTypes from 'prop-types';
 
-function MonthlyDetails (props) {
-  return (
-    <Card style={{ width: '18rem' }}>
-      <Card.Header>
-        {new Date(props.data.toDate).toLocaleString('en-us', { month: 'long' })}
-        { new Date(props.data.toDate).getFullYear()}
-      </Card.Header>
-      <Card.Body>
-        <Card.Text>
-          <ListGroup>
+import amountFormatter from '../../utilities/amountFormatter';
+
+class MonthlyDetails extends Component {
+  state = {
+    open: false,
+  }
+  render() {
+    return (
+      <Card border="primary" style={{ width: '26rem' }}>
+        <Card.Header>
+          <Button variant="link" onClick={() => this.setState({ open: !this.state.open })}>
+            {moment(this.props.data.fromDate).format('DD-MMM-YYYY')} To {moment(this.props.data.toDate).format('DD-MMM-YYYY')}
+          </Button>
+        </Card.Header>
+        <Collapse in={this.state.open}>
+        <Card.Body>
           {
-            props.data.monthlyStatistics && props.data.monthlyStatistics.map( (details, index) => {
+            this.props.data.monthlyStatistics && this.props.data.monthlyStatistics.map( (ms, index, arr) => {
               return (
-                <ListGroup.Item key={index}>
-                  {details.detailName}
-                  <ListGroup>
+                <React.Fragment key={'ms'+index}>
+                  <Row>
+                    <Col><strong>{ms.detailName}</strong></Col>
+                    <Col>
                     {
-                      details.details && details.details.map( (detail, index) => {
+                      amountFormatter(Math.abs(getTotalItems(ms.details)), this.props.decimalPlace)
+                    }
+                    </Col>
+                  </Row>
+                    {
+                      ms.details && ms.details.map( (detail, index) => {
                         return (
-                          <ListGroup.Item key={index}>
-                            {detail.transactionType.typeName}
-                            <Badge variant="secondary">{detail.total}</Badge>
-                          </ListGroup.Item>
+                          <Row key={'dt'+index}>
+                            <Col>
+                              {detail.transactionType.typeName}
+                            </Col>
+                            <Col>
+                              {amountFormatter(Math.abs(detail.total), this.props.decimalPlace)}
+                            </Col>
+                          </Row>
                         )
                       })
                     }
-                  </ListGroup>
-                </ListGroup.Item>
+                    {
+                      index !== (arr.length-1) && <hr />
+                    }
+                </React.Fragment>
               )
             })
           }
-          </ListGroup>
-        </Card.Text>
-      </Card.Body>
-    </Card>
-  )
+        </Card.Body>
+        </Collapse>
+        <Card.Footer className="text-muted">
+          <Row>
+            <Col>
+              <strong>Total</strong>
+            </Col>
+            <Col>
+            </Col>
+          </Row>
+        </Card.Footer>
+      </Card>
+    )
+  }
+}
+
+function getTotalItems (details) {
+  if(!details) {
+    return 0;
+  }
+  return details.reduce( (prv, detail) => {
+    return prv + parseFloat(detail.total);
+  }, 0)
+}
+
+function getTotalMonthlyStatistics (monthlyStatistics) {
+  if(!monthlyStatistics) {
+    return 0;
+  }
+
+  const details = monthlyStatistics.map( (ms) => {
+    return getTotalItems(ms.details);
+  });
+  console.log(details);
+}
+
+MonthlyDetails.propTypes = {
+  decimalPlace: PropTypes.number,
+};
+
+MonthlyDetails.defaultProps = {
+  decimalPlace: 2,
 }
 
 export default MonthlyDetails;

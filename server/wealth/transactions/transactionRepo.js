@@ -49,7 +49,8 @@ class TransactionRepo {
   static async getTotalTransactionsGroupByType(whereQuery) {
     return await TransactionModel.findAll({
       attributes: [
-        [sequelize.fn('sum', sequelize.literal('Round(transactionAmount*currencyRateAgainstBase,3)')), "total"]],
+        [sequelize.fn('sum', sequelize.literal(
+          'Round(transactionAmount*currencyRateAgainstBase*(case when transactionCRDR = \'Credit\' then 1 else -1 end),3)')), "total"]],
       include: [
         { model: AccountModel, as: 'account', attributes: [],
           include: [
