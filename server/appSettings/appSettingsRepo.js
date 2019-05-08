@@ -1,7 +1,8 @@
 const AppSettingsModel = require('./appSettingsModel');
 const CurrencyModel = require('../currencies/CurrencyModel');
+const Config = require('../config');
 
-const APP_SETTING_KEY = 'APP';
+const APP_SETTING_KEY = Config.appSettingKey;
 
 class AppSettingsRepo {
   static async getAppSettings() {

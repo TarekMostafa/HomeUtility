@@ -3,6 +3,7 @@ import { Form, Row, Col, Button, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import FormContainer from '../common/FormContainer';
+import DBBackup from './DBBackup';
 import CurrenciesDropDown from '../currencies/CurrenciesDropDown';
 import AppSettingsRequest from '../../axios/AppSettingsRequest';
 import CurrencyRequest from '../../axios/CurrencyRequest';
@@ -94,6 +95,7 @@ class AppSettings extends Component {
             </Row>
           </Form>
         </FormContainer>
+        <DBBackup />
       </React.Fragment>
     )
   }//end of render

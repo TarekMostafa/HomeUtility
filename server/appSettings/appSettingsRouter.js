@@ -1,5 +1,4 @@
 const express = require('express');
-const _ = require('lodash');
 const AppSettings = require('./appSettings');
 
 const router = express.Router();
@@ -20,7 +19,6 @@ router.get('/', function(req, res, next) {
 router.put('/', function(req, res, next){
   appSettings.updateAppSettings(req.body).then( result => {
     if(result.success) {
-      //res.status(200).send(result.message);
       req.url = '/api/currencies/updaterates';
       req.method = 'PUT';
       req.app.handle(req, res);

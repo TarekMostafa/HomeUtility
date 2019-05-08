@@ -269,6 +269,7 @@ CREATE TABLE `users` (
   `userPassword` varchar(64) NOT NULL,
   `userActive` bit(1) NOT NULL,
   `userAttempt` int(11) NOT NULL,
+  `userToken` varchar(36) DEFAULT NULL,
   PRIMARY KEY (`userId`),
   UNIQUE KEY `userName_UNIQUE` (`userName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -280,7 +281,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-insert into users values (1, 'admin', '47729eaf9053e25ab469e4c2bf8961147e2939dc6f789bacdfda81d5df44d5e6', 1, 0);
+insert into users values (1, 'admin', '47729eaf9053e25ab469e4c2bf8961147e2939dc6f789bacdfda81d5df44d5e6', 1, 0, NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
