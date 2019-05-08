@@ -33,12 +33,14 @@ class LoginModal extends Component {
           <Form.Group controlId="formBasicEmail">
             <Form.Label>User Name</Form.Label>
             <Form.Control type="input" maxLength={20}
-            name="userName" value={this.state.userName} onChange={this.handleChange}/>
+            name="userName" value={this.state.userName}
+            onChange={this.handleChange} onKeyPress={this.handleKeyPress}/>
           </Form.Group>
           <Form.Group controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
             <Form.Control type="password"
-            name="password" value={this.state.password} onChange={this.handleChange}/>
+            name="password" value={this.state.password}
+            onChange={this.handleChange} onKeyPress={this.handleKeyPress}/>
           </Form.Group>
           <Form.Text className={'text-danger'}>{this.state.message}</Form.Text>
         </Form>
@@ -56,6 +58,12 @@ class LoginModal extends Component {
     this.setState({
       ...initialState
     })
+  }
+
+  handleKeyPress = (target) => {
+    if(target.charCode===13){
+      this.handleClick();
+    }
   }
 
   handleClick = () => {
