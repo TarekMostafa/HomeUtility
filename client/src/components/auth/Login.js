@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 
 import LoginModal from './LoginModal';
 import { setUser } from '../../store/actions/authActions';
+import UserRequest from '../../axios/UserRequest';
+import interceptor from '../../axios/Interceptor';
 
 class Login extends Component {
   state = {
@@ -35,8 +37,15 @@ class Login extends Component {
   }//end for render
 
   handleLogoutClick = () => {
-    this.props.setUser(null);
-    localStorage.removeItem("user");
+    UserRequest.logout(this.props.user.userId)
+    .then( (response) => {
+      this.props.setUser(null);
+      interceptor.removeInterceptor();
+      localStorage.removeItem("user");
+    })
+    .catch( (err) => {
+
+    })
   }
 
   handleLoginClick = () => {

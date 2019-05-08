@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { Form, Button, Spinner } from 'react-bootstrap';
-import { connect } from 'react-redux';
 
 import ModalContainer from '../common/ModalContainer'
 import UserRequest from '../../axios/UserRequest';
-import { setUser } from '../../store/actions/authActions';
+import loadUser from '../../utilities/loadUser';
 
 const initialState = {
   userName: '',
@@ -80,8 +79,7 @@ class LoginModal extends Component {
     // Authenticate user name and password
     UserRequest.authenticate(this.state.userName, this.state.password)
     .then( (response) => {
-      this.props.setUser(response.data);
-      localStorage.setItem("user", JSON.stringify(response.data));
+      loadUser(response.data);
       this.props.onHide();
     })
     .catch( err => {
@@ -93,12 +91,4 @@ class LoginModal extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setUser: (user) => {
-      dispatch(setUser(user));
-    }
-  }
-}
-
-export default connect(null, mapDispatchToProps)(LoginModal);
+export default LoginModal;

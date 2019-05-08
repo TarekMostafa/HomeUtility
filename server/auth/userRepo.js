@@ -8,6 +8,10 @@ class UserRepo {
   static async getUserByUserName(name) {
     return await UserModel.findOne({where: {userName: name}});
   }
+
+  static async getUserByUserToken(userToken) {
+    return await UserModel.findOne({where: {userToken: userToken}});
+  }
 }
 
 module.exports = UserRepo;

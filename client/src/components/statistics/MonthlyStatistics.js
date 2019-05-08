@@ -30,7 +30,7 @@ class MonthlyStatistics extends Component {
     this.state.postingDateTo = new Date(new Date().toString().split('GMT')[0]+' UTC').toISOString();
     let fromDate = new Date();
     fromDate.setMonth(fromDate.getMonth() - 2);
-    fromDate.setDate(0);
+    fromDate.setDate(1);
     this.state.postingDateFrom = new Date(fromDate.toString().split('GMT')[0]+' UTC').toISOString();
   }
 

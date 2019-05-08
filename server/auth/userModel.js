@@ -8,7 +8,8 @@ UserModel.init({
   userName: Sequelize.STRING(20),
   userPassword: Sequelize.STRING(64),
   userActive: Sequelize.BOOLEAN,
-  userAttempt: Sequelize.INTEGER
+  userAttempt: Sequelize.INTEGER,
+  userToken: Sequelize.STRING(36)
 }, {
   tableName: 'users',
   createdAt: false,

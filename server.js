@@ -11,6 +11,7 @@ const currencyRouter = require('./server/currencies/currencyRouter');
 const appSettingsRouter = require('./server/appSettings/appSettingsRouter');
 const userRouter = require('./server/auth/userRouter');
 const reportRouter = require('./server/wealth/transactionReports/reportRouter');
+const UserRepo = require('./server/auth/userRepo');
 //Constant Variables
 const port = 5000;
 //Start Express Application
@@ -18,15 +19,32 @@ const app = express();
 //Middleware for body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+//Authentication
+app.use(function(req, res, next){
+  if(req.url.includes('/free/')){
+    next();
+  } else {
+    UserRepo.getUserByUserToken(req.headers.authorization)
+    .then( (user) => {
+      if(user){
+        next();
+      } else {
+        res.status(401).send();
+      }
+    })
+    .catch( (err) => {
+      res.status(401).send();
+    })
+  }
+})
 //Routing Modules
-app.use('/resources', express.static('server/resources/images'));
+app.use('/free/users', userRouter);
+app.use('/api/appsettings', appSettingsRouter);
 app.use('/api/wealth/transactions', transactionRouter);
 app.use('/api/wealth/accounts', accountRouter);
 app.use('/api/wealth/transactiontypes', transactionTypesRouter);
 app.use('/api/wealth/banks', bankRouter);
 app.use('/api/currencies', currencyRouter);
-app.use('/api/appsettings', appSettingsRouter);
-app.use('/api/users', userRouter);
 app.use('/api/wealth/reports', reportRouter);
 //Middleware for Errors
 app.use(function(err, req, res, next){

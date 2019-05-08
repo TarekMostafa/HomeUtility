@@ -1,3 +1,4 @@
+const uuidv1 = require('uuid/v1');
 const UserRepo = require('./userRepo');
 const Authentication = require('./authentication');
 const APIResponse = require('../utilities/apiResponse');
@@ -27,8 +28,37 @@ class User {
       return APIResponse.getAPIResponse(false, null, '003');
     }
     user.userAttempt = 0;
+    user.userToken = uuidv1();
     await user.save();
-    return APIResponse.getAPIResponse(true, {userId:user.userId, userName: user.userName});
+    return APIResponse.getAPIResponse(true, {
+      userId:user.userId,
+      userName: user.userName,
+      userToken: user.userToken
+    });
+  }
+
+  async tokenAuthentication({userToken}) {
+    const user = await UserRepo.getUserByUserToken(userToken);
+    if(!user) {
+      return APIResponse.getAPIResponse(false, null, '003');
+    } else {
+      return APIResponse.getAPIResponse(true, {
+        userId:user.userId,
+        userName: user.userName,
+        userToken: user.userToken
+      });
+    }
+  }
+
+  async logout({userId}) {
+    // Check user in the database
+    const user = await UserRepo.getUser(userId);
+    if(!user) {
+      return APIResponse.getAPIResponse(false, null, '003');
+    }
+    user.userToken = null;
+    await user.save();
+    return APIResponse.getAPIResponse(true, null, '045');
   }
 
   async changePassword({userId, oldPassword, newPassword}){
