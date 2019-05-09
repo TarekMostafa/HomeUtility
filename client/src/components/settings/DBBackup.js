@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Button, Spinner } from 'react-bootstrap';
+import { Form, Row, Col, Button, Spinner } from 'react-bootstrap';
 
 import FormContainer from '../common/FormContainer';
 import DBRequest from '../../axios/DBRequest';
@@ -29,6 +29,9 @@ class DBBackup extends Component {
             }
             </Button>
           </Col>
+          <Col>
+            <Form.Text className={this.state.messageClass}>{this.state.message}</Form.Text>
+          </Col>
         </Row>
       </FormContainer>
     )
@@ -41,10 +44,10 @@ class DBBackup extends Component {
       isLoading: true
     });
     DBRequest.backup()
-    .then( () => {
+    .then( (response) => {
       this.setState({
         messageClass: 'text-success',
-        message: 'Database backup is done successfully',
+        message: response.data,
         isLoading: false
       })
     })

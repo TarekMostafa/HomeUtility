@@ -43,5 +43,6 @@ module.exports = {
   '042' : 'User name has been successfully changed',
   '043' : 'Posting Date from and Posting Date to must be correct dates',
   '044' : 'Invalid Report Id',
-  '045' : 'User logged out successfully'
+  '045' : 'User logged out successfully',
+  '046' : 'Database has been backuped successfully',
 }
