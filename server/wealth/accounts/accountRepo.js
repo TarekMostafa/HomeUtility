@@ -25,6 +25,7 @@ class AccountRepo {
   static async getAccount(id) {
     return await AccountModel.findByPk(id, {
       include: [
+        { model: BankModel, as: 'bank', attributes: ['bankName'] },
         { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] }
       ]
     });

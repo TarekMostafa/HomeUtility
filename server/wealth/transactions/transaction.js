@@ -184,7 +184,8 @@ class Transaction {
       // Debit Side
       let transactionDR = {
         transactionAmount: internalTransaction.amount,
-        transactionNarrative: '',
+        transactionNarrative: accountTo.bank.bankName + ' (' +
+          accountTo.accountNumber + ')',
         transactionPostingDate: internalTransaction.postingDate,
         transactionCRDR: 'Debit',
         transactionAccount: internalTransaction.accountFrom,
@@ -199,7 +200,8 @@ class Transaction {
       // Credit Side
       let transactionCR = {
         transactionAmount: internalTransaction.amount,
-        transactionNarrative: '',
+        transactionNarrative: accountFrom.bank.bankName + ' (' +
+          accountFrom.accountNumber + ')',
         transactionPostingDate: internalTransaction.postingDate,
         transactionCRDR: 'Credit',
         transactionAccount: internalTransaction.accountTo,
