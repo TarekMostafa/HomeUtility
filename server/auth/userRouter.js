@@ -4,7 +4,7 @@ const User = require('./user');
 const router = express.Router();
 const user = new User();
 
-router.post('/authenticate', function(req, res, next){
+router.post('/authentication', function(req, res, next){
   user.authenticate(req.body).then( result => {
     if(result.success) {
       res.json(result.payload);

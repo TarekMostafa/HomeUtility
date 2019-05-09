@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 //Authentication
 app.use(function(req, res, next){
-  if(req.url.includes('/free/')){
+  if(req.url.includes('authentication')){
     next();
   } else {
     UserRepo.getUserByUserToken(req.headers.authorization)
@@ -41,7 +41,7 @@ app.use(function(req, res, next){
   }
 })
 //Routing Modules
-app.use('/free/users', userRouter);
+app.use('/api/users', userRouter);
 app.use('/api/appsettings', appSettingsRouter);
 app.use('/api/wealth/transactions', transactionRouter);
 app.use('/api/wealth/accounts', accountRouter);
@@ -53,7 +53,7 @@ app.use('/api/db', dbRouter);
 //Middleware for Errors
 app.use(function(err, req, res, next){
   console.error(err);
-  res.status(500).send(err.message);
+  res.status(500).send('Internal Server Error');
 })
 //Connect to MySql database
 sequelize.connect().then( () => {
