@@ -38,6 +38,7 @@ class Account {
     }
     account.accountCurrentBalance = account.accountStartBalance;
     account.accountStatus = 'ACTIVE';
+    account.accountUser = account.user.userId;
     await AccountRepo.addAccount(account);
     return APIResponse.getAPIResponse(true, null, '025');
   }

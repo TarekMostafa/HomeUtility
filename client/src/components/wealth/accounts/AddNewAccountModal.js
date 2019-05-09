@@ -107,7 +107,7 @@ class AddNewAccountModal extends Component {
     }
     // Add new account
     AccountRequest.addNewAccount(this.state.accountBank, this.state.accountNumber,
-    this.state.accountCurrency, this.state.accountStartBalance, this.props.user.userId)
+    this.state.accountCurrency, this.state.accountStartBalance)
     .then( (response) => {
       if (typeof this.props.onSave=== 'function') {
         this.props.onSave();
@@ -125,16 +125,10 @@ class AddNewAccountModal extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.auth.user,
-  }
-}
-
 const mapDispatchToProps = (dispatch) => {
   return {
     getAccounts: () => dispatch(getAccounts()),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddNewAccountModal);
+export default connect(null, mapDispatchToProps)(AddNewAccountModal);

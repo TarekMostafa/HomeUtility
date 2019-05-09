@@ -26,13 +26,12 @@ class AccountRequest {
     return response.data;
   }
 
-  static async addNewAccount(bankCode, accountNumber, currencyCode, startBalance, userId){
+  static async addNewAccount(bankCode, accountNumber, currencyCode, startBalance){
     return await axios.post('/api/wealth/accounts', {
       accountNumber: accountNumber,
       accountStartBalance: startBalance,
       accountBankCode: bankCode,
       accountCurrency: currencyCode,
-      accountUser: userId,
     });
   }
 

@@ -29,6 +29,7 @@ app.use(function(req, res, next){
     UserRepo.getUserByUserToken(req.headers.authorization)
     .then( (user) => {
       if(user){
+        req.body.user = user;
         next();
       } else {
         res.status(401).send();
