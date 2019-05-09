@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const sequelize = require('./server/db/dbConnection');
 //Routers Declarations
@@ -18,6 +19,10 @@ const Config = require('./server/config');
 const port = Config.port || 5000;
 //Start Express Application
 const app = express();
+app.use(express.static(path.join(__dirname, 'build')));
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 //Middleware for body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
