@@ -59,7 +59,7 @@ class TransactionRepo {
         },
         { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeName'] }
       ],
-      group: ['transactionType.typeName'],
+      group: [sequelize.literal('case when transactionTypeId is not null then transactionType.typeName else \'\' end')],
       where: whereQuery,
     });
   }

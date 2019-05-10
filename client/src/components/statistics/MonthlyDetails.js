@@ -36,7 +36,7 @@ class MonthlyDetails extends Component {
                         return (
                           <Row key={'dt'+index}>
                             <Col>
-                              {detail.transactionType.typeName}
+                              {detail.transactionType? detail.transactionType.typeName : ''}
                             </Col>
                             <Col>
                               {amountFormatter(Math.abs(detail.total), this.props.decimalPlace)}

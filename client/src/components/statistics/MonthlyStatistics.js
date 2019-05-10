@@ -119,6 +119,9 @@ class MonthlyStatistics extends Component {
     } else if(!this.state.postingDateTo) {
       this.setState({message: 'Invalid posting date to, should not be empty'});
       return;
+    } else if (this.state.postingDateFrom > this.state.postingDateTo) {
+      this.setState({message: 'Posting date from must be less than or equal to Posting date to'});
+      return;
     } else {
       this.setState({
         message: '',

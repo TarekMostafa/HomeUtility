@@ -84,7 +84,10 @@ class Transaction {
       resultDetails.toDate = to;
       resultDetails.monthlyStatistics = [];
       for(let counter = 0; counter < reportdetails.length; counter++) {
-        whereQuery.transactionTypeId = { [Op.in] : reportdetails[counter].detailTypes.split(',') };
+        whereQuery.transactionTypeId = { [Op.or] : [
+          {[Op.in] : reportdetails[counter].detailTypes.split(',')},
+          {[Op.eq] : null}
+        ]};
         const details = await TransactionRepo.getTotalTransactionsGroupByType(whereQuery);
         resultDetails.monthlyStatistics.push({
           detailName: reportdetails[counter].detailName,
