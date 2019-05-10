@@ -12,7 +12,7 @@ const Op = Sequelize.Op;
 class Transaction {
 
   async getTransactions({limit, skip, accountId, typeId, postingDateFrom,
-    postingDateTo, narrative, id}) {
+    postingDateTo, narrative, id, includeNarrative}) {
 
     let _limit = Common.getNumber(limit, 10);
     let _skip = Common.getNumber(skip, 0);
@@ -28,8 +28,14 @@ class Transaction {
     }
     // Narrative
     if(Common.getText(narrative, '') !== '') {
-      whereQuery.transactionNarrative = {
-        [Op.substring] : narrative
+      if(includeNarrative==='true') {
+        whereQuery.transactionNarrative = {
+          [Op.substring] : narrative
+        }
+      } else {
+        whereQuery.transactionNarrative = {
+          [Op.notLike] : '%'+narrative.trim()+'%'
+        }
       }
     }
     // Check Posting Date from and Posting Date To

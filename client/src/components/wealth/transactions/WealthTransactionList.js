@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Row, Col, Button, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
+import { Form, Row, Col, Button, ButtonToolbar, ButtonGroup, InputGroup } from 'react-bootstrap';
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
@@ -22,7 +22,8 @@ const initialState = {
   postingDateTo: '',
   narrative: '',
   limit: 10,
-  id: null,
+  id: '',
+  includeNarrative: true,
 }
 
 class WealthTransactionList extends Component {
@@ -43,7 +44,7 @@ class WealthTransactionList extends Component {
       (append?this.state.transactions.length:0),
       this.state.account, this.state.transactionType,
       this.state.postingDateFrom, this.state.postingDateTo,
-      this.state.narrative, this.state.id)
+      this.state.narrative, this.state.id, this.state.includeNarrative)
     .then( (transactions) => {
       let _transactions = [];
       if(append) {
@@ -103,8 +104,14 @@ class WealthTransactionList extends Component {
           <br />
           <Row>
             <Col xs={6}>
-              <Form.Control type="input" placeholder="Narrative" size="sm" name="narrative"
-              onChange={this.handleChange} value={this.state.narrative}/>
+              <InputGroup className="mb-3">
+                <InputGroup.Prepend>
+                  <InputGroup.Checkbox name="includeNarrative"
+                  checked={this.state.includeNarrative} onChange={this.handleChange}/>
+                </InputGroup.Prepend>
+                <Form.Control type="input" placeholder="Narrative" size="sm" name="narrative"
+                onChange={this.handleChange} value={this.state.narrative}/>
+              </InputGroup>
             </Col>
             <Col xs={2}>
               <Form.Control as="select" size="sm" name="limit" onChange={this.handleChange}
@@ -170,7 +177,7 @@ class WealthTransactionList extends Component {
 
   handleChange = (event) => {
     this.setState({
-      [event.target.name] : event.target.value
+      [event.target.name] : (event.target.type==='checkbox' ? event.target.checked : event.target.value)
     })
   }
 
