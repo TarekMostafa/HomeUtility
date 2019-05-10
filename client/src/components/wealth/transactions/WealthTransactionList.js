@@ -21,9 +21,9 @@ const initialState = {
   postingDateFrom: '',
   postingDateTo: '',
   narrative: '',
+  limit: 10,
+  id: null,
 }
-
-const TRANSACTION_LIMIT = 10;
 
 class WealthTransactionList extends Component {
 
@@ -38,10 +38,12 @@ class WealthTransactionList extends Component {
     ...initialState,
   }
 
-  loadTransctions(limit, skip, append) {
-    TransactionRequest.getTransactions(limit, skip, this.state.account,
-      this.state.transactionType, this.state.postingDateFrom, this.state.postingDateTo,
-      this.state.narrative)
+  loadTransctions(append) {
+    TransactionRequest.getTransactions(this.state.limit,
+      (append?this.state.transactions.length:0),
+      this.state.account, this.state.transactionType,
+      this.state.postingDateFrom, this.state.postingDateTo,
+      this.state.narrative, this.state.id)
     .then( (transactions) => {
       let _transactions = [];
       if(append) {
@@ -51,13 +53,13 @@ class WealthTransactionList extends Component {
       }
       this.setState({
         transactions: _transactions,
-        appearMoreButton: (transactions.length >= TRANSACTION_LIMIT)
+        appearMoreButton: (transactions.length >= this.state.limit)
       });
     });
   }
 
   componentDidMount() {
-    this.loadTransctions(TRANSACTION_LIMIT, 0, false);
+    this.loadTransctions(false);
   }
 
   render() {
@@ -104,7 +106,20 @@ class WealthTransactionList extends Component {
               <Form.Control type="input" placeholder="Narrative" size="sm" name="narrative"
               onChange={this.handleChange} value={this.state.narrative}/>
             </Col>
-            <Col xs={{offset:4, span:1}}>
+            <Col xs={2}>
+              <Form.Control as="select" size="sm" name="limit" onChange={this.handleChange}
+                value={this.state.limit}>
+                <option value='10'>10</option>
+                <option value='25'>25</option>
+                <option value='50'>50</option>
+                <option value='100'>100</option>
+              </Form.Control>
+            </Col>
+            <Col xs={2}>
+              <Form.Control type="number" placeholder="Id" size="sm" name="id"
+              onChange={this.handleChange} value={this.state.id}/>
+            </Col>
+            <Col xs={1}>
               <Button variant="primary" size="sm" block onClick={this.handleListClick}>List</Button>
             </Col>
             <Col xs={1}>
@@ -140,11 +155,11 @@ class WealthTransactionList extends Component {
   }// end of render
 
   handleListClick = () => {
-    this.loadTransctions(TRANSACTION_LIMIT, 0, false);
+    this.loadTransctions(false);
   }
 
   handleMoreClick = () => {
-    this.loadTransctions(TRANSACTION_LIMIT, this.state.transactions.length, true);
+    this.loadTransctions(true);
   }
 
   handleResetClick = () => {

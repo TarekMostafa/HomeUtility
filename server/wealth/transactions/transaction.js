@@ -11,7 +11,8 @@ const Op = Sequelize.Op;
 
 class Transaction {
 
-  async getTransactions({limit, skip, accountId, typeId, postingDateFrom, postingDateTo, narrative}) {
+  async getTransactions({limit, skip, accountId, typeId, postingDateFrom,
+    postingDateTo, narrative, id}) {
 
     let _limit = Common.getNumber(limit, 10);
     let _skip = Common.getNumber(skip, 0);
@@ -42,6 +43,10 @@ class Transaction {
       } else if(_dateTo !== '') {
         whereQuery.transactionPostingDate = { [Op.lte] : _dateTo };
       }
+    }
+    //Transaction Id
+    if(id){
+      whereQuery.transactionId = id;
     }
 
     const transactions = await TransactionRepo.getTransactions(_skip, _limit, whereQuery);
