@@ -5,7 +5,7 @@ const CurrencyModel = require('../../currencies/CurrencyModel');
 class AccountRepo {
   static async getSimpleAccounts() {
     return await AccountModel.findAll({
-      attributes: ['accountId', 'accountNumber'],
+      attributes: ['accountId', 'accountNumber', 'accountStatus'],
       include: [
         { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] }
       ]

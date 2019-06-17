@@ -44,7 +44,7 @@ class AddSingleTransactionModal extends Component {
             <Form.Label>Account</Form.Label>
             <Form.Control as="select" name="account" onChange={this.handleAccountChange}>
               <option value=''></option>
-              <AccountsDropDown />
+              <AccountsDropDown status='ACTIVE'/>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="postingDate">

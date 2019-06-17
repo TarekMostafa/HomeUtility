@@ -44,7 +44,7 @@ class AddInternalTransactionModal extends Component {
             <Form.Label>Account From</Form.Label>
             <Form.Control as="select" name="accountFrom" onChange={this.handleAccountChange}>
               <option value=''></option>
-              <AccountsDropDown />
+              <AccountsDropDown status='ACTIVE'/>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="typeFrom">
@@ -69,7 +69,7 @@ class AddInternalTransactionModal extends Component {
             <Form.Label>Account To</Form.Label>
             <Form.Control as="select" name="accountTo" onChange={this.handleChange}>
               <option value=''></option>
-              <AccountsDropDown />
+              <AccountsDropDown status='ACTIVE'/>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="typeTo">
