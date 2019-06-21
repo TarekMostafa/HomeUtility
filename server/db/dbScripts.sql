@@ -123,6 +123,54 @@ LOCK TABLES `currencies` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `deposits`
+--
+
+DROP TABLE IF EXISTS `deposits`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `deposits` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `reference` varchar(30) NOT NULL,
+  `amount` decimal(18,3) NOT NULL,
+  `status` enum('ACTIVE','CLOSED') NOT NULL,
+  `rate` decimal(18,7) NOT NULL,
+  `bankCode` varchar(3) NOT NULL,
+  `accountId` int(11) NOT NULL,
+  `currencyCode` varchar(3) NOT NULL,
+  `startDate` datetime NOT NULL,
+  `endDate` datetime NOT NULL,
+  `releaseDate` datetime DEFAULT NULL,
+  `originalTransId` bigint(20) DEFAULT NULL,
+  `relatedId` bigint(20) DEFAULT NULL,
+  `interestTransType` int(11) DEFAULT NULL,
+  `releaseTransId` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_bankCode_idx` (`bankCode`),
+  KEY `fk_account_idx` (`accountId`),
+  KEY `fk_currency_idx` (`currencyCode`),
+  KEY `fk_originalTransId_idx` (`originalTransId`),
+  KEY `fk_relatedTransId_idx` (`relatedId`),
+  KEY `fk_interestType_idx` (`interestTransType`),
+  CONSTRAINT `fk_account` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`accountId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_bankCode` FOREIGN KEY (`bankCode`) REFERENCES `banks` (`bankCode`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_currency` FOREIGN KEY (`currencyCode`) REFERENCES `currencies` (`currencyCode`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_interestType` FOREIGN KEY (`interestTransType`) REFERENCES `transactiontypes` (`typeId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_originalTransId` FOREIGN KEY (`originalTransId`) REFERENCES `transactions` (`transactionId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_relatedTransId` FOREIGN KEY (`relatedId`) REFERENCES `relatedtransactions` (`relatedTransactionsId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `deposits`
+--
+
+LOCK TABLES `deposits` WRITE;
+/*!40000 ALTER TABLE `deposits` DISABLE KEYS */;
+/*!40000 ALTER TABLE `deposits` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `relatedtransactions`
 --
 
@@ -161,7 +209,7 @@ CREATE TABLE `reportdetails` (
   PRIMARY KEY (`detailId`),
   KEY `reportDetails_fk_idx` (`detailReportId`),
   CONSTRAINT `reportDetails_fk` FOREIGN KEY (`detailReportId`) REFERENCES `reports` (`reportId`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,7 +233,7 @@ CREATE TABLE `reports` (
   `reportName` varchar(45) NOT NULL,
   `reportActive` enum('YES','NO') NOT NULL,
   PRIMARY KEY (`reportId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -213,6 +261,7 @@ CREATE TABLE `transactions` (
   `transactionAccount` int(11) NOT NULL,
   `transactionTypeId` int(11) DEFAULT NULL,
   `transactionRelatedTransactionId` bigint(20) DEFAULT NULL,
+  `transactionModule` varchar(3) DEFAULT NULL,
   PRIMARY KEY (`transactionId`),
   KEY `transactionAccount_fk_idx` (`transactionAccount`),
   KEY `transactionType_fk_idx` (`transactionTypeId`),
