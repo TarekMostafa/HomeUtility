@@ -6,6 +6,7 @@ import WealthDepositTable from './WealthDepositTable';
 import WealthDepositTotal from './WealthDepositTotal';
 import AddNewDepositModal from './AddNewDepositModal';
 import DeleteDepositModal from './DeleteDepositModal';
+import AddInterestModal from './AddInterestModal';
 import FormContainer from '../../common/FormContainer';
 import BanksDropDown from '../banks/BanksDropDown';
 import AccountStatusesDropDown from '../accounts/AccountStatusesDropDown';
@@ -22,6 +23,7 @@ class WealthDepositList extends Component {
     deposits: [],
     modalAddShow: false,
     modalDeleteShow: false,
+    modalInterestShow: false,
     depositId: '',
     ...initialState,
   }
@@ -72,7 +74,7 @@ class WealthDepositList extends Component {
         </FormContainer>
         <FormContainer>
           <WealthDepositTable deposits={this.state.deposits}
-          onDeleteDeposit={this.handleDeleteDeposit}/>
+          onDeleteDeposit={this.handleDeleteDeposit} onAddInterest={this.handleAddInterest}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings && this.props.appSettings.baseCurrency &&
@@ -89,6 +91,11 @@ class WealthDepositList extends Component {
           show={this.state.modalDeleteShow} onHide={this.handleHide}
           onDelete={this.handleListClick} depositId={this.state.depositId}/>
         }
+        {
+          this.state.modalInterestShow && <AddInterestModal
+          show={this.state.modalInterestShow} onHide={this.handleHide}
+          depositId={this.state.depositId}/>
+        }
       </React.Fragment>
     )
   }//end of render
@@ -104,10 +111,18 @@ class WealthDepositList extends Component {
     });
   }
 
+  handleAddInterest = (depositId) => {
+    this.setState({
+      modalInterestShow: true,
+      depositId
+    });
+  }
+
   handleHide = () => {
     this.setState({
       modalAddShow: false,
-      modalDeleteShow: false
+      modalDeleteShow: false,
+      modalInterestShow: false
     });
   }
 

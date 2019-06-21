@@ -27,6 +27,12 @@ class DepositRequest {
   static async deleteDeposit(id){
     return await axios.delete('/api/wealth/deposits/'+id);
   }
+
+  static async addDepositInterest(id, amount, date){
+    return await axios.post('/api/wealth/deposits/interest/'+id, {
+      amount, date
+    });
+  }
 }
 
 export default DepositRequest;

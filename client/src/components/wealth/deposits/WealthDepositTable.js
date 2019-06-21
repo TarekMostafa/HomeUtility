@@ -18,8 +18,8 @@ function WealthDepositTable (props) {
           <th>Equivalent Amount</th>
           <th>Status</th>
           <th>Rate</th>
-          <th>StartDate</th>
-          <th>EndDate</th>
+          <th>Start Date</th>
+          <th>End Date</th>
           <th></th>
         </tr>
       </thead>
@@ -54,6 +54,9 @@ function WealthDepositTable (props) {
               </td>
               <td>
                 <ButtonGroup>
+                  <Button variant="link" size="sm"
+                  onClick={() => props.onAddInterest(deposit.id)}>Add Interest</Button>
+                  <Button variant="link" size="sm">Release</Button>
                   <Button variant="link" size="sm"
                   onClick={() => props.onDeleteDeposit(deposit.id)}>Delete</Button>
                 </ButtonGroup>

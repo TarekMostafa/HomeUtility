@@ -6,6 +6,7 @@ const TransactionRepo = require('../transactions/transactionRepo');
 const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const Transaction = require('../transactions/transaction');
+const RelatedTransactionRepo = require('../transactions/relatedTransactionRepo');
 
 class Deposit {
   async getDeposits({bank, status}) {
@@ -95,6 +96,52 @@ class Deposit {
       console.log(err);
       await dbTransaction.rollback();
       return APIResponse.getAPIResponse(false, null, '051');
+    }
+  }
+
+  async addDepositInterest(id, tempTransaction) {
+    const _deposit = await DepositRepo.getDeposit(id);
+    if(_deposit === null) {
+      return APIResponse.getAPIResponse(false, null, '049');
+    }
+    //Start SQL transaction
+    let dbTransaction;
+    try {
+      dbTransaction = await sequelize.transaction();
+      let relatedId = _deposit.relatedId;
+      if(!relatedId) {
+        const relatedTransaction = await RelatedTransactionRepo.
+        addRelatedTransaction({
+          relatedTransactionType: 'DEP',
+          relatedTransactionDesc: ''
+        }, dbTransaction);
+        relatedId = relatedTransaction.relatedTransactionsId;
+      }
+      //Add Deposit Transaction
+      const transaction = new Transaction();
+      const result = await transaction.addTransaction({
+          transactionAmount: tempTransaction.amount,
+          transactionNarrative: _deposit.reference,
+          transactionPostingDate: tempTransaction.date,
+          transactionCRDR: 'Credit',
+          transactionAccount: _deposit.accountId,
+          transactionTypeId: _deposit.interestTransType,
+          transactionModule: 'DEP',
+          transactionRelatedTransactionId: relatedId,
+        }, dbTransaction);
+      if(!result.success) {
+        await dbTransaction.rollback();
+        return APIResponse.getAPIResponse(false, null, '053');
+      }
+      //Save Deposit related Id
+      _deposit.relatedId = relatedId;
+      await _deposit.save({transaction: dbTransaction});
+      await dbTransaction.commit();
+      return APIResponse.getAPIResponse(true, null, '054');
+    } catch (err) {
+      console.log(err);
+      await dbTransaction.rollback();
+      return APIResponse.getAPIResponse(false, null, '053');
     }
   }
 }
