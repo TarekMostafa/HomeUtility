@@ -24,7 +24,7 @@ class AddNewAccountModal extends Component {
   }
   render () {
     return (
-      <ModalContainer title="Add New Account" show={this.props.show}
+      <ModalContainer title="Create New Account" show={this.props.show}
         onHide={this.props.onHide} onShow={this.handleOnShow}
         footer={
           <Button variant="primary" block onClick={this.handleClick}>

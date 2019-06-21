@@ -2,64 +2,62 @@ import React, { Component } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
-import WealthAccountTable from './WealthAccountTable';
-import WealthAccountTotalBalance from './WealthAccountTotalBalance';
-import AddNewAccountModal from './AddNewAccountModal';
-import EditAccountModal from './EditAccountModal';
-import DeleteAccountModal from './DeleteAccountModal';
+import WealthDepositTable from './WealthDepositTable';
+import WealthDepositTotal from './WealthDepositTotal';
+import AddNewDepositModal from './AddNewDepositModal';
 import FormContainer from '../../common/FormContainer';
 import BanksDropDown from '../banks/BanksDropDown';
-import AccountStatusesDropDown from './AccountStatusesDropDown';
+import AccountStatusesDropDown from '../accounts/AccountStatusesDropDown';
 
-import AccountRequest from '../../../axios/AccountRequest';
+import DepositRequest from '../../../axios/DepositRequest';
 
 const initialState = {
-  accountStatus: 'ACTIVE',
-  accountBank: '',
+  depositStatus: 'ACTIVE',
+  depositBank: '',
 }
 
-class WealthAccountList extends Component {
+class WealthDepositList extends Component {
   state = {
-    accounts: [],
+    deposits: [],
     modalAddShow: false,
     modalEditShow: false,
     modalDeleteShow: false,
-    accountId: '',
+    depositId: '',
     ...initialState,
   }
 
-  loadAccounts() {
-    AccountRequest.getAccounts(this.state.accountBank, this.state.accountStatus)
-    .then( (accounts) => {
+  loadDeposits() {
+    DepositRequest.getDeposits(this.state.depositBank, this.state.depositStatus)
+    .then( (deposits) => {
       this.setState({
-        accounts
+        deposits
       })
     })
   }
 
   componentDidMount() {
-    this.loadAccounts();
+    this.loadDeposits();
   }
 
   render() {
     return (
       <React.Fragment>
-        <FormContainer title="Accounts Summary" toolbar={
-          <Button variant="info" size="sm" onClick={this.handleAddNewAccount}>Create New Account</Button>
+        <FormContainer title="Deposits Summary" toolbar={
+          <Button variant="info" size="sm" onClick={this.handleAddNewAccount}>Create New Deposit</Button>
         }>
           <Form>
             <Row>
               <Col xs={3}>
-                <Form.Control as="select" size="sm" name="accountBank" onChange={this.handleChange}
-                  value={this.state.accountBank}>
+                <Form.Control as="select" size="sm" name="depositBank" onChange={this.handleChange}
+                  value={this.state.depositBank}>
                   <option value=''>Banks</option>
                   <BanksDropDown />
                 </Form.Control>
               </Col>
               <Col xs={3}>
-                <Form.Control as="select" size="sm" name="accountStatus" onChange={this.handleChange}
-                  value={this.state.accountStatus}>
-                  <option value=''>Account Statuses</option>
+                <Form.Control as="select" size="sm" name="depositStatus" onChange={this.handleChange}
+                  value={this.state.depositStatus}>
+                  <option value=''>Deposit Statuses</option>
                   <AccountStatusesDropDown />
                 </Form.Control>
               </Col>
@@ -73,29 +71,19 @@ class WealthAccountList extends Component {
           </Form>
         </FormContainer>
         <FormContainer>
-          <WealthAccountTable accounts={this.state.accounts} onEditAccount={this.handleEditAccount}
+          <WealthDepositTable deposits={this.state.deposits} onEditAccount={this.handleEditAccount}
           onDeleteAccount={this.handleDeleteAccount}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings && this.props.appSettings.baseCurrency &&
-              <WealthAccountTotalBalance accounts={this.state.accounts}
+              <WealthDepositTotal deposits={this.state.deposits}
               baseCurrency={this.props.appSettings.baseCurrency}
               decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>}
             </Col>
           </Row>
         </FormContainer>
-        <AddNewAccountModal show={this.state.modalAddShow} onHide={this.handleHide}
+        <AddNewDepositModal show={this.state.modalAddShow} onHide={this.handleHide}
         onSave={this.handleListClick}/>
-        {
-          this.state.modalEditShow &&
-          <EditAccountModal show={this.state.modalEditShow} onHide={this.handleHide}
-          onSave={this.handleListClick} accountId={this.state.accountId}/>
-        }
-        {
-          this.state.modalDeleteShow &&
-          <DeleteAccountModal show={this.state.modalDeleteShow} onHide={this.handleHide}
-          onDelete={this.handleListClick} accountId={this.state.accountId}/>
-        }
       </React.Fragment>
     )
   }//end of render
@@ -104,17 +92,17 @@ class WealthAccountList extends Component {
     this.setState({modalAddShow: true});
   }
 
-  handleEditAccount = (accountId) => {
+  handleEditAccount = (depositId) => {
     this.setState({
       modalEditShow: true,
-      accountId
+      depositId
     });
   }
 
-  handleDeleteAccount = (accountId) => {
+  handleDeleteAccount = (depositId) => {
     this.setState({
       modalDeleteShow: true,
-      accountId
+      depositId
     });
   }
 
@@ -139,7 +127,7 @@ class WealthAccountList extends Component {
   }
 
   handleListClick = () => {
-    this.loadAccounts();
+    this.loadDeposits();
   }
 
 }
@@ -150,4 +138,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps)(WealthAccountList);
+export default connect(mapStateToProps)(WealthDepositList);

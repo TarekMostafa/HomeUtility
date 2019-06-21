@@ -6,6 +6,7 @@ const sequelize = require('./server/db/dbConnection');
 //Routers Declarations
 const transactionRouter = require('./server/wealth/transactions/transactionRouter');
 const accountRouter = require('./server/wealth/accounts/accountRouter');
+const depositRouter = require('./server/wealth/deposits/depositRouter');
 const transactionTypesRouter = require('./server/wealth/transactionTypes/transactionTypeRouter');
 const bankRouter = require('./server/wealth/banks/bankRouter');
 const currencyRouter = require('./server/currencies/currencyRouter');
@@ -50,6 +51,7 @@ app.use('/api/users', userRouter);
 app.use('/api/appsettings', appSettingsRouter);
 app.use('/api/wealth/transactions', transactionRouter);
 app.use('/api/wealth/accounts', accountRouter);
+app.use('/api/wealth/deposits', depositRouter);
 app.use('/api/wealth/transactiontypes', transactionTypesRouter);
 app.use('/api/wealth/banks', bankRouter);
 app.use('/api/currencies', currencyRouter);

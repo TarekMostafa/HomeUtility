@@ -258,10 +258,10 @@ class Transaction {
       return APIResponse.getAPIResponse(false, null, '033');
     }
     // Save Transaction
-    await TransactionRepo.addTransaction(transaction, dbTransaction);
+    const savedTrans = await TransactionRepo.addTransaction(transaction, dbTransaction);
     // Update Account Current Balance & Last Balance Update
     await this.accountCurrentBalanceUpdate(account, amount, dbTransaction);
-    return APIResponse.getAPIResponse(true, null, '030');
+    return APIResponse.getAPIResponse(true, savedTrans, '030');
   }
 
   async deleteTransaction(id, dbTransaction) {

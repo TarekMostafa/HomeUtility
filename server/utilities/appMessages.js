@@ -45,4 +45,6 @@ module.exports = {
   '044' : 'Invalid Report Id',
   '045' : 'User logged out successfully',
   '046' : 'Database has been backuped successfully',
+  '047' : 'This deposit has been successfully created',
+  '048' : 'Failed to create this deposit',
 }

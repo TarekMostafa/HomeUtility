@@ -37,7 +37,7 @@ class TransactionRepo {
   }
 
   static async addTransaction(transaction, dbTransaction) {
-    await TransactionModel.build(transaction).save({transaction: dbTransaction});
+    return await TransactionModel.build(transaction).save({transaction: dbTransaction});
   }
 
   static async getTransactionsCountByTransactionType(typeId) {

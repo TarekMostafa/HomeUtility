@@ -7,7 +7,7 @@ const RelatedTransactionModel = require('./relatedTransactionModel');
 
 class TransactionModel extends Model {}
 TransactionModel.init({
-  transactionId: { type: Sequelize.BIGINT(20), primaryKey: true },
+  transactionId: { type: Sequelize.BIGINT(20), primaryKey: true, autoIncrement: true},
   transactionAmount: Sequelize.DECIMAL(18, 3),
   transactionNarrative: Sequelize.STRING(200),
   transactionPostingDate: Sequelize.DATE,
