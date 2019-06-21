@@ -2,6 +2,7 @@ const sequelize = require('../../db/dbConnection').getSequelize();
 const DepositRepo = require('./depositRepo');
 const AppSettingsRepo = require('../../appSettings/appSettingsRepo');
 const AccountRepo = require('../accounts/accountRepo');
+const TransactionRepo = require('../transactions/transactionRepo');
 const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const Transaction = require('../transactions/transaction');
@@ -65,6 +66,34 @@ class Deposit {
       console.log(err);
       await dbTransaction.rollback();
       return APIResponse.getAPIResponse(false, null, '048');
+    }
+  }
+
+  async deleteDeposit(id) {
+    const _deposit = await DepositRepo.getDeposit(id);
+    if(_deposit === null) {
+      return APIResponse.getAPIResponse(false, null, '049');
+    }
+    if(_deposit.relatedId) {
+      return APIResponse.getAPIResponse(false, null, '052');
+    }
+    const _originalTrans = await TransactionRepo.getTransaction(_deposit.originalTransId);
+    if(_originalTrans === null) {
+      return APIResponse.getAPIResponse(false, null, '034');
+    }
+    //Start SQL transaction
+    let dbTransaction;
+    try {
+      dbTransaction = await sequelize.transaction();
+      await _deposit.destroy({transaction: dbTransaction});
+      const transaction = new Transaction();
+      await transaction.deleteTransaction(_originalTrans.transactionId, dbTransaction);
+      await dbTransaction.commit();
+      return APIResponse.getAPIResponse(true, null, '050');
+    } catch (err) {
+      console.log(err);
+      await dbTransaction.rollback();
+      return APIResponse.getAPIResponse(false, null, '051');
     }
   }
 }

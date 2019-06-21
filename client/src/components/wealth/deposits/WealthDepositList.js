@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import WealthDepositTable from './WealthDepositTable';
 import WealthDepositTotal from './WealthDepositTotal';
 import AddNewDepositModal from './AddNewDepositModal';
+import DeleteDepositModal from './DeleteDepositModal';
 import FormContainer from '../../common/FormContainer';
 import BanksDropDown from '../banks/BanksDropDown';
 import AccountStatusesDropDown from '../accounts/AccountStatusesDropDown';
@@ -20,7 +21,6 @@ class WealthDepositList extends Component {
   state = {
     deposits: [],
     modalAddShow: false,
-    modalEditShow: false,
     modalDeleteShow: false,
     depositId: '',
     ...initialState,
@@ -71,8 +71,8 @@ class WealthDepositList extends Component {
           </Form>
         </FormContainer>
         <FormContainer>
-          <WealthDepositTable deposits={this.state.deposits} onEditAccount={this.handleEditAccount}
-          onDeleteAccount={this.handleDeleteAccount}/>
+          <WealthDepositTable deposits={this.state.deposits}
+          onDeleteDeposit={this.handleDeleteDeposit}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings && this.props.appSettings.baseCurrency &&
@@ -84,6 +84,11 @@ class WealthDepositList extends Component {
         </FormContainer>
         <AddNewDepositModal show={this.state.modalAddShow} onHide={this.handleHide}
         onSave={this.handleListClick}/>
+        {
+          this.state.modalDeleteShow &&  <DeleteDepositModal
+          show={this.state.modalDeleteShow} onHide={this.handleHide}
+          onDelete={this.handleListClick} depositId={this.state.depositId}/>
+        }
       </React.Fragment>
     )
   }//end of render
@@ -92,14 +97,7 @@ class WealthDepositList extends Component {
     this.setState({modalAddShow: true});
   }
 
-  handleEditAccount = (depositId) => {
-    this.setState({
-      modalEditShow: true,
-      depositId
-    });
-  }
-
-  handleDeleteAccount = (depositId) => {
+  handleDeleteDeposit = (depositId) => {
     this.setState({
       modalDeleteShow: true,
       depositId
@@ -109,7 +107,6 @@ class WealthDepositList extends Component {
   handleHide = () => {
     this.setState({
       modalAddShow: false,
-      modalEditShow: false,
       modalDeleteShow: false
     });
   }

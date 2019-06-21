@@ -40,4 +40,16 @@ router.post('/', function(req, res, next) {
   })
 });
 
+router.delete('/:id', function(req, res, next) {
+  deposit.deleteDeposit(req.params.id).then( result => {
+    if(result.success) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+});
+
 module.exports = router;

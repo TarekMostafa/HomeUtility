@@ -28,7 +28,7 @@ class DeleteAccountModal extends Component {
     ...initialState
   }
 
-  componentDidMount(nextProps, prevState) {
+  componentDidMount() {
     if(!this.props.accountId)
       return;
     AccountRequest.getAccount(this.props.accountId)

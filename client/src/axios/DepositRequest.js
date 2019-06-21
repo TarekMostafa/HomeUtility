@@ -23,6 +23,10 @@ class DepositRequest {
       endDate, transDebitType, interestTransType
     });
   }
+
+  static async deleteDeposit(id){
+    return await axios.delete('/api/wealth/deposits/'+id);
+  }
 }
 
 export default DepositRequest;

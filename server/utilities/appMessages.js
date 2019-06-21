@@ -47,4 +47,8 @@ module.exports = {
   '046' : 'Database has been backuped successfully',
   '047' : 'This deposit has been successfully created',
   '048' : 'Failed to create this deposit',
+  '049' : 'This deposit does not exist in the database',
+  '050' : 'This deposit has been successfully deleted',
+  '051' : 'Failed to delete this deposit',
+  '052' : 'This deposit can not be deleted as it has related transactions',
 }

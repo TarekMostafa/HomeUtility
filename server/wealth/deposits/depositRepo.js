@@ -1,6 +1,7 @@
 const DepositModel = require('./depositModel');
 const BankModel = require('../banks/bankModel');
 const CurrencyModel = require('../../currencies/CurrencyModel');
+const AccountModel = require('../accounts/AccountModel');
 
 class DepositRepo {
   static async getDeposits(whereQuery) {
@@ -17,7 +18,8 @@ class DepositRepo {
     return await DepositModel.findByPk(id, {
       include: [
         { model: BankModel, as: 'bank', attributes: ['bankName'] },
-        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] }
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] },
+        { model: AccountModel, as: 'account', attributes: ['accountNumber'] }
       ]
     });
   }

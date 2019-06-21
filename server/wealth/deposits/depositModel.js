@@ -3,6 +3,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const BankModel = require('../banks/bankModel');
 const CurrencyModel = require('../../currencies/CurrencyModel');
+const AccountModel = require('../accounts/AccountModel');
 
 class DepositModel extends Model {}
 DepositModel.init({
@@ -35,6 +36,11 @@ DepositModel.belongsTo(BankModel, {
 DepositModel.belongsTo(CurrencyModel, {
   as: "currency",
   foreignKey: 'currencyCode'
+});
+
+DepositModel.belongsTo(AccountModel, {
+  as: "account",
+  foreignKey: 'accountId'
 });
 
 module.exports = DepositModel;

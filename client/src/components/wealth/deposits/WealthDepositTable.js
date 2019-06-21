@@ -55,9 +55,7 @@ function WealthDepositTable (props) {
               <td>
                 <ButtonGroup>
                   <Button variant="link" size="sm"
-                  onClick={() => props.onEditAccount(deposit.id)}>Edit</Button>
-                  <Button variant="link" size="sm"
-                  onClick={() => props.onDeleteAccount(deposit.id)}>Delete</Button>
+                  onClick={() => props.onDeleteDeposit(deposit.id)}>Delete</Button>
                 </ButtonGroup>
               </td>
             </tr>
