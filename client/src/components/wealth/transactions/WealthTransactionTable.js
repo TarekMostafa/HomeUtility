@@ -25,6 +25,7 @@ function WealthTransactionTable (props) {
       <tbody>
         {
           props.transactions && props.transactions.map( (transaction, index) => {
+            console.log(transaction.transactionModule);
           return (
             <tr key={transaction.transactionId}>
               <td>{index+1}</td>
@@ -54,12 +55,15 @@ function WealthTransactionTable (props) {
                 }
               </td>
               <td>
-                <ButtonGroup>
-                  <Button variant="link" size="sm"
-                  onClick={() => props.onEditTransaction(transaction.transactionId)}>Edit</Button>
-                  <Button variant="link" size="sm"
-                  onClick={() => props.onDeleteTransaction(transaction.transactionId)}>Delete</Button>
-                </ButtonGroup>
+                {
+                  !transaction.transactionModule &&
+                  <ButtonGroup>
+                    <Button variant="link" size="sm"
+                    onClick={() => props.onEditTransaction(transaction.transactionId)}>Edit</Button>
+                    <Button variant="link" size="sm"
+                    onClick={() => props.onDeleteTransaction(transaction.transactionId)}>Delete</Button>
+                  </ButtonGroup>
+                }
               </td>
             </tr>
           )

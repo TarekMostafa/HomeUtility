@@ -52,6 +52,7 @@ class Deposit {
           transactionCRDR: 'Debit',
           transactionAccount: deposit.accountId,
           transactionTypeId: deposit.transDebitType,
+          transactionModule: 'DEP',
         }, dbTransaction);
       if(!result.success) {
         await dbTransaction.rollback();

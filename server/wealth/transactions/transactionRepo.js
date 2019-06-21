@@ -10,7 +10,8 @@ class TransactionRepo {
       offset: skip,
       limit: limit,
       attributes: ['transactionId', 'transactionPostingDate', 'transactionAmount',
-        'transactionCRDR', 'transactionNarrative', 'transactionRelatedTransactionId'],
+        'transactionCRDR', 'transactionNarrative', 'transactionRelatedTransactionId',
+        'transactionModule'],
       include: [
         { model: AccountModel, as: 'account', attributes: ['accountNumber','accountCurrency'],
           include: [

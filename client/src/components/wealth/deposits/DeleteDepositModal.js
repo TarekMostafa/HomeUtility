@@ -84,7 +84,7 @@ class DeleteDepositModal extends Component {
               <Form.Group controlId="depositAmount">
                 <Form.Label>Deposit Amount</Form.Label>
                 <Form.Control type="number" name="depositAmount"
-                value={Number(this.state.depositAmount).toFixed(this.state.depositCurrencyDecimalPlaces)}
+                value={amountFormatter(this.state.depositAmount, this.state.depositCurrencyDecimalPlaces)}
                 readOnly/>
               </Form.Group>
             </Col>
