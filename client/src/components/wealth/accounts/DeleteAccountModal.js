@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button, Spinner, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import ModalContainer from '../../common/ModalContainer';
@@ -63,49 +63,67 @@ class DeleteAccountModal extends Component {
           </Button>
         }>
         <Form>
-          <Form.Group controlId="accountBank">
-            <Form.Label>Account Bank</Form.Label>
-            <Form.Control as="select" name="accountBank"
-            value={this.state.accountBank} readOnly>
-              <option value=''></option>
-              <BanksDropDown />
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId="accountNumber">
-            <Form.Label>Account Number</Form.Label>
-            <Form.Control type="input" maxLength={20}
-            name="accountNumber" value={this.state.accountNumber} readOnly/>
-          </Form.Group>
-          <Form.Group controlId="accountCurrency">
-            <Form.Label>Account Currency</Form.Label>
-            <Form.Control as="select" name="accountCurrency"
-            value={this.state.accountCurrency} readOnly>
-              <option value=''></option>
-              <CurrenciesDropDown />
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId="accountStartBalance">
-            <Form.Label>Start Balance</Form.Label>
-            <Form.Control type="input"
-            name="accountStartBalance"
-            value={amountFormatter(this.state.accountStartBalance, this.state.accountCurrencyDecimalPlaces)}
-            readOnly/>
-          </Form.Group>
-          <Form.Group controlId="accountCurrentBalance">
-            <Form.Label>Current Balance</Form.Label>
-            <Form.Control type="input"
-            name="accountCurrentBalance"
-            value={amountFormatter(this.state.accountCurrentBalance, this.state.accountCurrencyDecimalPlaces)}
-            readOnly/>
-          </Form.Group>
-          <Form.Group controlId="accountStatus">
-            <Form.Label>Account Status</Form.Label>
-            <Form.Control as="select" name="accountStatus" readOnly
-            value={this.state.accountStatus}>
-              <option value=''></option>
-              <AccountStatusesDropDown />
-            </Form.Control>
-          </Form.Group>
+          <Row>
+            <Col>
+              <Form.Group controlId="accountBank">
+                <Form.Label>Account Bank</Form.Label>
+                <Form.Control as="select" name="accountBank"
+                value={this.state.accountBank} readOnly>
+                  <option value=''></option>
+                  <BanksDropDown />
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group controlId="accountNumber">
+                <Form.Label>Account Number</Form.Label>
+                <Form.Control type="input" maxLength={20}
+                name="accountNumber" value={this.state.accountNumber} readOnly/>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="accountCurrency">
+                <Form.Label>Account Currency</Form.Label>
+                <Form.Control as="select" name="accountCurrency"
+                value={this.state.accountCurrency} readOnly>
+                  <option value=''></option>
+                  <CurrenciesDropDown />
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group controlId="accountStatus">
+                <Form.Label>Account Status</Form.Label>
+                <Form.Control as="select" name="accountStatus" readOnly
+                value={this.state.accountStatus}>
+                  <option value=''></option>
+                  <AccountStatusesDropDown />
+                </Form.Control>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="accountStartBalance">
+                <Form.Label>Start Balance</Form.Label>
+                <Form.Control type="input"
+                name="accountStartBalance"
+                value={amountFormatter(this.state.accountStartBalance, this.state.accountCurrencyDecimalPlaces)}
+                readOnly/>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group controlId="accountCurrentBalance">
+                <Form.Label>Current Balance</Form.Label>
+                <Form.Control type="input"
+                name="accountCurrentBalance"
+                value={amountFormatter(this.state.accountCurrentBalance, this.state.accountCurrencyDecimalPlaces)}
+                readOnly/>
+              </Form.Group>
+            </Col>
+          </Row>
           <Form.Group controlId="accountLastBalanceUpdate">
             <Form.Label>Balance Last Update</Form.Label>
             <Form.Control type="input"
