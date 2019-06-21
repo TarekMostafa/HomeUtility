@@ -65,7 +65,7 @@ class ReleaseDepositModal extends Component {
           </Form.Group>
           <Form.Group controlId="amount">
             <Form.Label>Deposit Amount</Form.Label>
-            <Form.Control type="number" name="amount"
+            <Form.Control type="input" name="amount"
             value={amountFormatter(this.state.amount, this.state.decimalPlaces)}
             readOnly/>
           </Form.Group>

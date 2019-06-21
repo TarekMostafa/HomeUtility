@@ -25,7 +25,6 @@ function WealthTransactionTable (props) {
       <tbody>
         {
           props.transactions && props.transactions.map( (transaction, index) => {
-            console.log(transaction.transactionModule);
           return (
             <tr key={transaction.transactionId}>
               <td>{index+1}</td>
