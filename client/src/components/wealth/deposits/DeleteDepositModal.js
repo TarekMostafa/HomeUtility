@@ -16,6 +16,7 @@ const initialState = {
   depositRate: 0,
   depositStartDate: '',
   depositEndDate: '',
+  depositReleaseDate: '',
   depositStatus: '',
   depositCurrencyDecimalPlaces: 0,
   message: '',
@@ -41,6 +42,7 @@ class DeleteDepositModal extends Component {
         depositStatus: deposit.status,
         depositStartDate: deposit.startDate,
         depositEndDate: deposit.endDate,
+        depositReleaseDate: deposit.releaseDate,
         depositCurrencyDecimalPlaces: deposit.currency.currencyDecimalPlace,
       });
     })
@@ -132,6 +134,21 @@ class DeleteDepositModal extends Component {
                 name="depositEndDate"
                 value={moment(this.state.depositEndDate).format('DD/MM/YYYY')} readOnly/>
               </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="depositReleaseDate">
+                <Form.Label>Release Date</Form.Label>
+                <Form.Control type="input"
+                name="depositReleaseDate"
+                value={
+                  this.state.depositReleaseDate?
+                  moment(this.state.depositReleaseDate).format('DD/MM/YYYY'):''
+                } readOnly/>
+              </Form.Group>
+            </Col>
+            <Col>
             </Col>
           </Row>
           <Form.Text className='text-danger'>{this.state.message}</Form.Text>

@@ -53,13 +53,17 @@ function WealthDepositTable (props) {
                 }
               </td>
               <td>
-                <ButtonGroup>
-                  <Button variant="link" size="sm"
-                  onClick={() => props.onAddInterest(deposit.id)}>Add Interest</Button>
-                  <Button variant="link" size="sm">Release</Button>
-                  <Button variant="link" size="sm"
-                  onClick={() => props.onDeleteDeposit(deposit.id)}>Delete</Button>
-                </ButtonGroup>
+                {
+                  deposit.status === 'ACTIVE' &&
+                  <ButtonGroup>
+                    <Button variant="link" size="sm"
+                    onClick={() => props.onAddInterest(deposit.id)}>Add Interest</Button>
+                    <Button variant="link" size="sm"
+                    onClick={() => props.onReleaseDeposit(deposit.id)}>Release</Button>
+                    <Button variant="link" size="sm"
+                    onClick={() => props.onDeleteDeposit(deposit.id)}>Delete</Button>
+                  </ButtonGroup>
+                }
               </td>
             </tr>
           )

@@ -21,6 +21,7 @@ DepositModel.init({
   originalTransId: { type: Sequelize.BIGINT(20), allowNull: true },
   relatedId: { type: Sequelize.BIGINT(20), allowNull: true },
   interestTransType: { type: Sequelize.INTEGER, allowNull: true },
+  releaseTransId: { type: Sequelize.BIGINT(20), allowNull: true },
 }, {
   tableName: 'deposits',
   createdAt: false,

@@ -7,6 +7,7 @@ import WealthDepositTotal from './WealthDepositTotal';
 import AddNewDepositModal from './AddNewDepositModal';
 import DeleteDepositModal from './DeleteDepositModal';
 import AddInterestModal from './AddInterestModal';
+import ReleaseDepositModal from './ReleaseDepositModal';
 import FormContainer from '../../common/FormContainer';
 import BanksDropDown from '../banks/BanksDropDown';
 import AccountStatusesDropDown from '../accounts/AccountStatusesDropDown';
@@ -24,6 +25,7 @@ class WealthDepositList extends Component {
     modalAddShow: false,
     modalDeleteShow: false,
     modalInterestShow: false,
+    modalReleaseShow: false,
     depositId: '',
     ...initialState,
   }
@@ -74,7 +76,9 @@ class WealthDepositList extends Component {
         </FormContainer>
         <FormContainer>
           <WealthDepositTable deposits={this.state.deposits}
-          onDeleteDeposit={this.handleDeleteDeposit} onAddInterest={this.handleAddInterest}/>
+          onDeleteDeposit={this.handleDeleteDeposit}
+          onAddInterest={this.handleAddInterest}
+          onReleaseDeposit={this.handleReleaseDeposit}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings && this.props.appSettings.baseCurrency &&
@@ -95,6 +99,11 @@ class WealthDepositList extends Component {
           this.state.modalInterestShow && <AddInterestModal
           show={this.state.modalInterestShow} onHide={this.handleHide}
           depositId={this.state.depositId}/>
+        }
+        {
+          this.state.modalReleaseShow && <ReleaseDepositModal
+          show={this.state.modalReleaseShow} onHide={this.handleHide}
+          onReleaseDeposit={this.handleListClick} depositId={this.state.depositId}/>
         }
       </React.Fragment>
     )
@@ -118,11 +127,19 @@ class WealthDepositList extends Component {
     });
   }
 
+  handleReleaseDeposit = (depositId) => {
+    this.setState({
+      modalReleaseShow: true,
+      depositId
+    });
+  }
+
   handleHide = () => {
     this.setState({
       modalAddShow: false,
       modalDeleteShow: false,
-      modalInterestShow: false
+      modalInterestShow: false,
+      modalReleaseShow: false,
     });
   }
 

@@ -53,4 +53,6 @@ module.exports = {
   '052' : 'This deposit can not be deleted as it has related transactions',
   '053' : 'Failed to add interest',
   '054' : 'This deposit interest has been successfully posted',
+  '055' : 'Failed to release deposit',
+  '056' : 'This deposit interest has been successfully released',
 }

@@ -64,4 +64,16 @@ router.post('/interest/:id', function(req, res, next) {
   })
 });
 
+router.post('/release/:id', function(req, res, next) {
+  deposit.releaseDeposit(req.params.id, req.body).then( result => {
+    if(result.success) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+});
+
 module.exports = router;

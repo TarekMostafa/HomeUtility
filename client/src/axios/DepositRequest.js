@@ -33,6 +33,12 @@ class DepositRequest {
       amount, date
     });
   }
+
+  static async releaseDeposit(id, releaseDate, transCreditType){
+    return await axios.post('/api/wealth/deposits/release/'+id, {
+      releaseDate, transCreditType
+    });
+  }
 }
 
 export default DepositRequest;
