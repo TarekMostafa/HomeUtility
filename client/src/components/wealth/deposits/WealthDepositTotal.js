@@ -12,7 +12,9 @@ function WealthDepositTotal (props) {
         <Card.Text>
           {
             props.deposits && amountFormatter(props.deposits.reduce( (result, deposit) => {
-              result += deposit.amount * deposit.currency.currencyRateAgainstBase
+              if(deposit.status==='ACTIVE') {
+                result += deposit.amount * deposit.currency.currencyRateAgainstBase;
+              }
               return result;
             }, 0), props.decimalPlace) + ' ' + props.baseCurrency
           }
