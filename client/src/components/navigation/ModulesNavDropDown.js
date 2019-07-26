@@ -11,10 +11,13 @@ function ModulesNavDropDown(props) {
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <LinkContainer to="/accounts">
-            <NavDropdown.Item>Accounts Summary</NavDropdown.Item>
+            <NavDropdown.Item>Summary</NavDropdown.Item>
           </LinkContainer>
           <LinkContainer to="/accountstransactions">
-            <NavDropdown.Item>Accounts Transactions</NavDropdown.Item>
+            <NavDropdown.Item>Transactions</NavDropdown.Item>
+          </LinkContainer>
+          <LinkContainer to="/relatedtransactions">
+            <NavDropdown.Item>Related Transactions</NavDropdown.Item>
           </LinkContainer>
         </Dropdown.Menu>
       </Dropdown>
@@ -24,7 +27,7 @@ function ModulesNavDropDown(props) {
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <LinkContainer to="/deposits">
-            <NavDropdown.Item>Deposits Summary</NavDropdown.Item>
+            <NavDropdown.Item>Summary</NavDropdown.Item>
           </LinkContainer>
         </Dropdown.Menu>
       </Dropdown>

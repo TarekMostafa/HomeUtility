@@ -5,6 +5,7 @@ const initState = {
   banks: null,
   accountStatuses: null,
   activeCurrencies: null,
+  relatedTypes: null,
 }
 
 const lookupReducer = (state=initState, action) => {
@@ -39,6 +40,11 @@ const lookupReducer = (state=initState, action) => {
         ...state,
         accountStatuses: action.data
       };
+    case 'SET_RELATED_TYPES':
+      return {
+        ...state,
+        relatedTypes: action.data
+      }
     default:
       return state;
   }

@@ -5,11 +5,13 @@ const path = require('path');
 const sequelize = require('./server/db/dbConnection');
 //Routers Declarations
 const transactionRouter = require('./server/wealth/transactions/transactionRouter');
+const relatedTransactionRouter = require('./server/wealth/relatedTransactions/relatedTransactionRouter');
 const accountRouter = require('./server/wealth/accounts/accountRouter');
 const depositRouter = require('./server/wealth/deposits/depositRouter');
 const transactionTypesRouter = require('./server/wealth/transactionTypes/transactionTypeRouter');
 const bankRouter = require('./server/wealth/banks/bankRouter');
 const currencyRouter = require('./server/currencies/currencyRouter');
+const relatedTypeRouter = require('./server/wealth/relatedTypes/relatedTypeRouter');
 const appSettingsRouter = require('./server/appSettings/appSettingsRouter');
 const userRouter = require('./server/auth/userRouter');
 const reportRouter = require('./server/wealth/transactionReports/reportRouter');
@@ -50,11 +52,13 @@ app.use(function(req, res, next){
 app.use('/api/users', userRouter);
 app.use('/api/appsettings', appSettingsRouter);
 app.use('/api/wealth/transactions', transactionRouter);
+app.use('/api/wealth/relatedTransactions', relatedTransactionRouter);
 app.use('/api/wealth/accounts', accountRouter);
 app.use('/api/wealth/deposits', depositRouter);
 app.use('/api/wealth/transactiontypes', transactionTypesRouter);
 app.use('/api/wealth/banks', bankRouter);
 app.use('/api/currencies', currencyRouter);
+app.use('/api/wealth/relatedTypes', relatedTypeRouter);
 app.use('/api/wealth/reports', reportRouter);
 app.use('/api/db', dbRouter);
 //Middleware for Errors

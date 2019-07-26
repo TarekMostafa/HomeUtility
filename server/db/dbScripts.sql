@@ -181,7 +181,9 @@ CREATE TABLE `relatedtransactions` (
   `relatedTransactionsId` bigint(20) NOT NULL AUTO_INCREMENT,
   `relatedTransactionType` varchar(3) NOT NULL,
   `relatedTransactionDesc` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`relatedTransactionsId`)
+  PRIMARY KEY (`relatedTransactionsId`),
+  KEY `relatedType_fk_idx` (`relatedTransactionType`),
+  CONSTRAINT `relatedType_fk` FOREIGN KEY (`relatedTransactionType`) REFERENCES `relatedtypes` (`typeCode`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -192,6 +194,30 @@ CREATE TABLE `relatedtransactions` (
 LOCK TABLES `relatedtransactions` WRITE;
 /*!40000 ALTER TABLE `relatedtransactions` DISABLE KEYS */;
 /*!40000 ALTER TABLE `relatedtransactions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `relatedtypes`
+--
+
+DROP TABLE IF EXISTS `relatedtypes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `relatedtypes` (
+  `typeCode` varchar(3) NOT NULL,
+  `typeDescription` varchar(45) NOT NULL,
+  PRIMARY KEY (`typeCode`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `relatedtypes`
+--
+
+LOCK TABLES `relatedtypes` WRITE;
+/*!40000 ALTER TABLE `relatedtypes` DISABLE KEYS */;
+INSERT INTO `relatedtypes` VALUES ('DEP','Deposit Related Transactions'),('IAT','Internal Account Transfer');
+/*!40000 ALTER TABLE `relatedtypes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

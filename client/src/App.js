@@ -10,6 +10,7 @@ import Home from './components/home/Home';
 import WealthAccountList from './components/wealth/accounts/WealthAccountList';
 import WealthDepositList from './components/wealth/deposits/WealthDepositList';
 import WealthTransactionList from './components/wealth/transactions/WealthTransactionList';
+import RelatedTransactionList from './components/wealth/relatedtransactions/RelatedTransactionList';
 import WealthBankList from './components/wealth/banks/WealthBankList';
 import CurrencyList from './components/currencies/CurrencyList';
 import WealthTransactionTypeList from './components/wealth/transactiontypes/WealthTransactionTypeList';
@@ -32,6 +33,7 @@ class App extends Component {
                 <Route path="/accounts" exact component={WealthAccountList}></Route>
                 <Route path="/deposits" exact component={WealthDepositList}></Route>
                 <Route path="/accountstransactions" exact component={WealthTransactionList}></Route>
+                <Route path="/relatedtransactions" exact component={RelatedTransactionList}></Route>
                 <Route path="/banks" exact component={WealthBankList}></Route>
                 <Route path="/currencies" exact component={CurrencyList}></Route>
                 <Route path="/transactiontypes" exact component={WealthTransactionTypeList}></Route>

@@ -6,7 +6,7 @@ const TransactionRepo = require('../transactions/transactionRepo');
 const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const Transaction = require('../transactions/transaction');
-const RelatedTransactionRepo = require('../transactions/relatedTransactionRepo');
+const RelatedTransactionRepo = require('../relatedTransactions/relatedTransactionRepo');
 
 class Deposit {
   async getDeposits({bank, status}) {

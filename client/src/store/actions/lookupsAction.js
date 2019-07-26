@@ -3,6 +3,7 @@ import AccountRequest from '../../axios/AccountRequest';
 import BankRequest from '../../axios/BankRequest';
 import CurrencyRequest from '../../axios/CurrencyRequest';
 import AppSettingsRequest from '../../axios/AppSettingsRequest';
+import RelatedTypeRequest from '../../axios/RelatedTypeRequest';
 
 export const getAppSettings = () => {
   return (dispatch, getState) => {
@@ -48,6 +49,14 @@ export const getActiveCurrencies = () => {
   return (dispatch, getState) => {
     CurrencyRequest.getCurrencies("YES")
     .then( (currencies) => dispatch({type: "SET_ACTIVE_CURRENCIES", data: currencies}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
+
+export const getRelatedTypes = () => {
+  return (dispatch, getState) => {
+    RelatedTypeRequest.getRelatedTypes()
+    .then( (relatedTypes) => dispatch({type: "SET_RELATED_TYPES", data: relatedTypes}) )
     .catch( () => dispatch({type: "ERROR"}) )
   }
 }

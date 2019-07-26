@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const AccountModel = require('../accounts/accountModel');
 const TransactionTypeModel = require('../transactionTypes/transactionTypeModel');
-const RelatedTransactionModel = require('./relatedTransactionModel');
+const RelatedTransactionModel = require('../relatedTransactions/relatedTransactionModel');
 
 class TransactionModel extends Model {}
 TransactionModel.init({

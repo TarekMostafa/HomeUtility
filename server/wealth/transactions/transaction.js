@@ -4,7 +4,7 @@ const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const TransactionRepo = require('./transactionRepo');
 const AccountRepo = require('../accounts/accountRepo');
-const RelatedTransactionRepo = require('./relatedTransactionRepo');
+const RelatedTransactionRepo = require('../relatedTransactions/relatedTransactionRepo');
 const ReportRepo = require('../transactionReports/reportRepo');
 
 const Op = Sequelize.Op;

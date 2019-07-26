@@ -1,6 +1,7 @@
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
+const RelatedTypeModel = require('../relatedTypes/RelatedTypeModel');
 
 class RelatedTransactionModel extends Model {}
 RelatedTransactionModel.init({
@@ -12,6 +13,11 @@ RelatedTransactionModel.init({
   createdAt: false,
   updatedAt: false,
   sequelize
+});
+
+RelatedTransactionModel.belongsTo(RelatedTypeModel, {
+  as: "relatedType",
+  foreignKey: 'relatedTransactionType'
 });
 
 module.exports = RelatedTransactionModel;
