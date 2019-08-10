@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, ButtonGroup } from 'react-bootstrap';
+import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
 import { connect } from 'react-redux';
 
@@ -55,14 +55,18 @@ function WealthDepositTable (props) {
               <td>
                 {
                   deposit.status === 'ACTIVE' &&
-                  <ButtonGroup>
-                    <Button variant="link" size="sm"
-                    onClick={() => props.onAddInterest(deposit.id)}>Add Interest</Button>
-                    <Button variant="link" size="sm"
-                    onClick={() => props.onReleaseDeposit(deposit.id)}>Release</Button>
-                    <Button variant="link" size="sm"
-                    onClick={() => props.onDeleteDeposit(deposit.id)}>Delete</Button>
-                  </ButtonGroup>
+                  <DropdownButton id="dropdown-basic-button" title="Actions"
+                  size="sm" variant="secondary">
+                    <Dropdown.Item onClick={() => props.onAddInterest(deposit.id)}>
+                    Add Interest
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => props.onReleaseDeposit(deposit.id)}>
+                    Release
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => props.onDeleteDeposit(deposit.id)}>
+                    Delete
+                    </Dropdown.Item>
+                  </DropdownButton>
                 }
               </td>
             </tr>
