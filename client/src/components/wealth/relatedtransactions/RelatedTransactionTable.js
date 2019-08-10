@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 import '../../../App.css';
 
 function RelatedTransactionTable (props) {
@@ -29,7 +29,12 @@ function RelatedTransactionTable (props) {
               </td>
               <td>{relatedTransactions.relatedTransactionDesc}</td>
               <td>{relatedTransactions.relatedTransactionsId}</td>
-              <td></td>
+              <td>
+                <Button variant="link" size="sm"
+                onClick={() => props.onDetails(relatedTransactions.relatedTransactionsId)}>
+                Details
+                </Button>
+              </td>
             </tr>
           )
         })}

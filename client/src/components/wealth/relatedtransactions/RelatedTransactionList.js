@@ -25,7 +25,7 @@ class RelatedTransactionList extends Component {
 
   loadTransctions(append) {
     RelatedTransactionRequest.getRelatedTransactions(this.state.limit,
-      (append?this.state.relatedTransactions.length:0), this.state.type, 
+      (append?this.state.relatedTransactions.length:0), this.state.type,
       this.state.description, this.state.id, this.state.includeDescription)
     .then( (relatedTransactions) => {
       let _relatedTransactions = [];
@@ -48,7 +48,7 @@ class RelatedTransactionList extends Component {
   render() {
     return (
       <React.Fragment>
-        <FormContainer title="Related Transactions">
+        <FormContainer title="Accounts Related Transactions">
           <Form>
           <Row>
             <Col xs={3}>
@@ -91,7 +91,8 @@ class RelatedTransactionList extends Component {
           </Form>
         </FormContainer>
         <FormContainer>
-          <RelatedTransactionTable relatedTransactions={this.state.relatedTransactions}/>
+          <RelatedTransactionTable relatedTransactions={this.state.relatedTransactions}
+          onDetails={this.handleDetails}/>
           <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
             hidden={!this.state.appearMoreButton}>
             more...</Button>
@@ -118,6 +119,10 @@ class RelatedTransactionList extends Component {
     this.setState({
       [event.target.name] : (event.target.type==='checkbox' ? event.target.checked : event.target.value)
     })
+  }
+
+  handleDetails = (id) => {
+    this.props.history.push('relatedtransactiondetails/'+id)
   }
 
 }

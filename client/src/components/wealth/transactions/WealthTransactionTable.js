@@ -57,10 +57,10 @@ function WealthTransactionTable (props) {
                 {
                   !transaction.transactionModule &&
                   <ButtonGroup>
-                    <Button variant="link" size="sm"
-                    onClick={() => props.onEditTransaction(transaction.transactionId)}>Edit</Button>
-                    <Button variant="link" size="sm"
-                    onClick={() => props.onDeleteTransaction(transaction.transactionId)}>Delete</Button>
+                    {props.onEditTransaction && <Button variant="link" size="sm"
+                    onClick={() => props.onEditTransaction(transaction.transactionId)}>Edit</Button>}
+                    {props.onDeleteTransaction && <Button variant="link" size="sm"
+                    onClick={() => props.onDeleteTransaction(transaction.transactionId)}>Delete</Button>}
                   </ButtonGroup>
                 }
               </td>

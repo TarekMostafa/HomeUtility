@@ -39,6 +39,11 @@ class RelatedTransaction {
     const relatedTransactions = await RelatedTransactionRepo.getRelatedTransactions(_skip, _limit, whereQuery);
     return APIResponse.getAPIResponse(true, relatedTransactions);
   }
+
+  async getRelatedTransactionsDetails({id}) {
+    const relatedTransactionsByDetails = await RelatedTransactionRepo.getRelatedTransactionsById(id);
+    return APIResponse.getAPIResponse(true, relatedTransactionsByDetails);
+  }
 }
 
 module.exports = RelatedTransaction;

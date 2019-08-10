@@ -16,4 +16,16 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/details', function(req, res, next) {
+  relatedTransaction.getRelatedTransactionsDetails(req.query).then( result => {
+    if(result.success) {
+      res.json(result.payload);
+    } else {
+      res.status(400).send(result.message);
+    }
+  }).catch( err => {
+    next(err);
+  })
+});
+
 module.exports = router;
