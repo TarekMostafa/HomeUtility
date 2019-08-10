@@ -78,7 +78,8 @@ class WealthDepositList extends Component {
           <WealthDepositTable deposits={this.state.deposits}
           onDeleteDeposit={this.handleDeleteDeposit}
           onAddInterest={this.handleAddInterest}
-          onReleaseDeposit={this.handleReleaseDeposit}/>
+          onReleaseDeposit={this.handleReleaseDeposit}
+          onDepositDetails={this.handleDepositDetails}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings && this.props.appSettings.baseCurrency &&
@@ -132,6 +133,10 @@ class WealthDepositList extends Component {
       modalReleaseShow: true,
       depositId
     });
+  }
+
+  handleDepositDetails = (deposit) => {
+    this.props.history.push('relatedtransactiondetails/'+deposit.relatedId)
   }
 
   handleHide = () => {

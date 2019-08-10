@@ -53,21 +53,26 @@ function WealthDepositTable (props) {
                 }
               </td>
               <td>
-                {
-                  deposit.status === 'ACTIVE' &&
-                  <DropdownButton id="dropdown-basic-button" title="Actions"
-                  size="sm" variant="secondary">
-                    <Dropdown.Item onClick={() => props.onAddInterest(deposit.id)}>
-                    Add Interest
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={() => props.onReleaseDeposit(deposit.id)}>
-                    Release
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={() => props.onDeleteDeposit(deposit.id)}>
-                    Delete
-                    </Dropdown.Item>
-                  </DropdownButton>
-                }
+                <DropdownButton id="dropdown-basic-button" title="Actions"
+                size="sm" variant="secondary">
+                  <Dropdown.Item onClick={() => props.onDepositDetails(deposit)}>
+                  Transactions
+                  </Dropdown.Item>
+                  {
+                    deposit.status === 'ACTIVE' &&
+                    <React.Fragment>
+                      <Dropdown.Item onClick={() => props.onAddInterest(deposit.id)}>
+                      Add Interest
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => props.onReleaseDeposit(deposit.id)}>
+                      Release
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => props.onDeleteDeposit(deposit.id)}>
+                      Delete
+                      </Dropdown.Item>
+                    </React.Fragment>
+                  }
+                </DropdownButton>
               </td>
             </tr>
           )
