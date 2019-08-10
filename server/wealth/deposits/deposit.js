@@ -9,7 +9,7 @@ const Transaction = require('../transactions/transaction');
 const RelatedTransactionRepo = require('../relatedTransactions/relatedTransactionRepo');
 
 class Deposit {
-  async getDeposits({bank, status}) {
+  async getDeposits({bank, status, currency}) {
     // Construct Where Condition
     let whereQuery = {};
     // Bank Code
@@ -19,6 +19,10 @@ class Deposit {
     // Status
     if(Common.getText(status, '') !== '') {
       whereQuery.status = status;
+    }
+    // Currency
+    if(Common.getText(currency, '') !== '') {
+      whereQuery.currencyCode = currency;
     }
     const deposits = await DepositRepo.getDeposits(whereQuery);
     return APIResponse.getAPIResponse(true, deposits);

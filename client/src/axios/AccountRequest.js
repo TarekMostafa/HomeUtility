@@ -11,11 +11,12 @@ class AccountRequest {
     return response.data;
   }
 
-  static async getAccounts(bank, status) {
+  static async getAccounts(bank, status, currency) {
     const response = await axios.get('/api/wealth/accounts', {
       params: {
         bank,
-        status
+        status,
+        currency
       }
     });
     return response.data;

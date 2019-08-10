@@ -11,12 +11,14 @@ import ReleaseDepositModal from './ReleaseDepositModal';
 import FormContainer from '../../common/FormContainer';
 import BanksDropDown from '../banks/BanksDropDown';
 import AccountStatusesDropDown from '../accounts/AccountStatusesDropDown';
+import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 
 import DepositRequest from '../../../axios/DepositRequest';
 
 const initialState = {
   depositStatus: 'ACTIVE',
   depositBank: '',
+  depositCurrency: '',
 }
 
 class WealthDepositList extends Component {
@@ -31,7 +33,8 @@ class WealthDepositList extends Component {
   }
 
   loadDeposits() {
-    DepositRequest.getDeposits(this.state.depositBank, this.state.depositStatus)
+    DepositRequest.getDeposits(this.state.depositBank, this.state.depositStatus,
+    this.state.depositCurrency)
     .then( (deposits) => {
       this.setState({
         deposits
@@ -65,7 +68,14 @@ class WealthDepositList extends Component {
                   <AccountStatusesDropDown />
                 </Form.Control>
               </Col>
-              <Col xs={{offset:4, span:1}}>
+              <Col xs={3}>
+                <Form.Control as="select" size="sm" name="depositCurrency" onChange={this.handleChange}
+                  value={this.state.depositCurrency}>
+                  <option value=''>Currencies</option>
+                  <CurrenciesDropDown />
+                </Form.Control>
+              </Col>
+              <Col xs={{offset:1, span:1}}>
                 <Button variant="primary" size="sm" block onClick={this.handleListClick}>List</Button>
               </Col>
               <Col xs={1}>

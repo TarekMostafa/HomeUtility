@@ -10,12 +10,14 @@ import DeleteAccountModal from './DeleteAccountModal';
 import FormContainer from '../../common/FormContainer';
 import BanksDropDown from '../banks/BanksDropDown';
 import AccountStatusesDropDown from './AccountStatusesDropDown';
+import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 
 import AccountRequest from '../../../axios/AccountRequest';
 
 const initialState = {
   accountStatus: 'ACTIVE',
   accountBank: '',
+  accountCurrency: '',
 }
 
 class WealthAccountList extends Component {
@@ -29,7 +31,8 @@ class WealthAccountList extends Component {
   }
 
   loadAccounts() {
-    AccountRequest.getAccounts(this.state.accountBank, this.state.accountStatus)
+    AccountRequest.getAccounts(this.state.accountBank, this.state.accountStatus,
+    this.state.accountCurrency)
     .then( (accounts) => {
       this.setState({
         accounts
@@ -63,7 +66,14 @@ class WealthAccountList extends Component {
                   <AccountStatusesDropDown />
                 </Form.Control>
               </Col>
-              <Col xs={{offset:4, span:1}}>
+              <Col xs={3}>
+                <Form.Control as="select" size="sm" name="accountCurrency" onChange={this.handleChange}
+                  value={this.state.accountCurrency}>
+                  <option value=''>Currencies</option>
+                  <CurrenciesDropDown />
+                </Form.Control>
+              </Col>
+              <Col xs={{offset:1, span:1}}>
                 <Button variant="primary" size="sm" block onClick={this.handleListClick}>List</Button>
               </Col>
               <Col xs={1}>

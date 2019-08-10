@@ -10,7 +10,7 @@ class Account {
     return APIResponse.getAPIResponse(true, accounts);
   }
 
-  async getAccounts({bank, status}) {
+  async getAccounts({bank, status, currency}) {
     // Construct Where Condition
     let whereQuery = {};
     // Bank Code
@@ -20,6 +20,10 @@ class Account {
     // Status
     if(Common.getText(status, '') !== '') {
       whereQuery.accountStatus = status;
+    }
+    // Currency
+    if(Common.getText(currency, '') !== '') {
+      whereQuery.accountCurrency = currency;
     }
     const accounts = await AccountRepo.getAccounts(whereQuery);
     return APIResponse.getAPIResponse(true, accounts);

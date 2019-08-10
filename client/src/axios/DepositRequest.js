@@ -1,11 +1,12 @@
 import axios from 'axios';
 
 class DepositRequest {
-  static async getDeposits(bank, status) {
+  static async getDeposits(bank, status, currency) {
     const response = await axios.get('/api/wealth/deposits', {
       params: {
         bank,
-        status
+        status,
+        currency
       }
     });
     return response.data;
