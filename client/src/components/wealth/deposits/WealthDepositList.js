@@ -62,17 +62,17 @@ class WealthDepositList extends Component {
                 </Form.Control>
               </Col>
               <Col xs={3}>
-                <Form.Control as="select" size="sm" name="depositStatus" onChange={this.handleChange}
-                  value={this.state.depositStatus}>
-                  <option value=''>Deposit Statuses</option>
-                  <AccountStatusesDropDown />
-                </Form.Control>
-              </Col>
-              <Col xs={3}>
                 <Form.Control as="select" size="sm" name="depositCurrency" onChange={this.handleChange}
                   value={this.state.depositCurrency}>
                   <option value=''>Currencies</option>
                   <CurrenciesDropDown />
+                </Form.Control>
+              </Col>
+              <Col xs={3}>
+                <Form.Control as="select" size="sm" name="depositStatus" onChange={this.handleChange}
+                  value={this.state.depositStatus}>
+                  <option value=''>Deposit Statuses</option>
+                  <AccountStatusesDropDown />
                 </Form.Control>
               </Col>
               <Col xs={{offset:1, span:1}}>

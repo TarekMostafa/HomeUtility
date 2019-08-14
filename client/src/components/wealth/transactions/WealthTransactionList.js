@@ -138,7 +138,8 @@ class WealthTransactionList extends Component {
         <FormContainer>
           <WealthTransactionTable transactions={this.state.transactions}
           onEditTransaction={this.handleEditTransaction}
-          onDeleteTransaction={this.handleDeleteTransaction}/>
+          onDeleteTransaction={this.handleDeleteTransaction}
+          onRelatedTransaction={this.handleRelatedTransaction}/>
           <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
             hidden={!this.state.appearMoreButton}>
             more...</Button>
@@ -226,6 +227,10 @@ class WealthTransactionList extends Component {
       modalDeleteSingleShow: true,
       transactionId
     });
+  }
+
+  handleRelatedTransaction = (relatedId) => {
+    this.props.history.push('relatedtransactiondetails/'+relatedId)
   }
 
 }

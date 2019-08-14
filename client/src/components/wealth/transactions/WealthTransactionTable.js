@@ -50,7 +50,12 @@ function WealthTransactionTable (props) {
                 {transaction.transactionId}
                 {
                   transaction.transactionRelatedTransactionId &&
-                  <Badge pill variant="success">{transaction.transactionRelatedTransactionId}</Badge>
+                  <Button variant="link"
+                  onClick={() => props.onRelatedTransaction(transaction.transactionRelatedTransactionId)}>
+                    <Badge pill variant="success">
+                      {transaction.transactionRelatedTransactionId}
+                    </Badge>
+                  </Button>
                 }
               </td>
               <td>

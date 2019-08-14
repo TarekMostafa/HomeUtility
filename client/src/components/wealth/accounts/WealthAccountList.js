@@ -60,17 +60,17 @@ class WealthAccountList extends Component {
                 </Form.Control>
               </Col>
               <Col xs={3}>
-                <Form.Control as="select" size="sm" name="accountStatus" onChange={this.handleChange}
-                  value={this.state.accountStatus}>
-                  <option value=''>Account Statuses</option>
-                  <AccountStatusesDropDown />
-                </Form.Control>
-              </Col>
-              <Col xs={3}>
                 <Form.Control as="select" size="sm" name="accountCurrency" onChange={this.handleChange}
                   value={this.state.accountCurrency}>
                   <option value=''>Currencies</option>
                   <CurrenciesDropDown />
+                </Form.Control>
+              </Col>
+              <Col xs={3}>
+                <Form.Control as="select" size="sm" name="accountStatus" onChange={this.handleChange}
+                  value={this.state.accountStatus}>
+                  <option value=''>Account Statuses</option>
+                  <AccountStatusesDropDown />
                 </Form.Control>
               </Col>
               <Col xs={{offset:1, span:1}}>
