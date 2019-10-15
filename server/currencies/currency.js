@@ -92,7 +92,7 @@ class Currency {
     });
     // Wait for rates and update database
     await Promise.all(promises).then( (data) => {
-      return data.map( currency => currency.save());
+      return data.map( async currency => await currency.save());
     });
     return APIResponse.getAPIResponse(true, null, '023');
   }
