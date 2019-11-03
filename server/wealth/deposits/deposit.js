@@ -44,7 +44,15 @@ class Deposit {
     let dbTransaction;
     try {
       dbTransaction = await sequelize.transaction();
+      //Add Related transaction
+      const relatedTransaction = await RelatedTransactionRepo.
+        addRelatedTransaction({
+          relatedTransactionType: 'DEP',
+          relatedTransactionDesc: ''
+        }, dbTransaction);
+      let relatedId = relatedTransaction.relatedTransactionsId;
       //Add New Deposit
+      deposit.relatedId = relatedId;
       let savedDeposit = await DepositRepo.addDeposit(deposit, dbTransaction);
       const transaction = new Transaction();
       //Add Deposit Transaction
@@ -56,6 +64,7 @@ class Deposit {
           transactionAccount: deposit.accountId,
           transactionTypeId: deposit.transDebitType,
           transactionModule: 'DEP',
+          transactionRelatedTransactionId: relatedId,
         }, dbTransaction);
       if(!result.success) {
         await dbTransaction.rollback();
@@ -109,15 +118,6 @@ class Deposit {
     let dbTransaction;
     try {
       dbTransaction = await sequelize.transaction();
-      let relatedId = _deposit.relatedId;
-      if(!relatedId) {
-        const relatedTransaction = await RelatedTransactionRepo.
-        addRelatedTransaction({
-          relatedTransactionType: 'DEP',
-          relatedTransactionDesc: ''
-        }, dbTransaction);
-        relatedId = relatedTransaction.relatedTransactionsId;
-      }
       //Add Deposit Transaction
       const transaction = new Transaction();
       const result = await transaction.addTransaction({
@@ -127,19 +127,15 @@ class Deposit {
           transactionCRDR: 'Credit',
           transactionAccount: _deposit.accountId,
           transactionTypeId: _deposit.interestTransType,
-          transactionRelatedTransactionId: relatedId,
+          transactionRelatedTransactionId: _deposit.relatedId,
         }, dbTransaction);
       if(!result.success) {
         await dbTransaction.rollback();
         return APIResponse.getAPIResponse(false, null, '053');
       }
-      //Save Deposit related Id
-      _deposit.relatedId = relatedId;
-      await _deposit.save({transaction: dbTransaction});
       await dbTransaction.commit();
       return APIResponse.getAPIResponse(true, null, '054');
     } catch (err) {
-      console.log(err);
       await dbTransaction.rollback();
       return APIResponse.getAPIResponse(false, null, '053');
     }
