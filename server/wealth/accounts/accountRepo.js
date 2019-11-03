@@ -1,6 +1,7 @@
 const AccountModel = require('./accountModel');
 const BankModel = require('../banks/bankModel');
 const CurrencyModel = require('../../currencies/CurrencyModel');
+const sequelize = require('../../db/dbConnection').getSequelize();
 
 class AccountRepo {
   static async getSimpleAccounts() {
@@ -33,6 +34,13 @@ class AccountRepo {
 
   static async addAccount(account) {
     await AccountModel.build(account).save();
+  }
+
+  static async updateAccountCurrentBalance(account, amount, dbTransaction) {
+    await account.update(
+      {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amount),
+      accountLastBalanceUpdate: sequelize.fn('NOW')},
+      {transaction: dbTransaction});
   }
 }
 

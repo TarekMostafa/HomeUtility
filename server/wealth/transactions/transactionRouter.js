@@ -1,8 +1,12 @@
 const express = require('express');
 const Transaction = require('./transaction');
+const SingleTransaction = require('./singleTransaction');
+const InternalTransaction = require('./internalTransaction');
 
 const router = express.Router();
 const transaction = new Transaction();
+const singleTransaction = new SingleTransaction();
+const internalTransaction = new InternalTransaction();
 
 router.get('/', function(req, res, next) {
   transaction.getTransactions(req.query).then( result => {
@@ -29,7 +33,7 @@ router.get('/monthlystatistics', function(req, res, next) {
 });
 
 router.post('/single', function(req, res, next) {
-  transaction.addSingleTransaction(req.body).then( result => {
+  singleTransaction.addSingleTransaction(req.body).then( result => {
     if(result.success) {
       res.status(200).send(result.message);
     } else {
@@ -41,7 +45,7 @@ router.post('/single', function(req, res, next) {
 })
 
 router.post('/internal', function(req, res, next) {
-  transaction.addInternalTransaction(req.body).then( result => {
+  internalTransaction.addInternalTransaction(req.body).then( result => {
     if(result.success) {
       res.status(200).send(result.message);
     } else {
@@ -53,7 +57,7 @@ router.post('/internal', function(req, res, next) {
 })
 
 router.get('/single/:id', function(req, res, next) {
-  transaction.getSingleTransaction(req.params.id).then( result => {
+  transaction.getTransaction(req.params.id).then( result => {
     if(result.success) {
       res.json(result.payload);
     } else {
@@ -65,7 +69,7 @@ router.get('/single/:id', function(req, res, next) {
 })
 
 router.put('/single/:id', function(req, res, next) {
-  transaction.editSingleTransaction(req.params.id, req.body).then( result => {
+  singleTransaction.editSingleTransaction(req.params.id, req.body).then( result => {
     if(result.success) {
       res.status(200).send(result.message);
     } else {
@@ -77,7 +81,7 @@ router.put('/single/:id', function(req, res, next) {
 })
 
 router.delete('/single/:id', function(req, res, next) {
-  transaction.deleteSingleTransaction(req.params.id).then( result => {
+  singleTransaction.deleteSingleTransaction(req.params.id).then( result => {
     if(result.success) {
       res.status(200).send(result.message);
     } else {

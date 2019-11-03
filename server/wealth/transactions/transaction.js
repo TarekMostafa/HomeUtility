@@ -1,10 +1,9 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../../db/dbConnection').getSequelize();
 const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const TransactionRepo = require('./transactionRepo');
 const AccountRepo = require('../accounts/accountRepo');
-const RelatedTransactionRepo = require('../relatedTransactions/relatedTransactionRepo');
+
 const ReportRepo = require('../transactionReports/reportRepo');
 
 const Op = Sequelize.Op;
@@ -19,15 +18,15 @@ class Transaction {
     // Construct Where Condition
     let whereQuery = {};
     // account Id
-    if(Common.getText(accountId, '') !== '') {
+    if(accountId) {
       whereQuery.transactionAccount = accountId;
     }
     // Transaction Type Id
-    if(Common.getText(typeId, '') !== '') {
+    if(typeId) {
       whereQuery.transactionTypeId = typeId;
     }
     // Narrative
-    if(Common.getText(narrative, '') !== '') {
+    if(narrative) {
       if(includeNarrative==='true') {
         whereQuery.transactionNarrative = {
           [Op.substring] : narrative
@@ -111,138 +110,9 @@ class Transaction {
     return APIResponse.getAPIResponse(true, result);
   }
 
-  async addSingleTransaction(transaction) {
-    let dbTransaction;
-    try{
-      dbTransaction = await sequelize.transaction();
-      const result = await this.addTransaction(transaction, dbTransaction);
-      if(result.success) {
-        await dbTransaction.commit();
-      } else {
-        await dbTransaction.rollback();
-      }
-      return result;
-    } catch (err) {
-      await dbTransaction.rollback();
-      return APIResponse.getAPIResponse(false, null, '031');
-    }
-  }
-
-  async getSingleTransaction(id) {
+  async getTransaction(id) {
     const transaction = await TransactionRepo.getTransaction(id);
     return APIResponse.getAPIResponse(true, transaction);
-  }
-
-  async editSingleTransaction(id, transaction) {
-    let dbTransaction;
-    try{
-      dbTransaction = await sequelize.transaction();
-      let result = await this.editTransaction(id, transaction, dbTransaction);
-      if(result.success) {
-        await dbTransaction.commit();
-      } else {
-        await dbTransaction.rollback();
-      }
-      return result;
-    } catch (err) {
-      await dbTransaction.rollback();
-      return APIResponse.getAPIResponse(false, null, '036');
-    }
-  }
-
-  async deleteSingleTransaction(id) {
-    let dbTransaction;
-    try{
-      dbTransaction = await sequelize.transaction();
-      const result = await this.deleteTransaction(id, dbTransaction);
-      if(result.success) {
-        await dbTransaction.commit();
-      } else {
-        await dbTransaction.rollback();
-      }
-      return result;
-    } catch (err) {
-      await dbTransaction.rollback();
-      return APIResponse.getAPIResponse(false, null, '038');
-    }
-  }
-
-  async addInternalTransaction(internalTransaction) {
-    // Validation
-    // Account From must not be equal to Account To
-    if(internalTransaction.accountFrom === internalTransaction.accountTo) {
-      return APIResponse.getAPIResponse(false, null, '040');
-    }
-    // Account From Currency must be equal to Account To Currency
-    let accountFrom = await AccountRepo.getAccount(internalTransaction.accountFrom);
-    if(!accountFrom){
-      return APIResponse.getAPIResponse(false, null, '032');
-    }
-    let accountTo = await AccountRepo.getAccount(internalTransaction.accountTo);
-    if(!accountTo){
-      return APIResponse.getAPIResponse(false, null, '032');
-    }
-    if(accountFrom.accountCurrency !== accountTo.accountCurrency) {
-      return APIResponse.getAPIResponse(false, null, '041');
-    }
-    // Begin Transaction
-    let dbTransaction;
-    try{
-      dbTransaction = await sequelize.transaction();
-      // Related Transaction
-      let relatedTransaction = {
-        relatedTransactionType: 'IAT',
-        relatedTransactionDesc: ''
-      }
-      relatedTransaction = await RelatedTransactionRepo.addRelatedTransaction(relatedTransaction, dbTransaction);
-      // Debit Side
-      let transactionDR = {
-        transactionAmount: internalTransaction.amount,
-        transactionNarrative: accountTo.bank.bankName + ' (' +
-          accountTo.accountNumber + ')',
-        transactionPostingDate: internalTransaction.postingDate,
-        transactionCRDR: 'Debit',
-        transactionAccount: internalTransaction.accountFrom,
-        transactionTypeId: internalTransaction.typeFrom,
-        transactionRelatedTransactionId: relatedTransaction.relatedTransactionsId
-      }
-      let result = await this.addTransaction(transactionDR, dbTransaction);
-      if(!result.success){
-        await dbTransaction.rollback();
-        return result;
-      }
-      // Credit Side
-      let transactionCR = {
-        transactionAmount: internalTransaction.amount,
-        transactionNarrative: accountFrom.bank.bankName + ' (' +
-          accountFrom.accountNumber + ')',
-        transactionPostingDate: internalTransaction.postingDate,
-        transactionCRDR: 'Credit',
-        transactionAccount: internalTransaction.accountTo,
-        transactionTypeId: internalTransaction.typeTo,
-        transactionRelatedTransactionId: relatedTransaction.relatedTransactionsId
-      }
-      result = await this.addTransaction(transactionCR, dbTransaction);
-      if(result.success) {
-        await dbTransaction.commit();
-      } else {
-        await dbTransaction.rollback();
-      }
-      return result;
-    } catch (err) {
-      await dbTransaction.rollback();
-      return APIResponse.getAPIResponse(false, null, '031');
-    }
-  }
-
-  evalTransactionAmount(amount, type, isRollback) {
-    if( (!isRollback && type === 'Debit') || (isRollback  && type === 'Credit') ) {
-      return amount * -1;
-    } else if ( (isRollback && type === 'Debit') || (!isRollback  && type === 'Credit') ) {
-      return amount * 1;
-    } else {
-      return null;
-    }
   }
 
   async addTransaction(transaction, dbTransaction) {
@@ -260,7 +130,7 @@ class Transaction {
     // Save Transaction
     const savedTrans = await TransactionRepo.addTransaction(transaction, dbTransaction);
     // Update Account Current Balance & Last Balance Update
-    await this.accountCurrentBalanceUpdate(account, amount, dbTransaction);
+    await AccountRepo.updateAccountCurrentBalance(account, amount, dbTransaction);
     return APIResponse.getAPIResponse(true, savedTrans, '030');
   }
 
@@ -284,7 +154,7 @@ class Transaction {
     // Delete Transaction
     await _transaction.destroy({transaction: dbTransaction});
     // Update Account
-    await this.accountCurrentBalanceUpdate(_account, amount, dbTransaction);
+    await AccountRepo.updateAccountCurrentBalance(_account, amount, dbTransaction);
     return APIResponse.getAPIResponse(true, null, '037');
   }
 
@@ -325,20 +195,24 @@ class Transaction {
     _transaction.transactionTypeId = transaction.transactionTypeId;
     await _transaction.save({transaction: dbTransaction});
     if(_account.accountId !== account.accountId) {
-      await this.accountCurrentBalanceUpdate(_account, amountRollback, dbTransaction);
-      await this.accountCurrentBalanceUpdate(account, amount, dbTransaction);
+      await AccountRepo.updateAccountCurrentBalance(_account, amountRollback, dbTransaction);
+      await AccountRepo.updateAccountCurrentBalance(account, amount, dbTransaction);
     } else {
-      await this.accountCurrentBalanceUpdate(_account, amountRollback+amount, dbTransaction);
+      await AccountRepo.updateAccountCurrentBalance(_account, amountRollback+amount, dbTransaction);
     }
     return APIResponse.getAPIResponse(true, null, '035');
   }
 
-  async accountCurrentBalanceUpdate(account, amount, dbTransaction) {
-    await account.update(
-      {accountCurrentBalance: sequelize.literal('accountCurrentBalance+'+amount),
-      accountLastBalanceUpdate: sequelize.fn('NOW')},
-      {transaction: dbTransaction});
+  evalTransactionAmount(amount, type, isRollback) {
+    if( (!isRollback && type === 'Debit') || (isRollback  && type === 'Credit') ) {
+      return amount * -1;
+    } else if ( (isRollback && type === 'Debit') || (!isRollback  && type === 'Credit') ) {
+      return amount * 1;
+    } else {
+      return null;
+    }
   }
+
 }
 
 module.exports = Transaction;
