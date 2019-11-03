@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button, Spinner, InputGroup } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
@@ -18,6 +18,8 @@ const initialState = {
   accountTo: '',
   typeTo: '',
   decimalPlaces: 0,
+  currencyFrom: '',
+  currencyTo: '',
   message: '',
   isLoading: false,
 }
@@ -42,7 +44,7 @@ class AddInternalTransactionModal extends Component {
         <Form>
           <Form.Group controlId="accountFrom">
             <Form.Label>Account From</Form.Label>
-            <Form.Control as="select" name="accountFrom" onChange={this.handleAccountChange}>
+            <Form.Control as="select" name="accountFrom" onChange={this.handleAccountFromChange}>
               <option value=''></option>
               <AccountsDropDown status='ACTIVE'/>
             </Form.Control>
@@ -61,13 +63,21 @@ class AddInternalTransactionModal extends Component {
           </Form.Group>
           <Form.Group controlId="amount">
             <Form.Label>Amount</Form.Label>
-            <Form.Control type="number"
-            name="amount" value={Number(this.state.amount).toFixed(this.state.decimalPlaces)}
-            onChange={this.handleChange}/>
+            <InputGroup>
+              <InputGroup.Prepend>
+                <InputGroup.Text id="inputGroupPrepend">{this.state.currencyFrom}</InputGroup.Text>
+              </InputGroup.Prepend>
+              <Form.Control type="number"
+              name="amount" value={Number(this.state.amount).toFixed(this.state.decimalPlaces)}
+              onChange={this.handleChange}/>
+              <InputGroup.Prepend>
+                <InputGroup.Text id="inputGroupPrepend">{this.state.currencyTo}</InputGroup.Text>
+              </InputGroup.Prepend>
+            </InputGroup>
           </Form.Group>
           <Form.Group controlId="accountTo">
             <Form.Label>Account To</Form.Label>
-            <Form.Control as="select" name="accountTo" onChange={this.handleChange}>
+            <Form.Control as="select" name="accountTo" onChange={this.handleAccountToChange}>
               <option value=''></option>
               <AccountsDropDown status='ACTIVE'/>
             </Form.Control>
@@ -85,11 +95,27 @@ class AddInternalTransactionModal extends Component {
     )
   }//end of render
 
-  handleAccountChange = (event) => {
+  handleAccountFromChange = (event) => {
     const decimalPlaces = event.target[event.target.selectedIndex].getAttribute('decimalplaces');
+    const currency = event.target[event.target.selectedIndex].getAttribute('currency');
     this.setState({
       accountFrom : event.target.value,
-      decimalPlaces
+      decimalPlaces,
+      currencyFrom: currency
+    });
+  }
+
+  handleOnShow = () => {
+    this.setState({
+      ...initialState
+    })
+  }
+
+  handleAccountToChange = (event) => {
+    const currency = event.target[event.target.selectedIndex].getAttribute('currency');
+    this.setState({
+      accountTo : event.target.value,
+      currencyTo: currency
     });
   }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button, Spinner, Row, Col } from 'react-bootstrap';
+import { Form, Button, Spinner, Row, Col, InputGroup } from 'react-bootstrap';
 import moment from 'moment';
 import ModalContainer from '../../common/ModalContainer';
 import AccountsDropDown from '../accounts/AccountsDropDown';
@@ -15,6 +15,7 @@ const initialState = {
   type: '',
   narrative: '',
   accountCurrencyDecimalPlaces: 0,
+  currency: '',
   message: '',
   isLoading: false,
 }
@@ -37,6 +38,7 @@ class DeleteSingleTransactionModal extends Component {
         type: transaction.transactionTypeId,
         narrative: transaction.transactionNarrative,
         accountCurrencyDecimalPlaces: transaction.account.currency.currencyDecimalPlace,
+        currency: transaction.account.accountCurrency
       });
     })
     .catch( (err) => {
@@ -73,10 +75,15 @@ class DeleteSingleTransactionModal extends Component {
           </Form.Group>
           <Form.Group controlId="amount">
             <Form.Label>Amount</Form.Label>
-            <Form.Control type="input"
-            name="amount"
-            value={amountFormatter(this.state.amount, this.state.accountCurrencyDecimalPlaces)}
-            readOnly/>
+            <InputGroup>
+              <Form.Control type="input"
+              name="amount"
+              value={amountFormatter(this.state.amount, this.state.accountCurrencyDecimalPlaces)}
+              readOnly/>
+              <InputGroup.Prepend>
+                <InputGroup.Text id="inputGroupPrepend">{this.state.currency}</InputGroup.Text>
+              </InputGroup.Prepend>
+            </InputGroup>
           </Form.Group>
           <Form.Group controlId="crdr">
             <Row>

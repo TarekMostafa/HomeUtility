@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button, Spinner, Row, Col } from 'react-bootstrap';
+import { Form, Button, Spinner, Row, Col, InputGroup } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
@@ -18,6 +18,7 @@ const initialState = {
   type: '',
   narrative: '',
   decimalPlaces: 0,
+  currency: '',
   message: '',
   isLoading: false,
 }
@@ -39,7 +40,8 @@ class EditSingleTransactionModal extends Component {
         crdr: transaction.transactionCRDR,
         type: transaction.transactionTypeId,
         narrative: transaction.transactionNarrative,
-        decimalPlaces: transaction.account.currency.currencyDecimalPlace
+        decimalPlaces: transaction.account.currency.currencyDecimalPlace,
+        currency: transaction.account.accountCurrency
       });
     })
     .catch( (err) => {
@@ -76,10 +78,15 @@ class EditSingleTransactionModal extends Component {
           </Form.Group>
           <Form.Group controlId="amount">
             <Form.Label>Amount</Form.Label>
-            <Form.Control type="number"
-            name="amount"
-            value={Number(this.state.amount).toFixed(this.state.decimalPlaces)}
-            onChange={this.handleChange}/>
+            <InputGroup>
+              <Form.Control type="number"
+              name="amount"
+              value={Number(this.state.amount).toFixed(this.state.decimalPlaces)}
+              onChange={this.handleChange}/>
+              <InputGroup.Prepend>
+                <InputGroup.Text id="inputGroupPrepend">{this.state.currency}</InputGroup.Text>
+              </InputGroup.Prepend>
+            </InputGroup>
           </Form.Group>
           <Form.Group controlId="crdr">
             <Row>
@@ -117,9 +124,11 @@ class EditSingleTransactionModal extends Component {
 
   handleAccountChange = (event) => {
     const decimalPlaces = event.target[event.target.selectedIndex].getAttribute('decimalplaces');
+    const currency = event.target[event.target.selectedIndex].getAttribute('currency');
     this.setState({
       account : event.target.value,
-      decimalPlaces
+      decimalPlaces,
+      currency
     });
   }
 

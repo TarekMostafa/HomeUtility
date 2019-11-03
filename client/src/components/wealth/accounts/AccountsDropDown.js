@@ -16,7 +16,7 @@ function AccountsDropDown(props) {
   return accounts.map( (account) => {
     return (
       <option key={account.accountId} value={account.accountId}
-      decimalplaces={account.currency.currencyDecimalPlace}>
+      decimalplaces={account.currency.currencyDecimalPlace} currency={account.accountCurrency}>
       {account.accountNumber}
       </option>
     )
