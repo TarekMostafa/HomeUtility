@@ -160,6 +160,7 @@ class Deposit {
           transactionAccount: _deposit.accountId,
           transactionTypeId: releaseData.transCreditType,
           transactionModule: 'DEP',
+          transactionRelatedTransactionId: _deposit.relatedId,
         }, dbTransaction);
       if(!result.success) {
         await dbTransaction.rollback();
