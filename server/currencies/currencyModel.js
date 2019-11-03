@@ -1,8 +1,7 @@
-const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../db/dbConnection').getSequelize();
 
-class CurrencyModel extends Model {}
+class CurrencyModel extends Sequelize.Model {}
 CurrencyModel.init({
   currencyCode: { type: Sequelize.STRING(3), primaryKey: true },
   currencyName: Sequelize.STRING(45),

@@ -1,8 +1,7 @@
-const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 
-class ReportDetailModel extends Model {}
+class ReportDetailModel extends Sequelize.Model {}
 ReportDetailModel.init({
   detailId: { type: Sequelize.INTEGER(11), primaryKey: true },
   detailReportId: Sequelize.INTEGER(11),

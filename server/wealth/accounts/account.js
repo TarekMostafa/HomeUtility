@@ -1,7 +1,6 @@
 const sequelize = require('../../db/dbConnection').getSequelize();
 const AccountRepo = require('./accountRepo');
 const AppSettingsRepo = require('../../appSettings/appSettingsRepo');
-const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 
 class Account {
@@ -14,15 +13,15 @@ class Account {
     // Construct Where Condition
     let whereQuery = {};
     // Bank Code
-    if(Common.getText(bank, '') !== '') {
+    if(bank) {
       whereQuery.accountBankCode = bank;
     }
     // Status
-    if(Common.getText(status, '') !== '') {
+    if(status) {
       whereQuery.accountStatus = status;
     }
     // Currency
-    if(Common.getText(currency, '') !== '') {
+    if(currency) {
       whereQuery.accountCurrency = currency;
     }
     const accounts = await AccountRepo.getAccounts(whereQuery);

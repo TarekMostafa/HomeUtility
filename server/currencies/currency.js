@@ -1,9 +1,7 @@
 const CurrencyCodes = require('currency-codes');
-const _ = require('lodash');
 
 const CurrencyRepo = require('./currencyRepo');
 const AppSettingsRepo = require('../appSettings/appSettingsRepo');
-const Common = require('../utilities/common');
 const APIResponse = require('../utilities/apiResponse');
 const currencyConversion = require('./currencyConversion');
 
@@ -12,8 +10,8 @@ class Currency {
   async getCurrencies({active}) {
     // Construct Where Condition
     let whereQuery = {};
-    // Check active query
-    if(Common.getText(active, '') !== '') {
+    // Check active property
+    if(active) {
       whereQuery.currencyActive = active;
     }
     const currencies = await CurrencyRepo.getCurrencies(whereQuery);
@@ -55,7 +53,7 @@ class Currency {
     }
     // Get Base Currency
     const appSettings = await AppSettingsRepo.getAppSettings();
-    if(!_.isNil(appSettings.baseCurrency))
+    if(appSettings.baseCurrency)
     {
       //Check base currency with the passed one
       if(appSettings.baseCurrency === currency.currencyCode) {
@@ -63,6 +61,7 @@ class Currency {
       }
     }
     currency.currencyActive = 'NO';
+    currency.currencyRateAgainstBase = 1;
     await currency.save();
     return APIResponse.getAPIResponse(true, null, '010');
   }
@@ -70,7 +69,7 @@ class Currency {
   async updateRates() {
     // Get Base Currency
     const appSettings = await AppSettingsRepo.getAppSettings();
-    if(_.isNil(appSettings.baseCurrency))
+    if(!appSettings.baseCurrency)
     {
       return APIResponse.getAPIResponse(false, null, '011');
     }

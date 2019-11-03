@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../../db/dbConnection').getSequelize();
 const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const RelatedTransactionRepo = require('./RelatedTransactionRepo');
@@ -20,7 +19,7 @@ class RelatedTransaction {
       whereQuery.relatedTransactionType = type;
     }
     // Description
-    if(Common.getText(description, '') !== '') {
+    if(description) {
       if(includeDescription==='true') {
         whereQuery.relatedTransactionDesc = {
           [Op.substring] : description

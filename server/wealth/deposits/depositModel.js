@@ -1,11 +1,10 @@
-const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const BankModel = require('../banks/bankModel');
 const CurrencyModel = require('../../currencies/CurrencyModel');
 const AccountModel = require('../accounts/AccountModel');
 
-class DepositModel extends Model {}
+class DepositModel extends Sequelize.Model {}
 DepositModel.init({
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true},
   reference: Sequelize.STRING(30),

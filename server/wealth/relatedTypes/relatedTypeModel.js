@@ -1,8 +1,7 @@
-const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 
-class RelatedTypeModel extends Model {}
+class RelatedTypeModel extends Sequelize.Model {}
 RelatedTypeModel.init({
   typeCode: { type: Sequelize.STRING(3), primaryKey: true },
   typeDescription: Sequelize.STRING(45),

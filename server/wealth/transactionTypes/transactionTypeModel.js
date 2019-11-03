@@ -1,8 +1,7 @@
-const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 
-class TransactionTypeModel extends Model {}
+class TransactionTypeModel extends Sequelize.Model {}
 TransactionTypeModel.init({
   typeId: { type: Sequelize.INTEGER, primaryKey: true },
   typeName: Sequelize.STRING(45),

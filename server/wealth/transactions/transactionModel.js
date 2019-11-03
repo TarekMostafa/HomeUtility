@@ -1,11 +1,10 @@
-const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const AccountModel = require('../accounts/accountModel');
 const TransactionTypeModel = require('../transactionTypes/transactionTypeModel');
 const RelatedTransactionModel = require('../relatedTransactions/relatedTransactionModel');
 
-class TransactionModel extends Model {}
+class TransactionModel extends Sequelize.Model {}
 TransactionModel.init({
   transactionId: { type: Sequelize.BIGINT(20), primaryKey: true, autoIncrement: true},
   transactionAmount: Sequelize.DECIMAL(18, 3),

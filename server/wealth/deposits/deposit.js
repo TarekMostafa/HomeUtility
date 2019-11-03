@@ -1,9 +1,7 @@
 const sequelize = require('../../db/dbConnection').getSequelize();
 const DepositRepo = require('./depositRepo');
-const AppSettingsRepo = require('../../appSettings/appSettingsRepo');
 const AccountRepo = require('../accounts/accountRepo');
 const TransactionRepo = require('../transactions/transactionRepo');
-const Common = require('../../utilities/common');
 const APIResponse = require('../../utilities/apiResponse');
 const Transaction = require('../transactions/transaction');
 const RelatedTransactionRepo = require('../relatedTransactions/relatedTransactionRepo');
@@ -13,15 +11,15 @@ class Deposit {
     // Construct Where Condition
     let whereQuery = {};
     // Bank Code
-    if(Common.getText(bank, '') !== '') {
+    if(bank) {
       whereQuery.bankCode = bank;
     }
     // Status
-    if(Common.getText(status, '') !== '') {
+    if(status) {
       whereQuery.status = status;
     }
     // Currency
-    if(Common.getText(currency, '') !== '') {
+    if(currency) {
       whereQuery.currencyCode = currency;
     }
     const deposits = await DepositRepo.getDeposits(whereQuery);
@@ -69,7 +67,6 @@ class Deposit {
       await dbTransaction.commit();
       return APIResponse.getAPIResponse(true, null, '047');
     } catch (err) {
-      console.log(err);
       await dbTransaction.rollback();
       return APIResponse.getAPIResponse(false, null, '048');
     }

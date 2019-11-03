@@ -1,4 +1,3 @@
-const sequelize = require('../../db/dbConnection').getSequelize();
 const ReportRepo = require('./reportRepo');
 const APIResponse = require('../../utilities/apiResponse');
 

@@ -1,9 +1,8 @@
-const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const RelatedTypeModel = require('../relatedTypes/RelatedTypeModel');
 
-class RelatedTransactionModel extends Model {}
+class RelatedTransactionModel extends Sequelize.Model {}
 RelatedTransactionModel.init({
   relatedTransactionsId: { type: Sequelize.BIGINT(20), primaryKey: true, autoIncrement: true },
   relatedTransactionType: Sequelize.STRING(3),
