@@ -34,7 +34,9 @@ class InternalTransaction {
             // Related Transaction
             let relatedTransaction = {
             relatedTransactionType: 'IAT',
-            relatedTransactionDesc: ''
+            relatedTransactionDesc: this.getDescription(accountFrom.accountBankCode, 
+                accountFrom.accountNumber, accountTo.accountBankCode, accountTo.accountNumber,
+                internalTransaction.amount, accountFrom.accountCurrency, internalTransaction.postingDate)
             }
             relatedTransaction = await RelatedTransactionRepo.addRelatedTransaction(relatedTransaction, dbTransaction);
             // Debit Side
@@ -76,6 +78,11 @@ class InternalTransaction {
             await dbTransaction.rollback();
             return APIResponse.getAPIResponse(false, null, '031');
         }
+    }
+
+    getDescription(bankFrom, accountFrom, bankTo, accountTo, amount, currency, postingDate) {
+        return `Internal Transfer from ${bankFrom}(${accountFrom}) to ${bankTo}(${accountTo}) with ` 
+               + `amount ${amount} ${currency} on ${postingDate.substring(0, 10)}`;
     }
 }
 

@@ -48,7 +48,8 @@ class Deposit {
       const relatedTransaction = await RelatedTransactionRepo.
         addRelatedTransaction({
           relatedTransactionType: 'DEP',
-          relatedTransactionDesc: ''
+          relatedTransactionDesc: this.getDescription(deposit.reference, deposit.amount,
+            account.accountCurrency, deposit.startDate, deposit.endDate)
         }, dbTransaction);
       let relatedId = relatedTransaction.relatedTransactionsId;
       //Add New Deposit
@@ -178,6 +179,11 @@ class Deposit {
       await dbTransaction.rollback();
       return APIResponse.getAPIResponse(false, null, '055');
     }
+  }
+
+  getDescription(reference, amount, currency, startDate, endDate) {
+    return `Deposit Reference (${reference}) with amount ${amount} ${currency}`
+        + ` from ${startDate.substring(0, 10)} to ${endDate.substring(0, 10)}`;
   }
 }
 
