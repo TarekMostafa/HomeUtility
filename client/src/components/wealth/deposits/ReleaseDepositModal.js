@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import { Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button, Spinner, InputGroup } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
 
 import ModalContainer from '../../common/ModalContainer';
-import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
 import DepositRequest from '../../../axios/DepositRequest';
 import amountFormatter from '../../../utilities/amountFormatter';
 
 const initialState = {
+  reference: '',
   account: '',
   amount: 0,
   currency: '',
@@ -33,6 +33,7 @@ class ReleaseDepositModal extends Component {
     DepositRequest.getDeposit(this.props.depositId)
     .then( (deposit) => {
       this.setState({
+        reference: deposit.reference,
         account: deposit.account.accountNumber,
         amount: deposit.amount,
         currency: deposit.currencyCode,
@@ -58,24 +59,26 @@ class ReleaseDepositModal extends Component {
           </Button>
         }>
         <Form>
+          <Form.Group controlId="reference">
+            <Form.Label>Deposit Reference</Form.Label>
+            <Form.Control type="input" name="reference"
+            value={this.state.reference} readOnly/>
+          </Form.Group>
           <Form.Group controlId="account">
             <Form.Label>Credit Account</Form.Label>
             <Form.Control type="input" name="account"
             value={this.state.account} readOnly/>
-          </Form.Group>
+          </Form.Group>          
           <Form.Group controlId="amount">
             <Form.Label>Deposit Amount</Form.Label>
-            <Form.Control type="input" name="amount"
-            value={amountFormatter(this.state.amount, this.state.decimalPlaces)}
-            readOnly/>
-          </Form.Group>
-          <Form.Group controlId="currency">
-            <Form.Label>Deposit Currency</Form.Label>
-            <Form.Control as="select" name="currency"
-            value={this.state.currency} readOnly>
-              <option value=''></option>
-              <CurrenciesDropDown />
-            </Form.Control>
+            <InputGroup>
+              <Form.Control type="input" name="amount"
+                value={amountFormatter(this.state.amount, this.state.decimalPlaces)}
+                readOnly/>
+              <InputGroup.Prepend>
+                <InputGroup.Text id="inputGroupPrepend">{this.state.currency}</InputGroup.Text>
+              </InputGroup.Prepend>
+            </InputGroup>
           </Form.Group>
           <Form.Group controlId="releaseDate">
             <Form.Label>Release Date</Form.Label>

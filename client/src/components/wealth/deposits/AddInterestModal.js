@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button, Spinner, InputGroup } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
@@ -10,9 +10,11 @@ import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDo
 import DepositRequest from '../../../axios/DepositRequest';
 
 const initialState = {
+  reference: '',
   account: '',
   interestDate: '',
   interestAmount: 0,
+  currency: '',
   decimalPlaces: 0,
   interestTransType: '',
   message: '',
@@ -30,7 +32,9 @@ class AddInterestModal extends Component {
     DepositRequest.getDeposit(this.props.depositId)
     .then( (deposit) => {
       this.setState({
+        reference: deposit.reference,
         account: deposit.account.accountNumber,
+        currency: deposit.currencyCode,
         decimalPlaces: deposit.currency.currencyDecimalPlace,
         interestTransType: deposit.interestTransType,
       });
@@ -54,22 +58,32 @@ class AddInterestModal extends Component {
           </Button>
         }>
         <Form>
+          <Form.Group controlId="reference">
+            <Form.Label>Deposit Reference</Form.Label>
+            <Form.Control type="input" name="reference"
+            value={this.state.reference} readOnly/>
+          </Form.Group>
           <Form.Group controlId="account">
-            <Form.Label>Account</Form.Label>
+            <Form.Label>Credit Account</Form.Label>
             <Form.Control type="input" name="account"
             value={this.state.account} readOnly/>
+          </Form.Group>
+          <Form.Group controlId="interestAmount">
+            <Form.Label>Interest Amount</Form.Label>
+            <InputGroup>
+              <Form.Control type="number" maxLength={20}
+                name="interestAmount"
+                value={Number(this.state.interestAmount).toFixed(this.state.decimalPlaces)}
+                onChange={this.handleChange}/>
+              <InputGroup.Prepend>
+                <InputGroup.Text id="inputGroupPrepend">{this.state.currency}</InputGroup.Text>
+              </InputGroup.Prepend>
+            </InputGroup>
           </Form.Group>
           <Form.Group controlId="interestDate">
             <Form.Label>Interest Date</Form.Label>
             <DatePickerInput value={this.state.interestDate}
               onChange={this.handleInterestDateChange} readOnly/>
-          </Form.Group>
-          <Form.Group controlId="interestAmount">
-            <Form.Label>Interest Amount</Form.Label>
-            <Form.Control type="number" maxLength={20}
-              name="interestAmount"
-              value={Number(this.state.interestAmount).toFixed(this.state.decimalPlaces)}
-              onChange={this.handleChange}/>
           </Form.Group>
           <Form.Group controlId="interestTransType">
             <Form.Label>Interest Transaction Type</Form.Label>
