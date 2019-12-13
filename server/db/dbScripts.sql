@@ -97,6 +97,129 @@ LOCK TABLES `banks` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `billitems`
+--
+
+DROP TABLE IF EXISTS `billitems`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `billitems` (
+  `billItemId` bigint(20) NOT NULL AUTO_INCREMENT,
+  `billItemName` varchar(35) DEFAULT NULL,
+  `billId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`billItemId`),
+  KEY `FK_me81drrbpj15sj8rrr0vnyvul` (`billId`),
+  CONSTRAINT `FK_me81drrbpj15sj8rrr0vnyvul` FOREIGN KEY (`billId`) REFERENCES `bills` (`billId`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `billitems`
+--
+
+LOCK TABLES `billitems` WRITE;
+/*!40000 ALTER TABLE `billitems` DISABLE KEYS */;
+/*!40000 ALTER TABLE `billitems` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `bills`
+--
+
+DROP TABLE IF EXISTS `bills`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bills` (
+  `billId` int(11) NOT NULL AUTO_INCREMENT,
+  `billFrequency` varchar(15) DEFAULT NULL,
+  `billName` varchar(100) DEFAULT NULL,
+  `billStartDate` date DEFAULT NULL,
+  `billStatus` enum('ACTIVE','CLOSED') DEFAULT NULL,
+  `billCurrency` varchar(3) DEFAULT NULL,
+  `billDefaultAmount` double NOT NULL,
+  `billLastBillPaidDate` date DEFAULT NULL,
+  `billIsTransDetailRequired` bit(1) NOT NULL,
+  PRIMARY KEY (`billId`),
+  KEY `FK_p5jnywrtdnj7ly4gonjl0anvw` (`billCurrency`),
+  CONSTRAINT `FK_p5jnywrtdnj7ly4gonjl0anvw` FOREIGN KEY (`billCurrency`) REFERENCES `currencies` (`currencyCode`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `bills`
+--
+
+LOCK TABLES `bills` WRITE;
+/*!40000 ALTER TABLE `bills` DISABLE KEYS */;
+/*!40000 ALTER TABLE `bills` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `billtransactiondetails`
+--
+
+DROP TABLE IF EXISTS `billtransactiondetails`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `billtransactiondetails` (
+  `detId` bigint(20) NOT NULL AUTO_INCREMENT,
+  `detAmount` double NOT NULL,
+  `detQuantity` int(11) NOT NULL,
+  `detAmountType` enum('Credit','Debit') DEFAULT NULL,
+  `billItemId` bigint(20) DEFAULT NULL,
+  `transId` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`detId`),
+  KEY `FK_17bi2l4o2urgrawtaq4ee1x4p` (`billItemId`),
+  KEY `FK_nlsbo2o5xmsspq5svelbkx526` (`transId`),
+  CONSTRAINT `FK_17bi2l4o2urgrawtaq4ee1x4p` FOREIGN KEY (`billItemId`) REFERENCES `billitems` (`billItemId`),
+  CONSTRAINT `FK_nlsbo2o5xmsspq5svelbkx526` FOREIGN KEY (`transId`) REFERENCES `billtransactions` (`transId`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `billtransactiondetails`
+--
+
+LOCK TABLES `billtransactiondetails` WRITE;
+/*!40000 ALTER TABLE `billtransactiondetails` DISABLE KEYS */;
+/*!40000 ALTER TABLE `billtransactiondetails` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `billtransactions`
+--
+
+DROP TABLE IF EXISTS `billtransactions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `billtransactions` (
+  `transId` bigint(20) NOT NULL AUTO_INCREMENT,
+  `transAmount` double NOT NULL,
+  `transBillDate` date DEFAULT NULL,
+  `transNotes` varchar(255) DEFAULT NULL,
+  `transOutOfFreq` bit(1) NOT NULL,
+  `transAmountType` enum('Credit','Debit') DEFAULT NULL,
+  `billId` int(11) DEFAULT NULL,
+  `transPostingDate` date DEFAULT NULL,
+  `transCurrency` varchar(3) DEFAULT NULL,
+  PRIMARY KEY (`transId`),
+  KEY `FK_8hqg920j2cgxyvlhvv0bkqvby` (`billId`),
+  KEY `fk_billtransdetailccy_idx` (`transCurrency`),
+  CONSTRAINT `FK_8hqg920j2cgxyvlhvv0bkqvby` FOREIGN KEY (`billId`) REFERENCES `bills` (`billId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_billtransdetailccy` FOREIGN KEY (`transCurrency`) REFERENCES `currencies` (`currencyCode`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `billtransactions`
+--
+
+LOCK TABLES `billtransactions` WRITE;
+/*!40000 ALTER TABLE `billtransactions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `billtransactions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `currencies`
 --
 
