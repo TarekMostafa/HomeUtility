@@ -4,6 +4,7 @@ import BankRequest from '../../axios/BankRequest';
 import CurrencyRequest from '../../axios/CurrencyRequest';
 import AppSettingsRequest from '../../axios/AppSettingsRequest';
 import RelatedTypeRequest from '../../axios/RelatedTypeRequest';
+import BillRequest from '../../axios/BillRequest';
 
 export const getAppSettings = () => {
   return (dispatch, getState) => {
@@ -29,10 +30,34 @@ export const getAccounts = () => {
   }
 }
 
+export const getBills = () => {
+  return (dispatch, getState) => {
+    BillRequest.getBillsForDropDown()
+    .then( (bills) => dispatch({type: "SET_BILLS", data: bills}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
+
 export const getAccountStatuses = () => {
   return (dispatch, getState) => {
     AccountRequest.getAccountStatuses()
     .then( (accountStatuses) => dispatch({type: "SET_ACCOUNT_STATUSES", data: accountStatuses}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
+
+export const getBillStatuses = () => {
+  return (dispatch, getState) => {
+    BillRequest.getBillStatuses()
+    .then( (billStatuses) => dispatch({type: "SET_BILL_STATUSES", data: billStatuses}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
+
+export const getBillFrequencies = () => {
+  return (dispatch, getState) => {
+    BillRequest.getBillFrequencies()
+    .then( (billFrequencies) => dispatch({type: "SET_BILL_FREQUENCIES", data: billFrequencies}) )
     .catch( () => dispatch({type: "ERROR"}) )
   }
 }

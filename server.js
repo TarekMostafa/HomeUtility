@@ -18,6 +18,8 @@ const reportRouter = require('./server/wealth/transactionReports/reportRouter');
 const dbRouter = require('./server/db/dbRouter');
 const UserRepo = require('./server/auth/userRepo');
 const Config = require('./server/config');
+const billRouter = require('./server/bills/billRouter');
+const billTransactionRouter = require('./server/bills/billTransactionRouter');
 //Constant Variables
 const port = Config.port || 5000;
 //Start Express Application
@@ -61,6 +63,8 @@ app.use('/api/currencies', currencyRouter);
 app.use('/api/wealth/relatedTypes', relatedTypeRouter);
 app.use('/api/wealth/reports', reportRouter);
 app.use('/api/db', dbRouter);
+app.use('/api/bills', billRouter);
+app.use('/api/billsTransactions', billTransactionRouter);
 //Middleware for Errors
 app.use(function(err, req, res, next){
   console.error(err);

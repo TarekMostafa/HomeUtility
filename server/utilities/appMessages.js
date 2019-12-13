@@ -55,4 +55,17 @@ module.exports = {
   '054' : 'This deposit interest has been successfully posted',
   '055' : 'Failed to release deposit',
   '056' : 'This deposit interest has been successfully released',
+  '057' : 'This bill has been successfully created',
+  '058' : 'This bill does not exist in the database',
+  '059' : 'This bill has been successfully updated',
+  '060' : 'This bill has been successfully deleted',
+  '061' : 'Failed to create this bill',
+  '062' : 'Failed to update this bill',
+  '063' : 'This bill transaction has been successfully added',
+  '064' : 'Failed to add this bill transaction',
+  '065' : 'This bill transaction does not exist in the database',
+  '066' : 'This bill transaction has been successfully updated',
+  '067' : 'Failed to update this bill transaction',
+  '068' : 'This bill transaction has been successfully deleted',
+  '069' : 'This bill transaction exceed bill frequency (?)'
 }

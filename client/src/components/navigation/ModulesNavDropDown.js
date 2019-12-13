@@ -22,12 +22,25 @@ function ModulesNavDropDown(props) {
         </Dropdown.Menu>
       </Dropdown>
       <Dropdown drop={'right'}>
-        <Dropdown.Toggle as={Nav.Link} id={'dropdown-accounts'}>
+        <Dropdown.Toggle as={Nav.Link} id={'dropdown-deposits'}>
           Deposits
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <LinkContainer to="/deposits">
             <NavDropdown.Item>Summary</NavDropdown.Item>
+          </LinkContainer>
+        </Dropdown.Menu>
+      </Dropdown>
+      <Dropdown drop={'right'}>
+        <Dropdown.Toggle as={Nav.Link} id={'dropdown-bills'}>
+          Bills
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <LinkContainer to="/bills">
+            <NavDropdown.Item>Summary</NavDropdown.Item>
+          </LinkContainer>
+          <LinkContainer to="/billstransactions">
+            <NavDropdown.Item>Transactions</NavDropdown.Item>
           </LinkContainer>
         </Dropdown.Menu>
       </Dropdown>
