@@ -10,7 +10,6 @@ import BillDropDown from '../summary/BillsDropDown';
 import BillTransDetailList from './BillTransDetailList';
 
 import BillTransactionRequest from '../../../axios/BillTransactionRequest';
-import BillRequest from '../../../axios/BillRequest';
 
 const initialState = {
   bill: '',
@@ -24,7 +23,6 @@ const initialState = {
   notes: '',
   transId: '',
   transDetails: [],
-  billInfo: null,
   message: '',
   isLoading: false,
 }
@@ -39,7 +37,6 @@ class EditBillTransactionModal extends Component {
       return;
     BillTransactionRequest.getBillTransaction(this.props.transId)
     .then( (trans) => {
-      this.loadBillInfo(trans.billId);
       this.setState({
         bill: trans.billId,
         currency: trans.transCurrency,
@@ -56,19 +53,6 @@ class EditBillTransactionModal extends Component {
     })
     .catch( (err) => {
       this.setState({message: 'Error occured while loading bill trans information' + err});
-    })
-  }
-
-  loadBillInfo(billId) {
-    // Retrieve Bill Information
-    BillRequest.getBill(billId)
-    .then( billInfo => {
-      this.setState({
-        billInfo,
-      });
-    })
-    .catch( err => {
-      console.log(err);
     })
   }
 
@@ -238,9 +222,6 @@ class EditBillTransactionModal extends Component {
     if(!this.state.bill) {
       this.setState({message: 'Invalid bill, should not be empty'});
       return;
-    } else if(!this.state.amount) {
-      this.setState({message: 'Invalid amount, should not be zero'});
-      return;
     } else if(!this.state.amountType) {
       this.setState({message: 'Invalid amount type, should not be empty'});
       return;
@@ -249,9 +230,6 @@ class EditBillTransactionModal extends Component {
       return;
     } else if(!this.state.postingDate) {
       this.setState({message: 'Invalid posting date'});
-      return;
-    } else if(this.state.billInfo.billIsTransDetailRequired && this.state.transDetails.length === 0) {
-      this.setState({message: 'Invalid Trans Details, you must enter at least one detail'});
       return;
     } else {
       this.setState({

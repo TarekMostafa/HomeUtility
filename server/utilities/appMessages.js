@@ -67,5 +67,7 @@ module.exports = {
   '066' : 'This bill transaction has been successfully updated',
   '067' : 'Failed to update this bill transaction',
   '068' : 'This bill transaction has been successfully deleted',
-  '069' : 'This bill transaction exceed bill frequency (?)'
+  '069' : 'This bill transaction exceed bill frequency (?)',
+  '070' : 'This tranasction bill date is less than the bill start date (?)',
+  '071' : 'Invalid bill transaction Details, you must enter at least one detail',
 }

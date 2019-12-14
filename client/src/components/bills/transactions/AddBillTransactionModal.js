@@ -10,12 +10,12 @@ import BillDropDown from '../summary/BillsDropDown';
 import BillTransDetailList from './BillTransDetailList';
 
 import BillTransactionRequest from '../../../axios/BillTransactionRequest';
-import BillRequest from '../../../axios/BillRequest';
 
 const initialState = {
   bill: '',
   currency: '',
   decimalPlaces: 0,
+  defaultAmount: 0,
   outOfFreq: false,
   amount: 0,
   amountType: '',
@@ -24,7 +24,6 @@ const initialState = {
   notes: '',
   transDetails: [],
   isBillSelectable: true,
-  billInfo: null,
   message: '',
   isLoading: false,
 }
@@ -178,19 +177,11 @@ class AddBillTransactionModal extends Component {
       return;
     }
 
-    // Retrieve Bill Information
-    BillRequest.getBill(this.state.bill)
-    .then( billInfo => {
-      this.setState({
-        billInfo,
-        isBillSelectable: false, 
-        message: '',
-        amount: billInfo.billDefaultAmount
-      });
-    })
-    .catch( err => {
-      console.log(err);
-    })
+    this.setState({
+      isBillSelectable: false, 
+      message: '',
+      amount: this.state.defaultAmount
+    });
   }
 
   handleChange = (event) => {
@@ -204,10 +195,12 @@ class AddBillTransactionModal extends Component {
 
     const decimalPlaces = event.target[event.target.selectedIndex].getAttribute('decimalplaces');
     const currency = event.target[event.target.selectedIndex].getAttribute('currency');
+    const defaultAmount = event.target[event.target.selectedIndex].getAttribute('defaultAmount');
     this.setState({
       bill : event.target.value,
       decimalPlaces,
-      currency
+      currency,
+      defaultAmount
     });
   }
 
@@ -231,10 +224,7 @@ class AddBillTransactionModal extends Component {
 
   handleClick = () => {
     // Validate Input
-    if(!this.state.amount) {
-      this.setState({message: 'Invalid amount, should not be zero'});
-      return;
-    } else if(!this.state.amountType) {
+    if(!this.state.amountType) {
       this.setState({message: 'Invalid amount type, should not be empty'});
       return;
     } else if(!this.state.billDate) {
@@ -242,9 +232,6 @@ class AddBillTransactionModal extends Component {
       return;
     } else if(!this.state.postingDate) {
       this.setState({message: 'Invalid posting date'});
-      return;
-    } else if(this.state.billInfo.billIsTransDetailRequired && this.state.transDetails.length === 0) {
-      this.setState({message: 'Invalid Trans Details, you must enter at least one detail'});
       return;
     } else {
       this.setState({

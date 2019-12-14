@@ -4,7 +4,7 @@ const CurrencyModel = require('../currencies/CurrencyModel');
 class BillRepo {
   static async getSimpleBills() {
     return await BillModel.findAll({
-      attributes: ['billId', 'billName', 'billStatus', 'billCurrency', 'billFrequency'],
+      attributes: ['billId', 'billName', 'billStatus', 'billCurrency', 'billFrequency', 'billDefaultAmount'],
       include: [
         { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] }
       ]

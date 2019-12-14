@@ -70,11 +70,21 @@ class BillTransaction {
     if(!_bill) {
       return APIResponse.getAPIResponse(false, null, '058');
     }
+    //Bill Validation
+    //Check bill start date against bill transaction bill date
+    if(billTrans.transBillDate < _bill.billStartDate) {
+      return APIResponse.getAPIResponse(false, null, '070', _bill.billStartDate);
+    }
+    //Check bill trans detail required with the trans details
+    if(_bill.billIsTransDetailRequired && billTrans.billTransactionDetails.length === 0) {
+      return APIResponse.getAPIResponse(false, null, '071');
+    }
     //Check bill date with Frequency incase it is in frequency
     if(!billTrans.transOutOfFreq) {
       const dateRange = Frequency.getDateRange(_bill.billFrequency, billTrans.transBillDate);
       let whereQuery = {};
       whereQuery.transBillDate = { [Op.between] : [dateRange.dateFrom, dateRange.dateTo] };
+      whereQuery.transOutOfFreq = { [Op.not] : true};
       whereQuery.billId = _bill.billId;
       const tempTrans = await BillTransactionRepo.getBillTransactions(0, 999, whereQuery);
       if(tempTrans.length > 0) {
@@ -126,11 +136,21 @@ class BillTransaction {
     if(!_bill) {
       return APIResponse.getAPIResponse(false, null, '058');
     }
+    //Bill Validation
+    //Check bill start date against bill transaction bill date
+    if(billTrans.transBillDate < _bill.billStartDate) {
+      return APIResponse.getAPIResponse(false, null, '070', _bill.billStartDate);
+    }
+    //Check bill trans detail required with the trans details
+    if(_bill.billIsTransDetailRequired && billTrans.billTransactionDetails.length === 0) {
+      return APIResponse.getAPIResponse(false, null, '071');
+    }
     //Check bill date with Frequency incase it is in frequency
     if(!billTrans.transOutOfFreq) {
       const dateRange = Frequency.getDateRange(_bill.billFrequency, billTrans.transBillDate);
       let whereQuery = {};
       whereQuery.transBillDate = { [Op.between] : [dateRange.dateFrom, dateRange.dateTo] };
+      whereQuery.transOutOfFreq = { [Op.not] : true};
       whereQuery.billId = _bill.billId;
       whereQuery.transId = { [Op.ne] : _billTrans.transId };
       const tempTrans = await BillTransactionRepo.getBillTransactions(0, 999, whereQuery);
