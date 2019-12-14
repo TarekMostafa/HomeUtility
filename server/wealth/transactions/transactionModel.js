@@ -9,7 +9,7 @@ TransactionModel.init({
   transactionId: { type: Sequelize.BIGINT(20), primaryKey: true, autoIncrement: true},
   transactionAmount: Sequelize.DECIMAL(18, 3),
   transactionNarrative: Sequelize.STRING(200),
-  transactionPostingDate: Sequelize.DATE,
+  transactionPostingDate: Sequelize.DATEONLY,
   transactionCRDR: Sequelize.ENUM('Credit', 'Debit'),
   transactionAccount: { type: Sequelize.INTEGER },
   transactionTypeId: Sequelize.INTEGER,
