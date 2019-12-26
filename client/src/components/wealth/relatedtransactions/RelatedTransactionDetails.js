@@ -44,9 +44,9 @@ class RelatedTransactionDetails extends Component {
         decimalPlaces = transaction.account.currency.currencyDecimalPlace;
       }
       if(transaction.transactionCRDR === "Debit") {
-        totalDebit += transaction.transactionAmount;
+        totalDebit += Number(transaction.transactionAmount);
       } else {
-        totalCredit += transaction.transactionAmount;
+        totalCredit += Number(transaction.transactionAmount);
       }
     });
 
