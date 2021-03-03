@@ -10,7 +10,15 @@ class BankRepo {
   }
 
   static async addBank(bank) {
-    await BankModel.build(bank).save();
+    return await BankModel.build(bank).save();
+  }
+
+  static async saveBank(bank) {
+    return await bank.save();
+  }
+
+  static async deleteBank(bank) {
+    return await bank.destroy();
   }
 }
 

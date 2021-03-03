@@ -2,6 +2,7 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 
 import WealthTransactionTypeTableRow from './WealthTransactionTypeTableRow';
+import TransactionTypeModel from './TransactionTypeModel';
 
 function WealthTransactionTypeTable (props) {
   return (
@@ -16,9 +17,10 @@ function WealthTransactionTypeTable (props) {
       </thead>
       <tbody>
         {props.transactionTypes && props.transactionTypes.map( (transactionType, index) => {
+          let transactionTypeModel = new TransactionTypeModel(transactionType);
           return (
-            <WealthTransactionTypeTableRow transactionType={transactionType} index={index}
-            key={transactionType.typeId}
+            <WealthTransactionTypeTableRow transactionType={transactionTypeModel} index={index}
+            key={transactionTypeModel.typeId}
             {...props}/>
           )
         })}

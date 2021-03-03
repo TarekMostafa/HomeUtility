@@ -1,19 +1,22 @@
 import React, {Component} from 'react';
-import { Button, Form, Spinner, Row, Col } from 'react-bootstrap';
+import { Form, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 import BankRequest from '../../../axios/BankRequest';
-import EditCancelButton from '../../common/EditCancelButton';
+import EditDeleteButton from '../../common/EditDeleteButton';
+
+const initialState = {
+  mode: 'None',
+  messageClass: '',
+  message: '',
+  isLoading: false,
+  isDisabled: false,
+}
 
 class WealthBankTableRow extends Component {
   state = {
-    editMode: false,
     bankName: this.props.bank.bankName,
-    messageClass: '',
-    message: '',
-    isEditLoading: false,
-    isDeleteLoading: false,
-    isDisabled: false
+    ...initialState
   }
   render () {
     const { bank, index } = this.props;
@@ -22,7 +25,7 @@ class WealthBankTableRow extends Component {
         <td>{index+1}</td>
         <td>{bank.bankCode}</td>
         <td>
-          { this.state.editMode?
+          { this.state.mode === 'Edit' ?
             <Form.Control type="input" size="sm" value={this.state.bankName}
             name="bankName" onChange={this.handleChange} maxLength={45}/>
             : this.state.bankName
@@ -30,24 +33,15 @@ class WealthBankTableRow extends Component {
         </td>
         <td>
           <Row>
-            <Col xs={4}>
-              <EditCancelButton onEditClick={this.handleEditClick}
+            <Col xs={6}>
+              <EditDeleteButton onEditClick={this.handleEditClick}
+              onDeleteClick={this.handleDeleteClick}
               onCancelClick={this.handleCancelClick}
               disabled={this.state.isDisabled}
-              isLoading={this.state.isEditLoading}
-              editMode={this.state.editMode}/>
+              isLoading={this.state.isLoading}
+              mode={this.state.mode}/>
             </Col>
             <Col xs={2}>
-              <Button variant="danger" size="sm" name={'btndelete'+bank.bankCode}
-              onClick={this.handleDeleteClick} disabled={this.state.isDisabled}>
-              {
-                this.state.isDeleteLoading?
-                <Spinner as="span" animation="border" size="sm" role="status"
-                aria-hidden="true"/> : 'Delete'
-              }
-              </Button>
-            </Col>
-            <Col>
               <Form.Text className={this.state.messageClass}>{this.state.message}</Form.Text>
             </Col>
           </Row>
@@ -58,37 +52,33 @@ class WealthBankTableRow extends Component {
 
   handleCancelClick = () => {
     this.setState({
-      editMode: false
+      ...initialState
     });
   }
 
   handleEditClick = () => {
-    if(this.state.editMode) {
-      this.setState({isEditLoading: true, isDisabled: true});
+    if(this.state.mode === 'Edit') {
+      this.setState({isLoading: true, isDisabled: true});
       BankRequest.updateBank(this.props.bank.bankCode, this.state.bankName)
       .then((result) => {
         if (typeof this.props.onEditBank=== 'function') {
           this.props.onEditBank();
         }
         this.setState({
-          editMode: false,
-          message: 'Done',
-          messageClass: 'text-success',
-          isEditLoading: false,
-          isDisabled: false
+          ...initialState
         });
       })
       .catch( err => {
         this.setState({
           message: err.response.data,
           messageClass: 'text-danger',
-          isEditLoading: false,
+          isLoading: false,
           isDisabled: false
         })
       })
     } else {
       this.setState({
-        editMode: true,
+        mode: 'Edit',
         message: '',
         messageClass: ''
       })
@@ -96,27 +86,32 @@ class WealthBankTableRow extends Component {
   }
 
   handleDeleteClick = () => {
-    this.setState({isDeleteLoading: true, isDisabled: true});
-    BankRequest.deleteBank(this.props.bank.bankCode)
-    .then((result) => {
-      if (typeof this.props.onDeleteBank=== 'function') {
-        this.props.onDeleteBank();
-      }
-      this.setState({
-        message: '',
-        messageClass: '',
-        isDeleteLoading: false,
-        isDisabled: false
-      });
-    })
-    .catch( err => {
-      this.setState({
-        message: err.response.data,
-        messageClass: 'text-danger',
-        isDeleteLoading: false,
-        isDisabled: false
+    if(this.state.mode === 'Delete') {
+      this.setState({isLoading: true, isDisabled: true});
+      BankRequest.deleteBank(this.props.bank.bankCode)
+      .then((result) => {
+        if (typeof this.props.onDeleteBank=== 'function') {
+          this.props.onDeleteBank();
+        }
+        this.setState({
+          ...initialState,
+        });
       })
-    })
+      .catch( err => {
+        this.setState({
+          message: err.response.data,
+          messageClass: 'text-danger',
+          isLoading: false,
+          isDisabled: false
+        })
+      })
+    } else {
+      this.setState({
+        mode: 'Delete',
+        message: '',
+        messageClass: ''
+      })
+    }
   }
 
   handleChange = (event) => {

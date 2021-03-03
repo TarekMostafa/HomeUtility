@@ -1,52 +1,37 @@
 const express = require('express');
-const Bank = require('./bank');
+const BankBusiness = require('./bankBusiness');
 
 const router = express.Router();
-const bank = new Bank();
+const bankBusiness = new BankBusiness();
 
 router.get('/', function(req, res, next) {
-  bank.getBanks().then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bankBusiness.getBanks().then( result => {
+    res.json(result);
   }).catch( err => {
     next(err);
   })
 });
 
 router.post('/', function(req, res, next) {
-  bank.addBank(req.body).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bankBusiness.addBank(req.body).then( () => {
+    res.messageCode = 'BNK_ADD_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
 });
 
 router.put('/:id', function(req, res, next) {
-  bank.updateBank(req.params.id, req.body).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bankBusiness.updateBank(req.params.id, req.body).then( () => {
+    res.status(200).send();
   }).catch( err => {
     next(err);
   })
 });
 
 router.delete('/:id', function(req, res, next) {
-  bank.deleteBank(req.params.id).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bankBusiness.deleteBank(req.params.id).then( () => {
+    res.status(200).send();
   }).catch( err => {
     next(err);
   })

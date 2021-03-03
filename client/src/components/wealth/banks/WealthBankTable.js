@@ -2,6 +2,7 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 
 import WealthBankTableRow from './WealthBankTableRow';
+import BankModel from './BankModel';
 
 function WealthBankTable(props) {
   return (
@@ -16,8 +17,9 @@ function WealthBankTable(props) {
       </thead>
       <tbody>
         {props.banks && props.banks.map( (bank, index) => {
+          let bankModel = new BankModel(bank);
           return (
-            <WealthBankTableRow bank={bank} index={index} key={bank.bankCode}
+            <WealthBankTableRow bank={bankModel} index={index} key={bankModel.bankCode}
             {...props}/>
           )
         })}

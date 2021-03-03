@@ -1,11 +1,13 @@
 const express = require('express');
-const TransactionType = require('./transactionType');
+const TransactionTypeBusiness = require('./transactionTypeBusiness');
+const AddTransactionTypeRequest = require('./Request/addTransactionTypeRequest');
+const UpdateTransactionTypeRequest = require('./Request/updateTransactionTypeRequest');
 
 const router = express.Router();
-const transactionType = new TransactionType();
+const transactionTypeBusiness = new TransactionTypeBusiness();
 
 router.get('/', function(req, res, next) {
-  transactionType.getTransactionTypes().then( result => {
+  transactionTypeBusiness.getTransactionTypes().then( result => {
     if(result.success) {
       res.json(result.payload);
     } else {
@@ -17,7 +19,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-  transactionType.addTransactionType(req.body).then( result => {
+  const transactionTypeRequest = new AddTransactionTypeRequest(req.body);
+  transactionTypeBusiness.addTransactionType(transactionTypeRequest).then( result => {
     if(result.success) {
       res.status(200).send(result.message);
     } else {
@@ -29,7 +32,8 @@ router.post('/', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
-  transactionType.updateTransactionType(req.params.id, req.body).then( result => {
+  const transactionTypeRequest = new UpdateTransactionTypeRequest(req.body);
+  transactionTypeBusiness.updateTransactionType(req.params.id, transactionTypeRequest).then( result => {
     if(result.success) {
       res.status(200).send(result.message);
     } else {
@@ -41,7 +45,7 @@ router.put('/:id', function(req, res, next) {
 });
 
 router.delete('/:id', function(req, res, next) {
-  transactionType.deleteTransactionType(req.params.id).then( result => {
+  transactionTypeBusiness.deleteTransactionType(req.params.id).then( result => {
     if(result.success) {
       res.status(200).send(result.message);
     } else {

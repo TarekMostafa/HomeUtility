@@ -20,8 +20,13 @@ const UserRepo = require('./server/auth/userRepo');
 const Config = require('./server/config');
 const billRouter = require('./server/bills/billRouter');
 const billTransactionRouter = require('./server/bills/billTransactionRouter');
+const Exception = require('./server/features/exception');
+const AppMessageTranslation = require('./server/features/appMessageTranslation');
 //Constant Variables
 const port = Config.port || 5000;
+// Initialize App Message Transalation
+const messageFile = require('./server/appMessages');
+const appMessageTranslation = new AppMessageTranslation(messageFile);
 //Start Express Application
 const app = express();
 app.use(express.static(path.join(__dirname, 'build')));
@@ -65,10 +70,19 @@ app.use('/api/wealth/reports', reportRouter);
 app.use('/api/db', dbRouter);
 app.use('/api/bills', billRouter);
 app.use('/api/billsTransactions', billTransactionRouter);
+//Middleware for Success
+app.use(function(req, res, next){
+  const message = appMessageTranslation.translate(res.messageCode, res.params);
+  res.status(200).send(message);
+})
 //Middleware for Errors
 app.use(function(err, req, res, next){
-  console.error(err);
-  res.status(500).send('Internal Server Error');
+  if(err instanceof Exception){
+    const message = appMessageTranslation.translate(err.message, err.params);
+    res.status(400).send(message);
+  } else {
+    res.status(500).send('Internal Server Error');
+  }
 })
 //Connect to MySql database
 sequelize.connect().then( () => {

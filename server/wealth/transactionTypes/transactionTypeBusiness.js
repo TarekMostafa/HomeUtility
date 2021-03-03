@@ -2,7 +2,7 @@ const TransactionTypeRepo = require('./transactionTypeRepo');
 const TranasctionRepo = require('../transactions/transactionRepo');
 const APIResponse = require('../../utilities/apiResponse');
 
-class TransactionType {
+class transactionTypeBusiness {
   async getTransactionTypes() {
     const transactionTypes = await TransactionTypeRepo.getTransactionTypes();
     return APIResponse.getAPIResponse(true, transactionTypes);
@@ -42,4 +42,4 @@ class TransactionType {
   }
 }
 
-module.exports = TransactionType;
+module.exports = transactionTypeBusiness;
