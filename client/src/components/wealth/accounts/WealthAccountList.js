@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
+import WealthAccountsContainer from './WealthAccountsContainer';
 import WealthAccountTable from './WealthAccountTable';
 import WealthAccountTotalBalance from './WealthAccountTotalBalance';
 import AddNewAccountModal from './AddNewAccountModal';
@@ -27,6 +28,7 @@ class WealthAccountList extends Component {
     modalEditShow: false,
     modalDeleteShow: false,
     accountId: '',
+    view: 'Card',
     ...initialState,
   }
 
@@ -73,7 +75,16 @@ class WealthAccountList extends Component {
                   <AccountStatusesDropDown />
                 </Form.Control>
               </Col>
-              <Col xs={{offset:1, span:1}}>
+              {/* <Col xs={{offset:1, span:1}}> */}
+              <Col xs={1}>
+                <Form.Check 
+                  type="switch"
+                  id="view-switch"
+                  label={this.state.view}
+                  onChange={this.handleCheckChange}
+                />
+              </Col>
+              <Col xs={1}>
                 <Button variant="primary" size="sm" block onClick={this.handleListClick}>List</Button>
               </Col>
               <Col xs={1}>
@@ -83,16 +94,19 @@ class WealthAccountList extends Component {
           </Form>
         </FormContainer>
         <FormContainer>
-          <WealthAccountTable accounts={this.state.accounts} onEditAccount={this.handleEditAccount}
-          onDeleteAccount={this.handleDeleteAccount}/>
-          <Row>
-            <Col xs={{offset:4, span:4}}>
-              {this.props.appSettings && this.props.appSettings.baseCurrency &&
-              <WealthAccountTotalBalance accounts={this.state.accounts}
+          {
+            this.props.appSettings && this.props.appSettings.baseCurrency &&
+            <WealthAccountTotalBalance accounts={this.state.accounts}
               baseCurrency={this.props.appSettings.baseCurrency}
-              decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>}
-            </Col>
-          </Row>
+              decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>
+          }  
+          {
+            this.state.view === 'Card' ? 
+            <WealthAccountsContainer accounts={this.state.accounts} onEditAccount={this.handleEditAccount}
+              onDeleteAccount={this.handleDeleteAccount}/> :
+            <WealthAccountTable accounts={this.state.accounts} onEditAccount={this.handleEditAccount}
+            onDeleteAccount={this.handleDeleteAccount}/>
+          }
         </FormContainer>
         <AddNewAccountModal show={this.state.modalAddShow} onHide={this.handleHide}
         onSave={this.handleListClick}/>
@@ -118,6 +132,12 @@ class WealthAccountList extends Component {
     this.setState({
       modalEditShow: true,
       accountId
+    });
+  }
+
+  handleCheckChange = () => {
+    this.setState({
+      view: (this.state.view === 'Card' ? 'Table' : 'Card')
     });
   }
 
