@@ -22,22 +22,22 @@ function WealthAccountTotalBalance (props) {
     <Alert variant='primary'>
       <Row>
         <Col md={{span:3, offset:3}}>
-          <strong>Total Current Balance: </strong>
+          Total Current Balance: <strong>
           {
             props.accounts && amountFormatter(props.accounts.reduce( (result, account) => {
               result += account.accountCurrentBalance * account.currency.currencyRateAgainstBase
               return result;
             }, 0), props.decimalPlace) + ' ' + props.baseCurrency
-          }  
+          } </strong>
         </Col>
         <Col md="3">
-          <strong>Total Number of Accounts: </strong>
+          Total Number of Accounts: <strong>
           {
             props.accounts && props.accounts.reduce( (result, account) => {
               result += 1
               return result;
             }, 0)
-          } 
+          } </strong>
         </Col>
       </Row> 
     </Alert>

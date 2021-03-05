@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table, ButtonGroup, Button, Badge, Row, Col } from 'react-bootstrap';
+import { Card, Table, ButtonGroup, Button, Badge } from 'react-bootstrap';
 import moment from 'moment';
 import { connect } from 'react-redux';
 
@@ -9,23 +9,27 @@ function WealthAccountCard(props) {
     let {account} = props;
     return (
         account && 
-        <Card bg='light' key={account.accountId} text='dark' style={{ width: '24rem' }} className="mb-2">
+        <Card key={account.accountId} text='dark' className="mb-2" border="secondary">
             <Card.Header>
-                <div>
-                    <Row>
-                        <Col>{account.accountNumber}</Col>
-                        <Col md={{offset: 1, span: 5}}><strong>{amountFormatter(account.accountCurrentBalance, account.currency.currencyDecimalPlace)} {account.accountCurrency}</strong></Col>
-                    </Row>
-                </div>
+                <Table size="sm" responsive="sm" borderless>
+                    <tbody>
+                        <tr>
+                            <td>{account.accountNumber}</td>
+                            <td className="text-right"><strong>{amountFormatter(account.accountCurrentBalance, account.currency.currencyDecimalPlace)} {account.accountCurrency}</strong></td>
+                        </tr>
+                    </tbody>
+                </Table>
             </Card.Header>
             <Card.Body>
                 <Card.Title>
-                    <div>
-                        <Row>
-                            <Col>{account.bank.bankName}</Col>
-                            <Col md="3"><Badge variant={account.accountStatus==="CLOSED"?"warning":"success"}>{account.accountStatus}</Badge></Col>
-                        </Row>
-                    </div>
+                    <Table size="sm" responsive="sm" borderless>
+                        <tbody>
+                            <tr>
+                                <td>{account.bank.bankName}</td>
+                                <td className="text-right"><Badge variant={account.accountStatus==="CLOSED"?"warning":"success"}>{account.accountStatus}</Badge></td>
+                            </tr>
+                        </tbody>
+                    </Table>
                 </Card.Title>
                 <Table size="sm" responsive="sm">
                     <tbody>
@@ -40,7 +44,7 @@ function WealthAccountCard(props) {
                         </tr>
                         <tr>
                             <td>Balance Last Update:</td>
-                            <td>
+                            <td className="text-right">
                                 {
                                 account.accountLastBalanceUpdate ?
                                 moment(account.accountLastBalanceUpdate).format('DD/MMM/YYYY HH:mm:ss') : ''
@@ -50,12 +54,14 @@ function WealthAccountCard(props) {
                     </tbody>
                 </Table>
             </Card.Body>
-            <ButtonGroup>
-                <Button variant="link" size="sm"
-                onClick={() => props.onEditAccount(account.accountId)}>Edit</Button>
-                <Button variant="link" size="sm"
-                onClick={() => props.onDeleteAccount(account.accountId)}>Delete</Button>
-            </ButtonGroup>
+            <Card.Footer>
+                <ButtonGroup>
+                    <Button variant="link" size="sm"
+                    onClick={() => props.onEditAccount(account.accountId)}>Edit</Button>
+                    <Button variant="link" size="sm"
+                    onClick={() => props.onDeleteAccount(account.accountId)}>Delete</Button>
+                </ButtonGroup>
+            </Card.Footer>
         </Card>
     );
 }
