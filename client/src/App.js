@@ -21,6 +21,9 @@ import ChangeUserName from './components/auth/ChangeUserName';
 import MonthlyStatistics from './components/statistics/MonthlyStatistics';
 import BillList from './components/bills/summary/BillList';
 import BillTransactionList from './components/bills/transactions/BillTransactionList';
+import ExpenseHeaderList from './components/expenses/ExpenseHeaderList';
+import ExpenseDetailList from './components/expenses/ExpenseDetailList';
+import ExpenseTypeList from './components/expenses/expensetypes/ExpenseTypeList';
 
 class App extends Component {
   render() {
@@ -47,6 +50,9 @@ class App extends Component {
                 <Route path="/statistics" exact component={MonthlyStatistics}></Route>
                 <Route path="/bills" exact component={BillList}></Route>
                 <Route path="/billstransactions/:id?" exact component={BillTransactionList}></Route>
+                <Route path="/expenseHeaderList" exact component={ExpenseHeaderList}></Route>
+                <Route path="/expenseDetailList" exact component={ExpenseDetailList}></Route>
+                <Route path="/expensetypes" exact component={ExpenseTypeList}></Route>
               </Switch> :
               <Switch>
                 <Route path="/" component={Home}></Route>

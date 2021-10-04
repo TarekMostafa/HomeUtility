@@ -14,6 +14,9 @@ function LookupsNavDropDown(props) {
       <LinkContainer to="/transactiontypes">
         <NavDropdown.Item>Transaction Types</NavDropdown.Item>
       </LinkContainer>
+      <LinkContainer to="/expensetypes">
+        <NavDropdown.Item>Expense Types</NavDropdown.Item>
+      </LinkContainer>
     </NavDropdown>
   )
 }

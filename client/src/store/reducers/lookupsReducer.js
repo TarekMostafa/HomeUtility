@@ -23,6 +23,11 @@ const lookupReducer = (state=initState, action) => {
         ...state,
         transactionTypes: action.data
       };
+    case 'SET_EXPENSE_TYPES':
+      return {
+        ...state,
+        expenseTypes: action.data
+      }
     case 'SET_ACCOUNTS':
       return {
         ...state,

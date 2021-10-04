@@ -5,6 +5,7 @@ import CurrencyRequest from '../../axios/CurrencyRequest';
 import AppSettingsRequest from '../../axios/AppSettingsRequest';
 import RelatedTypeRequest from '../../axios/RelatedTypeRequest';
 import BillRequest from '../../axios/BillRequest';
+import ExpenseTypeRequest from '../../axios/ExpenseTypeRequest';
 
 export const getAppSettings = () => {
   return (dispatch, getState) => {
@@ -18,6 +19,14 @@ export const getTransactionTypes = () => {
   return (dispatch, getState) => {
     TransactionTypeRequest.getTransactionTypes()
     .then( (transactionTypes) => dispatch({type: "SET_TRANSACTION_TYPES", data: transactionTypes}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
+
+export const getExpenseTypes = () => {
+  return (dispatch, getState) => {
+    ExpenseTypeRequest.getExpenseTypes()
+    .then( (expenseTypes) => dispatch({type: "SET_EXPENSE_TYPES", data: expenseTypes}) )
     .catch( () => dispatch({type: "ERROR"}) )
   }
 }
