@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../db/dbConnection').getSequelize();
+const sequelize = require('../../db/dbConnection').getSequelize();
 
 class ExpenseTypeModel extends Sequelize.Model {}
 ExpenseTypeModel.init({

@@ -1,18 +1,19 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../db/dbConnection').getSequelize();
-const ExpenseModel = require('./expenseModel');
-const ExpenseTypeModel = require('./expenseTypeModel');
+const sequelize = require('../../db/dbConnection').getSequelize();
+const ExpenseModel = require('../expenseHeader/expenseModel');
+const ExpenseTypeModel = require('../expenseType/expenseTypeModel');
+const CurrencyModel = require('../../currencies/currencyModel');
 
 class ExpenseDetailModel extends Sequelize.Model {}
 ExpenseDetailModel.init({
   expenseDetailId: { type: Sequelize.BIGINT(20), primaryKey: true, autoIncrement: true},
-  expenseId: Sequelize.BIGINT(20),
+  expenseId: Sequelize.INTEGER(11),
   expenseDay: Sequelize.SMALLINT(2),
   expenseAmount: Sequelize.DECIMAL(18, 3),
   expenseCurrency: Sequelize.STRING(3),
   expenseDescription: Sequelize.STRING(250),
   expenseTypeId: Sequelize.INTEGER,
-  expenseAdjusment: Sequelize.ENUM('YES', 'NO')
+  expenseAdjusment: Sequelize.BOOLEAN
 }, {
   tableName: 'expensesDetails',
   createdAt: false,
@@ -28,6 +29,11 @@ ExpenseDetailModel.belongsTo(ExpenseModel, {
 ExpenseDetailModel.belongsTo(ExpenseTypeModel, {
     as: "expenseType",
     foreignKey: 'expenseTypeId'
+});
+
+ExpenseDetailModel.belongsTo(CurrencyModel, {
+  as: "currency",
+  foreignKey: 'expenseCurrency'
 });
 
 module.exports = ExpenseDetailModel;

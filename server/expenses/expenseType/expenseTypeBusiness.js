@@ -1,21 +1,21 @@
 const ExpenseTypeRepo = require('./expenseTypeRepo');
-const Exception = require('../features/exception');
+const Exception = require('../../features/exception');
 
 class expenseTypeBusiness {
   async getExpenseTypes() {
     return await ExpenseTypeRepo.getExpenseTypes();
   }
 
-  async addExpenseType(expenseType) {
-    return await ExpenseTypeRepo.addExpenseType(expenseType);
+  async addExpenseType({expenseTypeName}) {
+    return await ExpenseTypeRepo.addExpenseType({expenseTypeName});
   }
 
-  async updateExpenseType(id, expenseType) {
+  async updateExpenseType(id, {expenseTypeName}) {
     const _expenseType = await ExpenseTypeRepo.getExpenseType(id);
     if(!_expenseType) {
       throw new Exception('EXP_TYP_NOT_EXIST');
     }
-    _expenseType.typeName = expenseType.typeName;
+    _expenseType.expenseTypeName = expenseTypeName;
     return await _expenseType.save();
   }
 

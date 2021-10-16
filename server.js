@@ -22,7 +22,9 @@ const billRouter = require('./server/bills/billRouter');
 const billTransactionRouter = require('./server/bills/billTransactionRouter');
 const Exception = require('./server/features/exception');
 const AppMessageTranslation = require('./server/features/appMessageTranslation');
-const expenseTypeRouter = require('./server/expenses/expenseTypeRouter');
+const expenseTypeRouter = require('./server/expenses/expenseType/expenseTypeRouter');
+const expenseRouter = require('./server/expenses/expenseHeader/expenseRouter');
+const expenseDetailRouter = require('./server/expenses/expenseDetail/expenseDetailRouter');
 //Constant Variables
 const port = Config.port || 5000;
 // Initialize App Message Transalation
@@ -72,6 +74,8 @@ app.use('/api/db', dbRouter);
 app.use('/api/bills', billRouter);
 app.use('/api/billsTransactions', billTransactionRouter);
 app.use('/api/expenseTypes', expenseTypeRouter);
+app.use('/api/expenses', expenseRouter);
+app.use('/api/expenseDetail', expenseDetailRouter);
 //Middleware for Success
 app.use(function(req, res, next){
   const message = appMessageTranslation.translate(res.messageCode, res.params);
@@ -83,6 +87,7 @@ app.use(function(err, req, res, next){
     const message = appMessageTranslation.translate(err.message, err.params);
     res.status(400).send(message);
   } else {
+    console.log(`Internal Server Error ${err}`)
     res.status(500).send('Internal Server Error');
   }
 })

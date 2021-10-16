@@ -71,7 +71,13 @@ module.exports = {
   '070' : 'This tranasction bill date is less than the bill start date (?)',
   '071' : 'Invalid bill transaction Details, you must enter at least one detail',
   'EXP_TYP_ADD_SUCCESS': 'This expense type has been successfully saved',
-  'EXP_TYP_NOT_EXIST': 'This expense type does not exist in the database',
+  'EXP_TYP_NOT_EXIST': 'This expense type does not exist',
   'EXP_TYP_UPDATE_SUCCESS': 'This expense type has been successfully updated',
-  'EXP_TYP_DEL_SUCCESS': 'This expense type has been successfully deleted'
+  'EXP_TYP_DEL_SUCCESS': 'This expense type has been successfully deleted',
+  'EXP_EXIST': 'This expense already exists',
+  'EXP_ADD_SUCCESS': 'This expense has been successfully saved',
+  'EXP_ID_REQ': 'The expense id is required',
+  'EXP_HEAD_NOTEXIST': 'The expense header does not exist',
+  'EXP_DET_NOTEXIST': 'This expense detail does not exist',
+  'EXP_DET_ADD_SUCCESS': 'This expense detail has been successfully saved',
 }

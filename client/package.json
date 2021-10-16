@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.22.0",
     "bootstrap": "^4.6.0",
     "lodash": "^4.17.21",
     "rc-datepicker": "^5.0.16",
@@ -11,6 +11,7 @@
     "react-bootstrap": "^1.5.1",
     "react-chips": "^0.8.0",
     "react-dom": "^16.14.0",
+    "react-month-year-picker": "^1.0.1",
     "react-redux": "^6.0.1",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.2.0",

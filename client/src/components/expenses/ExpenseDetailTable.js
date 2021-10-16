@@ -2,14 +2,15 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 
 import ExpenseDetailAddRow from './ExpenseDetailAddRow';
+import ExpenseDetailRow from './ExpenseDetailRow';
 
-function ExpenseDetailTable() {
+function ExpenseDetailTable(props) {
 
     return (
         <Table hover bordered size="sm" responsive="sm">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>Id</th>
                     <th>Date</th>
                     <th>Amount</th>
                     <th>Currency</th>
@@ -20,7 +21,16 @@ function ExpenseDetailTable() {
                 </tr>
             </thead>
             <tbody>
-                <ExpenseDetailAddRow></ExpenseDetailAddRow>
+                <ExpenseDetailAddRow expense={props.expense} onAdd={props.onAdd}/>
+                {
+                    props.expenseDetails && props.expenseDetails.map(elem => {
+                        return (
+                            <ExpenseDetailRow 
+                                expenseDetail={elem} 
+                                onDelete={props.onDelete}/>
+                        )
+                    })
+                }
             </tbody>
         </Table>
     );
