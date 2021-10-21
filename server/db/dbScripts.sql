@@ -314,7 +314,9 @@ CREATE TABLE `expenses` (
   `expenseCloseBalance` decimal(18,3) NOT NULL DEFAULT '0.000',
   `expenseDebits` decimal(18,3) NOT NULL DEFAULT '0.000',
   `expenseAdjusments` decimal(18,3) NOT NULL DEFAULT '0.000',
-  PRIMARY KEY (`expenseId`)
+  PRIMARY KEY (`expenseId`),
+  KEY `fk_expenses_currency_idx` (`expenseCurrency`),
+  CONSTRAINT `fk_expenses_currency` FOREIGN KEY (`expenseCurrency`) REFERENCES `currencies` (`currencyCode`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
