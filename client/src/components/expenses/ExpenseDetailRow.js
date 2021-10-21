@@ -53,7 +53,7 @@ function ExpenseDetailRow(props) {
             </td>
             <td>{elem.expenseCurrency}</td>
             <td>{elem.expenseDescription}</td>
-            <td>{elem.expenseType.expenseTypeName}</td>
+            <td>{(elem.expenseType?elem.expenseType.expenseTypeName:"")}</td>
             <td>{elem.expenseAdjusment?'YES':'NO'}</td>
             <td>
                 <Button variant="danger" size="sm" onClick={()=>handleExpenseDetailDelete(elem.expenseDetailId)}>

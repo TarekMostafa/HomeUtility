@@ -22,8 +22,8 @@ class ExpenseDetailRepo {
     return await ExpenseDetailModel.findByPk(id);
   }
 
-  static async addExpenseDetail(expenseDetail) {
-    await ExpenseDetailModel.build(expenseDetail).save();
+  static async addExpenseDetail(expenseDetail, dbTransaction) {
+    await ExpenseDetailModel.build(expenseDetail).save({transaction: dbTransaction});
   }
 }
 

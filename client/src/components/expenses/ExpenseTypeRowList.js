@@ -1,26 +1,22 @@
 import React from 'react';
 import { Button, Badge } from 'react-bootstrap';
-import { connect } from 'react-redux';
 
 function ExpenseTypeRowList(props) {
-    const { expenseTypes } = props;
+    const { groupExpenseTypes } = props;
     return (
         <div>
             {
-                expenseTypes && expenseTypes.map( expenseType => {
-                    return (<Button key={expenseType.expenseTypeId} variant="outline-info" size="lg">
-                        {expenseType.expenseTypeName}  <Badge pill variant="success">123</Badge>
-                    </Button>);
+                groupExpenseTypes && Object.keys(groupExpenseTypes).map( key => {
+                    return (
+                    <Button key={key} variant="outline-info" size="lg">
+                        {groupExpenseTypes[key].name}  
+                        {' '}<Badge pill variant="success">{groupExpenseTypes[key].totalAmt}</Badge>
+                    </Button>
+                    );
                 })
             }
         </div>
     );
 }
 
-const mapStateToProps = (state) => {
-	return {
-        expenseTypes: state.lookups.expenseTypes
-	}
-}
-
-export default connect(mapStateToProps)(ExpenseTypeRowList)
+export default ExpenseTypeRowList;

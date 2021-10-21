@@ -9,7 +9,6 @@ import ExpenseDetailRequest from '../../axios/ExpenseDetailRequest';
 const initialState = {
     expenseDate: '',
     expenseAmt: 0,
-    expenseCcy: '',
     expenseDesc: '',
     expenseType: 0,
     expenseAdj: false,
@@ -23,7 +22,15 @@ function ExpenseDetailAddRow(props) {
     const handleChange = (event) => {
         setFormData({
             ...formData,
-            [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value)
+            [event.target.name] : event.target.value
+        })
+    }
+
+    const handleChangeAdj = (event) => {
+        setFormData({
+            ...formData,
+            expenseAdj: event.target.checked,
+            expenseType: (event.target.checked? null: formData.expenseType)
         })
     }
 
@@ -37,22 +44,22 @@ function ExpenseDetailAddRow(props) {
     const handleExpenseDetailAdd = () => {
         // Validate Input
         if(!formData.expenseDate) {
-            setFormData({...formData, message: "Invalid date"});
+            setFormData({...formData, messageClass:'text-danger', message:"Invalid date"});
             return;
         } else if(!formData.expenseAmt) {
-            setFormData({...formData, message: "Invalid amount"});
+            setFormData({...formData, messageClass:'text-danger', message:"Invalid amount"});
             return;
         } else if(!formData.expenseDesc) {
-            setFormData({...formData, message: "Invalid description"});
+            setFormData({...formData, messageClass:'text-danger', message:"Invalid description"});
             return;
-        } else if(!formData.expenseType) {
-            setFormData({...formData, message: "Invalid expense type"});
+        } else if(!formData.expenseType && !formData.expenseAdj) {
+            setFormData({...formData, messageClass:'text-danger', message:"Invalid expense type"});
             return;
         } else {
-            setFormData({...formData, message: "", isLoading: true});
+            setFormData({...formData, messageClass:'', message: "", isLoading: true});
         }
         ExpenseDetailRequest.addExpenseDetail(
-            props.expense.id, 
+            props.expense.expenseId, 
             new Date(formData.expenseDate).getDate(),
             formData.expenseAmt,
             formData.expenseDesc,
@@ -78,10 +85,7 @@ function ExpenseDetailAddRow(props) {
         })
     }
 
-    const [formData, setFormData] = useState({
-        ...initialState, 
-        expenseCcy: (props.expense? props.expense.currency: '')
-    });
+    const [formData, setFormData] = useState(initialState);
 
     return (
         <tr key={'AddRow'}>
@@ -89,8 +93,8 @@ function ExpenseDetailAddRow(props) {
             <td>
                 <DatePickerInput readOnly small placeholder="Expense Date" 
                 value={formData.expenseDate} onChange={handleExpenseDateChange}
-                minDate={new Date(props.expense.year, props.expense.month-1, 1)}
-                maxDate={new Date(props.expense.year, props.expense.month-1, 31)}
+                minDate={new Date(props.expense.expenseYear, props.expense.expenseMonth-1, 1)}
+                maxDate={new Date(props.expense.expenseYear, props.expense.expenseMonth-1, 31)}
                 />
             </td>
             <td colSpan='2'>
@@ -100,7 +104,7 @@ function ExpenseDetailAddRow(props) {
                         value={Number(formData.expenseAmt).toFixed(2)} 
                         onChange={handleChange}/>
                     <InputGroup.Prepend>
-                        <InputGroup.Text id="inputGroupPrepend">{formData.expenseCcy}</InputGroup.Text>
+                        <InputGroup.Text id="inputGroupPrepend">{props.expense.expenseCurrency}</InputGroup.Text>
                     </InputGroup.Prepend>
                 </InputGroup>  
             </td>
@@ -109,14 +113,14 @@ function ExpenseDetailAddRow(props) {
             </td>
             <td>
                 <Form.Control size="sm" as="select" name="expenseType" placeholder="Expense Type" 
-                    onChange={handleChange} value={formData.expenseType}>
+                    onChange={handleChange} value={formData.expenseType} disabled={formData.expenseAdj}>
                     <option key={0} value=''>Expense Type</option>
                     <ExpenseTypesDropDown></ExpenseTypesDropDown>
                 </Form.Control>
             </td>
             <td>
                 <Form.Check name="expenseAdj" type="checkbox" label="Adjusment" checked={formData.expenseAdj} 
-                    onChange={handleChange}></Form.Check>
+                    onChange={handleChangeAdj}></Form.Check>
             </td>
             <td>
                 <Button variant="primary" size="sm" onClick={handleExpenseDetailAdd}>

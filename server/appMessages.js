@@ -80,4 +80,6 @@ module.exports = {
   'EXP_HEAD_NOTEXIST': 'The expense header does not exist',
   'EXP_DET_NOTEXIST': 'This expense detail does not exist',
   'EXP_DET_ADD_SUCCESS': 'This expense detail has been successfully saved',
+  'EXP_ADD_FAIL': 'Failed to add this expense detail',
+  'EXP_DELETE_FAIL': 'Failed to delete this expense detail'
 }

@@ -1,5 +1,10 @@
-Create database homeutilitytestdb;
-use homeutilitytestdb;
+Create database homeutilityapptestdb;
+use homeutilityapptestdb;
+-- MySQL dump 10.13  Distrib 5.7.20, for Win32 (AMD64)
+--
+-- Host: localhost    Database: homeutilityapptestdb
+-- ------------------------------------------------------
+-- Server version	5.7.20-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -69,7 +74,7 @@ CREATE TABLE `appsettings` (
 
 LOCK TABLES `appsettings` WRITE;
 /*!40000 ALTER TABLE `appsettings` DISABLE KEYS */;
-insert into appsettings values ('APP', null, '');
+INSERT INTO `appsettings` VALUES ('APP',null,'');
 /*!40000 ALTER TABLE `appsettings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -294,6 +299,93 @@ LOCK TABLES `deposits` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `expenses`
+--
+
+DROP TABLE IF EXISTS `expenses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `expenses` (
+  `expenseId` int(11) NOT NULL AUTO_INCREMENT,
+  `expenseYear` smallint(4) NOT NULL,
+  `expenseMonth` smallint(2) NOT NULL,
+  `expenseCurrency` varchar(3) NOT NULL,
+  `expenseOpenBalance` decimal(18,3) NOT NULL DEFAULT '0.000',
+  `expenseCloseBalance` decimal(18,3) NOT NULL DEFAULT '0.000',
+  `expenseDebits` decimal(18,3) NOT NULL DEFAULT '0.000',
+  `expenseAdjusments` decimal(18,3) NOT NULL DEFAULT '0.000',
+  PRIMARY KEY (`expenseId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `expenses`
+--
+
+LOCK TABLES `expenses` WRITE;
+/*!40000 ALTER TABLE `expenses` DISABLE KEYS */;
+/*!40000 ALTER TABLE `expenses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `expensesdetails`
+--
+
+DROP TABLE IF EXISTS `expensesdetails`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `expensesdetails` (
+  `expenseDetailId` bigint(20) NOT NULL AUTO_INCREMENT,
+  `expenseId` int(11) NOT NULL,
+  `expenseDay` smallint(2) NOT NULL,
+  `expenseAmount` decimal(18,3) NOT NULL,
+  `expenseCurrency` varchar(3) NOT NULL,
+  `expenseDescription` varchar(250) DEFAULT NULL,
+  `expenseTypeId` int(11) DEFAULT NULL,
+  `expenseAdjusment` tinyint(4) NOT NULL,
+  PRIMARY KEY (`expenseDetailId`),
+  KEY `fk_expense_idx` (`expenseId`),
+  KEY `fk_expensedetails_currency_idx` (`expenseCurrency`),
+  KEY `fk_expensedetails_expensetype_idx` (`expenseTypeId`),
+  CONSTRAINT `fk_expensedetails_currency` FOREIGN KEY (`expenseCurrency`) REFERENCES `currencies` (`currencyCode`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_expensedetails_expense` FOREIGN KEY (`expenseId`) REFERENCES `expenses` (`expenseId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_expensedetails_expensetype` FOREIGN KEY (`expenseTypeId`) REFERENCES `expensetypes` (`expenseTypeId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `expensesdetails`
+--
+
+LOCK TABLES `expensesdetails` WRITE;
+/*!40000 ALTER TABLE `expensesdetails` DISABLE KEYS */;
+/*!40000 ALTER TABLE `expensesdetails` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `expensetypes`
+--
+
+DROP TABLE IF EXISTS `expensetypes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `expensetypes` (
+  `expenseTypeId` int(11) NOT NULL AUTO_INCREMENT,
+  `expenseTypeName` varchar(45) NOT NULL,
+  PRIMARY KEY (`expenseTypeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `expensetypes`
+--
+
+LOCK TABLES `expensetypes` WRITE;
+/*!40000 ALTER TABLE `expensetypes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `expensetypes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `relatedtransactions`
 --
 
@@ -339,7 +431,6 @@ CREATE TABLE `relatedtypes` (
 
 LOCK TABLES `relatedtypes` WRITE;
 /*!40000 ALTER TABLE `relatedtypes` DISABLE KEYS */;
-INSERT INTO `relatedtypes` VALUES ('DEP','Deposit Related Transactions'),('IAT','Internal Account Transfer');
 /*!40000 ALTER TABLE `relatedtypes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -479,7 +570,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-insert into users values (1, 'admin', '47729eaf9053e25ab469e4c2bf8961147e2939dc6f789bacdfda81d5df44d5e6', 1, 0, NULL);
+INSERT INTO `users` VALUES (1,'admin','47729eaf9053e25ab469e4c2bf8961147e2939dc6f789bacdfda81d5df44d5e6',1,0,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -492,4 +583,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-04 15:55:47
+-- Dump completed on 2021-10-21 17:44:53

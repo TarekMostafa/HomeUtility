@@ -10,17 +10,22 @@ class ExpenseRequest {
     return response.data;
   }
 
+  static async getExpense(id) {
+    const response = await axios.get('/api/expenses/'+id);
+    return response.data;
+  }
+
   static async addExpense(year, month, currency, openBalance) {
     return await axios.post('/api/expenses', {
         year, month, currency, openBalance
     });
   }
 
-//   static async updateExpenseType(expenseTypeId, expenseTypeName, typeCRDR) {
-//     return await axios.put('/api/expenseTypes/'+expenseTypeId, {
-//       expenseTypeName
-//     });
-//   }
+  static async updateExpense(expenseId, openBalance) {
+    return await axios.put('/api/expenses/'+expenseId, {
+      openBalance
+    });
+  }
 
 //   static async deleteExpenseType(expenseTypeId) {
 //     return await axios.delete('/api/expenseTypes/'+expenseTypeId);

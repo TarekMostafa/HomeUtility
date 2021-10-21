@@ -6,6 +6,10 @@ class expenseBusiness {
     return await ExpenseRepo.getExpenses({year});
   }
 
+  async getExpense(id) {
+    return await ExpenseRepo.getExpense(id);
+  }
+
   async addExpense({year,month,currency, openBalance}) {
     var expenses = await ExpenseRepo.getExpenses({year, month, currency});
     if(expenses && expenses.length) throw new Exception('EXP_EXIST');
@@ -18,14 +22,9 @@ class expenseBusiness {
     });
   }
 
-//   async updateExpenseType(id, expenseType) {
-//     const _expenseType = await ExpenseTypeRepo.getExpenseType(id);
-//     if(!_expenseType) {
-//       throw new Exception('EXP_TYP_NOT_EXIST');
-//     }
-//     _expenseType.typeName = expenseType.typeName;
-//     return await _expenseType.save();
-//   }
+  async updateExpense(id, {openBalance}) {
+    await ExpenseRepo.updateExpense(id, {openBalance});
+  }
 
 //   async deleteExpenseType(id) {
 //     const _expenseType = await ExpenseTypeRepo.getExpenseType(id);

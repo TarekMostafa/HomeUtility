@@ -25,7 +25,7 @@ function ExpenseDetailTable(props) {
                 {
                     props.expenseDetails && props.expenseDetails.map(elem => {
                         return (
-                            <ExpenseDetailRow 
+                            <ExpenseDetailRow key={elem.expenseDetailId}
                                 expenseDetail={elem} 
                                 onDelete={props.onDelete}/>
                         )

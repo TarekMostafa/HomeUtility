@@ -12,7 +12,7 @@ ExpenseDetailModel.init({
   expenseAmount: Sequelize.DECIMAL(18, 3),
   expenseCurrency: Sequelize.STRING(3),
   expenseDescription: Sequelize.STRING(250),
-  expenseTypeId: Sequelize.INTEGER,
+  expenseTypeId: { type: Sequelize.INTEGER, allowNull: true},
   expenseAdjusment: Sequelize.BOOLEAN
 }, {
   tableName: 'expensesDetails',

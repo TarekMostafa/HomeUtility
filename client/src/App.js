@@ -51,7 +51,7 @@ class App extends Component {
                 <Route path="/bills" exact component={BillList}></Route>
                 <Route path="/billstransactions/:id?" exact component={BillTransactionList}></Route>
                 <Route path="/expenseHeaderList" exact component={ExpenseHeaderList}></Route>
-                <Route path="/expenseDetailList" exact component={ExpenseDetailList}></Route>
+                <Route path="/expenseDetailList/:id?" exact component={ExpenseDetailList}></Route>
                 <Route path="/expensetypes" exact component={ExpenseTypeList}></Route>
               </Switch> :
               <Switch>
