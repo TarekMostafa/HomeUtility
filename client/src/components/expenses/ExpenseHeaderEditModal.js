@@ -60,7 +60,7 @@ function ExpenseHeaderEditModal(props) {
                     name="expenseMonthYear"
                     year={expense.expenseYear} 
                     month={expense.expenseMonth}
-                    />
+                    disabled/>
                     <Form.Group controlId="expenseCurrency">
                         <Form.Label>Expense Currency</Form.Label>
                         <Form.Control name="expenseCurrency" type="input" readOnly

@@ -17,7 +17,7 @@ function MonthYearField(props){
         <React.Fragment>
             <Form.Group controlId={props.name}>
                 <Form.Label>{props.label}</Form.Label>
-                <Form.Control name={props.name} type="input" readOnly
+                <Form.Control {...props} type="input" readOnly
                 onClick={()=>setShow(true)} value={getMonthName(props.month)+'/'+props.year}/>
                 {
                     show && <Card bg="light"><Card.Body>
