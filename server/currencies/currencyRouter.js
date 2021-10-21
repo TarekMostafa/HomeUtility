@@ -1,5 +1,4 @@
 const express = require('express');
-const _ = require('lodash');
 const Currency = require('./currency');
 
 const router = express.Router();

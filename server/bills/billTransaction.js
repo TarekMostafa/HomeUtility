@@ -3,7 +3,6 @@ const sequelize = require('../db/dbConnection').getSequelize();
 const BillTransactionRepo = require('./billTransactionRepo');
 const BillRepo = require('./billRepo');
 const APIResponse = require('../utilities/apiResponse');
-const Common = require('../utilities/common');
 const Frequency = require('./frequency');
 
 const Op = Sequelize.Op;
@@ -12,8 +11,8 @@ class BillTransaction {
   async getBillTransactions({limit, skip, billId, billDateFrom, billDateTo,
     postingDateFrom, postingDateTo, includeNotes, notes, amountType}) {
 
-    let _limit = Common.getNumber(limit, 10);
-    let _skip = Common.getNumber(skip, 0);
+    if(!limit) limit = 10;
+    if(!skip) skip = 0;
     // Construct Where Condition
     let whereQuery = {};
     // Bill Id
@@ -60,7 +59,7 @@ class BillTransaction {
     if(amountType){
       whereQuery.transAmountType = amountType.trim();
     }
-    const billTrans = await BillTransactionRepo.getBillTransactions(_skip, _limit, whereQuery);
+    const billTrans = await BillTransactionRepo.getBillTransactions(skip, limit, whereQuery);
     return APIResponse.getAPIResponse(true, billTrans);
   }
 
