@@ -23,11 +23,24 @@ function ExpenseDetailTable(props) {
             <tbody>
                 <ExpenseDetailAddRow expense={props.expense} onAdd={props.onAdd}/>
                 {
-                    props.expenseDetails && props.expenseDetails.map(elem => {
+                    props.expenseDetails && props.expenseDetails.filter(elem => {
+                        if(!props.searchFilter) return true;
+                        switch(props.searchFilter.name) {
+                            case "expenseType":
+                                return props.searchFilter.value.toString() === elem.expenseTypeId+'';
+                            case "adjusment":
+                                return props.searchFilter.value === elem.expenseAdjusment;
+                            case "negative":
+                                return elem.expenseAmount < 0;
+                            default:
+                                return true;
+                        } 
+                    }).map(elem => {
                         return (
                             <ExpenseDetailRow key={elem.expenseDetailId}
                                 expenseDetail={elem} 
-                                onDelete={props.onDelete}/>
+                                onDelete={props.onDelete}
+                                onEdit={props.onEdit}/>
                         )
                     })
                 }

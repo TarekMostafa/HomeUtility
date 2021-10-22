@@ -34,6 +34,14 @@ class expenseDetailBusiness {
     }
   }
 
+  async updateExpenseDetail(id, {expenseTypeId}) {
+    const _expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
+    if(!_expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
+
+    _expenseDetail.expenseTypeId = expenseTypeId;
+    _expenseDetail.save();
+  }
+
   async deleteExpenseDetail(id) {
     const _expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
     if(!_expenseDetail) throw new Exception('EXP_DET_NOTEXIST');

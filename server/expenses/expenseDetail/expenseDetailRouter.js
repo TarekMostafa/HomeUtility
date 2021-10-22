@@ -22,14 +22,13 @@ router.post('/', function(req, res, next) {
   })
 });
 
-// router.put('/:id', function(req, res, next) {
-//   const expenseTypeRequest = new UpdateExpenseTypeRequest(req.body);
-//   expenseTypeBusiness.updateExpenseType(req.params.id, expenseTypeRequest).then( () => {
-//     res.status(200).send();
-//   }).catch( err => {
-//     next(err);
-//   })
-// });
+router.put('/:id', function(req, res, next) {
+  expenseDetailBusiness.updateExpenseDetail(req.params.id, req.body).then( () => {
+    res.status(200).send();
+  }).catch( err => {
+    next(err);
+  })
+});
 
 router.delete('/:id', function(req, res, next) {
     expenseDetailBusiness.deleteExpenseDetail(req.params.id).then( result => {

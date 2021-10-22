@@ -9,10 +9,13 @@ function ExpenseTypeRowList(props) {
                 groupExpenseTypes && Object.entries(groupExpenseTypes)
                     .sort(([,a],[,b])=> a.totalAmt < b.totalAmt).map(elem => {
                         return (
-                            <Button key={elem[0]} variant="outline-info" size="lg">
+                            <React.Fragment key={elem[0]}>
+                            <Button key={elem[0]} variant="outline-info" size="md"
+                                onClick={() => props.onExpenseTypeClick(elem[0])}>
                                 {elem[1].name}  
                                 {' '}<Badge pill variant="success">{elem[1].totalAmt}</Badge>
-                            </Button>
+                            </Button>{' '}
+                            </React.Fragment>
                         );
                 })
             }

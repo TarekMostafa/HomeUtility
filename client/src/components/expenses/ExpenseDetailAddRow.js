@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Form, InputGroup, Button, Spinner } from 'react-bootstrap';
+import { Form, InputGroup, Button, Spinner, Row, Col } from 'react-bootstrap';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
 
@@ -71,7 +71,7 @@ function ExpenseDetailAddRow(props) {
             }
             setFormData({
                 ...initialState,
-                message: result.data,
+                message: 'Ok',
                 messageClass: 'text-success'
             });
         })
@@ -123,14 +123,16 @@ function ExpenseDetailAddRow(props) {
                     onChange={handleChangeAdj}></Form.Check>
             </td>
             <td>
-                <Button variant="primary" size="sm" onClick={handleExpenseDetailAdd}>
+                <Row>
+                <Col xs={4}><Button variant="primary" size="sm" onClick={handleExpenseDetailAdd}>
                 {
                   formData.isLoading?
                   <Spinner as="span" animation="border" size="sm" role="status"
                   aria-hidden="true"/> : 'Add'
                 }
-                </Button>
-                <Form.Text className={formData.messageClass}>{formData.message}</Form.Text>
+                </Button></Col>
+                <Col xs={8}><Form.Text className={formData.messageClass}>{formData.message}</Form.Text></Col>
+                </Row>
             </td>
         </tr>
     )

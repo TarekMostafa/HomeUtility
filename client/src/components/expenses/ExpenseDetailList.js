@@ -4,6 +4,7 @@ import FormContainer from '../common/FormContainer';
 import ExpenseHeaderCard from './ExpenseHeaderCard';
 import ExpenseDetailTable from './ExpenseDetailTable';
 import ExpenseTypeRowList from './ExpenseTypeRowList';
+import ExpenseDetailSummary from './ExpenseDetailSummary';
 import ExpenseRequest from '../../axios/ExpenseRequest'
 import ExpenseDetailRequest from '../../axios/ExpenseDetailRequest';
 
@@ -11,6 +12,7 @@ function ExpenseDetailList(props) {
 
     const [expense, setExpense] = useState(null);
     const [expenseDetails, setExpenseDetails] = useState([]);
+    const [searchFilter, setSearchFilter] = useState(null);
 
     const loadData = id => {
         ExpenseRequest.getExpense(id)
@@ -40,12 +42,20 @@ function ExpenseDetailList(props) {
             expense && <React.Fragment>
                 <ExpenseHeaderCard expense={expense} inline/>
                 <FormContainer>
-                    <ExpenseTypeRowList groupExpenseTypes={groupExpenseTypes(expenseDetails)}/>
+                    <ExpenseDetailSummary expenseDetails={expenseDetails}
+                        onAllClick={() => setSearchFilter(null)}
+                        onDebitClick={() => setSearchFilter({name:'adjusment', value:false})}
+                        onAdjClick={() => setSearchFilter({name:'adjusment', value:true})}
+                        onNegClick={() => setSearchFilter({name:'negative', value:''})}/>
+                    <ExpenseTypeRowList groupExpenseTypes={groupExpenseTypes(expenseDetails)}
+                        onExpenseTypeClick={type => setSearchFilter({name:'expenseType', value:type})}/>
                 </FormContainer>
                 <ExpenseDetailTable expense={expense} 
                     expenseDetails={expenseDetails} 
+                    searchFilter={searchFilter}
                     onAdd={()=> loadData(props.match.params.id)}
-                    onDelete={()=> loadData(props.match.params.id)}/>
+                    onDelete={()=> loadData(props.match.params.id)}
+                    onEdit={()=> loadData(props.match.params.id)}/>
             </React.Fragment>
         }
         </FormContainer>

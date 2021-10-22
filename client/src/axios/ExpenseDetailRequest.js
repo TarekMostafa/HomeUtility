@@ -17,11 +17,11 @@ class ExpenseDetailRequest {
     });
   }
 
-//   static async updateExpenseType(expenseTypeId, expenseTypeName, typeCRDR) {
-//     return await axios.put('/api/expenseTypes/'+expenseTypeId, {
-//       expenseTypeName
-//     });
-//   }
+  static async updateExpenseDetail(expenseDetailId, expenseTypeId) {
+    return await axios.put('/api/expenseDetail/'+expenseDetailId, {
+      expenseTypeId
+    });
+  }
 
   static async deleteExpenseDetail(expenseDetailId) {
     return await axios.delete('/api/expenseDetail/'+expenseDetailId);
