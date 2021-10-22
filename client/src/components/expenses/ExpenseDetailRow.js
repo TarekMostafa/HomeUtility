@@ -37,18 +37,26 @@ function ExpenseDetailRow(props) {
         })
     }
 
+    const getCellColor = (amount) => {
+        if(amount < 0)  return {color:'#ff0000'};
+    }
+
+    const getRowColor = (expense) => {
+        if(expense.expenseAdjusment) return {color:'#0020ff'};
+    }
+
     const [formData, setFormData] = useState({...initialState});
 
     const elem = props.expenseDetail;
 
     return (
-        <tr key={elem.expenseDetailId}>
+        <tr key={elem.expenseDetailId} style={getRowColor(elem)}>
             <td>{elem.expenseDetailId}</td>
             <td>
                 {moment(new Date(elem.expense.expenseYear, elem.expense.expenseMonth-1, 
                     elem.expenseDay)).format('DD/MM/YYYY')}
             </td>
-            <td className="text-right">
+            <td className="text-right" style={getCellColor(elem.expenseAmount)}>
                 {amountFormatter(elem.expenseAmount, elem.currency.currencyDecimalPlace)}
             </td>
             <td>{elem.expenseCurrency}</td>

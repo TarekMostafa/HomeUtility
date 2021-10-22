@@ -6,13 +6,14 @@ function ExpenseTypeRowList(props) {
     return (
         <div>
             {
-                groupExpenseTypes && Object.keys(groupExpenseTypes).map( key => {
-                    return (
-                    <Button key={key} variant="outline-info" size="lg">
-                        {groupExpenseTypes[key].name}  
-                        {' '}<Badge pill variant="success">{groupExpenseTypes[key].totalAmt}</Badge>
-                    </Button>
-                    );
+                groupExpenseTypes && Object.entries(groupExpenseTypes)
+                    .sort(([,a],[,b])=> a.totalAmt < b.totalAmt).map(elem => {
+                        return (
+                            <Button key={elem[0]} variant="outline-info" size="lg">
+                                {elem[1].name}  
+                                {' '}<Badge pill variant="success">{elem[1].totalAmt}</Badge>
+                            </Button>
+                        );
                 })
             }
         </div>

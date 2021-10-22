@@ -9,7 +9,7 @@ import ExpenseDetailRequest from '../../axios/ExpenseDetailRequest';
 
 function ExpenseDetailList(props) {
 
-    const [expense, setExpense] = useState({});
+    const [expense, setExpense] = useState(null);
     const [expenseDetails, setExpenseDetails] = useState([]);
 
     const loadData = id => {

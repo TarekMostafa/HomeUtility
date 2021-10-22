@@ -101,7 +101,7 @@ function ExpenseDetailAddRow(props) {
                 <InputGroup size="sm">
                     <Form.Control size="sm" type="number" placeholder="Amount"
                         name="expenseAmt" 
-                        value={Number(formData.expenseAmt).toFixed(2)} 
+                        value={Number(formData.expenseAmt).toFixed(props.expense.currency.currencyDecimalPlace)} 
                         onChange={handleChange}/>
                     <InputGroup.Prepend>
                         <InputGroup.Text id="inputGroupPrepend">{props.expense.expenseCurrency}</InputGroup.Text>

@@ -22,12 +22,12 @@ function ExpenseHeaderCard(props) {
         { inline ?<ExpenseHeaderCardBodyInline expense={expense}/>
                 :<ExpenseHeaderCardBody expense={expense}/>
         }
-        <Card.Footer>
         {
-            props.onEdit && <Button variant="link" size="sm"
-            onClick={() => props.onEdit(expense.expenseId)}>Edit</Button>
+            props.onEdit && <Card.Footer>
+                <Button variant="link" size="sm"
+                onClick={() => props.onEdit(expense.expenseId)}>Edit</Button>
+            </Card.Footer>
         }    
-        </Card.Footer>
         </Card>
     );
 }

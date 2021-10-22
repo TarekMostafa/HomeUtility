@@ -14,7 +14,7 @@ class ExpenseDetailRepo {
         { model: ExpenseModel, as: 'expense'}
       ],
       where: query,
-      order: [ ['expenseDay', 'DESC'] , ['expenseId', 'DESC'] ]
+      order: [ ['expenseDay', 'DESC'] , ['expenseDetailId', 'DESC'] ]
     });
   }
 

@@ -1,28 +1,29 @@
 import React from 'react';
 import { Card, Row, Col, Badge } from 'react-bootstrap';
+import amountFormatter from '../../utilities/amountFormatter';
 
 function ExpenseHeaderCardBodyInline(props) {
 
     const { expense } = props;
 
     return (
-        <Card.Body>
+        expense && <Card.Body>
             <Row>
                 <Col xs={3}>
                     <strong>Open Balance: </strong>
-                    {expense?expense.expenseOpenBalance:0}
+                    {amountFormatter(expense.expenseOpenBalance, expense.currency.currencyDecimalPlace)}
                 </Col>
                 <Col xs={2}>
                     <strong>Adjusments: </strong>
-                    {expense?expense.expenseAdjusments:0}
+                    {amountFormatter(expense.expenseAdjusments, expense.currency.currencyDecimalPlace)}
                 </Col>
                 <Col xs={3}>
                     <strong>Debits: </strong>
-                    {expense?expense.expenseDebits:0}
+                    {amountFormatter(expense.expenseDebits, expense.currency.currencyDecimalPlace)}
                 </Col>
                 <Col xs={3}>
                     <strong>Close Balance: </strong>
-                    {expense?expense.expenseCloseBalance:0}
+                    {amountFormatter(expense.expenseCloseBalance, expense.currency.currencyDecimalPlace)}
                 </Col>
                 <Col xs={1}>
                     <Badge variant="success">{expense && expense.status}</Badge>
