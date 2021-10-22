@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const APIResponse = require('../../utilities/apiResponse');
 const TransactionRepo = require('./transactionRepo');
 const AccountRepo = require('../accounts/accountRepo');
-
+const Common = require('../../utilities/common');
 const ReportRepo = require('../transactionReports/reportRepo');
 
 const Op = Sequelize.Op;
@@ -12,8 +12,8 @@ class Transaction {
   async getTransactions({limit, skip, accountId, typeId, postingDateFrom,
     postingDateTo, narrative, id, includeNarrative}) {
 
-    if(!limit) limit = 10;
-    if(!skip) skip = 0;
+    limit = Common.getNumber(limit, 10);
+    skip = Common.getNumber(skip, 0);
     // Construct Where Condition
     let whereQuery = {};
     // account Id

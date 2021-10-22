@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const APIResponse = require('../../utilities/apiResponse');
 const RelatedTransactionRepo = require('./RelatedTransactionRepo');
+const Common = require('../../utilities/common');
 
 const Op = Sequelize.Op;
 
@@ -9,8 +10,8 @@ class RelatedTransaction {
   async getRelatedTransactions({limit, skip, type,
     description, id, includeDescription}) {
 
-    if(!limit) limit = 10;
-    if(!skip) skip = 0;
+    limit = Common.getNumber(limit, 10);
+    skip = Common.getNumber(skip, 0);
     // Construct Where Condition
     let whereQuery = {};
     // Type

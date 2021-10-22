@@ -1,11 +1,11 @@
 class Common {
-  // static getNumber(value, defaultValue) {
-  //   if(!_.isNil(value)) {
-  //     return _.isNaN(_.toNumber(value)) ? defaultValue : _.toNumber(value);
-  //   } else {
-  //     return defaultValue;
-  //   }
-  // }
+  static getNumber(value, defaultValue) {
+    if(isNaN(value)) {
+      return defaultValue;
+    } else {
+      return Number(value);
+    }
+  }
 
   // static getText(value, defaultValue) {
   //   if(!_.isNil(value)) {
