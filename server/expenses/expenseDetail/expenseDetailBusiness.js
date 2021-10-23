@@ -34,25 +34,26 @@ class expenseDetailBusiness {
     }
   }
 
-  async updateExpenseDetail(id, {expenseTypeId}) {
-    const _expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
-    if(!_expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
+  async updateExpenseDetail(id, {expenseTypeId, expenseDescription}) {
+    let expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
+    if(!expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
 
-    _expenseDetail.expenseTypeId = expenseTypeId;
-    _expenseDetail.save();
+    expenseDetail.expenseTypeId = expenseTypeId;
+    expenseDetail.expenseDescription = expenseDescription;
+    expenseDetail.save();
   }
 
   async deleteExpenseDetail(id) {
-    const _expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
-    if(!_expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
+    const expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
+    if(!expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
 
     let dbTransaction;
     try {
       dbTransaction = await sequelize.transaction();
-      await ExpenseRepo.decreaseExpenseBalances(_expenseDetail.expenseId, 
-        _expenseDetail.expenseAmount, 
-        _expenseDetail.expenseAdjusment, dbTransaction);
-      await _expenseDetail.destroy({transaction: dbTransaction});
+      await ExpenseRepo.decreaseExpenseBalances(expenseDetail.expenseId, 
+        expenseDetail.expenseAmount, 
+        expenseDetail.expenseAdjusment, dbTransaction);
+      await expenseDetail.destroy({transaction: dbTransaction});
       await dbTransaction.commit();
     } catch (err) {
       console.log(`error ${err}`);

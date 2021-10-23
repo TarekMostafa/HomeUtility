@@ -17,9 +17,9 @@ class ExpenseDetailRequest {
     });
   }
 
-  static async updateExpenseDetail(expenseDetailId, expenseTypeId) {
+  static async updateExpenseDetail(expenseDetailId, expenseTypeId, expenseDescription) {
     return await axios.put('/api/expenseDetail/'+expenseDetailId, {
-      expenseTypeId
+      expenseTypeId, expenseDescription
     });
   }
 

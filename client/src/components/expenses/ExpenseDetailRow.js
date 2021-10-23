@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Form } from 'react-bootstrap';
 import moment from 'moment';
 
@@ -14,6 +14,7 @@ const initialState = {
     message: "",
     messageClass:"",
     expenseType: 0,
+    expenseDesc: ""
 }
 
 function ExpenseDetailRow(props) {
@@ -61,7 +62,8 @@ function ExpenseDetailRow(props) {
                 messageClass:""
             });
 
-            ExpenseDetailRequest.updateExpenseDetail(id, formData.expenseType)
+            ExpenseDetailRequest.updateExpenseDetail(id, 
+                formData.expenseType, formData.expenseDesc)
             .then( (result) => {
                 if (typeof props.onEdit=== 'function') {
                     props.onEdit();
@@ -86,6 +88,21 @@ function ExpenseDetailRow(props) {
         }
     }
 
+    const initializeFormData = () => {
+        setFormData({
+            ...initialState,
+            expenseType: elem.expenseTypeId,
+            expenseDesc: elem.expenseDescription
+        })
+    }
+
+    const elem = props.expenseDetail;
+    const [formData, setFormData] = useState(initialState);
+
+    useEffect(()=>{
+        initializeFormData();
+    },[props.expenseDetail])
+    
     const getCellColor = (amount) => {
         if(amount < 0)  return {color:'#ff0000'};
     }
@@ -93,9 +110,6 @@ function ExpenseDetailRow(props) {
     const getRowColor = (expense) => {
         if(expense.expenseAdjusment) return {color:'#0020ff'};
     }
-
-    const elem = props.expenseDetail;
-    const [formData, setFormData] = useState({...initialState, expenseType: elem.expenseTypeId});
 
     return (
         <tr key={elem.expenseDetailId} style={getRowColor(elem)}>
@@ -108,7 +122,15 @@ function ExpenseDetailRow(props) {
                 {amountFormatter(elem.expenseAmount, elem.currency.currencyDecimalPlace)}
             </td>
             <td>{elem.expenseCurrency}</td>
-            <td>{elem.expenseDescription}</td>
+            <td>
+                {
+                    formData.mode === 'Edit' ? 
+                    <Form.Control size="sm" type="input" maxLength={200} placeholder="Description"
+                    name="expenseDesc" value={formData.expenseDesc} 
+                    onChange={(e)=>setFormData({...formData, expenseDesc:e.target.value})}/>
+                    :elem.expenseDescription
+                }
+            </td>
             <td>
                 {   formData.mode === 'Edit' ? 
                     <Form.Control size="sm" as="select" name="expenseType" placeholder="Expense Type" 
@@ -125,7 +147,7 @@ function ExpenseDetailRow(props) {
                 <EditDeleteButton 
                     onEditClick={()=>handleExpenseDetailEdit(elem.expenseDetailId)}
                     onDeleteClick={()=>handleExpenseDetailDelete(elem.expenseDetailId)}
-                    onCancelClick={()=>setFormData(initialState)}
+                    onCancelClick={()=>initializeFormData()}
                     disabled={formData.isDisabled}
                     isLoading={formData.isLoading}
                     mode={formData.mode}/>
