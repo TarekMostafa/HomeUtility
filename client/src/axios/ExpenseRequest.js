@@ -15,15 +15,17 @@ class ExpenseRequest {
     return response.data;
   }
 
-  static async addExpense(year, month, currency, openBalance) {
+  static async addExpense(year, month, currency, openBalance, allowedDebitTransTypeIds, 
+    extractedDebitTransTypeIds) {
     return await axios.post('/api/expenses', {
-        year, month, currency, openBalance
+        year, month, currency, openBalance, allowedDebitTransTypeIds, extractedDebitTransTypeIds
     });
   }
 
-  static async updateExpense(expenseId, openBalance) {
+  static async updateExpense(expenseId, openBalance, allowedDebitTransTypeIds, 
+    extractedDebitTransTypeIds) {
     return await axios.put('/api/expenses/'+expenseId, {
-      openBalance
+      openBalance, allowedDebitTransTypeIds, extractedDebitTransTypeIds
     });
   }
 

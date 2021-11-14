@@ -11,21 +11,20 @@ class expenseTypeBusiness {
   }
 
   async updateExpenseType(id, {expenseTypeName}) {
-    const _expenseType = await ExpenseTypeRepo.getExpenseType(id);
-    if(!_expenseType) {
+    const expenseType = await ExpenseTypeRepo.getExpenseType(id);
+    if(!expenseType) {
       throw new Exception('EXP_TYP_NOT_EXIST');
     }
-    _expenseType.expenseTypeName = expenseTypeName;
-    return await _expenseType.save();
+    expenseType.expenseTypeName = expenseTypeName;
+    return await expenseType.save();
   }
 
   async deleteExpenseType(id) {
-    const _expenseType = await ExpenseTypeRepo.getExpenseType(id);
-    if(!_expenseType) {
+    const expenseType = await ExpenseTypeRepo.getExpenseType(id);
+    if(!expenseType) {
       throw new Exception('EXP_TYP_NOT_EXIST');
     }
-    await _expenseType.destroy();
-    return true;
+    return await expenseType.destroy();
   }
 }
 

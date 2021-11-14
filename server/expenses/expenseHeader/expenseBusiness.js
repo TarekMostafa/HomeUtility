@@ -10,7 +10,8 @@ class expenseBusiness {
     return await ExpenseRepo.getExpense(id);
   }
 
-  async addExpense({year,month,currency, openBalance}) {
+  async addExpense({year,month,currency, openBalance, allowedDebitTransTypeIds, 
+    extractedDebitTransTypeIds}) {
     var expenses = await ExpenseRepo.getExpenses({year, month, currency});
     if(expenses && expenses.length) throw new Exception('EXP_EXIST');
     return await ExpenseRepo.addExpense({
@@ -18,12 +19,15 @@ class expenseBusiness {
         expenseMonth: month,
         expenseCurrency: currency,
         expenseOpenBalance: openBalance,
-        expenseCloseBalance: openBalance
+        expenseCloseBalance: openBalance,
+        allowedDebitTransTypes: allowedDebitTransTypeIds?allowedDebitTransTypeIds:null,
+        extractedDebitTransTypes: extractedDebitTransTypeIds?extractedDebitTransTypeIds:null,
     });
   }
 
-  async updateExpense(id, {openBalance}) {
-    await ExpenseRepo.updateExpense(id, {openBalance});
+  async updateExpense(id, {openBalance, allowedDebitTransTypeIds, extractedDebitTransTypeIds}) {
+    await ExpenseRepo.updateExpense(id, {openBalance, allowedDebitTransTypeIds, 
+      extractedDebitTransTypeIds});
   }
 
 //   async deleteExpenseType(id) {

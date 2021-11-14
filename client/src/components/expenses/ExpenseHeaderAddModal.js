@@ -4,6 +4,7 @@ import { Button, Spinner, Form } from 'react-bootstrap';
 import ModalContainer from '../common/ModalContainer';
 import MonthYearField from '../common/MonthYearField';
 import CurrenciesDropDown from '../currencies/CurrenciesDropDown';
+import TransactionTypesChips from '../wealth/transactiontypes/TransactionTypesChips';
 import ExpenseRequest from '../../axios/ExpenseRequest';
 
 const initialState = {
@@ -14,6 +15,8 @@ const initialState = {
     currency: "",
     decimalPlaces: 0,
     openBalance: 0,
+    debitTransTypes: [],
+    extractedDebitTransTypes: []
 }
 
 function ExpenseHeaderAddModal(props) {
@@ -38,7 +41,8 @@ function ExpenseHeaderAddModal(props) {
         }
         // Add new expense
         ExpenseRequest.addExpense(formData.year, formData.month, formData.currency,
-            formData.openBalance)
+            formData.openBalance, formData.debitTransTypes.map(e=>e.typeId).join(','),
+            formData.extractedDebitTransTypes.map(e=>e.typeId).join(','))
         .then( () => {
             if (typeof props.onSave=== 'function') {
                 props.onSave();
@@ -51,6 +55,20 @@ function ExpenseHeaderAddModal(props) {
         })
     }
 
+    const handleChipChange = (chips) => {
+        setFormData({
+            ...formData,
+            debitTransTypes: chips
+        })
+    }
+
+    const handleChip2Change = (chips) => {
+        setFormData({
+            ...formData,
+            extractedDebitTransTypes: chips
+        })
+    }
+    
     return (
         <ModalContainer title="Create New Expense" show={props.show}
             onHide={props.onHide} onShow={() => setFormData(initialState)}
@@ -86,6 +104,23 @@ function ExpenseHeaderAddModal(props) {
                     name="expenseOpenBalance"
                     value={Number(formData.openBalance).toFixed(formData.decimalPlaces)}
                     onChange={e=>setFormData({...formData, openBalance:e.target.value})}/>
+                </Form.Group>
+                <Form.Group controlId="debitTransTypes">
+                    <Form.Label>
+                        {'Allowed Debit Transaction Types (' + formData.debitTransTypes.length + ')' }
+                    </Form.Label>
+                    <TransactionTypesChips value={formData.debitTransTypes}
+                        onChange={handleChipChange} name="debitTransTypes"
+                        onFilter={e => e.typeCRDR==='Debit'}/>
+                </Form.Group>
+                <Form.Group controlId="extractedDebitTransTypes">
+                    <Form.Label>
+                        {'Extracted Debit Transaction Types (' + 
+                        formData.extractedDebitTransTypes.length + ')' }
+                    </Form.Label>
+                    <TransactionTypesChips value={formData.extractedDebitTransTypes}
+                        onChange={handleChip2Change} name="extractedDebitTransTypes"
+                        onFilter={e => formData.debitTransTypes.some(type => type.typeId === e.typeId)}/>
                 </Form.Group>
                 <Form.Text className='text-danger'>{formData.message}</Form.Text>
             </Form>

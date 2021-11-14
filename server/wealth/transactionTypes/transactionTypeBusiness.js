@@ -1,44 +1,38 @@
 const TransactionTypeRepo = require('./transactionTypeRepo');
 const TranasctionRepo = require('../transactions/transactionRepo');
-const APIResponse = require('../../utilities/apiResponse');
+const Exception = require('../../features/exception');
 
 class transactionTypeBusiness {
   async getTransactionTypes() {
-    const transactionTypes = await TransactionTypeRepo.getTransactionTypes();
-    return APIResponse.getAPIResponse(true, transactionTypes);
+    return await TransactionTypeRepo.getTransactionTypes();
   }
 
-  async addTransactionType(transactionType) {
-    await TransactionTypeRepo.addTransactionType(transactionType);
-    return APIResponse.getAPIResponse(true, null, '017');
+  async addTransactionType({typeName, typeCRDR}) {
+    return await TransactionTypeRepo.addTransactionType({
+      typeName, typeCRDR
+    });
   }
 
-  async updateTransactionType(id, transactionType) {
-    const _transactionType = await TransactionTypeRepo.getTransactionType(id);
-    if(!_transactionType) {
-      return APIResponse.getAPIResponse(false, null, '018');
-    }
+  async updateTransactionType(id, {typeName, typeCRDR}) {
+    const transactionType = await TransactionTypeRepo.getTransactionType(id);
+    if(!transactionType) throw new Exception('TRNS_TYP_NOT_EXIST');
+    
     // Check number of transactions used by transaction type
     // if there is a change in typeCRDR field
-    if(_transactionType.typeCRDR !== transactionType.typeCRDR) {
-      const count = await TranasctionRepo.getTransactionsCountByTransactionType(_transactionType.typeId);
-      if(count > 0) {
-        return APIResponse.getAPIResponse(false, null, '019', count);
-      }
+    if(transactionType.typeCRDR !== typeCRDR) {
+      const count = await TranasctionRepo.getTransactionsCountByTransactionType(transactionType.typeId);
+      if(count > 0) throw new Exception('TRNS_TYP_CRDB_ERR', count);
     }
-    _transactionType.typeName = transactionType.typeName;
-    _transactionType.typeCRDR = transactionType.typeCRDR;
-    await _transactionType.save();
-    return APIResponse.getAPIResponse(true, null, '020');
+
+    transactionType.typeName = typeName;
+    transactionType.typeCRDR = typeCRDR;
+    return await transactionType.save();
   }
 
   async deleteTransactionType(id) {
-    const _transactionType = await TransactionTypeRepo.getTransactionType(id);
-    if(!_transactionType) {
-      return APIResponse.getAPIResponse(false, null, '018');
-    }
-    await _transactionType.destroy();
-    return APIResponse.getAPIResponse(true, null, '021');
+    const transactionType = await TransactionTypeRepo.getTransactionType(id);
+    if(!transactionType) throw new Exception('TRNS_TYP_NOT_EXIST')
+    return await transactionType.destroy();
   }
 }
 

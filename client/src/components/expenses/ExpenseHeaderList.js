@@ -9,7 +9,10 @@ import ExpenseRequest from '../../axios/ExpenseRequest';
 
 function ExpenseHeaderList(props) {
 
-    const [year, setYear] = useState(new Date().getFullYear());
+    const minYear = 2015;
+    const currentYear = new Date().getFullYear()
+
+    const [year, setYear] = useState(currentYear);
     const [modalAddShow, setModalAddShow] = useState(false);
     const [modalEdit, setModalEdit] = useState({show: false, id: 0});
     const [expenses, setExpenses] = useState([]);
@@ -38,8 +41,12 @@ function ExpenseHeaderList(props) {
                     <Form.Label>Expense Year</Form.Label>
                     <Form.Control as="select" name="expenseYear" value={year} 
                     onChange={e => setYear(e.target.value)}>
-                        <option value='2021'>2021</option>
-                        <option value='2020'>2020</option>
+                    {
+                        Array(currentYear - minYear + 1).fill().map((elem,index,arr) => {
+                            const val = minYear + arr.length - index - 1;
+                            return <option key={val} value={val+''}>{val}</option>
+                        })
+                    }
                     </Form.Control>
                 </Form.Group>
                 <Container fluid><CardColumns>

@@ -51,11 +51,13 @@ class ExpenseRepo {
     }, {transaction: dbTransaction});
   }
 
-  static async updateExpense(id, {openBalance}){
+  static async updateExpense(id, {openBalance, allowedDebitTransTypeIds, extractedDebitTransTypeIds}){
     var expense = await this.getExpense(id);
     if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
     await expense.update({
       expenseOpenBalance: openBalance,
+      allowedDebitTransTypes: allowedDebitTransTypeIds?allowedDebitTransTypeIds:null,
+      extractedDebitTransTypes: extractedDebitTransTypeIds?extractedDebitTransTypeIds:null,
       expenseCloseBalance: sequelize.literal('expenseAdjusments-expenseDebits+'+Number(openBalance))
     })
   }

@@ -14,11 +14,15 @@ function ExpenseHeaderCardBody(props) {
                 <Col xs={2}><Badge variant="success">{expense && expense.status}</Badge></Col>
             </Row>
             <Row>
+                <Col xs={5}><strong>Accounts Debits:</strong></Col>
+                <Col xs={5}>{amountFormatter(expense.totalAccountsDebitTrans, expense.currency.currencyDecimalPlace)}</Col>
+            </Row>
+            <Row>
                 <Col xs={5}><strong>Adjusments:</strong></Col>
                 <Col xs={5}>{amountFormatter(expense.expenseAdjusments, expense.currency.currencyDecimalPlace)}</Col>
             </Row>
             <Row>
-                <Col xs={5}><strong>Debits:</strong></Col>
+                <Col xs={5}><strong>Expense Debits:</strong></Col>
                 <Col xs={5}>{amountFormatter(expense.expenseDebits, expense.currency.currencyDecimalPlace)}</Col>
             </Row>
             <Row>
