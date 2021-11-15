@@ -32,6 +32,26 @@ function ModulesNavDropDown(props) {
         </Dropdown.Menu>
       </Dropdown>
       <Dropdown drop={'right'}>
+        <Dropdown.Toggle as={Nav.Link} id={'dropdown-expenses'}>
+          Expenses
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <LinkContainer to="/expenseHeaderList">
+            <NavDropdown.Item>Summary</NavDropdown.Item>
+          </LinkContainer>
+        </Dropdown.Menu>
+      </Dropdown>
+      <Dropdown drop={'right'}>
+        <Dropdown.Toggle as={Nav.Link} id={'dropdown-cards'}>
+          Cards
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <LinkContainer to="/cards">
+            <NavDropdown.Item>Summary</NavDropdown.Item>
+          </LinkContainer>
+        </Dropdown.Menu>
+      </Dropdown>
+      <Dropdown drop={'right'}>
         <Dropdown.Toggle as={Nav.Link} id={'dropdown-bills'}>
           Bills
         </Dropdown.Toggle>
@@ -46,9 +66,6 @@ function ModulesNavDropDown(props) {
       </Dropdown>
       <LinkContainer to="/statistics">
         <NavDropdown.Item>Statistics</NavDropdown.Item>
-      </LinkContainer>
-      <LinkContainer to="/expenseHeaderList">
-        <NavDropdown.Item>Expense</NavDropdown.Item>
       </LinkContainer>
     </NavDropdown>
   )

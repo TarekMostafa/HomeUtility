@@ -25,6 +25,7 @@ const AppMessageTranslation = require('./server/features/appMessageTranslation')
 const expenseTypeRouter = require('./server/expenses/expenseType/expenseTypeRouter');
 const expenseRouter = require('./server/expenses/expenseHeader/expenseRouter');
 const expenseDetailRouter = require('./server/expenses/expenseDetail/expenseDetailRouter');
+const cardRouter = require('./server/cards/cardRouter');
 //Constant Variables
 const port = Config.port || 5000;
 // Initialize App Message Transalation
@@ -76,6 +77,7 @@ app.use('/api/billsTransactions', billTransactionRouter);
 app.use('/api/expenseTypes', expenseTypeRouter);
 app.use('/api/expenses', expenseRouter);
 app.use('/api/expenseDetail', expenseDetailRouter);
+app.use('/api/cards', cardRouter);
 //Middleware for Success
 app.use(function(req, res, next){
   const message = appMessageTranslation.translate(res.messageCode, res.params);
