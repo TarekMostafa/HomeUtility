@@ -85,5 +85,9 @@ module.exports = {
   'EXP_DELETE_FAIL': 'Failed to delete this expense detail',
   'CARD_NOT_EXIST': 'This card does not exist',
   'CARD_UPDATE_FAIL': 'Failed to update card information',
-  'CARD_ADD_SUCCESS': 'This card has been successfully saved'
+  'CARD_ADD_SUCCESS': 'This card has been successfully saved',
+  'CARD_INST_ADD_SUCCESS': 'This card installment has been successfully saved',
+  'CARD_INST_NOT_EXIST': 'This card installment does not exist',
+  'CARD_INST_ADD_FAIL': 'Failed to Add card installment',
+  'CARD_INST_DELETE_FAIL': 'Failed to delete card installment'
 }

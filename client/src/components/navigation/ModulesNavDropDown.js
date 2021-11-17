@@ -49,6 +49,9 @@ function ModulesNavDropDown(props) {
           <LinkContainer to="/cards">
             <NavDropdown.Item>Summary</NavDropdown.Item>
           </LinkContainer>
+          <LinkContainer to="/cardsInstallments">
+            <NavDropdown.Item>Installments</NavDropdown.Item>
+          </LinkContainer>
         </Dropdown.Menu>
       </Dropdown>
       <Dropdown drop={'right'}>

@@ -20,7 +20,7 @@ CardTransactionModel.init({
   sequelize
 });
 
-ExpenseModel.belongsTo(CurrencyModel, {
+CardTransactionModel.belongsTo(CurrencyModel, {
   as: "currency",
   foreignKey: 'cardTransCurrency'
 });
