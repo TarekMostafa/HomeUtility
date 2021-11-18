@@ -29,6 +29,17 @@ class CardInstallmentRepo {
   static async addCardInstallment(cardInst, dbTransaction) {
     await CardInstallmentModel.build(cardInst).save({transaction: dbTransaction});
   }
+
+  static async updatePostInstallment(id, instAmount, instDate, dbTransaction) {
+    var cardInst = await this.getCardInstallment(id);
+    if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
+    await cardInst.update({
+      cInstFirstInstDate: (cardInst.cInstFirstInstDate?cardInst.cInstFirstInstDate:instDate),
+      cInstNoOfPostedInst: sequelize.literal('cInstNoOfPostedInst+'+1),
+      cInstPosted: sequelize.literal('cInstPosted+'+Number(instAmount)),
+      cInstStatus: 'ACTIVE'
+    }, {transaction: dbTransaction});
+  }
 }
 
 module.exports = CardInstallmentRepo;

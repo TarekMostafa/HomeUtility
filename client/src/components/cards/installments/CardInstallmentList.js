@@ -7,6 +7,8 @@ import CardsDropDown from '../CardsDropDown';
 import CardInstallmentAddModal from './CardInstallmentAddModal';
 import CardInstallmentEditModal from './CardInstallmentEditModal';
 import CardInstallmentDeleteModal from './CardInstallmentDeleteModal';
+import CardInstallmentPostModal from './CardInstallmentPostModal';
+import CardInstallmentTerminateModal from './CardInstallmentTerminateModal';
 
 import CardRequest from '../../../axios/CardRequest';
 import CardInstRequest from '../../../axios/CardInstRequest';
@@ -15,14 +17,12 @@ const initialState = {
     cardId: ""
 }
 
-function CardInstallmentList() {
+function CardInstallmentList(props) {
 
     const [formData, setFormData] = useState(initialState);
     const [cards, setCards] = useState([]);
     const [cardsInstallments, setCardsInstallments] = useState([]);
-    const [modalAddShow, setModalAddShow] = useState(false);
-    const [modalEdit, setModalEdit] = useState({show: false, id: 0});
-    const [modalDelete, setModalDelete] = useState({show: false, id: 0});
+    const [modalShow, setModalShow] = useState({name:"", id: 0});
 
     const loadCards = () => 
         CardRequest.getCards()
@@ -53,17 +53,29 @@ function CardInstallmentList() {
     }
 
     const handleEditCardInst = (id) => {
-        setModalEdit({show: true, id});
+        setModalShow({name:"Edit",id})
     }
 
     const handleDeleteCardInst = (id) => {
-        setModalDelete({show: true, id});
+        setModalShow({name:"Delete",id})
+    }
+
+    const handlePostCardInst = (id) => {
+        setModalShow({name:"Post",id})
+    }
+
+    const handleViewCardTransactions = (cardId, cardInstId) => {
+        props.history.push('cardsTranactions', {cardId, cardInstId});
+    }
+
+    const handleTerminateCardInst = (id) => {
+        setModalShow({name:"Terminate",id})
     }
 
     return (
         <React.Fragment>
             <FormContainer title="Cards Installments" toolbar={
-                <Button variant="info" size="sm" onClick={()=>setModalAddShow(true)}>
+                <Button variant="info" size="sm" onClick={()=>setModalShow({name:"Add",id:0})}>
                     Add New Card Installment</Button>
                 }>
                 <Form>
@@ -87,27 +99,46 @@ function CardInstallmentList() {
                 </Form>
             </FormContainer>
             <FormContainer>
-                <CardInstallmentTable cards={cards} cardsInstallments={cardsInstallments}
+                <CardInstallmentTable cardsInstallments={cardsInstallments}
                 onEditCardInst={handleEditCardInst}
-                onDeleteCardInst={handleDeleteCardInst}/>
+                onDeleteCardInst={handleDeleteCardInst}
+                onPostCardInst={handlePostCardInst}
+                onViewCardTransactions={handleViewCardTransactions}
+                onTerminateCardInst={handleTerminateCardInst}/>
             </FormContainer>
             <CardInstallmentAddModal 
                 cards={cards}
-                show={modalAddShow} 
-                onHide={()=>setModalAddShow(false)}
+                show={modalShow.name==='Add'} 
+                onHide={()=>setModalShow({name:"", id: 0})}
                 onSave={()=>loadCardsInstallments()}
             />
             <CardInstallmentEditModal
-                cardInstId={modalEdit.id}
-                show={modalEdit.show}
-                onHide={()=>setModalEdit({show: false, id: 0})}
+                cards={cards}
+                cardInstId={modalShow.id}
+                show={modalShow.name==='Edit'}
+                onHide={()=>setModalShow({name:"", id: 0})}
                 onSave={()=>loadCardsInstallments()}
             />
             <CardInstallmentDeleteModal
-                cardInstId={modalDelete.id}
-                show={modalDelete.show}
-                onHide={()=>setModalDelete({show: false, id: 0})}
+                cards={cards}
+                cardInstId={modalShow.id}
+                show={modalShow.name==='Delete'}
+                onHide={()=>setModalShow({name:"", id: 0})}
                 onDelete={()=>loadCardsInstallments()}
+            />
+            <CardInstallmentPostModal
+                cards={cards}
+                cardInstId={modalShow.id}
+                show={modalShow.name==='Post'}
+                onHide={()=>setModalShow({name:"", id: 0})}
+                onPost={()=>loadCardsInstallments()}
+            />
+            <CardInstallmentTerminateModal
+                cards={cards}
+                cardInstId={modalShow.id}
+                show={modalShow.name==='Terminate'}
+                onHide={()=>setModalShow({name:"", id: 0})}
+                onTerminate={()=>loadCardsInstallments()}
             />
         </React.Fragment>
     )

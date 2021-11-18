@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, ButtonGroup } from 'react-bootstrap';
+import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
 
 import amountFormatter from '../../../utilities/amountFormatter';
@@ -17,7 +17,9 @@ function CardInstallmentTable (props) {
           <th>First Inst Date</th>
           <th>Number of Inst</th>
           <th>Price</th>
-          <th>Paid</th>
+          <th>Posted</th>
+          <th>Status</th>
+          <th>Id</th>
           <th></th>
         </tr>
       </thead>
@@ -38,20 +40,40 @@ function CardInstallmentTable (props) {
                     moment(inst.cInstFirstInstDate).format('DD/MM/YYYY'):""
                 }
               </td>
-              <td>{inst.cInstNoOfInst}</td>
+              <td>{`${inst.cInstNoOfPostedInst} / ${inst.cInstNoOfInst}`}</td>
               <td className="text-right">
                 {amountFormatter(inst.cInstPrice, inst.currency.currencyDecimalPlace)}
               </td>
               <td className="text-right">
-                {amountFormatter(inst.cInstPaid, inst.currency.currencyDecimalPlace)}
+                {amountFormatter(inst.cInstPosted, inst.currency.currencyDecimalPlace)}
               </td>
+              <td>{inst.cInstStatus}</td>
+              <td>{inst.cInstId}</td>
               <td>
-                <ButtonGroup>
-                  <Button variant="link" size="sm"
-                  onClick={() => props.onEditCardInst(inst.cInstId)}>Edit</Button>
-                  <Button variant="link" size="sm"
-                  onClick={() => props.onDeleteCardInst(inst.cInstId)}>Delete</Button>
-                </ButtonGroup>
+              <DropdownButton id="dropdown-basic-button" title="Actions"
+                size="sm" variant="secondary">
+                  <Dropdown.Item onClick={() => props.onViewCardTransactions(inst.cardId, inst.cInstId)}>
+                  View Card Transactions
+                  </Dropdown.Item>
+                  {
+                    inst.cInstStatus !== 'FINISHED' && 
+                    <React.Fragment>
+                      <Dropdown.Item onClick={() => props.onPostCardInst(inst.cInstId)}>
+                      Post Installment
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => props.onTerminateCardInst(inst.cInstId)}>
+                      Terminate Installment
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => props.onEditCardInst(inst.cInstId)}>
+                      Edit
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => props.onDeleteCardInst(inst.cInstId)}>
+                      Delete
+                      </Dropdown.Item>
+                    </React.Fragment>
+                  }
+                  
+              </DropdownButton>
               </td>
             </tr>
           )

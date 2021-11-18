@@ -13,8 +13,10 @@ CardInstallmentModel.init({
     cInstFirstInstDate: Sequelize.DATEONLY,
     cInstNoOfInst: Sequelize.SMALLINT,
     cInstPrice: Sequelize.DECIMAL(18, 3),
-    cInstPaid: Sequelize.DECIMAL(18, 3),
-    cInstRelTransId: Sequelize.BIGINT(20)
+    cInstNoOfPostedInst: Sequelize.SMALLINT,
+    cInstPosted: Sequelize.DECIMAL(18, 3),
+    cInstRelTransId: Sequelize.BIGINT(20),
+    cInstStatus: Sequelize.ENUM('NEW', 'ACTIVE', 'FINISHED')
 }, {
   tableName: 'cardinstallments',
   createdAt: false,

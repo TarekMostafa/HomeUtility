@@ -13,12 +13,12 @@ import CardInstRequest from '../../../axios/CardInstRequest';
 const initialState = {
     isLoading: false,
     message: "",
-    itemDesc: "",
-    purchaseDate: "",
-    noOfInst: 0,
+    transAmt: 0,
+    transDate: new Date(Date.now()),
+    transDesc: ""
 }
 
-function CardInstallmentEditModal(props) {
+function CardInstallmentPostModal(props) {
 
     const [formData, setFormData] = useState(initialState);
     const [cardInstallment, setCardInstallment] = useState(null);
@@ -26,11 +26,14 @@ function CardInstallmentEditModal(props) {
     const loadCardInstallment = (id) => CardInstRequest.getCardInstallment(id)
         .then(  cardInst => {
           setCardInstallment(cardInst);
+            let tmpTransAmt = Number(cardInst.cInstPrice / cardInst.cInstNoOfInst)
+              .toFixed(cardInst.currency.currencyDecimalPlace);
+            let diff = cardInst.cInstPrice - cardInst.cInstPosted;
+            if(tmpTransAmt > diff) tmpTransAmt= diff;
             if(cardInst) setFormData({
                 ...formData,
-                itemDesc: cardInst.cInstItemDesc,
-                purchaseDate: cardInst.cInstPurchaseDate,
-                noOfInst: cardInst.cInstNoOfInst
+                transAmt: tmpTransAmt,
+                transDesc: `${cardInst.cInstItemDesc} ${cardInst.cInstNoOfPostedInst+1}/${cardInst.cInstNoOfInst}`
             });
         });
 
@@ -40,24 +43,24 @@ function CardInstallmentEditModal(props) {
 
     const handleClick = () => {
       // Validate Input
-      if(!formData.itemDesc) {
-        setFormData({...formData, message: 'Invalid item description, should not be empty'});
+      if(!formData.transAmt) {
+        setFormData({...formData, message: 'Invalid installment amount, should not be zero'});
         return;
-      } else if(!formData.purchaseDate) {
-        setFormData({...formData, message: 'Invalid purchase date'});
+      } else if(!formData.transDate) {
+        setFormData({...formData, message: 'Invalid installment date'});
         return;
-      } else if(!formData.noOfInst) {
-        setFormData({...formData, message: 'Invalid number of installment, should be greater than zero'});
+      } else if(!formData.transDesc) {
+        setFormData({...formData, message: 'Invalid installment description, should not be empty'});
         return;
       } else {
         setFormData({...formData, message: "", isLoading: true});
       }
-      // update card installment
-      CardInstRequest.updateCardInstallment(cardInstallment.cInstId,
-        formData.itemDesc, formData.purchaseDate, formData.noOfInst)                     
+      // post card installment
+      CardInstRequest.postCardInstallment(cardInstallment.cInstId, 
+        formData.transAmt, formData.transDate, formData.transDesc)                     
       .then( () => {
-          if (typeof props.onSave=== 'function') {
-              props.onSave();
+          if (typeof props.onPost=== 'function') {
+              props.onPost();
           }
           setFormData({...formData, isLoading: false});
           props.onHide();
@@ -74,19 +77,19 @@ function CardInstallmentEditModal(props) {
       });
     }
 
-    const handlePurchaseDateChange = (jsDate, date) => {
-      setFormData({...formData, purchaseDate:date});
+    const handleTransDateChange = (jsDate, date) => {
+      setFormData({...formData, transDate:date});
     }
 
     return (
-        <ModalContainer title="Edit Card Installment" show={props.show}
+        <ModalContainer title="Post Card Installment" show={props.show}
         onHide={props.onHide} onShow={() => setFormData(initialState)}
         footer={
-          <Button variant="primary" block onClick={handleClick}>
+          <Button variant="success" block onClick={handleClick}>
           {
             formData.isLoading?
             <Spinner as="span" animation="border" size="sm" role="status"
-            aria-hidden="true"/> : 'Save'
+            aria-hidden="true"/> : 'Post'
           }
           </Button>
         }>
@@ -100,34 +103,27 @@ function CardInstallmentEditModal(props) {
                 <CardsDropDown cards={props.cards} />
               </Form.Control>
             </Form.Group>
-            <Form.Group controlId="itemDesc">
-              <Form.Label>Item Description</Form.Label>
-              <Form.Control type="input" maxLength={200}
-                name="itemDesc" value={formData.itemDesc} onChange={handleChange}/>
-            </Form.Group>
-            <Form.Group controlId="purchaseDate">
-              <Form.Label>Purchase Date</Form.Label>
-              <DatePickerInput value={formData.purchaseDate}
-              onChange={handlePurchaseDateChange} readOnly/>
-            </Form.Group>
-            <Form.Group controlId="price">
-              <Form.Label>Price</Form.Label>
+            <Form.Group controlId="transAmt">
+              <Form.Label>Installment Amount</Form.Label>
               <InputGroup>
                 <Form.Control type="number" maxLength={20}
-                name="price"
-                value={Number(cardInstallment.cInstPrice).toFixed(cardInstallment.currency.currencyDecimalPlace)}
-                readOnly/>
+                name="transAmt"
+                value={Number(formData.transAmt).toFixed(cardInstallment.currency.currencyDecimalPlace)}
+                onChange={handleChange}/>
                 <InputGroup.Prepend>
                   <InputGroup.Text id="inputGroupPrepend">{cardInstallment.cInstCurrency}</InputGroup.Text>
                 </InputGroup.Prepend>
               </InputGroup>
             </Form.Group>
-            <Form.Group controlId="noOfInst">
-              <Form.Label>Number of Installments</Form.Label>
-              <Form.Control type="number" maxLength={20}
-              name="noOfInst"
-              value={Number(formData.noOfInst).toFixed(0)}
-              onChange={handleChange}/>
+            <Form.Group controlId="transDate">
+              <Form.Label>Installment Date</Form.Label>
+              <DatePickerInput value={formData.transDate}
+              onChange={handleTransDateChange} readOnly/>
+            </Form.Group>
+            <Form.Group controlId="transDesc">
+              <Form.Label>Installment Description</Form.Label>
+              <Form.Control type="input" maxLength={200}
+                name="transDesc" value={formData.transDesc} onChange={handleChange}/>
             </Form.Group>
             <Form.Text className='text-danger'>{formData.message}</Form.Text>
           </form>
@@ -136,4 +132,4 @@ function CardInstallmentEditModal(props) {
     );
 }
 
-export default CardInstallmentEditModal;
+export default CardInstallmentPostModal;

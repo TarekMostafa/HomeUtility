@@ -2,6 +2,7 @@ const CardInstallmentRepo = require('./cardInstallmentRepo');
 const CardRepo = require('../cardRepo');
 const Exception = require('../../features/exception');
 const sequelize = require('../../db/dbConnection').getSequelize();
+const CardTransactionRepo = require('../cardTransaction/cardTransactionRepo');
 
 class CardInstallmentBusiness {
   async getCardsInstallments({cardId}) {
@@ -27,8 +28,10 @@ class CardInstallmentBusiness {
         cInstFirstInstDate: null,
         cInstNoOfInst: noOfInst,
         cInstPrice: price,
-        cInstPaid: 0,
-        cInstRelTransId: null
+        cInstNoOfPostedInst: 0,
+        cInstPosted: 0,
+        cInstRelTransId: null,
+        cInstStatus: 'NEW'
       }, dbTransaction);
       await CardRepo.updateCardBalance(cardId, price * -1, dbTransaction);
       await dbTransaction.commit();
@@ -64,6 +67,44 @@ class CardInstallmentBusiness {
       await dbTransaction.rollback();
       throw new Exception('CARD_INST_DELETE_FAIL');
     }
+  }
+
+  async postInstallment(cardInstId, {transAmt, transDate, transDesc}){
+    var cardInst = await this.getCardInstallment(cardInstId);
+    if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
+
+    let dbTransaction;
+    try {
+      dbTransaction = await sequelize.transaction();
+      await CardTransactionRepo.addCardTransaction({
+        cardId: cardInst.cardId,
+        cardTransAmount: transAmt,
+        cardTransCurrency: cardInst.cInstCurrency,
+        cardTransDate: transDate,
+        cardTransDesc: transDesc,
+        cardTransBillAmount: transAmt,
+        cardTransBillDate: null,
+        cardTransIsInstallment: true,
+        cardTransAccountTransId: null,
+        cardTransInstallmentId: cardInst.cInstId
+      }, dbTransaction)
+      await CardInstallmentRepo.updatePostInstallment(cardInstId, transAmt, transDate, dbTransaction);
+      await dbTransaction.commit();
+    } catch (err) {
+      console.log(`error ${err}`);
+      await dbTransaction.rollback();
+      throw new Exception('CARD_INST_POST_FAIL');
+    }
+  }
+
+  async terminateInstallment(cardInstId) {
+    var cardInst = await this.getCardInstallment(cardInstId);
+    if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
+
+    if(cardInst.cInstPrice !== cardInst.cInstPosted) throw new Exception('CARD_INST_PRICE_NOT_POSTED');
+    
+    cardInst.cInstStatus = 'FINISHED';
+    return await cardInst.save();
   }
 }
 

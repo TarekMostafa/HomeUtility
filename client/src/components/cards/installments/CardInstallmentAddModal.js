@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button, Spinner, InputGroup } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
@@ -106,7 +106,7 @@ function CardInstallmentAddModal(props) {
               <Form.Control as="select" name="cardId" onChange={handleCardChange}
                 value={formData.cardId}>
                 <option value=''>Cards</option>
-                <CardsDropDown cards={props.cards} />
+                <CardsDropDown cards={props.cards} status={"ACTIVE"}/>
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="itemDesc">
@@ -121,10 +121,15 @@ function CardInstallmentAddModal(props) {
             </Form.Group>
             <Form.Group controlId="price">
               <Form.Label>Price</Form.Label>
-              <Form.Control type="number" maxLength={20}
-              name="price"
-              value={Number(formData.price).toFixed(formData.decimalPlaces)}
-              onChange={handleChange}/>
+              <InputGroup>
+                <Form.Control type="number" maxLength={20}
+                name="price"
+                value={Number(formData.price).toFixed(formData.decimalPlaces)}
+                onChange={handleChange}/>
+                <InputGroup.Prepend>
+                  <InputGroup.Text id="inputGroupPrepend">{formData.cardCurrency}</InputGroup.Text>
+                </InputGroup.Prepend>
+              </InputGroup>
             </Form.Group>
             <Form.Group controlId="noOfInst">
               <Form.Label>Number of Installments</Form.Label>

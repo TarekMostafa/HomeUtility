@@ -89,5 +89,7 @@ module.exports = {
   'CARD_INST_ADD_SUCCESS': 'This card installment has been successfully saved',
   'CARD_INST_NOT_EXIST': 'This card installment does not exist',
   'CARD_INST_ADD_FAIL': 'Failed to Add card installment',
-  'CARD_INST_DELETE_FAIL': 'Failed to delete card installment'
+  'CARD_INST_DELETE_FAIL': 'Failed to delete card installment',
+  'CARD_INST_POST_FAIL': 'Failed to post card installment',
+  'CARD_INST_PRICE_NOT_POSTED': 'This card installment not fully posted',
 }

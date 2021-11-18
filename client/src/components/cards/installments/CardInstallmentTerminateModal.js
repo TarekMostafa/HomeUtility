@@ -11,7 +11,7 @@ const initialState = {
     message: "",
 }
 
-function CardInstallmentDeleteModal(props) {
+function CardInstallmentTerminateModal(props) {
 
     const [formData, setFormData] = useState(initialState);
     const [cardInstallment, setCardInstallment] = useState(null);
@@ -26,10 +26,10 @@ function CardInstallmentDeleteModal(props) {
     const handleClick = () => {
       setFormData({...formData, message: "", isLoading: true});
       // update card
-      CardInstRequest.deleteCardInstallment(cardInstallment.cInstId)                   
+      CardInstRequest.terminateCardInstallment(cardInstallment.cInstId)                   
       .then( () => {
-          if (typeof props.onDelete=== 'function') {
-              props.onDelete();
+          if (typeof props.onTerminate=== 'function') {
+              props.onTerminate();
           }
           setFormData({...formData, isLoading: false});
           props.onHide();
@@ -40,14 +40,14 @@ function CardInstallmentDeleteModal(props) {
     }
 
     return (
-        <ModalContainer title="Delete Card Installment" show={props.show}
+        <ModalContainer title="Terminate Card Installment" show={props.show}
         onHide={props.onHide} onShow={() => setFormData(initialState)}
         footer={
-          <Button variant="danger" block onClick={handleClick}>
+          <Button variant="warning" block onClick={handleClick}>
           {
             formData.isLoading?
             <Spinner as="span" animation="border" size="sm" role="status"
-            aria-hidden="true"/> : 'Delete'
+            aria-hidden="true"/> : 'Terminate'
           }
           </Button>
         }>
@@ -62,4 +62,4 @@ function CardInstallmentDeleteModal(props) {
     );
 }
 
-export default CardInstallmentDeleteModal;
+export default CardInstallmentTerminateModal;

@@ -1,10 +1,16 @@
 import React from 'react';
 
 function CardsDropDown(props){
+    let { cards } = props;
+    if(cards) {
+        cards = cards.filter( card => {
+            return !props.status || card.cardStatus === props.status;
+        })
+    }
     return (
         <React.Fragment>
         {
-            props.cards && props.cards.map(card=> (
+            cards && cards.map(card=> (
                 <option key={card.cardId} value={card.cardId} 
                     currencycode={card.cardCurrency}
                     decimalplaces={card.currency.currencyDecimalPlace}>

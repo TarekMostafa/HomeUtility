@@ -30,6 +30,17 @@ class CardInstRequest {
   static async deleteCardInstallment(cardInstId) {
     return await axios.delete('/api/cardInst/'+cardInstId);
   }
+
+  static async postCardInstallment(cardInstId, transAmt, transDate, transDesc) {
+    return await axios.post('/api/cardInst/postInstallment/'+cardInstId, {
+      transAmt, transDate, transDesc
+    });
+  }
+
+  static async terminateCardInstallment(cardInstId) {
+    return await axios.post('/api/cardInst/terminateInstallment/'+cardInstId, {
+    });
+  }
 }
 
 export default CardInstRequest;
