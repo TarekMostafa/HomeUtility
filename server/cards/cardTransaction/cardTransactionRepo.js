@@ -28,7 +28,13 @@ class CardTransactionRepo {
   static async getCardTransaction(id) {
     return await CardTransactionModel.findByPk(id, {
       include: [
-        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] },
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace']},
+        { model: CardModel, as: 'card', attributes: ['cardNumber', 'cardBank', 'cardCurrency'], 
+          include: [
+            { model: BankModel, as: 'bank', attributes: ['bankName'] },
+            { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace']}
+           ]
+        },
       ]
     });
   }

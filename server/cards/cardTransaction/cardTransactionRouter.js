@@ -12,37 +12,37 @@ router.get('/', function(req, res, next) {
   })
 });
 
-// router.get('/:id', (req,res,next) => {
-//   cardInstallmentBusiness.getCardInstallment(req.params.id).then( result => {
-//     res.json(result);
-//   }).catch( err => {
-//     next(err);
-//   })
-// })
+router.get('/:id', (req,res,next) => {
+  cardTransactionBusiness.getCardTransaction(req.params.id).then( result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+})
 
-// router.post('/', function(req, res, next) {
-//   cardInstallmentBusiness.addCardInstallment(req.body).then( () => {
-//     res.messageCode = 'CARD_INST_ADD_SUCCESS';
-//     next();
-//   }).catch( err => {
-//     next(err);
-//   })
-// });
+router.post('/', function(req, res, next) {
+  cardTransactionBusiness.addCardTransaction(req.body).then( () => {
+    res.messageCode = 'CARD_TRANS_ADD_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
 
-// router.put('/:id', function(req, res, next) {
-//   cardInstallmentBusiness.updateCardInstallment(req.params.id, req.body).then( () => {
-//     res.status(200).send();
-//   }).catch( err => {
-//     next(err);
-//   })
-// });
+router.put('/:id', function(req, res, next) {
+  cardTransactionBusiness.updateCardTransaction(req.params.id, req.body).then( () => {
+    res.status(200).send();
+  }).catch( err => {
+    next(err);
+  })
+});
 
-// router.delete('/:id', function(req, res, next) {
-//   cardInstallmentBusiness.deleteCardInstallment(req.params.id).then( result => {
-//     res.status(200).send();
-//   }).catch( err => {
-//     next(err);
-//   })
-// });
+router.delete('/:id', function(req, res, next) {
+  cardTransactionBusiness.deleteCardTransaction(req.params.id).then( result => {
+    res.status(200).send();
+  }).catch( err => {
+    next(err);
+  })
+});
 
 module.exports = router;

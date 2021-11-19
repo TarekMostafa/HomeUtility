@@ -5,6 +5,9 @@ import FormContainer from '../../common/FormContainer';
 import CardTransactionTable from './CardTransactionTable';
 import CardsDropDown from '../CardsDropDown';
 import CardsInstallmentsDropDown from '../installments/CardsInstallmentsDropDown';
+import CardTransactionAddModal from './CardTransactionAddModal';
+import CardTransactionEditModal from './CardTransactionEditModal';
+import CardTransactionDeleteModal from './CardTransactionDeleteModal';
 
 import CardRequest from '../../../axios/CardRequest';
 import CardTransRequest from '../../../axios/CardTransRequest';
@@ -67,12 +70,12 @@ function CardTransactionList(props) {
         setFormData({...initialState});
     }
 
-    const handleEditCardInst = (id) => {
-        //setModalEdit({show: true, id});
+    const handleEditCardTrans = (id) => {
+        setModalShow({name:"Edit",id})
     }
 
-    const handleDeleteCardInst = (id) => {
-        //setModalDelete({show: true, id});
+    const handleDeleteCardTrans = (id) => {
+        setModalShow({name:"Delete",id})
     }
 
     return (
@@ -110,29 +113,29 @@ function CardTransactionList(props) {
             </FormContainer>
             <FormContainer>
                 <CardTransactionTable cardsTransactions={cardsTransactions}
-                onEditCardInst={handleEditCardInst}
-                onDeleteCardInst={handleDeleteCardInst}/>
+                onEditCardTrans={handleEditCardTrans}
+                onDeleteCardTrans={handleDeleteCardTrans}/>
             </FormContainer>
-            {/* <CardInstallmentAddModal 
+            <CardTransactionAddModal 
                 cards={cards}
-                show={modalAddShow} 
-                onHide={()=>setModalAddShow(false)}
-                onSave={()=>loadCardsInstallments()}
+                show={modalShow.name==='Add'} 
+                onHide={()=>setModalShow({name:"", id: 0})}
+                onSave={()=>loadCardsTransactions()}
             />
-            <CardInstallmentEditModal
+            <CardTransactionEditModal
                 cards={cards}
-                cardInstId={modalEdit.id}
-                show={modalEdit.show}
-                onHide={()=>setModalEdit({show: false, id: 0})}
-                onSave={()=>loadCardsInstallments()}
+                cardTransId={modalShow.id}
+                show={modalShow.name==='Edit'}
+                onHide={()=>setModalShow({name:"", id: 0})}
+                onSave={()=>loadCardsTransactions()}
             />
-            <CardInstallmentDeleteModal
+            <CardTransactionDeleteModal
                 cards={cards}
-                cardInstId={modalDelete.id}
-                show={modalDelete.show}
-                onHide={()=>setModalDelete({show: false, id: 0})}
-                onDelete={()=>loadCardsInstallments()}
-            /> */}
+                cardTransId={modalShow.id}
+                show={modalShow.name==='Delete'}
+                onHide={()=>setModalShow({name:"", id: 0})}
+                onDelete={()=>loadCardsTransactions()}
+            />
         </React.Fragment>
     )
 }

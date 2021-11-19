@@ -48,6 +48,15 @@ function CardTransactionTable (props) {
               <td>{trans.cardTransIsInstallment?'YES':'NO'}</td>
               <td>{trans.cardTransId}</td>
               <td>
+              <DropdownButton id="dropdown-basic-button" title="Actions"
+                size="sm" variant="secondary">
+                  <Dropdown.Item onClick={() => props.onEditCardTrans(trans.cardTransId)}>
+                      Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => props.onDeleteCardTrans(trans.cardTransId)}>
+                    Delete
+                  </Dropdown.Item>
+              </DropdownButton>
               </td>
             </tr>
           )

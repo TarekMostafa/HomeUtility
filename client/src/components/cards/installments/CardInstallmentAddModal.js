@@ -51,7 +51,7 @@ function CardInstallmentAddModal(props) {
         });
       }
 
-      // Add new card
+      // Add new card installment
       CardInstRequest.addCardInstallment(formData.cardId, formData.itemDesc,
         formData.purchaseDate, formData.noOfInst, formData.price)
       .then( () => {

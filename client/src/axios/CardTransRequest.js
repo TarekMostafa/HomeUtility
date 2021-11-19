@@ -10,26 +10,26 @@ class CardTransRequest {
     return response.data;
   }
 
-//   static async getCardInstallment(id) {
-//     const response = await axios.get('/api/cardInst/'+id);
-//     return response.data;
-//   }
+  static async getCardTransaction(id) {
+    const response = await axios.get('/api/cardTrans/'+id);
+    return response.data;
+  }
 
-//   static async addCardInstallment(cardId, itemDesc, purchaseDate, noOfInst, price) {
-//     return await axios.post('/api/cardInst', {
-//         cardId, itemDesc, purchaseDate, noOfInst, price
-//     });
-//   }
+  static async addCardTransaction(cardId, transCurrency, transAmount, transDate, transDesc, billAmount) {
+    return await axios.post('/api/cardTrans', {
+      cardId, transCurrency, transAmount, transDate, transDesc, billAmount
+    });
+  }
 
-//   static async updateCardInstallment(cardInstId, itemDesc, purchaseDate, noOfInst) {
-//     return await axios.put('/api/cardInst/'+cardInstId, {
-//       itemDesc, purchaseDate, noOfInst
-//     });
-//   }
+  static async updateCardTransaction(cardTransId, transCurrency, transAmount, transDate, transDesc, billAmount) {
+    return await axios.put('/api/cardTrans/'+cardTransId, {
+      transCurrency, transAmount, transDate, transDesc, billAmount
+    });
+  }
 
-//   static async deleteCardInstallment(cardInstId) {
-//     return await axios.delete('/api/cardInst/'+cardInstId);
-//   }
+  static async deleteCardTransaction(cardTransId) {
+    return await axios.delete('/api/cardTrans/'+cardTransId);
+  }
 }
 
 export default CardTransRequest;
