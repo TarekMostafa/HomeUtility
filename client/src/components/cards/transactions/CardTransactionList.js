@@ -59,7 +59,8 @@ function CardTransactionList(props) {
 
     const handleCardChange = (event) => {
         handleChange(event);
-        loadCardsInstallments(event.target.value);
+        if(event.target.value) loadCardsInstallments(event.target.value);
+        else setCardsInstallments([]);
     }
 
     const handleListClick = () => {
@@ -68,6 +69,7 @@ function CardTransactionList(props) {
 
     const handleResetClick = () => {
         setFormData({...initialState});
+        setCardsInstallments([]);
     }
 
     const handleEditCardTrans = (id) => {

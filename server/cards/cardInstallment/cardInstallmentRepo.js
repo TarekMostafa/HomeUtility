@@ -40,6 +40,15 @@ class CardInstallmentRepo {
       cInstStatus: 'ACTIVE'
     }, {transaction: dbTransaction});
   }
+
+  static async removePostInstallment(id, instAmount, dbTransaction) {
+    var cardInst = await this.getCardInstallment(id);
+    if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
+    await cardInst.update({
+      cInstNoOfPostedInst: sequelize.literal('cInstNoOfPostedInst-'+1),
+      cInstPosted: sequelize.literal('cInstPosted-'+Number(instAmount)),
+    }, {transaction: dbTransaction});
+  }
 }
 
 module.exports = CardInstallmentRepo;

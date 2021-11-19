@@ -46,6 +46,8 @@ class CardInstallmentBusiness {
     var cardInst = await this.getCardInstallment(cardInstId);
     if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
 
+    if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
+
     cardInst.cInstItemDesc = itemDesc;
     cardInst.cInstPurchaseDate = purchaseDate;
     cardInst.cInstNoOfInst = noOfInst;
@@ -55,6 +57,8 @@ class CardInstallmentBusiness {
   async deleteCardInstallment(cardInstId) {
     var cardInst = await this.getCardInstallment(cardInstId);
     if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
+
+    if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
 
     let dbTransaction;
     try {
@@ -72,6 +76,8 @@ class CardInstallmentBusiness {
   async postInstallment(cardInstId, {transAmt, transDate, transDesc}){
     var cardInst = await this.getCardInstallment(cardInstId);
     if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
+
+    if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
 
     let dbTransaction;
     try {
@@ -101,6 +107,7 @@ class CardInstallmentBusiness {
     var cardInst = await this.getCardInstallment(cardInstId);
     if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
 
+    if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
     if(cardInst.cInstPrice !== cardInst.cInstPosted) throw new Exception('CARD_INST_PRICE_NOT_POSTED');
     
     cardInst.cInstStatus = 'FINISHED';

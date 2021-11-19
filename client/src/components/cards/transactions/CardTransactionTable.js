@@ -18,6 +18,7 @@ function CardTransactionTable (props) {
           <th>Bill Amount</th>
           <th>Bill Date</th>
           <th>Is Installment?</th>
+          <th>Is Paid?</th>
           <th>Id</th>
           <th></th>
         </tr>
@@ -46,16 +47,20 @@ function CardTransactionTable (props) {
                 }
               </td>
               <td>{trans.cardTransIsInstallment?'YES':'NO'}</td>
+              <td>{trans.cardTransIsPaid?'YES':'NO'}</td>
               <td>{trans.cardTransId}</td>
               <td>
               <DropdownButton id="dropdown-basic-button" title="Actions"
                 size="sm" variant="secondary">
-                  <Dropdown.Item onClick={() => props.onEditCardTrans(trans.cardTransId)}>
-                      Edit
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => props.onDeleteCardTrans(trans.cardTransId)}>
-                    Delete
-                  </Dropdown.Item>
+              {
+                !trans.cardTransIsInstallment &&
+                <Dropdown.Item onClick={() => props.onEditCardTrans(trans.cardTransId)}>
+                  Edit
+                </Dropdown.Item>
+              }
+                <Dropdown.Item onClick={() => props.onDeleteCardTrans(trans.cardTransId)}>
+                  Delete
+                </Dropdown.Item>
               </DropdownButton>
               </td>
             </tr>

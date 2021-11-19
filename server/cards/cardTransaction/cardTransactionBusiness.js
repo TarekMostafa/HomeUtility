@@ -1,5 +1,6 @@
 const CardTransactionRepo = require('./cardTransactionRepo');
 const CardRepo = require('../cardRepo');
+const CardInstallmentRepo = require('../cardInstallment/cardInstallmentRepo');
 const Exception = require('../../features/exception');
 const sequelize = require('../../db/dbConnection').getSequelize();
 
@@ -29,7 +30,8 @@ class CardTransactionBusiness {
         cardTransBillDate: null,
         cardTransIsInstallment: false,
         cardTransAccountTransId: null,
-        cardTransInstallmentId: null
+        cardTransInstallmentId: null,
+        cardTransIsPaid: false
       }, dbTransaction);
       await CardRepo.updateCardBalance(cardId, billAmount * -1, dbTransaction);
       await dbTransaction.commit();
@@ -43,6 +45,8 @@ class CardTransactionBusiness {
   async updateCardTransaction(cardTransId, {transCurrency, transAmount, transDate, transDesc, billAmount}) {
     var cardTrans = await this.getCardTransaction(cardTransId);
     if(!cardTrans) throw new Exception('CARD_TRANS_NOT_EXIST');
+
+    if(cardTrans.cardTransIsInstallment) throw new Exception('CARD_TRANS_INST_FAIL');
 
     let dbTransaction;
     try {
@@ -70,7 +74,15 @@ class CardTransactionBusiness {
     let dbTransaction;
     try {
       dbTransaction = await sequelize.transaction();
-      await CardRepo.updateCardBalance(cardTrans.cardId, cardTrans.cardTransBillAmount, dbTransaction);
+      if(cardTrans.cardTransIsInstallment) {
+        var cardInst = await CardInstallmentRepo.getCardInstallment(cardTrans.cardTransInstallmentId);
+        if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
+        if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
+        CardInstallmentRepo.removePostInstallment(cardTrans.cardTransInstallmentId, 
+          cardTrans.cardTransBillAmount, dbTransaction);
+      } else {
+        await CardRepo.updateCardBalance(cardTrans.cardId, cardTrans.cardTransBillAmount, dbTransaction);
+      }
       await cardTrans.destroy({transaction: dbTransaction});
       await dbTransaction.commit();
     } catch (err) {

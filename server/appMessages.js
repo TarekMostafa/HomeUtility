@@ -97,4 +97,6 @@ module.exports = {
   'CARD_TRANS_NOT_EXIST': 'This card transaction does not exist',
   'CARD_TRANS_DELETE_FAIL': 'Failed to delete card transaction',
   'CARD_TRANS_UPDATE_FAIL': 'Failed to update card transaction',
+  'CARD_TRANS_INST_FAIL': 'You cant update installment transaction',
+  'CARD_INST_FINISHED': 'This card installment is terminated', 
 }

@@ -16,6 +16,7 @@ CardTransactionModel.init({
     cardTransIsInstallment: Sequelize.BOOLEAN,
     cardTransAccountTransId: Sequelize.BIGINT(20),
     cardTransInstallmentId: Sequelize.BIGINT(20),
+    cardTransIsPaid: Sequelize.BOOLEAN,
 }, {
   tableName: 'cardtransactions',
   createdAt: false,
