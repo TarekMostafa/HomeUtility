@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Table, Dropdown, DropdownButton, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import moment from 'moment';
 
 import amountFormatter from '../../../utilities/amountFormatter';
@@ -25,10 +25,20 @@ function CardTransactionTable (props) {
       </thead>
       <tbody>
         {props.cardsTransactions && props.cardsTransactions.map( (trans, index) => {
+          const cardInfo = `${trans.card.cardNumber} - ${trans.card.bank.bankName} - ${trans.card.cardCurrency}`;
           return (
             <tr key={trans.cardTransId}>
               <td>{index+1}</td>
-              <td>{trans.card.cardNumber} - {trans.card.bank.bankName} - {trans.card.cardCurrency}</td>
+              <td>
+                <OverlayTrigger placement="right"
+                  delay={{ show: 250, hide: 400 }} overlay={(
+                    <Tooltip>{cardInfo}</Tooltip>
+                  )}>
+                  <span className="textEllipsis">
+                    {cardInfo}
+                  </span>
+                </OverlayTrigger>
+              </td>
               <td className="text-right">
                 {amountFormatter(trans.cardTransAmount, trans.currency.currencyDecimalPlace)}
               </td>
@@ -36,7 +46,16 @@ function CardTransactionTable (props) {
               <td>
                 {moment(trans.cardTransDate).format('DD/MM/YYYY')}
               </td>
-              <td>{trans.cardTransDesc}</td>
+              <td>
+                <OverlayTrigger placement="right"
+                  delay={{ show: 250, hide: 400 }} overlay={(
+                    <Tooltip>{trans.cardTransDesc}</Tooltip>
+                  )}>
+                  <span className="textEllipsis">
+                    {trans.cardTransDesc}
+                  </span>
+                </OverlayTrigger>
+              </td>
               <td className="text-right">
                 {amountFormatter(trans.cardTransBillAmount, trans.card.currency.currencyDecimalPlace)}
               </td>

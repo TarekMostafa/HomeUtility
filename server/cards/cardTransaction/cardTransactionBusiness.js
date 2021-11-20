@@ -87,7 +87,7 @@ class CardTransactionBusiness {
         var cardInst = await CardInstallmentRepo.getCardInstallment(cardTrans.cardTransInstallmentId);
         if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
         if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
-        CardInstallmentRepo.removePostInstallment(cardTrans.cardTransInstallmentId, 
+        await CardInstallmentRepo.removePostInstallment(cardTrans.cardTransInstallmentId, 
           cardTrans.cardTransBillAmount, dbTransaction);
       } else {
         await CardRepo.updateCardBalance(cardTrans.cardId, cardTrans.cardTransBillAmount, dbTransaction);
