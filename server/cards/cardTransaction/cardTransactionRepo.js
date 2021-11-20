@@ -6,12 +6,14 @@ const BankModel = require('../../wealth/banks/bankModel');
 const Exception = require('../../features/exception');
 
 class CardTransactionRepo {
-  static async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid}) {
+  static async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid, skip, limit}) {
     var query = {};
     if(cardId) query.cardId = cardId;
     if(cardInstId) query.cardTransInstallmentId = cardInstId;
     if(cardPayment) query.cardTransIsPaid = cardIsPaid;
     return await CardTransactionModel.findAll({
+      offset: skip,
+      limit: limit,
       include: [
         { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace']},
         { model: CardModel, as: 'card', attributes: ['cardNumber', 'cardBank', 'cardCurrency'], 

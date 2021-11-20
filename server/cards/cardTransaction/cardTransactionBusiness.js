@@ -8,10 +8,14 @@ const RelatedTransactionRepo = require('../../wealth/relatedTransactions/related
 const Exception = require('../../features/exception');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const DateHelper = require('../../helper/DateHelper');
+const Common = require('../../utilities/common');
 
 class CardTransactionBusiness {
-  async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid}) {
-    return await CardTransactionRepo.getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid});
+  async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid, skip, limit}) {
+    limit = Common.getNumber(limit, 10);
+    skip = Common.getNumber(skip, 0);
+    return await CardTransactionRepo.getCardsTransactions({
+      cardId, cardInstId, cardPayment, cardIsPaid, skip, limit});
   }
 
   async getCardTransaction(id) {

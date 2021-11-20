@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 class CardTransRequest {
-  static async getCardsTransactions(cardId, cardInstId, cardPayment, cardIsPaid) {
+  static async getCardsTransactions(cardId, cardInstId, cardPayment, cardIsPaid, skip, limit) {
     const response = await axios.get('/api/cardTrans', {
         params: {
-            cardId, cardInstId, cardPayment, cardIsPaid
+            cardId, cardInstId, cardPayment, cardIsPaid, skip, limit
         }
       });
     return response.data;

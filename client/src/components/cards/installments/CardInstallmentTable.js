@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Table, Dropdown, DropdownButton, Button, Badge } from 'react-bootstrap';
 import moment from 'moment';
 
 import amountFormatter from '../../../utilities/amountFormatter';
@@ -48,7 +48,18 @@ function CardInstallmentTable (props) {
                 {amountFormatter(inst.cInstPosted, inst.currency.currencyDecimalPlace)}
               </td>
               <td>{inst.cInstStatus}</td>
-              <td>{inst.cInstId}</td>
+              <td>
+                {inst.cInstId}
+                {
+                  inst.cInstRelTransId &&
+                  <Button variant="link"
+                  onClick={() => props.onRelatedTransaction(inst.cInstRelTransId)}>
+                    <Badge pill variant="success">
+                      {inst.cInstRelTransId}
+                    </Badge>
+                  </Button>
+                }
+              </td>
               <td>
               <DropdownButton id="dropdown-basic-button" title="Actions"
                 size="sm" variant="primary">

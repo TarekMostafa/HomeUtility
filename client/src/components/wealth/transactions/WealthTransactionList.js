@@ -6,6 +6,7 @@ import 'rc-datepicker/lib/style.css';
 
 import WealthTransactionTable from './WealthTransactionTable';
 import FormContainer from '../../common/FormContainer';
+import TableLimiterDropDown from '../../common/TableLimiterDropDown';
 import AccountsDropDown from '../accounts/AccountsDropDown';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
 import AddSingleTransactionModal from './AddSingleTransactionModal';
@@ -116,10 +117,7 @@ class WealthTransactionList extends Component {
             <Col xs={2}>
               <Form.Control as="select" size="sm" name="limit" onChange={this.handleChange}
                 value={this.state.limit}>
-                <option value='10'>10</option>
-                <option value='25'>25</option>
-                <option value='50'>50</option>
-                <option value='100'>100</option>
+                <TableLimiterDropDown />
               </Form.Control>
             </Col>
             <Col xs={2}>

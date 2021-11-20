@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
 import FormContainer from '../../common/FormContainer';
+import TableLimiterDropDown from '../../common/TableLimiterDropDown';
 import CardTransactionTable from './CardTransactionTable';
 import CardsDropDown from '../CardsDropDown';
 import CardsInstallmentsDropDown from '../installments/CardsInstallmentsDropDown';
@@ -15,7 +16,8 @@ import CardInstRequest from '../../../axios/CardInstRequest';
 
 const initialState = {
     cardId: "",
-    cardInstId: ""
+    cardInstId: "",
+    limit: 10
 }
 
 function CardTransactionList(props) {
@@ -25,14 +27,26 @@ function CardTransactionList(props) {
     const [cardsTransactions, setCardsTransactions] = useState([]);
     const [cardsInstallments, setCardsInstallments] = useState([]);
     const [modalShow, setModalShow] = useState({name:"", id: 0});
+    const [appearMoreButton, setAppearMoreButton] = useState(true);
 
     const loadCards = () => 
         CardRequest.getCards()
         .then(cards => setCards(cards));
 
-    const loadCardsTransactions = (cardId, cardInstId) => 
-        CardTransRequest.getCardsTransactions(cardId||formData.cardId, cardInstId||formData.cardInstId)
-        .then(cardsTrans => setCardsTransactions(cardsTrans));
+    const loadCardsTransactions = (append, cardId, cardInstId) => 
+        CardTransRequest.getCardsTransactions(
+            cardId||formData.cardId, 
+            cardInstId||formData.cardInstId,
+            undefined, 
+            undefined, 
+            append?cardsTransactions.length:0, 
+            formData.limit)
+        .then(cardsTrans => {
+            setCardsTransactions(
+                append? [...cardsTransactions, ...cardsTrans] : cardsTrans
+            );
+            setAppearMoreButton((cardsTrans.length >= formData.limit));
+        });
 
     const loadCardsInstallments = (cardId) => 
         CardInstRequest.getCardsInstallments(cardId)
@@ -44,9 +58,9 @@ function CardTransactionList(props) {
             const {cardId, cardInstId} =  props.location.state;
             setFormData({...formData, cardId, cardInstId});
             if(cardId) loadCardsInstallments(cardId);
-            loadCardsTransactions(cardId, cardInstId);
+            loadCardsTransactions(false, cardId, cardInstId);
         } else {
-            loadCardsTransactions();
+            loadCardsTransactions(false);
         }
     },[])
 
@@ -64,7 +78,7 @@ function CardTransactionList(props) {
     }
 
     const handleListClick = () => {
-        loadCardsTransactions();
+        loadCardsTransactions(false);
     }
 
     const handleResetClick = () => {
@@ -78,6 +92,10 @@ function CardTransactionList(props) {
 
     const handleDeleteCardTrans = (id) => {
         setModalShow({name:"Delete",id})
+    }
+
+    const handleMoreClick = () => {
+        loadCardsTransactions(true);
     }
 
     return (
@@ -102,6 +120,12 @@ function CardTransactionList(props) {
                         <CardsInstallmentsDropDown cardsInstallments={cardsInstallments} />
                         </Form.Control>
                     </Col>
+                    <Col xs={2}>
+                        <Form.Control as="select" size="sm" name="limit" onChange={handleChange}
+                            value={formData.limit}>
+                            <TableLimiterDropDown />
+                        </Form.Control>
+                    </Col>
                     <Col xs={1}>
                         <Button variant="primary" size="sm" block onClick={handleListClick}>
                             List</Button>
@@ -117,26 +141,29 @@ function CardTransactionList(props) {
                 <CardTransactionTable cardsTransactions={cardsTransactions}
                 onEditCardTrans={handleEditCardTrans}
                 onDeleteCardTrans={handleDeleteCardTrans}/>
+                <Button variant="primary" size="sm" block onClick={handleMoreClick}
+                    hidden={!appearMoreButton}>
+                    more...</Button>
             </FormContainer>
             <CardTransactionAddModal 
                 cards={cards}
                 show={modalShow.name==='Add'} 
                 onHide={()=>setModalShow({name:"", id: 0})}
-                onSave={()=>loadCardsTransactions()}
+                onSave={()=>loadCardsTransactions(false)}
             />
             <CardTransactionEditModal
                 cards={cards}
                 cardTransId={modalShow.id}
                 show={modalShow.name==='Edit'}
                 onHide={()=>setModalShow({name:"", id: 0})}
-                onSave={()=>loadCardsTransactions()}
+                onSave={()=>loadCardsTransactions(false)}
             />
             <CardTransactionDeleteModal
                 cards={cards}
                 cardTransId={modalShow.id}
                 show={modalShow.name==='Delete'}
                 onHide={()=>setModalShow({name:"", id: 0})}
-                onDelete={()=>loadCardsTransactions()}
+                onDelete={()=>loadCardsTransactions(false)}
             />
         </React.Fragment>
     )

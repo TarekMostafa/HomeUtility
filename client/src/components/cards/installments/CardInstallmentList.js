@@ -104,7 +104,8 @@ function CardInstallmentList(props) {
                 onDeleteCardInst={handleDeleteCardInst}
                 onPostCardInst={handlePostCardInst}
                 onViewCardTransactions={handleViewCardTransactions}
-                onTerminateCardInst={handleTerminateCardInst}/>
+                onTerminateCardInst={handleTerminateCardInst}
+                onRelatedTransaction={(id)=>props.history.push('relatedtransactiondetails/'+id)}/>
             </FormContainer>
             <CardInstallmentAddModal 
                 cards={cards}

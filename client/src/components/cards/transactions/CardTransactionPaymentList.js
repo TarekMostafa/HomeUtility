@@ -30,7 +30,10 @@ function CardTransactionPaymentList(props) {
 
     const loadCardTransactions = (cardId) => 
         CardTransRequest.getCardsTransactions(cardId, undefined, true, false)
-        .then(cardsTrans => setCardTransactions(cardsTrans));
+        .then(cardsTrans => {
+            setCardTransactions(cardsTrans);
+            setCardPayments([]);
+        });
 
     useEffect(()=>{
         loadCards();
@@ -47,7 +50,10 @@ function CardTransactionPaymentList(props) {
             cardCurrency
         });
         if(cardId) loadCardTransactions(cardId);
-        else setCardTransactions([]);
+        else {
+            setCardTransactions([]);
+            setCardPayments([]);
+        }
     }
 
     const handleOnPay = (isPaid, trans) => {
