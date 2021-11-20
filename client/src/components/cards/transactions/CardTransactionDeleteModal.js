@@ -6,8 +6,10 @@ import moment from 'moment';
 import ModalContainer from '../../common/ModalContainer';
 import CardsDropDown from '../CardsDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
+import CardsInstallmentsDropDown from '../installments/CardsInstallmentsDropDown';
 
 import CardTransRequest from '../../../axios/CardTransRequest';
+import CardInstRequest from '../../../axios/CardInstRequest';
 
 const initialState = {
     isLoading: false,
@@ -18,6 +20,15 @@ function CardTransactionDeleteModal(props) {
 
     const [formData, setFormData] = useState(initialState);
     const [cardTransaction, setCardTransaction] = useState(null);
+    const [cardsInstallments, setCardsInstallments] = useState([]);
+
+    const loadCardsInstallments = () => 
+        CardInstRequest.getCardsInstallments()
+        .then(cardsInsts => setCardsInstallments(cardsInsts));
+
+    useEffect(()=>{
+      loadCardsInstallments();
+    },[])
 
     const loadCardTransaction = (id) => CardTransRequest.getCardTransaction(id)
         .then(cardTrans => setCardTransaction(cardTrans));
@@ -107,6 +118,14 @@ function CardTransactionDeleteModal(props) {
                   </InputGroup.Text>
                 </InputGroup.Prepend>
               </InputGroup>
+            </Form.Group>
+            <Form.Group controlId="instId">
+              <Form.Label>Attach to Card Installment</Form.Label>
+              <Form.Control as="select" name="instId" readOnly
+                value={cardTransaction.cardTransInstallmentId?cardTransaction.cardTransInstallmentId:""}>
+                <option value=''>Card Installments</option>
+                <CardsInstallmentsDropDown cardsInstallments={cardsInstallments} />
+              </Form.Control>
             </Form.Group>
             <Form.Text className='text-danger'>{formData.message}</Form.Text>
           </form>

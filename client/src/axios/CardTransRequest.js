@@ -15,15 +15,17 @@ class CardTransRequest {
     return response.data;
   }
 
-  static async addCardTransaction(cardId, transCurrency, transAmount, transDate, transDesc, billAmount) {
+  static async addCardTransaction(cardId, transCurrency, transAmount, transDate, 
+    transDesc, billAmount, instId) {
     return await axios.post('/api/cardTrans', {
-      cardId, transCurrency, transAmount, transDate, transDesc, billAmount
+      cardId, transCurrency, transAmount, transDate, transDesc, billAmount, instId
     });
   }
 
-  static async updateCardTransaction(cardTransId, transCurrency, transAmount, transDate, transDesc, billAmount) {
+  static async updateCardTransaction(cardTransId, transCurrency, transAmount, transDate, 
+    transDesc, billAmount, instId) {
     return await axios.put('/api/cardTrans/'+cardTransId, {
-      transCurrency, transAmount, transDate, transDesc, billAmount
+      transCurrency, transAmount, transDate, transDesc, billAmount, instId
     });
   }
 

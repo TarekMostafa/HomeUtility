@@ -22,7 +22,8 @@ class CardTransactionBusiness {
     return await CardTransactionRepo.getCardTransaction(id);
   }
 
-  async addCardTransaction({cardId, transCurrency, transAmount, transDate, transDesc, billAmount}) {
+  async addCardTransaction({cardId, transCurrency, transAmount, transDate, 
+    transDesc, billAmount, instId}) {
     var card = await CardRepo.getCard(cardId);
     if(!card) throw new Exception('CARD_NOT_EXIST');
     
@@ -39,7 +40,7 @@ class CardTransactionBusiness {
         cardTransBillDate: null,
         cardTransIsInstallment: false,
         cardTransAccountTransId: null,
-        cardTransInstallmentId: null,
+        cardTransInstallmentId: instId?instId:null,
         cardTransIsPaid: false
       }, dbTransaction);
       await CardRepo.updateCardBalance(cardId, billAmount * -1, dbTransaction);
@@ -51,7 +52,8 @@ class CardTransactionBusiness {
     }
   }
 
-  async updateCardTransaction(cardTransId, {transCurrency, transAmount, transDate, transDesc, billAmount}) {
+  async updateCardTransaction(cardTransId, {transCurrency, transAmount, transDate, 
+    transDesc, billAmount, instId}) {
     var cardTrans = await this.getCardTransaction(cardTransId);
     if(!cardTrans) throw new Exception('CARD_TRANS_NOT_EXIST');
 
@@ -67,6 +69,7 @@ class CardTransactionBusiness {
       cardTrans.cardTransDate = transDate;
       cardTrans.cardTransDesc = transDesc;
       cardTrans.cardTransBillAmount = billAmount;
+      cardTrans.cardTransInstallmentId = instId?instId:null;
       await cardTrans.save({transaction: dbTransaction});
       await dbTransaction.commit();
     } catch (err) {
@@ -127,7 +130,7 @@ class CardTransactionBusiness {
       for(let cardTrans of cardTranses) {
         let relId = null;
         //Check Card Installments
-        if(cardTrans.cardTransIsInstallment) {
+        if(cardTrans.cardTransIsInstallment || cardTrans.cardTransInstallmentId) {
           let cardInst = await CardInstallmentRepo.getCardInstallment(cardTrans.cardTransInstallmentId);
           if(cardInst.cInstRelTransId) relId = cardInst.cInstRelTransId
           else {

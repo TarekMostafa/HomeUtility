@@ -8,8 +8,10 @@ import 'rc-datepicker/lib/style.css';
 import ModalContainer from '../../common/ModalContainer';
 import CardsDropDown from '../CardsDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
+import CardsInstallmentsDropDown from '../installments/CardsInstallmentsDropDown';
 
 import CardTransRequest from '../../../axios/CardTransRequest';
+import CardInstRequest from '../../../axios/CardInstRequest';
 
 const initialState = {
     isLoading: false,
@@ -19,13 +21,23 @@ const initialState = {
     transAmount: 0,
     transDate: "",
     transDesc: "",
-    billAmount: 0
+    billAmount: 0,
+    instId: ""
 }
 
 function CardTransactionEditModal(props) {
 
     const [formData, setFormData] = useState(initialState);
     const [cardTransaction, setCardTransaction] = useState(null);
+    const [cardsInstallments, setCardsInstallments] = useState([]);
+
+    const loadCardsInstallments = () => 
+        CardInstRequest.getCardsInstallments()
+        .then(cardsInsts => setCardsInstallments(cardsInsts));
+
+    useEffect(()=>{
+      loadCardsInstallments();
+    },[])
 
     const loadCardTransaction = (id) => CardTransRequest.getCardTransaction(id)
         .then(cardTrans => {
@@ -37,7 +49,9 @@ function CardTransactionEditModal(props) {
                 transAmount: cardTrans.cardTransAmount,
                 transDate: cardTrans.cardTransDate,
                 transDesc: cardTrans.cardTransDesc,
-                billAmount: cardTrans.cardTransBillAmount
+                billAmount: cardTrans.cardTransBillAmount,
+                instId: cardTrans.cardTransInstallmentId? 
+                  cardTrans.cardTransInstallmentId:""
             });
         });
 
@@ -75,7 +89,8 @@ function CardTransactionEditModal(props) {
       }
       // update new card transaction
       CardTransRequest.updateCardTransaction(cardTransaction.cardTransId, formData.transCurrency,
-        formData.transAmount, formData.transDate, formData.transDesc, formData.billAmount)
+        formData.transAmount, formData.transDate, formData.transDesc, formData.billAmount, 
+        formData.instId)
       .then( () => {
           if (typeof props.onSave=== 'function') {
               props.onSave();
@@ -170,6 +185,14 @@ function CardTransactionEditModal(props) {
                 </InputGroup.Text>
               </InputGroup.Prepend>
             </InputGroup>
+          </Form.Group>
+          <Form.Group controlId="instId">
+            <Form.Label>Attach to Card Installment</Form.Label>
+            <Form.Control as="select" name="instId" onChange={handleChange}
+              value={formData.instId}>
+              <option value=''>Card Installments</option>
+              <CardsInstallmentsDropDown cardsInstallments={cardsInstallments} />
+            </Form.Control>
           </Form.Group>
           <Form.Text className='text-danger'>{formData.message}</Form.Text>
           </form>

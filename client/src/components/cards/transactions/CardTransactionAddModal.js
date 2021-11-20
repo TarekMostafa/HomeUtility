@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Form, Button, Spinner, InputGroup } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
@@ -8,8 +8,10 @@ import 'rc-datepicker/lib/style.css';
 import ModalContainer from '../../common/ModalContainer';
 import CardsDropDown from '../CardsDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
+import CardsInstallmentsDropDown from '../installments/CardsInstallmentsDropDown';
 
 import CardTransRequest from '../../../axios/CardTransRequest';
+import CardInstRequest from '../../../axios/CardInstRequest';
 
 const initialState = {
     isLoading: false,
@@ -22,12 +24,22 @@ const initialState = {
     transAmount: 0,
     transDate: "",
     transDesc: "",
-    billAmount: 0
+    billAmount: 0,
+    instId: ""
 }
 
 function CardTransactionAddModal(props) {
 
     const [formData, setFormData] = useState(initialState);
+    const [cardsInstallments, setCardsInstallments] = useState([]);
+
+    const loadCardsInstallments = () => 
+        CardInstRequest.getCardsInstallments()
+        .then(cardsInsts => setCardsInstallments(cardsInsts));
+
+    useEffect(()=>{
+      loadCardsInstallments();
+    },[])
 
     const handleClick = () => {
       // Validate Input
@@ -63,7 +75,7 @@ function CardTransactionAddModal(props) {
       // add new card transaction
       CardTransRequest.addCardTransaction(formData.cardId, formData.transCurrency,
         formData.transAmount, formData.transDate, formData.transDesc,
-        formData.billAmount)
+        formData.billAmount, formData.instId)
       .then( () => {
           if (typeof props.onSave=== 'function') {
               props.onSave();
@@ -163,6 +175,14 @@ function CardTransactionAddModal(props) {
                   <InputGroup.Text id="inputGroupPrepend">{formData.cardCurrency}</InputGroup.Text>
                 </InputGroup.Prepend>
               </InputGroup>
+            </Form.Group>
+            <Form.Group controlId="instId">
+              <Form.Label>Attach to Card Installment</Form.Label>
+              <Form.Control as="select" name="instId" onChange={handleChange}
+                value={formData.instId}>
+                <option value=''>Card Installments</option>
+                <CardsInstallmentsDropDown cardsInstallments={cardsInstallments} />
+              </Form.Control>
             </Form.Group>
             <Form.Text className='text-danger'>{formData.message}</Form.Text>
             </form>
