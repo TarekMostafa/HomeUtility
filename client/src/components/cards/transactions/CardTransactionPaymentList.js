@@ -29,7 +29,7 @@ function CardTransactionPaymentList(props) {
         .then(cards => setCards(cards));
 
     const loadCardTransactions = (cardId) => 
-        CardTransRequest.getCardsTransactions(cardId, undefined, true, false)
+        CardTransRequest.getCardsTransactions(cardId, undefined, true, false, 0, 1000)
         .then(cardsTrans => {
             setCardTransactions(cardsTrans);
             setCardPayments([]);
