@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, ButtonGroup } from 'react-bootstrap';
+import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
 
 import amountFormatter from '../../utilities/amountFormatter';
@@ -51,12 +51,15 @@ function CardTable (props) {
                 }
               </td>
               <td>
-                <ButtonGroup>
-                  <Button variant="link" size="sm"
-                  onClick={() => props.onEditCard(card.cardId)}>Edit</Button>
-                  <Button variant="link" size="sm"
-                  onClick={() => props.onDeleteCard(card.cardId)}>Delete</Button>
-                </ButtonGroup>
+                <DropdownButton id="dropdown-basic-button" title="Actions"
+                  size="sm" variant="primary">
+                  <Dropdown.Item onClick={() => props.onEditCard(card.cardId)}>
+                    Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => props.onDeleteCard(card.cardId)}>
+                    Delete
+                  </Dropdown.Item>
+                </DropdownButton>
               </td>
             </tr>
           )

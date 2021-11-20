@@ -27,6 +27,7 @@ import ExpenseTypeList from './components/expenses/expensetypes/ExpenseTypeList'
 import CardList from './components/cards/CardList';
 import CardInstallmentList from './components/cards/installments/CardInstallmentList';
 import CardTranactionList from './components/cards/transactions/CardTransactionList';
+import CardTransactionPaymentList from './components/cards/transactions/CardTransactionPaymentList';
 
 class App extends Component {
   render() {
@@ -59,6 +60,7 @@ class App extends Component {
                 <Route path="/cards" exact component={CardList}></Route>
                 <Route path="/cardsInstallments" exact component={CardInstallmentList}></Route>
                 <Route path="/cardsTranactions" exact component={CardTranactionList}></Route>
+                <Route path="/cardPayments" exact component={CardTransactionPaymentList}></Route>
               </Switch> :
               <Switch>
                 <Route path="/" component={Home}></Route>

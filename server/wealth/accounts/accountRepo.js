@@ -6,8 +6,9 @@ const sequelize = require('../../db/dbConnection').getSequelize();
 class AccountRepo {
   static async getSimpleAccounts() {
     return await AccountModel.findAll({
-      attributes: ['accountId', 'accountNumber', 'accountStatus', 'accountCurrency'],
+      attributes: ['accountId', 'accountNumber', 'accountStatus', 'accountCurrency', 'accountBankCode'],
       include: [
+        { model: BankModel, as: 'bank', attributes: ['bankName'] },
         { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] }
       ]
     });

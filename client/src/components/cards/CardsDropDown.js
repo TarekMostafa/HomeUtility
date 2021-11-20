@@ -14,7 +14,7 @@ function CardsDropDown(props){
                 <option key={card.cardId} value={card.cardId} 
                     currencycode={card.cardCurrency}
                     decimalplaces={card.currency.currencyDecimalPlace}>
-                    {`${card.cardNumber} - ${card.bank.bankName}`}
+                    {`${card.cardNumber} - ${card.bank.bankName} - ${card.cardCurrency}`}
                 </option>
             ))
         }

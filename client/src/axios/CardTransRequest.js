@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 class CardTransRequest {
-  static async getCardsTransactions(cardId, cardInstId) {
+  static async getCardsTransactions(cardId, cardInstId, cardPayment, cardIsPaid) {
     const response = await axios.get('/api/cardTrans', {
         params: {
-            cardId, cardInstId
+            cardId, cardInstId, cardPayment, cardIsPaid
         }
       });
     return response.data;
@@ -29,6 +29,12 @@ class CardTransRequest {
 
   static async deleteCardTransaction(cardTransId) {
     return await axios.delete('/api/cardTrans/'+cardTransId);
+  }
+
+  static async payCardTransactions(cardTransIds, accountId, transactionTypeId, postingDate) {
+    return await axios.post('/api/cardTrans/payCardTransactions', {
+      cardTransIds, accountId, transactionTypeId, postingDate
+    });
   }
 }
 

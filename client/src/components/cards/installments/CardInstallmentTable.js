@@ -51,7 +51,7 @@ function CardInstallmentTable (props) {
               <td>{inst.cInstId}</td>
               <td>
               <DropdownButton id="dropdown-basic-button" title="Actions"
-                size="sm" variant="secondary">
+                size="sm" variant="primary">
                   <Dropdown.Item onClick={() => props.onViewCardTransactions(inst.cardId, inst.cInstId)}>
                   View Card Transactions
                   </Dropdown.Item>

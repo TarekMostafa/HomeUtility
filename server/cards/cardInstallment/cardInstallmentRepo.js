@@ -22,6 +22,7 @@ class CardInstallmentRepo {
     return await CardInstallmentModel.findByPk(id, {
       include: [
         { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] },
+        { model: CardModel, as: 'card', attributes: ['cardNumber'] },
       ]
     });
   }

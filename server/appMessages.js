@@ -19,6 +19,7 @@ module.exports = {
   'TRNS_TYP_NOT_EXIST' : 'This transaction type does not exist in the database',
   'TRNS_TYP_CRDB_ERR' : 'You can not update the Credit/Debit field as this transaction type is used in ? transaction(s)',
   'TRNS_TYP_CR_EXP_ERR': 'this transaction type is credit and can not be used in expense module',
+  'TRNS_TYP_INVALID': 'Invalid transaction type',
   '020' : 'This transaction type has been successfully updated',
   '021' : 'This transaction type has been successfully deleted',
   '022' : 'Invalid Currency Code',
@@ -71,6 +72,7 @@ module.exports = {
   '069' : 'This bill transaction exceed bill frequency (?)',
   '070' : 'This tranasction bill date is less than the bill start date (?)',
   '071' : 'Invalid bill transaction Details, you must enter at least one detail',
+  'ACC_INVALID': 'Invalid account',
   'EXP_TYP_ADD_SUCCESS': 'This expense type has been successfully saved',
   'EXP_TYP_NOT_EXIST': 'This expense type does not exist',
   'EXP_TYP_UPDATE_SUCCESS': 'This expense type has been successfully updated',
@@ -99,4 +101,6 @@ module.exports = {
   'CARD_TRANS_UPDATE_FAIL': 'Failed to update card transaction',
   'CARD_TRANS_INST_FAIL': 'You cant update installment transaction',
   'CARD_INST_FINISHED': 'This card installment is terminated', 
+  'CARD_TRANS_INVALID': 'Invalid card transactions',
+  'CARD_TRANS_PAY_FAIL': 'Failed to pay card transactions',
 }

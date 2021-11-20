@@ -51,7 +51,7 @@ function CardTransactionTable (props) {
               <td>{trans.cardTransId}</td>
               <td>
               <DropdownButton id="dropdown-basic-button" title="Actions"
-                size="sm" variant="secondary">
+                size="sm" variant="primary">
               {
                 !trans.cardTransIsInstallment &&
                 <Dropdown.Item onClick={() => props.onEditCardTrans(trans.cardTransId)}>

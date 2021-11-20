@@ -29,6 +29,14 @@ router.post('/', function(req, res, next) {
   })
 });
 
+router.post('/payCardTransactions', function(req, res, next) {
+  cardTransactionBusiness.PayCardTransactions(req.body).then( () => {
+    res.status(200).send();
+  }).catch( err => {
+    next(err);
+  })
+});
+
 router.put('/:id', function(req, res, next) {
   cardTransactionBusiness.updateCardTransaction(req.params.id, req.body).then( () => {
     res.status(200).send();
