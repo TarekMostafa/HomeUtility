@@ -48,16 +48,16 @@ function CardTransactionList(props) {
             setAppearMoreButton((cardsTrans.length >= formData.limit));
         });
 
-    const loadCardsInstallments = (cardId) => 
-        CardInstRequest.getCardsInstallments(cardId)
+    const loadCardsInstallments = () => 
+        CardInstRequest.getCardsInstallments()
         .then(cardsInsts => setCardsInstallments(cardsInsts));
 
     useEffect(()=>{
         loadCards();
+        loadCardsInstallments();
         if(props.location.state) {
             const {cardId, cardInstId} =  props.location.state;
             setFormData({...formData, cardId, cardInstId});
-            if(cardId) loadCardsInstallments(cardId);
             loadCardsTransactions(false, cardId, cardInstId);
         } else {
             loadCardsTransactions(false);
@@ -69,12 +69,6 @@ function CardTransactionList(props) {
             ...formData,
             [event.target.name] : event.target.value
           })
-    }
-
-    const handleCardChange = (event) => {
-        handleChange(event);
-        if(event.target.value) loadCardsInstallments(event.target.value);
-        else setCardsInstallments([]);
     }
 
     const handleListClick = () => {
@@ -107,7 +101,7 @@ function CardTransactionList(props) {
                 <Form>
                     <Row>
                     <Col xs={3}>
-                        <Form.Control as="select" size="sm" name="cardId" onChange={handleCardChange}
+                        <Form.Control as="select" size="sm" name="cardId" onChange={handleChange}
                         value={formData.cardId}>
                         <option value=''>Cards</option>
                         <CardsDropDown cards={cards}/>
@@ -117,7 +111,9 @@ function CardTransactionList(props) {
                         <Form.Control as="select" size="sm" name="cardInstId" onChange={handleChange}
                         value={formData.cardInstId}>
                         <option value=''>Card Installments</option>
-                        <CardsInstallmentsDropDown cardsInstallments={cardsInstallments} />
+                        <CardsInstallmentsDropDown 
+                            cardsInstallments={cardsInstallments} 
+                            cardId={formData.cardId}/>
                         </Form.Control>
                     </Col>
                     <Col xs={2}>
@@ -147,12 +143,14 @@ function CardTransactionList(props) {
             </FormContainer>
             <CardTransactionAddModal 
                 cards={cards}
+                cardsInstallments={cardsInstallments}
                 show={modalShow.name==='Add'} 
                 onHide={()=>setModalShow({name:"", id: 0})}
                 onSave={()=>loadCardsTransactions(false)}
             />
             <CardTransactionEditModal
                 cards={cards}
+                cardsInstallments={cardsInstallments}
                 cardTransId={modalShow.id}
                 show={modalShow.name==='Edit'}
                 onHide={()=>setModalShow({name:"", id: 0})}
@@ -160,6 +158,7 @@ function CardTransactionList(props) {
             />
             <CardTransactionDeleteModal
                 cards={cards}
+                cardsInstallments={cardsInstallments}
                 cardTransId={modalShow.id}
                 show={modalShow.name==='Delete'}
                 onHide={()=>setModalShow({name:"", id: 0})}

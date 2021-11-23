@@ -11,7 +11,6 @@ import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import CardsInstallmentsDropDown from '../installments/CardsInstallmentsDropDown';
 
 import CardTransRequest from '../../../axios/CardTransRequest';
-import CardInstRequest from '../../../axios/CardInstRequest';
 
 const initialState = {
     isLoading: false,
@@ -29,15 +28,6 @@ function CardTransactionEditModal(props) {
 
     const [formData, setFormData] = useState(initialState);
     const [cardTransaction, setCardTransaction] = useState(null);
-    const [cardsInstallments, setCardsInstallments] = useState([]);
-
-    const loadCardsInstallments = () => 
-        CardInstRequest.getCardsInstallments()
-        .then(cardsInsts => setCardsInstallments(cardsInsts));
-
-    useEffect(()=>{
-      loadCardsInstallments();
-    },[])
 
     const loadCardTransaction = (id) => CardTransRequest.getCardTransaction(id)
         .then(cardTrans => {
@@ -191,7 +181,9 @@ function CardTransactionEditModal(props) {
             <Form.Control as="select" name="instId" onChange={handleChange}
               value={formData.instId}>
               <option value=''>Card Installments</option>
-              <CardsInstallmentsDropDown cardsInstallments={cardsInstallments} />
+              <CardsInstallmentsDropDown 
+                cardsInstallments={props.cardsInstallments} 
+                cardId={cardTransaction.cardId} />
             </Form.Control>
           </Form.Group>
           <Form.Text className='text-danger'>{formData.message}</Form.Text>

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { Form, Button, Spinner, InputGroup } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
@@ -11,7 +11,6 @@ import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import CardsInstallmentsDropDown from '../installments/CardsInstallmentsDropDown';
 
 import CardTransRequest from '../../../axios/CardTransRequest';
-import CardInstRequest from '../../../axios/CardInstRequest';
 
 const initialState = {
     isLoading: false,
@@ -31,15 +30,6 @@ const initialState = {
 function CardTransactionAddModal(props) {
 
     const [formData, setFormData] = useState(initialState);
-    const [cardsInstallments, setCardsInstallments] = useState([]);
-
-    const loadCardsInstallments = () => 
-        CardInstRequest.getCardsInstallments()
-        .then(cardsInsts => setCardsInstallments(cardsInsts));
-
-    useEffect(()=>{
-      loadCardsInstallments();
-    },[])
 
     const handleClick = () => {
       // Validate Input
@@ -181,7 +171,9 @@ function CardTransactionAddModal(props) {
               <Form.Control as="select" name="instId" onChange={handleChange}
                 value={formData.instId}>
                 <option value=''>Card Installments</option>
-                <CardsInstallmentsDropDown cardsInstallments={cardsInstallments} />
+                <CardsInstallmentsDropDown 
+                  cardsInstallments={props.cardsInstallments} 
+                  cardId={formData.cardId} />
               </Form.Control>
             </Form.Group>
             <Form.Text className='text-danger'>{formData.message}</Form.Text>
