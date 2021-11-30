@@ -120,14 +120,15 @@ class CardTransactionBusiness {
     for(let id of cardTransIds) {
       const cardTrans = await this.getCardTransaction(id);
       if(!cardTrans) throw new Exception('CARD_TRANS_INVALID');
-      cardTranses.push(cardTrans);
+      if(!cardTrans.cardTransIsPaid) cardTranses.push(cardTrans);
     }
     //Pay
+    const transaction = new Transaction();
+    let errorTransIds = [];
     let dbTransaction;
-    try {
-      dbTransaction = await sequelize.transaction();
-      const transaction = new Transaction();
-      for(let cardTrans of cardTranses) {
+    for(let cardTrans of cardTranses) {
+      try {
+        dbTransaction = await sequelize.transaction();
         let relId = null;
         //Check Card Installments
         if(cardTrans.cardTransIsInstallment || cardTrans.cardTransInstallmentId) {
@@ -158,10 +159,7 @@ class CardTransactionBusiness {
           transactionModule: "CRD",
           transactionRelatedTransactionId: relId,
         }, dbTransaction);
-        if(!result.success) {
-          await dbTransaction.rollback();
-          throw new Exception('CARD_TRANS_PAY_FAIL');
-        }
+        if(!result.success) throw new Exception('CARD_TRANS_PAY_FAIL');
         //Increase Card Balance
         await CardRepo.updateCardBalance(cardTrans.cardId, cardTrans.cardTransBillAmount, dbTransaction);
         //Save Transaction Id in Card Transaction
@@ -169,13 +167,14 @@ class CardTransactionBusiness {
         cardTrans.cardTransIsPaid = true;
         cardTrans.cardTransBillDate = postingDate;
         await cardTrans.save({transaction: dbTransaction});
+        await dbTransaction.commit();
+      } catch (err) {
+        errorTransIds.push(cardTrans.cardTransId);
+        console.log(`An error occured while paying Card transaction with id (${cardTrans.cardTransId}): ${err}`);
+        await dbTransaction.rollback();
       }
-      await dbTransaction.commit();
-    } catch (err) {
-      console.log(`error ${err}`);
-      await dbTransaction.rollback();
-      throw new Exception('CARD_TRANS_PAY_FAIL');
     }
+    if(errorTransIds.length>0) throw new Exception('CARD_TRANS_PAY_SOME', errorTransIds.length)
   }
 
   getCardInstallmentRelatedDescription(cardInst) {

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button, Badge } from 'react-bootstrap';
 
 import FormContainer from '../../common/FormContainer';
 import CardsDropDown from '../CardsDropDown';
@@ -68,13 +68,18 @@ function CardTransactionPaymentList(props) {
         }
     }
 
-    const getTotalPayment = () => {
+    const getTotalSelectedPayment = () => {
         var total = cardPayments.reduce( (prv, current) => prv += Number(current.cardTransBillAmount), 0);
         return Number(total).toFixed(formData.decimalPlaces);
     }
 
+    const getTotalPayment = () => {
+        var total = cardTransactions.reduce( (prv, current) => prv += Number(current.cardTransBillAmount), 0);
+        return Number(total).toFixed(formData.decimalPlaces);
+    }
+
     const handlePayClick = () => {
-        if(Number(getTotalPayment()) === 0) {
+        if(Number(getTotalSelectedPayment()) === 0) {
             setFormData({...formData, message: 'No payment is selected'});
             return;
         } else {
@@ -96,10 +101,6 @@ function CardTransactionPaymentList(props) {
                         <CardsDropDown cards={cards}/>
                         </Form.Control>
                     </Col>
-                    <Col xs={3}>
-                        <Form.Control size="sm" type="text" 
-                        value={`Total Payment = ${getTotalPayment()} ${formData.cardCurrency}`} readOnly/>
-                    </Col>
                     <Col xs={1}>
                         <Button variant="success" size="sm" block onClick={handlePayClick}>
                             Pay
@@ -112,6 +113,17 @@ function CardTransactionPaymentList(props) {
                 </Form>
             </FormContainer>
             <FormContainer>
+                <Row>
+                    <Col xs={{span:4, offset:4}}>
+                        <h4>
+                            <Badge variant="primary">
+                            {`Total Selected Payment: ${getTotalSelectedPayment()} 
+                            / ${getTotalPayment()} 
+                            ${formData.cardCurrency?formData.cardCurrency:""}`}
+                            </Badge>
+                        </h4>
+                    </Col>
+                </Row>
                 <CardTransactionPaymentTable 
                     appearPayCol
                     cardTransactions={cardTransactions}

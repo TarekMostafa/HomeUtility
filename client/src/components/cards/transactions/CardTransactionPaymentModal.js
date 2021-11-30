@@ -65,13 +65,12 @@ function CardTransactionPaymentModal(props) {
       CardTransRequest.payCardTransactions(props.cardTransactions.map( trns => trns.cardTransId), 
         formData.accountId, formData.transactionTypeId, formData.postingDate)
       .then( () => {
-          if (typeof props.onPay=== 'function') {
-              props.onPay();
-          }
+          if (typeof props.onPay=== 'function') props.onPay();
           setFormData({...formData, isLoading: false});
           props.onHide();
       })
       .catch( err => {
+          if (typeof props.onPay=== 'function') props.onPay();
           setFormData({...formData, message: err.response.data, isLoading: false});
       })
     }

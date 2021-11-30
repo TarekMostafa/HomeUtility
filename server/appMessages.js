@@ -102,5 +102,6 @@ module.exports = {
   'CARD_TRANS_INST_FAIL': 'You cant update installment transaction',
   'CARD_INST_FINISHED': 'This card installment is terminated', 
   'CARD_TRANS_INVALID': 'Invalid card transactions',
-  'CARD_TRANS_PAY_FAIL': 'Failed to pay card transactions',
+  'CARD_TRANS_PAY_FAIL': 'Failed to pay card transaction',
+  'CARD_TRANS_PAY_SOME': '(?) Card Transaction(s) failed to be paid'
 }
