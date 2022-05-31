@@ -103,5 +103,7 @@ module.exports = {
   'CARD_INST_FINISHED': 'This card installment is terminated', 
   'CARD_TRANS_INVALID': 'Invalid card transactions',
   'CARD_TRANS_PAY_FAIL': 'Failed to pay card transaction',
-  'CARD_TRANS_PAY_SOME': '(?) Card Transaction(s) failed to be paid'
+  'CARD_TRANS_PAY_SOME': '(?) Card Transaction(s) failed to be paid',
+  'CARD_TRANS_PAY_AMOUNT': 'Invalid card transaction amount, must not be zero',
+  'CARD_TRANS_PAY_MIX': 'Invalid card transactions, can not process credit and debit together',
 }

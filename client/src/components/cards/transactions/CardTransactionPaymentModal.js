@@ -70,13 +70,25 @@ function CardTransactionPaymentModal(props) {
           props.onHide();
       })
       .catch( err => {
-          if (typeof props.onPay=== 'function') props.onPay();
+          //if (typeof props.onPay=== 'function') props.onPay();
           setFormData({...formData, message: err.response.data, isLoading: false});
       })
     }
 
     const handlePostingDateChange = (jsDate, date) => {
       setFormData({...formData, postingDate:date});
+    }
+
+    const getDebitOrCredit = () => {
+      let DebitOrCredit = "";
+      
+      const cardTransactions = props.cardTransactions;
+      if(cardTransactions) {
+        if(cardTransactions.every(trans => trans.cardTransBillAmount > 0)) DebitOrCredit="Debit"
+        if(cardTransactions.every(trans => trans.cardTransBillAmount < 0)) DebitOrCredit="Credit"
+      }
+
+      return DebitOrCredit;
     }
 
     return (
@@ -113,7 +125,7 @@ function CardTransactionPaymentModal(props) {
                     <Form.Control as="select" name="transactionTypeId" onChange={handleChange}
                       value={formData.transactionTypeId}>
                       <option value=''>Transaction Types</option>
-                      <TransactionTypesDropDown typeCRDR="Debit"/>
+                      <TransactionTypesDropDown typeCRDR={getDebitOrCredit()}/>
                     </Form.Control>
                   </Form.Group>
                 </Col>

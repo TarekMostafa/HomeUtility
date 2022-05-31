@@ -122,6 +122,17 @@ class CardTransactionBusiness {
       if(!cardTrans) throw new Exception('CARD_TRANS_INVALID');
       if(!cardTrans.cardTransIsPaid) cardTranses.push(cardTrans);
     }
+    //Check card transactions are all credits or all debits only
+    //No mix between credit and debit
+    let debitOrCredit = null;
+    for(let cardTrans of cardTranses) {
+      if (cardTrans.cardTransBillAmount === 0) throw new Exception('CARD_TRANS_PAY_AMOUNT');
+      if(debitOrCredit === null) debitOrCredit = (cardTrans.cardTransBillAmount > 0 ? "C" : "D");
+      else {
+        if(debitOrCredit !== (cardTrans.cardTransBillAmount > 0 ? "C" : "D")) 
+          throw new Exception('CARD_TRANS_PAY_MIX');
+      }
+    }
     //Pay
     const transaction = new Transaction();
     let errorTransIds = [];
@@ -149,11 +160,11 @@ class CardTransactionBusiness {
         }
         //Add Transaction
         const result = await transaction.addTransaction({
-          transactionAmount: cardTrans.cardTransBillAmount,
+          transactionAmount: Math.abs(cardTrans.cardTransBillAmount),
           transactionNarrative: 
           `${cardTrans.cardTransDesc} on ${DateHelper.getFullDateFormat(cardTrans.cardTransDate)}`,
           transactionPostingDate: postingDate,
-          transactionCRDR: 'Debit',
+          transactionCRDR: (cardTrans.cardTransBillAmount > 0 ? 'Debit' : 'Credit') ,
           transactionAccount: accountId,
           transactionTypeId: transactionTypeId,
           transactionModule: "CRD",

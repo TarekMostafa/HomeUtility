@@ -32,12 +32,18 @@ function CardTransactionPaymentList(props) {
         CardTransRequest.getCardsTransactions(cardId, undefined, true, false, 0, 1000)
         .then(cardsTrans => {
             setCardTransactions(cardsTrans);
-            setCardPayments([]);
         });
 
     useEffect(()=>{
         loadCards();
     },[])
+
+    useEffect(()=>{
+        let tmpCardPayment = [...cardPayments];
+        tmpCardPayment = tmpCardPayment.filter(pay => 
+            cardTransactions.some(cardTrans=>cardTrans.cardTransId===pay.cardTransId));
+        setCardPayments(tmpCardPayment);
+    },[cardTransactions])
 
     const handleCardChange = (event) => {
         const cardId = event.target.value;
@@ -79,13 +85,22 @@ function CardTransactionPaymentList(props) {
     }
 
     const handlePayClick = () => {
-        if(Number(getTotalSelectedPayment()) === 0) {
+        if(cardPayments.length === 0) {
             setFormData({...formData, message: 'No payment is selected'});
             return;
+        } else if(!cardPayments.every(pay=> pay.cardTransBillAmount < 0) &&
+          !cardPayments.every(pay=> pay.cardTransBillAmount > 0)) {
+            setFormData({...formData, message: 'We Can not process mixed of credit or debit together'});
+            return;    
         } else {
             setFormData({...formData, message: ''});
             setModalShow({name:"Pay"})
         }
+    }
+
+    const handleModalOnHideClick = () => {
+        setModalShow({name:""});
+        loadCardTransactions(formData.cardId);
     }
 
     return (
@@ -133,7 +148,7 @@ function CardTransactionPaymentList(props) {
                 modalShow.name==='Pay' && 
                 <CardTransactionPaymentModal 
                 show={modalShow.name==='Pay'} 
-                onHide={()=>setModalShow({name:""})}
+                onHide={handleModalOnHideClick}
                 onPay={()=>loadCardTransactions(formData.cardId)}
                 cardTransactions={cardPayments}
                 cardId={formData.cardId}
