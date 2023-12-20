@@ -13,7 +13,7 @@ function WealthDepositTotal (props) {
           {
             props.deposits && amountFormatter(props.deposits.reduce( (result, deposit) => {
               if(deposit.status==='ACTIVE') {
-                result += deposit.amount * deposit.currency.currencyRateAgainstBase;
+                result += deposit.amount * deposit.currencyRateAgainstBase;
               }
               return result;
             }, 0), props.decimalPlace) + ' ' + props.baseCurrency

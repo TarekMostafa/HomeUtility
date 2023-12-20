@@ -2,18 +2,54 @@ const CardRepo = require('./cardRepo');
 const Exception = require('../features/exception');
 const sequelize = require('../db/dbConnection').getSequelize();
 
+const CARD_STATUS = {
+  ACTIVE: 'ACTIVE',
+  CLOSED: 'CLOSED'
+}
+
 class CardBusiness {
   async getCards({bank, currency, status}) {
-    return await CardRepo.getCards({bank, currency, status});
+    let cards = await CardRepo.getCards({bank, currency, status});
+    cards = cards.map(card => {
+      return  {
+        cardId: card.cardId,
+        cardNumber: card.cardNumber,
+        cardLimit: card.cardLimit,
+        cardBalance: card.cardBalance,
+        cardStatus: card.cardStatus,
+        cardBank: card.cardBank,
+        cardCurrency: card.cardCurrency,
+        cardStartDate: card.cardStartDate,
+        cardExpiryDate: card.cardExpiryDate,
+        cardLastBalanceUpdate: card.cardLastBalanceUpdate,
+        currencyDecimalPlace: card.currency.currencyDecimalPlace,
+        bankName: card.bank.bankName
+      }
+    });
+    return cards;
   }
 
   async getCard(id) {
-    return await CardRepo.getCard(id);
+    let card = await CardRepo.getCard(id);
+    card = {
+      cardId: card.cardId,
+        cardNumber: card.cardNumber,
+        cardLimit: card.cardLimit,
+        cardBalance: card.cardBalance,
+        cardStatus: card.cardStatus,
+        cardBank: card.cardBank,
+        cardCurrency: card.cardCurrency,
+        cardStartDate: card.cardStartDate,
+        cardExpiryDate: card.cardExpiryDate,
+        cardLastBalanceUpdate: card.cardLastBalanceUpdate,
+        currencyDecimalPlace: card.currency.currencyDecimalPlace,
+    }
+    return card;
   }
 
   async addCard({cardNumber,cardLimit,cardBank, cardCurrency, cardStartDate, 
     cardExpiryDate}) {
-    return await CardRepo.addCard({
+    await CardRepo.addCard({
         cardNumber: cardNumber,
         cardLimit: cardLimit,
         cardBalance: cardLimit,
@@ -29,6 +65,17 @@ class CardBusiness {
   async updateCard(id, {cardLimit, cardStatus, cardStartDate, cardExpiryDate}) {
     var card = await this.getCard(id);
     if(!card) throw new Exception('CARD_NOT_EXIST');
+
+    if (cardStatus === CARD_STATUS.CLOSED){
+      if(cardLimit !== card.cardBalance){
+        throw new Exception('CARD_CLOSE_BALANCE');
+      }
+      cardLimit = 0; 
+    } else if(cardStatus === CARD_STATUS.ACTIVE) {
+      if(cardLimit === 0) {
+        throw new Exception('CARD_ACTIVE_LIMIT');
+      }
+    }
 
     let dbTransaction;
     try {

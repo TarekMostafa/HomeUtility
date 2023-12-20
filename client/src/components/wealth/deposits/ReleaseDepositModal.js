@@ -34,10 +34,10 @@ class ReleaseDepositModal extends Component {
     .then( (deposit) => {
       this.setState({
         reference: deposit.reference,
-        account: deposit.account.accountNumber,
+        account: deposit.accountNumber,
         amount: deposit.amount,
         currency: deposit.currencyCode,
-        decimalPlaces: deposit.currency.currencyDecimalPlace,
+        decimalPlaces: deposit.currencyDecimalPlace,
       });
     })
     .catch( (err) => {

@@ -7,7 +7,8 @@ CurrencyModel.init({
   currencyName: Sequelize.STRING(45),
   currencyActive: Sequelize.ENUM('YES', 'NO'),
   currencyRateAgainstBase: Sequelize.DECIMAL(18, 7),
-  currencyDecimalPlace: Sequelize.TINYINT
+  currencyDecimalPlace: Sequelize.TINYINT,
+  currencyManualRateAgainstBase: Sequelize.DECIMAL(18, 7),
 }, {
   tableName: 'currencies',
   createdAt: false,

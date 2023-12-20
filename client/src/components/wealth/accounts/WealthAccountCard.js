@@ -15,7 +15,7 @@ function WealthAccountCard(props) {
                     <tbody>
                         <tr>
                             <td>{account.accountNumber}</td>
-                            <td className="text-right"><strong>{amountFormatter(account.accountCurrentBalance, account.currency.currencyDecimalPlace)} {account.accountCurrency}</strong></td>
+                            <td className="text-right"><strong>{amountFormatter(account.accountCurrentBalance, account.currencyDecimalPlace)} {account.accountCurrency}</strong></td>
                         </tr>
                     </tbody>
                 </Table>
@@ -25,7 +25,7 @@ function WealthAccountCard(props) {
                     <Table size="sm" responsive="sm" borderless>
                         <tbody>
                             <tr>
-                                <td>{account.bank.bankName}</td>
+                                <td>{account.bankName}</td>
                                 <td className="text-right"><Badge variant={account.accountStatus==="CLOSED"?"warning":"success"}>{account.accountStatus}</Badge></td>
                             </tr>
                         </tbody>
@@ -35,11 +35,11 @@ function WealthAccountCard(props) {
                     <tbody>
                         <tr>
                             <td>Start Balance:</td>
-                            <td className="text-right">{amountFormatter(account.accountStartBalance, account.currency.currencyDecimalPlace)} {account.accountCurrency}</td>
+                            <td className="text-right">{amountFormatter(account.accountStartBalance, account.currencyDecimalPlace)} {account.accountCurrency}</td>
                         </tr>
                         <tr>
                             <td>Equivalent Balance:</td>
-                            <td className="text-right">{amountFormatter(account.accountCurrentBalance * account.currency.currencyRateAgainstBase,
+                            <td className="text-right">{amountFormatter(account.accountCurrentBalance * account.currencyRateAgainstBase,
                                                 props.appSettings.currency.currencyDecimalPlace)} {props.appSettings.baseCurrency}</td>
                         </tr>
                         <tr>

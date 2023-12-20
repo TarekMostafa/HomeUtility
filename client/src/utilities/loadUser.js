@@ -2,7 +2,7 @@ import interceptor from '../axios/Interceptor';
 import store from '../store/store';
 import { getTransactionTypes, getAccounts, getBanks, getActiveCurrencies,
   getAppSettings, getAccountStatuses, getRelatedTypes, getBillStatuses, 
-  getBillFrequencies, getBills, getExpenseTypes} 
+  getBillFrequencies, getBills, getExpenseTypes, getCurrencies} 
   from '../store/actions/lookupsAction';
 import { setUser } from '../store/actions/authActions';
 
@@ -13,6 +13,7 @@ export default (user) => {
   store.dispatch(getAccounts());
   store.dispatch(getBanks());
   store.dispatch(getActiveCurrencies());
+  store.dispatch(getCurrencies());
   store.dispatch(getAppSettings());
   store.dispatch(getAccountStatuses());
   store.dispatch(getBillStatuses());

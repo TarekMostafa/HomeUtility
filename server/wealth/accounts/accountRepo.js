@@ -18,7 +18,8 @@ class AccountRepo {
     return await AccountModel.findAll({
       include: [
         { model: BankModel, as: 'bank', attributes: ['bankName'] },
-        { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 'currencyDecimalPlace'] }
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 
+          'currencyDecimalPlace', 'currencyManualRateAgainstBase'] }
       ],
       where: whereQuery
     });

@@ -1,16 +1,12 @@
 const express = require('express');
-const RelatedType = require('./relatedType');
+const RelatedTypeBusiness = require('./relatedTypeBusiness');
 
 const router = express.Router();
-const relatedType = new RelatedType();
+const relatedTypeBusiness = new RelatedTypeBusiness();
 
 router.get('/', function(req, res, next) {
-  relatedType.getRelatedTypes().then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+  relatedTypeBusiness.getRelatedTypes().then( result => {
+    res.json(result);
   }).catch( err => {
     next(err);
   })

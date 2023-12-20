@@ -58,6 +58,11 @@ function CardTransactionDeleteModal(props) {
         {
           cardTransaction && 
           <form>
+            <Form.Group controlId="payForOthers">
+              <Form.Check name="payForOthers" type="checkbox" label="Pay for others" 
+              checked={cardTransaction.cardTransPayForOthers}>
+            </Form.Check>
+            </Form.Group>
             <Form.Group controlId="cardId">
               <Form.Label>Card</Form.Label>
               <Form.Control as="select" name="cardId" readOnly
@@ -71,7 +76,7 @@ function CardTransactionDeleteModal(props) {
               <Form.Control as="select" name="transCurrency" readOnly
                 value={cardTransaction.cardTransCurrency}>
                 <option value=''></option>
-                <CurrenciesDropDown />
+                <CurrenciesDropDown status={''}/>
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="transAmount">
@@ -79,7 +84,7 @@ function CardTransactionDeleteModal(props) {
               <Form.Control type="number" maxLength={20}
               name="transAmount"
               value={Number(cardTransaction.cardTransAmount)
-                .toFixed(cardTransaction.currency.currencyDecimalPlace)}
+                .toFixed(cardTransaction.currencyDecimalPlace)}
                 readOnly/>
             </Form.Group>
             <Form.Group controlId="transDate">
@@ -100,11 +105,11 @@ function CardTransactionDeleteModal(props) {
                 <Form.Control type="number" maxLength={20}
                 name="billAmount"
                 value={Number(cardTransaction.cardTransBillAmount)
-                  .toFixed(cardTransaction.card.currency.currencyDecimalPlace)}
+                  .toFixed(cardTransaction.cardCurrencyDecimalPlace)}
                   readOnly/>
                 <InputGroup.Prepend>
                   <InputGroup.Text id="inputGroupPrepend">
-                    {cardTransaction.card.cardCurrency}
+                    {cardTransaction.cardCurrency}
                   </InputGroup.Text>
                 </InputGroup.Prepend>
               </InputGroup>

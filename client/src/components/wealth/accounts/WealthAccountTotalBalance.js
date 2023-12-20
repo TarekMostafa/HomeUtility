@@ -25,7 +25,7 @@ function WealthAccountTotalBalance (props) {
           Total Current Balance: <strong>
           {
             props.accounts && amountFormatter(props.accounts.reduce( (result, account) => {
-              result += account.accountCurrentBalance * account.currency.currencyRateAgainstBase
+              result += account.accountCurrentBalance * account.currencyRateAgainstBase
               return result;
             }, 0), props.decimalPlace) + ' ' + props.baseCurrency
           } </strong>

@@ -32,7 +32,8 @@ class CurrencyList extends Component {
           <CurrencyAddForm onAddCurrency={this.handleAddCurrency}/>
         </FormContainer>
         <FormContainer>
-          <CurrencyTable currencies={this.props.activeCurrencies} onDeactivate={this.handleDeactivate}/>
+          <CurrencyTable currencies={this.props.activeCurrencies} onDeactivate={this.handleDeactivate}
+          onUpdate={this.handleAddCurrency}/>
         </FormContainer>
         <FormContainer title="Inactive Currencies" />
         <FormContainer>

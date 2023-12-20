@@ -21,7 +21,8 @@ const initialState = {
     transDate: "",
     transDesc: "",
     billAmount: 0,
-    instId: ""
+    instId: "",
+    payForOthers: 0
 }
 
 function CardTransactionEditModal(props) {
@@ -35,13 +36,14 @@ function CardTransactionEditModal(props) {
             if(cardTrans) setFormData({
                 ...formData,
                 transCurrency: cardTrans.cardTransCurrency,
-                decimalPlaces: cardTrans.currency.currencyDecimalPlace,
+                decimalPlaces: cardTrans.currencyDecimalPlace,
                 transAmount: cardTrans.cardTransAmount,
                 transDate: cardTrans.cardTransDate,
                 transDesc: cardTrans.cardTransDesc,
                 billAmount: cardTrans.cardTransBillAmount,
                 instId: cardTrans.cardTransInstallmentId? 
-                  cardTrans.cardTransInstallmentId:""
+                  cardTrans.cardTransInstallmentId:"",
+                payForOthers: cardTrans.cardTransPayForOthers
             });
         });
 
@@ -80,7 +82,7 @@ function CardTransactionEditModal(props) {
       // update new card transaction
       CardTransRequest.updateCardTransaction(cardTransaction.cardTransId, formData.transCurrency,
         formData.transAmount, formData.transDate, formData.transDesc, formData.billAmount, 
-        formData.instId)
+        formData.instId, formData.payForOthers)
       .then( () => {
           if (typeof props.onSave=== 'function') {
               props.onSave();
@@ -96,7 +98,7 @@ function CardTransactionEditModal(props) {
     const handleChange = (event) => {
         setFormData({
           ...formData,
-          [event.target.name] : event.target.value
+          [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value)
         });
     }
 
@@ -128,6 +130,12 @@ function CardTransactionEditModal(props) {
         {
           cardTransaction && 
           <form>
+          <Form.Group controlId="payForOthers">
+            <Form.Check name="payForOthers" type="checkbox" label="Pay for others" 
+            checked={formData.payForOthers} 
+            onChange={handleChange}>
+            </Form.Check>
+          </Form.Group>
           <Form.Group controlId="cardId">
             <Form.Label>Card</Form.Label>
             <Form.Control as="select" name="cardId" readOnly
@@ -141,7 +149,7 @@ function CardTransactionEditModal(props) {
             <Form.Control as="select" name="transCurrency" onChange={handleCurrencyChange}
             value={formData.transCurrency}>
               <option value=''></option>
-              <CurrenciesDropDown />
+              <CurrenciesDropDown status={''}/>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="transAmount">
@@ -167,11 +175,11 @@ function CardTransactionEditModal(props) {
               <Form.Control type="number" maxLength={20}
               name="billAmount"
               value={Number(formData.billAmount)
-                  .toFixed(cardTransaction.card.currency.currencyDecimalPlace)}
+                  .toFixed(cardTransaction.cardCurrencyDecimalPlace)}
               onChange={handleChange}/>
               <InputGroup.Prepend>
                 <InputGroup.Text id="inputGroupPrepend">
-                    {cardTransaction.card.cardCurrency}
+                    {cardTransaction.cardCurrency}
                 </InputGroup.Text>
               </InputGroup.Prepend>
             </InputGroup>

@@ -14,9 +14,14 @@ class CurrencyRequest {
     return await axios.post('/api/currencies/', {
       currencyCode: code,
       currencyName: name,
-      currencyActive: 'YES',
-      currencyRateAgainstBase: '1',
       currencyDecimalPlace: decimalPlace,
+    });
+  }
+
+  static async updateCurrency(code, manualRate) {
+    return await axios.put('/api/currencies/', {
+      code,
+      manualRate,
     });
   }
 

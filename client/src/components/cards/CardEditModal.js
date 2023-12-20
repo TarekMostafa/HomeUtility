@@ -34,7 +34,8 @@ function CardEditModal(props) {
                 cardLimit: card.cardLimit,
                 cardStartDate: card.cardStartDate,
                 cardExpiryDate: card.cardExpiryDate,
-                cardStatus: card.cardStatus
+                cardStatus: card.cardStatus,
+                message: ''
             });
         });
 

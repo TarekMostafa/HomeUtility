@@ -27,7 +27,7 @@ function CardInstallmentPostModal(props) {
         .then(  cardInst => {
           setCardInstallment(cardInst);
             let tmpTransAmt = Number(cardInst.cInstPrice / cardInst.cInstNoOfInst)
-              .toFixed(cardInst.currency.currencyDecimalPlace);
+              .toFixed(cardInst.currencyDecimalPlace);
             let diff = cardInst.cInstPrice - cardInst.cInstPosted;
             if(tmpTransAmt > diff) tmpTransAmt= diff;
             if(cardInst) setFormData({
@@ -108,7 +108,7 @@ function CardInstallmentPostModal(props) {
               <InputGroup>
                 <Form.Control type="number" maxLength={20}
                 name="transAmt"
-                value={Number(formData.transAmt).toFixed(cardInstallment.currency.currencyDecimalPlace)}
+                value={Number(formData.transAmt).toFixed(cardInstallment.currencyDecimalPlace)}
                 onChange={handleChange}/>
                 <InputGroup.Prepend>
                   <InputGroup.Text id="inputGroupPrepend">{cardInstallment.cInstCurrency}</InputGroup.Text>

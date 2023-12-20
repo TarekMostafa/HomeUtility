@@ -13,6 +13,7 @@ function CurrencyTable (props) {
           <th>Name</th>
           <th>Rate</th>
           <th>Decimal Place</th>
+          <th>Manual Rate</th>
           <th></th>
         </tr>
       </thead>

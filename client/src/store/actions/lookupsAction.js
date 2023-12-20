@@ -87,6 +87,14 @@ export const getActiveCurrencies = () => {
   }
 }
 
+export const getCurrencies = () => {
+  return (dispatch, getState) => {
+    CurrencyRequest.getCurrencies()
+    .then( (currencies) => dispatch({type: "SET_CURRENCIES", data: currencies}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
+
 export const getRelatedTypes = () => {
   return (dispatch, getState) => {
     RelatedTypeRequest.getRelatedTypes()

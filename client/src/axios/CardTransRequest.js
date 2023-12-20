@@ -1,10 +1,12 @@
 import axios from 'axios';
 
 class CardTransRequest {
-  static async getCardsTransactions(cardId, cardInstId, cardPayment, cardIsPaid, skip, limit) {
+  static async getCardsTransactions(cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
+    description, includeDescription, transDateFrom, transDateTo) {
     const response = await axios.get('/api/cardTrans', {
         params: {
-            cardId, cardInstId, cardPayment, cardIsPaid, skip, limit
+            cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
+            description, includeDescription, transDateFrom, transDateTo
         }
       });
     return response.data;
@@ -16,16 +18,16 @@ class CardTransRequest {
   }
 
   static async addCardTransaction(cardId, transCurrency, transAmount, transDate, 
-    transDesc, billAmount, instId) {
+    transDesc, billAmount, instId, payForOthers) {
     return await axios.post('/api/cardTrans', {
-      cardId, transCurrency, transAmount, transDate, transDesc, billAmount, instId
+      cardId, transCurrency, transAmount, transDate, transDesc, billAmount, instId, payForOthers
     });
   }
 
   static async updateCardTransaction(cardTransId, transCurrency, transAmount, transDate, 
-    transDesc, billAmount, instId) {
+    transDesc, billAmount, instId, payForOthers) {
     return await axios.put('/api/cardTrans/'+cardTransId, {
-      transCurrency, transAmount, transDate, transDesc, billAmount, instId
+      transCurrency, transAmount, transDate, transDesc, billAmount, instId, payForOthers
     });
   }
 

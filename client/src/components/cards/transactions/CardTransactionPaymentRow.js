@@ -18,7 +18,7 @@ function CardTransactionPaymentRow (props) {
         <tr key={trans.cardTransId}>
             <td>{props.index+1}</td>
             <td className="text-right">
-                {amountFormatter(trans.cardTransAmount, trans.currency.currencyDecimalPlace)}
+                {amountFormatter(trans.cardTransAmount, trans.currencyDecimalPlace)}
             </td>
             <td>{trans.cardTransCurrency}</td>
             <td>
@@ -26,7 +26,7 @@ function CardTransactionPaymentRow (props) {
             </td>
             <td>{trans.cardTransDesc}</td>
             <td className="text-right">
-                {amountFormatter(trans.cardTransBillAmount, trans.card.currency.currencyDecimalPlace)}
+                {amountFormatter(trans.cardTransBillAmount, trans.cardCurrencyDecimalPlace)}
             </td>
             <td>{trans.cardTransIsInstallment?'YES':'NO'}</td>
             <td>{trans.cardTransId}</td>

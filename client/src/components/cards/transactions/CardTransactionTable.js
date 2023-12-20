@@ -3,6 +3,7 @@ import { Table, Dropdown, DropdownButton, OverlayTrigger, Tooltip } from 'react-
 import moment from 'moment';
 
 import amountFormatter from '../../../utilities/amountFormatter';
+import cardNumberFormatter from '../../../utilities/cardNumberFormatter';
 
 function CardTransactionTable (props) {
   return (
@@ -15,9 +16,10 @@ function CardTransactionTable (props) {
           <th>Trans Currency</th>
           <th>Trans Date</th>
           <th>Trans Desc</th>
+          <th>Pay For Others?</th>
           <th>Bill Amount</th>
           <th>Bill Date</th>
-          <th>Is Installment?</th>
+          <th>Is Instal.?</th>
           <th>Is Paid?</th>
           <th>Id</th>
           <th></th>
@@ -25,7 +27,8 @@ function CardTransactionTable (props) {
       </thead>
       <tbody>
         {props.cardsTransactions && props.cardsTransactions.map( (trans, index) => {
-          const cardInfo = `${trans.card.cardNumber} - ${trans.card.bank.bankName} - ${trans.card.cardCurrency}`;
+          const cardInfo = `${cardNumberFormatter(trans.cardNumber)} 
+                          - ${trans.bankName} - ${trans.cardCurrency}`;
           return (
             <tr key={trans.cardTransId}>
               <td>{index+1}</td>
@@ -40,7 +43,7 @@ function CardTransactionTable (props) {
                 </OverlayTrigger>
               </td>
               <td className="text-right">
-                {amountFormatter(trans.cardTransAmount, trans.currency.currencyDecimalPlace)}
+                {amountFormatter(trans.cardTransAmount, trans.currencyDecimalPlace)}
               </td>
               <td>{trans.cardTransCurrency}</td>
               <td>
@@ -56,8 +59,9 @@ function CardTransactionTable (props) {
                   </span>
                 </OverlayTrigger>
               </td>
+              <td>{trans.cardTransPayForOthers?'YES':'NO'}</td>
               <td className="text-right">
-                {amountFormatter(trans.cardTransBillAmount, trans.card.currency.currencyDecimalPlace)}
+                {amountFormatter(trans.cardTransBillAmount, trans.cardCurrencyDecimalPlace)}
               </td>
               <td>
                 {

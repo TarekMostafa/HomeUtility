@@ -9,6 +9,7 @@ const initState = {
   billStatuses: null,
   billFrequencies: null,
   bills: null,
+  currencies: null,
 }
 
 const lookupReducer = (state=initState, action) => {
@@ -48,6 +49,11 @@ const lookupReducer = (state=initState, action) => {
         ...state,
         activeCurrencies: action.data
       };
+    case 'SET_CURRENCIES':
+      return {
+        ...state,
+        currencies: action.data
+      }
     case 'SET_ACCOUNT_STATUSES':
       return {
         ...state,

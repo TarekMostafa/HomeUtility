@@ -1,5 +1,7 @@
 import React from 'react';
 
+import cardNumberFormatter from '../../utilities/cardNumberFormatter';
+
 function CardsDropDown(props){
     let { cards } = props;
     if(cards) {
@@ -13,8 +15,8 @@ function CardsDropDown(props){
             cards && cards.map(card=> (
                 <option key={card.cardId} value={card.cardId} 
                     currencycode={card.cardCurrency}
-                    decimalplaces={card.currency.currencyDecimalPlace}>
-                    {`${card.cardNumber} - ${card.bank.bankName} - ${card.cardCurrency}`}
+                    decimalplaces={card.currencyDecimalPlace}>
+                    {`${cardNumberFormatter(card.cardNumber)} - ${card.bankName} - ${card.cardCurrency}`}
                 </option>
             ))
         }

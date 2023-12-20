@@ -11,19 +11,67 @@ const DateHelper = require('../../helper/DateHelper');
 const Common = require('../../utilities/common');
 
 class CardTransactionBusiness {
-  async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid, skip, limit}) {
+  async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
+    description, includeDescription, transDateFrom, transDateTo}) {
     limit = Common.getNumber(limit, 10);
     skip = Common.getNumber(skip, 0);
-    return await CardTransactionRepo.getCardsTransactions({
-      cardId, cardInstId, cardPayment, cardIsPaid, skip, limit});
+    let cardTransactions = await CardTransactionRepo.getCardsTransactions({
+      cardId, cardInstId, cardPayment, cardIsPaid, skip, limit, 
+      description, includeDescription, transDateFrom, transDateTo});
+      cardTransactions = cardTransactions.map(trans =>{
+        return {
+          cardTransId: trans.cardTransId,
+          cardId: trans.cardId,
+          cardTransAmount: trans.cardTransAmount,
+          cardTransCurrency: trans.cardTransCurrency,
+          cardTransDate: trans.cardTransDate,
+          cardTransDesc: trans.cardTransDesc,
+          cardTransBillAmount: trans.cardTransBillAmount,
+          cardTransBillDate: trans.cardTransBillDate,
+          cardTransIsInstallment: trans.cardTransIsInstallment,
+          cardTransAccountTransId: trans.cardTransAccountTransId,
+          cardTransInstallmentId: trans.cardTransInstallmentId,
+          cardTransIsPaid: trans.cardTransIsPaid,
+          cardTransPayForOthers: trans.cardTransPayForOthers,
+          currencyDecimalPlace: trans.currency.currencyDecimalPlace,
+          cardNumber: trans.card.cardNumber,
+          cardBank: trans.card.cardBank,
+          cardCurrency: trans.card.cardCurrency,
+          bankName: trans.card.bank.bankName,
+          cardCurrencyDecimalPlace: trans.card.currency.currencyDecimalPlace
+        }
+      });
+    return cardTransactions
   }
 
   async getCardTransaction(id) {
-    return await CardTransactionRepo.getCardTransaction(id);
+    let trans = await CardTransactionRepo.getCardTransaction(id);
+    trans = {
+      cardTransId: trans.cardTransId,
+      cardId: trans.cardId,
+      cardTransAmount: trans.cardTransAmount,
+      cardTransCurrency: trans.cardTransCurrency,
+      cardTransDate: trans.cardTransDate,
+      cardTransDesc: trans.cardTransDesc,
+      cardTransBillAmount: trans.cardTransBillAmount,
+      cardTransBillDate: trans.cardTransBillDate,
+      cardTransIsInstallment: trans.cardTransIsInstallment,
+      cardTransAccountTransId: trans.cardTransAccountTransId,
+      cardTransInstallmentId: trans.cardTransInstallmentId,
+      cardTransIsPaid: trans.cardTransIsPaid,
+      cardTransPayForOthers: trans.cardTransPayForOthers,
+      currencyDecimalPlace: trans.currency.currencyDecimalPlace,
+      cardNumber: trans.card.cardNumber,
+      cardBank: trans.card.cardBank,
+      cardCurrency: trans.card.cardCurrency,
+      bankName: trans.card.bank.bankName,
+      cardCurrencyDecimalPlace: trans.card.currency.currencyDecimalPlace
+    };
+    return trans;
   }
 
   async addCardTransaction({cardId, transCurrency, transAmount, transDate, 
-    transDesc, billAmount, instId}) {
+    transDesc, billAmount, instId, payForOthers}) {
     var card = await CardRepo.getCard(cardId);
     if(!card) throw new Exception('CARD_NOT_EXIST');
     
@@ -41,7 +89,8 @@ class CardTransactionBusiness {
         cardTransIsInstallment: false,
         cardTransAccountTransId: null,
         cardTransInstallmentId: instId?instId:null,
-        cardTransIsPaid: false
+        cardTransIsPaid: false,
+        cardTransPayForOthers: payForOthers
       }, dbTransaction);
       await CardRepo.updateCardBalance(cardId, billAmount * -1, dbTransaction);
       await dbTransaction.commit();
@@ -53,7 +102,7 @@ class CardTransactionBusiness {
   }
 
   async updateCardTransaction(cardTransId, {transCurrency, transAmount, transDate, 
-    transDesc, billAmount, instId}) {
+    transDesc, billAmount, instId, payForOthers}) {
     var cardTrans = await this.getCardTransaction(cardTransId);
     if(!cardTrans) throw new Exception('CARD_TRANS_NOT_EXIST');
 
@@ -70,6 +119,7 @@ class CardTransactionBusiness {
       cardTrans.cardTransDesc = transDesc;
       cardTrans.cardTransBillAmount = billAmount;
       cardTrans.cardTransInstallmentId = instId?instId:null;
+      cardTrans.cardTransPayForOthers = payForOthers;
       await cardTrans.save({transaction: dbTransaction});
       await dbTransaction.commit();
     } catch (err) {
@@ -118,7 +168,8 @@ class CardTransactionBusiness {
     //Check card transactions Ids 
     let cardTranses = [];
     for(let id of cardTransIds) {
-      const cardTrans = await this.getCardTransaction(id);
+      //const cardTrans = await this.getCardTransaction(id);
+      const cardTrans = await CardTransactionRepo.getCardTransaction(id);
       if(!cardTrans) throw new Exception('CARD_TRANS_INVALID');
       if(!cardTrans.cardTransIsPaid) cardTranses.push(cardTrans);
     }

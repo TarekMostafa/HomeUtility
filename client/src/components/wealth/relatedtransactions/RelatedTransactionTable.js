@@ -23,7 +23,7 @@ function RelatedTransactionTable (props) {
               <td>{index+1}</td>
               <td>
                 {
-                  relatedTransactions.relatedType.typeDescription +
+                  relatedTransactions.typeDescription +
                   ' (' + relatedTransactions.relatedTransactionType + ')'
                 }
               </td>

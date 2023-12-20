@@ -27,17 +27,17 @@ function WealthAccountTable (props) {
           return (
             <tr key={account.accountId} className={account.accountStatus==="CLOSED"?"table-danger":""}>
               <td>{index+1}</td>
-              <td>{account.bank.bankName}</td>
+              <td>{account.bankName}</td>
               <td>{account.accountNumber}</td>
               <td>{account.accountCurrency}</td>
               <td className="text-right">
-                {amountFormatter(account.accountStartBalance, account.currency.currencyDecimalPlace)}
+                {amountFormatter(account.accountStartBalance, account.currencyDecimalPlace)}
               </td>
               <td className="text-right">
-                {amountFormatter(account.accountCurrentBalance, account.currency.currencyDecimalPlace)}
+                {amountFormatter(account.accountCurrentBalance, account.currencyDecimalPlace)}
               </td>
               <td className="text-right">
-                {amountFormatter(account.accountCurrentBalance * account.currency.currencyRateAgainstBase,
+                {amountFormatter(account.accountCurrentBalance * account.currencyRateAgainstBase,
                 props.appSettings.currency.currencyDecimalPlace)}
               </td>
               <td>{account.accountStatus}</td>

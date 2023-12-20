@@ -12,7 +12,7 @@ function EditDeleteButton(props){
             {
               props.isLoading?
               <Spinner as="span" animation="border" size="sm" role="status"
-              aria-hidden="true"/> : 'Update'
+              aria-hidden="true"/> : props.confirmEditLabel
             }
           </Button>{' '}
           <Button variant="secondary" size="sm" onClick={props.onCancelClick} disabled={props.disabled}>
@@ -27,7 +27,7 @@ function EditDeleteButton(props){
             {
               props.isLoading?
               <Spinner as="span" animation="border" size="sm" role="status"
-              aria-hidden="true"/> : 'Confirm Deletion'
+              aria-hidden="true"/> : props.confirmDeleteLabel
             }
           </Button>{' '}
           <Button variant="secondary" size="sm" onClick={props.onCancelClick} disabled={props.disabled}>
@@ -39,10 +39,10 @@ function EditDeleteButton(props){
         props.mode === 'None' &&
         <React.Fragment>
           <Button variant="primary" size="sm" onClick={props.onEditClick} disabled={props.disabled}>
-          Edit
+          {props.editLabel}
           </Button>{' '}
           <Button variant="danger" size="sm" onClick={props.onDeleteClick} disabled={props.disabled}>
-          Delete
+          {props.deleteLabel}
           </Button>
         </React.Fragment>
       }
@@ -56,13 +56,22 @@ EditDeleteButton.propTypes = {
   onCancelClick: PropTypes.func,
   disabled: PropTypes.bool,
   isLoading: PropTypes.bool,
-  mode: PropTypes.oneOf(['None', 'Edit', 'Delete'])
+  mode: PropTypes.oneOf(['None', 'Edit', 'Delete']),
+  editLabel: PropTypes.string,
+  deleteLabel: PropTypes.string,
+  confirmEditLabel: PropTypes.string,
+  confirmDeleteLabel: PropTypes.string,
 }
 
 EditDeleteButton.defaultProps = {
   disabled: false,
   isLoading: false,
-  mode: 'None'
+  mode: 'None',
+  editLabel: 'Edit',
+  deleteLabel: 'Delete',
+  confirmEditLabel: 'Update',
+  confirmDeleteLabel: 'Confirm Deletion'
+
 }
 
 export default EditDeleteButton;

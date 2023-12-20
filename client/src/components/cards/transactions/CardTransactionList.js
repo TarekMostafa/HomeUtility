@@ -1,5 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
+import 'moment/locale/en-gb.js';
+import { DatePickerInput } from 'rc-datepicker';
+import 'rc-datepicker/lib/style.css';
 
 import FormContainer from '../../common/FormContainer';
 import TableLimiterDropDown from '../../common/TableLimiterDropDown';
@@ -17,7 +20,11 @@ import CardInstRequest from '../../../axios/CardInstRequest';
 const initialState = {
     cardId: "",
     cardInstId: "",
-    limit: 10
+    limit: 10,
+    description: '',
+    includeDescription: true,
+    transDateFrom: '',
+    transDateTo: '',
 }
 
 function CardTransactionList(props) {
@@ -40,7 +47,11 @@ function CardTransactionList(props) {
             undefined, 
             undefined, 
             append?cardsTransactions.length:0, 
-            formData.limit)
+            formData.limit,
+            formData.description,
+            formData.includeDescription,
+            formData.transDateFrom,
+            formData.transDateTo)
         .then(cardsTrans => {
             setCardsTransactions(
                 append? [...cardsTransactions, ...cardsTrans] : cardsTrans
@@ -67,7 +78,7 @@ function CardTransactionList(props) {
     const handleChange = (event) => {
         setFormData({
             ...formData,
-            [event.target.name] : event.target.value
+            [event.target.name] : (event.target.type==='checkbox' ? event.target.checked : event.target.value)
           })
     }
 
@@ -90,6 +101,20 @@ function CardTransactionList(props) {
 
     const handleMoreClick = () => {
         loadCardsTransactions(true);
+    }
+
+    const handleTransDateFromChange = (jsDate, date) => {
+        setFormData({
+            ...formData,
+            transDateFrom: date
+        });
+    }
+    
+    const handleTransDateToChange = (jsDate, date) => {
+        setFormData({
+            ...formData,
+            transDateTo: date
+        });
     }
 
     return (
@@ -116,12 +141,35 @@ function CardTransactionList(props) {
                             cardId={formData.cardId}/>
                         </Form.Control>
                     </Col>
+                    <Col>
+                        <DatePickerInput value={formData.transDateFrom}
+                        onChange={handleTransDateFromChange} readOnly 
+                        placeholder="Transaction Date From" small/>
+                    </Col>
+                    <Col>
+                        <DatePickerInput value={formData.transDateTo}
+                        onChange={handleTransDateToChange} readOnly 
+                        placeholder="Transaction Date To" small/>
+                    </Col>
+                    </Row>
+                    <br />
+                    <Row>
+                    <Col xs={6}>
+                        <InputGroup className="mb-3">
+                            <InputGroup.Prepend>
+                            <InputGroup.Checkbox name="includeDescription"
+                                checked={formData.includeDescription} onChange={handleChange}/>
+                            </InputGroup.Prepend>
+                            <Form.Control type="input" placeholder="description" size="sm" name="description"
+                                onChange={handleChange} value={formData.description}/>
+                        </InputGroup>
+                    </Col> 
                     <Col xs={2}>
                         <Form.Control as="select" size="sm" name="limit" onChange={handleChange}
                             value={formData.limit}>
                             <TableLimiterDropDown />
                         </Form.Control>
-                    </Col>
+                    </Col>   
                     <Col xs={1}>
                         <Button variant="primary" size="sm" block onClick={handleListClick}>
                             List</Button>

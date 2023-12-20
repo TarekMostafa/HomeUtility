@@ -1,76 +1,57 @@
 const express = require('express');
-const Deposit = require('./deposit');
+const DepositBusiness = require('./depositBusiness');
+const Exception = require('../../features/exception');
 
 const router = express.Router();
-const deposit = new Deposit();
+const depositBusiness = new DepositBusiness();
 
 router.get('/', function(req, res, next) {
-  deposit.getDeposits(req.query).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+  depositBusiness.getDeposits(req.query).then( result => {
+    res.json(result);
   }).catch( err => {
     next(err);
   })
 });
 
 router.get('/:id', function(req, res, next) {
-  deposit.getDeposit(req.params.id).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+  depositBusiness.getDeposit(req.params.id).then( result => {
+    res.json(result);
   }).catch( err => {
     next(err);
   })
 });
 
 router.post('/', function(req, res, next) {
-  deposit.addNewDeposit(req.body).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  depositBusiness.addNewDeposit(req.body).then( result => {
+    res.messageCode = 'DEP_ADD_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
 });
 
 router.delete('/:id', function(req, res, next) {
-  deposit.deleteDeposit(req.params.id).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  depositBusiness.deleteDeposit(req.params.id).then( result => {
+    res.messageCode = 'DEP_DELETE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
 });
 
 router.post('/interest/:id', function(req, res, next) {
-  deposit.addDepositInterest(req.params.id, req.body).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  depositBusiness.addDepositInterest(req.params.id, req.body).then( result => {
+    res.messageCode = 'DEP_INT_ADD_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
 });
 
 router.post('/release/:id', function(req, res, next) {
-  deposit.releaseDeposit(req.params.id, req.body).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  depositBusiness.releaseDeposit(req.params.id, req.body).then( result => {
+    res.messageCode = 'DEP_REL_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })

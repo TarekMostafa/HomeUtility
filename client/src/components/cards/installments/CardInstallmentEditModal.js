@@ -115,7 +115,7 @@ function CardInstallmentEditModal(props) {
               <InputGroup>
                 <Form.Control type="number" maxLength={20}
                 name="price"
-                value={Number(cardInstallment.cInstPrice).toFixed(cardInstallment.currency.currencyDecimalPlace)}
+                value={Number(cardInstallment.cInstPrice).toFixed(cardInstallment.currencyDecimalPlace)}
                 readOnly/>
                 <InputGroup.Prepend>
                   <InputGroup.Text id="inputGroupPrepend">{cardInstallment.cInstCurrency}</InputGroup.Text>

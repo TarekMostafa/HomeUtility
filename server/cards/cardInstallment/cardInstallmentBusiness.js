@@ -6,11 +6,47 @@ const CardTransactionRepo = require('../cardTransaction/cardTransactionRepo');
 
 class CardInstallmentBusiness {
   async getCardsInstallments({cardId}) {
-    return await CardInstallmentRepo.getCardsInstallments({cardId});
+    let cardInstallments = await CardInstallmentRepo.getCardsInstallments({cardId});
+    cardInstallments = cardInstallments.map(inst => {
+      return { 
+        cInstId: inst.cInstId,
+        cardId: inst.cardId,
+        cInstCurrency: inst.cInstCurrency,
+        cInstItemDesc: inst.cInstItemDesc,
+        cInstPurchaseDate: inst.cInstPurchaseDate,
+        cInstFirstInstDate: inst.cInstFirstInstDate,
+        cInstNoOfInst: inst.cInstNoOfInst,
+        cInstPrice: inst.cInstPrice,
+        cInstNoOfPostedInst: inst.cInstNoOfPostedInst,
+        cInstPosted: inst.cInstPosted,
+        cInstRelTransId: inst.cInstRelTransId,
+        cInstStatus: inst.cInstStatus,
+        currencyDecimalPlace: inst.currency.currencyDecimalPlace,
+        cardNumber: inst.card.cardNumber,
+      }
+    });
+    return cardInstallments;
   }
 
   async getCardInstallment(id) {
-    return await CardInstallmentRepo.getCardInstallment(id);
+    let cardInstallment = await CardInstallmentRepo.getCardInstallment(id);
+    cardInstallment = {
+      cInstId: cardInstallment.cInstId,
+      cardId: cardInstallment.cardId,
+      cInstCurrency: cardInstallment.cInstCurrency,
+      cInstItemDesc: cardInstallment.cInstItemDesc,
+      cInstPurchaseDate: cardInstallment.cInstPurchaseDate,
+      cInstFirstInstDate: cardInstallment.cInstFirstInstDate,
+      cInstNoOfInst: cardInstallment.cInstNoOfInst,
+      cInstPrice: cardInstallment.cInstPrice,
+      cInstNoOfPostedInst: cardInstallment.cInstNoOfPostedInst,
+      cInstPosted: cardInstallment.cInstPosted,
+      cInstRelTransId: cardInstallment.cInstRelTransId,
+      cInstStatus: cardInstallment.cInstStatus,
+      currencyDecimalPlace: cardInstallment.currency.currencyDecimalPlace,
+      cardNumber: cardInstallment.card.cardNumber,
+    };
+    return cardInstallment;
   }
 
   async addCardInstallment({cardId, itemDesc, purchaseDate, noOfInst, price}) {
@@ -43,7 +79,8 @@ class CardInstallmentBusiness {
   }
 
   async updateCardInstallment(cardInstId, {itemDesc, purchaseDate, noOfInst}) {
-    var cardInst = await this.getCardInstallment(cardInstId);
+    //var cardInst = await this.getCardInstallment(cardInstId);
+    let cardInst = await CardInstallmentRepo.getCardInstallment(cardInstId);
     if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
 
     if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
@@ -51,11 +88,12 @@ class CardInstallmentBusiness {
     cardInst.cInstItemDesc = itemDesc;
     cardInst.cInstPurchaseDate = purchaseDate;
     cardInst.cInstNoOfInst = noOfInst;
-    return await cardInst.save();
+    await cardInst.save();
   }
 
   async deleteCardInstallment(cardInstId) {
-    var cardInst = await this.getCardInstallment(cardInstId);
+    //var cardInst = await this.getCardInstallment(cardInstId);
+    let cardInst = await CardInstallmentRepo.getCardInstallment(cardInstId);
     if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
 
     if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
@@ -74,7 +112,8 @@ class CardInstallmentBusiness {
   }
 
   async postInstallment(cardInstId, {transAmt, transDate, transDesc}){
-    var cardInst = await this.getCardInstallment(cardInstId);
+    //var cardInst = await this.getCardInstallment(cardInstId);
+    let cardInst = await CardInstallmentRepo.getCardInstallment(cardInstId);
     if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
 
     if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
@@ -104,11 +143,13 @@ class CardInstallmentBusiness {
   }
 
   async terminateInstallment(cardInstId) {
-    var cardInst = await this.getCardInstallment(cardInstId);
+    //var cardInst = await this.getCardInstallment(cardInstId);
+    let cardInst = await CardInstallmentRepo.getCardInstallment(cardInstId);
     if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
 
     if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
-    if(cardInst.cInstPrice !== cardInst.cInstPosted) throw new Exception('CARD_INST_PRICE_NOT_POSTED');
+    if(Number(cardInst.cInstPrice) > Number(cardInst.cInstPosted)) 
+      throw new Exception('CARD_INST_PRICE_NOT_POSTED');
     
     cardInst.cInstStatus = 'FINISHED';
     return await cardInst.save();

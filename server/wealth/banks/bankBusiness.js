@@ -1,41 +1,45 @@
 const BankRepo = require('./bankRepo');
 const Exception = require('../../features/exception');
-const AddBankRequest = require('./Request/addBankRequest');
-const UpdateBankRequest = require('./Request/updateBankRequest');
+const AddBankRequest = require('./request/addBankRequest');
+const UpdateBankRequest = require('./request/updateBankRequest');
 
 class BankBusiness {
   async getBanks() {
-    return await BankRepo.getBanks();
+    let banks = await BankRepo.getBanks();
+    banks = banks.map( bank => {
+      return {
+        bankCode: bank.bankCode,
+        bankName: bank.bankName
+      }
+    });
+    return banks;
   }
 
   async addBank(newBank) {
     const bankRequest = new AddBankRequest(newBank);
     const bankModel = await BankRepo.getBank(bankRequest.bankCode);
     if(bankModel) {
-      throw new Exception('BNK_EXIST');
+      throw new Exception('BANK_EXIST');
     }
-    const addedBank = await BankRepo.addBank(bankRequest);
-    return addedBank;
+    await BankRepo.addBank(bankRequest);
   }
 
   async updateBank(id, editBank) {
     const bankRequest = new UpdateBankRequest(editBank);
     const bankModel = await BankRepo.getBank(id);
     if(!bankModel) {
-      throw new Exception('BNK_NOTEXIST');
+      throw new Exception('BANK_NOT_EXIST');
     }
     bankModel.bankName = bankRequest.bankName;
-    const editedBank = await BankRepo.saveBank(bankModel);
-    return editedBank;
+    await BankRepo.saveBank(bankModel);
   }
 
   async deleteBank(id) {
     const bankModel = await BankRepo.getBank(id);
     if(!bankModel) {
-      throw new Exception('BNK_NOTEXIST');
+      throw new Exception('BANK_NOT_EXIST');
     }
     await BankRepo.deleteBank(bankModel);
-    return true;
   }
 }
 

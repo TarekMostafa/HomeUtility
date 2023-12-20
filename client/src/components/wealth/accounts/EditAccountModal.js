@@ -36,7 +36,7 @@ class EditAccountModal extends Component {
         accountCurrency: account.accountCurrency,
         accountStartBalance: account.accountStartBalance,
         accountStatus: account.accountStatus,
-        accountCurrencyDecimalPlaces: account.currency.currencyDecimalPlace
+        accountCurrencyDecimalPlaces: account.currencyDecimalPlace
       });
     })
     .catch( (err) => {

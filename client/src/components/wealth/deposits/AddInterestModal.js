@@ -33,9 +33,9 @@ class AddInterestModal extends Component {
     .then( (deposit) => {
       this.setState({
         reference: deposit.reference,
-        account: deposit.account.accountNumber,
+        account: deposit.accountNumber,
         currency: deposit.currencyCode,
-        decimalPlaces: deposit.currency.currencyDecimalPlace,
+        decimalPlaces: deposit.currencyDecimalPlace,
         interestTransType: deposit.interestTransType,
       });
     })

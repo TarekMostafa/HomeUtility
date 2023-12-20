@@ -34,7 +34,7 @@ function CardInstallmentViewForm(props) {
               <Form.Control type="number" maxLength={20}
               name="price"
               value={Number(props.cardInstallment.cInstPrice)
-                .toFixed(props.cardInstallment.currency.currencyDecimalPlace)}
+                .toFixed(props.cardInstallment.currencyDecimalPlace)}
               readOnly/>
               <InputGroup.Prepend>
                 <InputGroup.Text id="inputGroupPrepend">

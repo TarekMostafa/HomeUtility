@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
   bankBusiness.addBank(req.body).then( () => {
-    res.messageCode = 'BNK_ADD_SUCCESS';
+    res.messageCode = 'BANK_ADD_SUCCESS';
     next();
   }).catch( err => {
     next(err);

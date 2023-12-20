@@ -41,7 +41,7 @@ class RelatedTransactionDetails extends Component {
 
     transactions.forEach( (transaction, index) => {
       if(index === 0) {
-        decimalPlaces = transaction.account.currency.currencyDecimalPlace;
+        decimalPlaces = transaction.currencyDecimalPlace;
       }
       if(transaction.transactionCRDR === "Debit") {
         totalDebit += Number(transaction.transactionAmount);

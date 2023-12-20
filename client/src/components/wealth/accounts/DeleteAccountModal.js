@@ -41,7 +41,7 @@ class DeleteAccountModal extends Component {
         accountStatus: account.accountStatus,
         accountCurrentBalance: account.accountCurrentBalance,
         accountLastBalanceUpdate: account.accountLastBalanceUpdate,
-        accountCurrencyDecimalPlaces: account.currency.currencyDecimalPlace,
+        accountCurrencyDecimalPlaces: account.currencyDecimalPlace,
       });
     })
     .catch( (err) => {

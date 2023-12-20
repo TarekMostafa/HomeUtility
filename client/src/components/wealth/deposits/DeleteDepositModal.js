@@ -35,7 +35,7 @@ class DeleteDepositModal extends Component {
     .then( (deposit) => {
       this.setState({
         depositReference: deposit.reference,
-        depositAccount: deposit.account.accountNumber,
+        depositAccount: deposit.accountNumber,
         depositCurrency: deposit.currencyCode,
         depositAmount: deposit.amount,
         depositRate: deposit.rate,
@@ -43,7 +43,7 @@ class DeleteDepositModal extends Component {
         depositStartDate: deposit.startDate,
         depositEndDate: deposit.endDate,
         depositReleaseDate: deposit.releaseDate,
-        depositCurrencyDecimalPlaces: deposit.currency.currencyDecimalPlace,
+        depositCurrencyDecimalPlaces: deposit.currencyDecimalPlace,
       });
     })
     .catch( (err) => {

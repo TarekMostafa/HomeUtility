@@ -28,14 +28,14 @@ function WealthDepositTable (props) {
           return (
             <tr key={deposit.id} className={deposit.status==="CLOSED"?"table-danger":""}>
               <td>{index+1}</td>
-              <td>{deposit.bank.bankName}</td>
+              <td>{deposit.bankName}</td>
               <td>{deposit.reference}</td>
               <td>{deposit.currencyCode}</td>
               <td className="text-right">
-                {amountFormatter(deposit.amount, deposit.currency.currencyDecimalPlace)}
+                {amountFormatter(deposit.amount, deposit.currencyDecimalPlace)}
               </td>
               <td className="text-right">
-                {amountFormatter(deposit.amount * deposit.currency.currencyRateAgainstBase,
+                {amountFormatter(deposit.amount * deposit.currencyRateAgainstBase,
                 props.appSettings.currency.currencyDecimalPlace)}
               </td>
               <td>{deposit.status}</td>

@@ -113,7 +113,7 @@ function CardTransactionPaymentList(props) {
                         onChange={handleCardChange}
                         value={formData.cardId}>
                         <option value=''>Cards</option>
-                        <CardsDropDown cards={cards}/>
+                        <CardsDropDown cards={cards} status={"ACTIVE"}/>
                         </Form.Control>
                     </Col>
                     <Col xs={1}>

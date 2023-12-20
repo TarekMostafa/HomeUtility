@@ -3,6 +3,7 @@ import { Table, Dropdown, DropdownButton, Button, Badge } from 'react-bootstrap'
 import moment from 'moment';
 
 import amountFormatter from '../../../utilities/amountFormatter';
+import cardNumberFormatter from '../../../utilities/cardNumberFormatter';
 
 function CardInstallmentTable (props) {
   return (
@@ -28,7 +29,7 @@ function CardInstallmentTable (props) {
           return (
             <tr key={inst.cInstId}>
               <td>{index+1}</td>
-              <td>{inst.card.cardNumber}</td>
+              <td>{cardNumberFormatter(inst.cardNumber)}</td>
               <td>{inst.cInstCurrency}</td>
               <td>{inst.cInstItemDesc}</td>
               <td>
@@ -42,10 +43,10 @@ function CardInstallmentTable (props) {
               </td>
               <td>{`${inst.cInstNoOfPostedInst} / ${inst.cInstNoOfInst}`}</td>
               <td className="text-right">
-                {amountFormatter(inst.cInstPrice, inst.currency.currencyDecimalPlace)}
+                {amountFormatter(inst.cInstPrice, inst.currencyDecimalPlace)}
               </td>
               <td className="text-right">
-                {amountFormatter(inst.cInstPosted, inst.currency.currencyDecimalPlace)}
+                {amountFormatter(inst.cInstPosted, inst.currencyDecimalPlace)}
               </td>
               <td>{inst.cInstStatus}</td>
               <td>

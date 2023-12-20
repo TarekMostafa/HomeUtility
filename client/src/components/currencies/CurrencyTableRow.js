@@ -3,12 +3,20 @@ import { Button, Row, Col, Form, Spinner } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 import CurrencyRequest from '../../axios/CurrencyRequest';
+import EditDeleteButton from '../common/EditDeleteButton';
+
+const initialState = {
+  mode: 'None',
+  messageClass: '',
+  message: '',
+  isLoading: false,
+  isDisabled: false,
+}
 
 class CurrencyTableRow extends Component {
   state = {
-    isLoading: false,
-    messageClass: '',
-    message: '',
+    manualRate: this.props.currency.currencyManualRateAgainstBase,
+    ...initialState
   }
   render () {
     const { currency, index } = this.props;
@@ -20,19 +28,29 @@ class CurrencyTableRow extends Component {
         <td>{currency.currencyRateAgainstBase}</td>
         <td>{currency.currencyDecimalPlace}</td>
         <td>
+          {
+            this.state.mode === 'Edit' ?
+            <Form.Control type="input" size="sm" value={Number(this.state.manualRate).toFixed(7)}
+            name="manualRate" onChange={this.handleChange}/>
+            : currency.currencyManualRateAgainstBase
+          }
+        </td>
+        <td>
           <Row>
-            <Col xs={2}>
+            <Col xs={6}>
               {
                 currency.currencyActive === 'YES' ?
-                <Button variant="danger" size="sm"
-                onClick={this.handleDeactivateClick}
-                disabled={this.state.isLoading}>
-                  {
-                    this.state.isLoading?
-                    <Spinner as="span" animation="border" size="sm" role="status"
-                    aria-hidden="true"/> : 'Deactivate'
-                  }
-                </Button> :
+                <React.Fragment>
+                  <EditDeleteButton onEditClick={this.handleEditClick}
+                  onDeleteClick={this.handleDeactivateClick}
+                  onCancelClick={this.handleCancelClick}
+                  disabled={this.state.isDisabled}
+                  isLoading={this.state.isLoading}
+                  mode={this.state.mode}
+                  deleteLabel={'Deactivate'}
+                  confirmDeleteLabel={'Confirm Deactivation'}/>
+                </React.Fragment>
+                :
                 <Button variant="primary" size="sm"
                 onClick={this.handleActivateClick}
                 disabled={this.state.isLoading}>
@@ -53,25 +71,68 @@ class CurrencyTableRow extends Component {
     )
   }//end of render
 
-  handleDeactivateClick = () => {
+  handleCancelClick = () => {
     this.setState({
-      isLoading: true,
-      messageClass: '',
-      message: '',
+      ...initialState
     });
-    CurrencyRequest.deactivateCurrency(this.props.currency.currencyCode)
-    .then( () => {
-      if (typeof this.props.onDeactivate=== 'function') {
-        this.props.onDeactivate();
-      }
-    })
-    .catch( err => {
-      this.setState({
-        message: err.response.data,
-        messageClass: 'text-danger',
-        isLoading: false
+  }
+
+  handleEditClick = () => {
+    if(this.state.mode === 'Edit') {
+      this.setState({isLoading: true, isDisabled: true});
+      CurrencyRequest.updateCurrency(this.props.currency.currencyCode, this.state.manualRate)
+      .then((result) => {
+        if (typeof this.props.onUpdate=== 'function') {
+          this.props.onUpdate();
+        }
+        this.setState({
+          ...initialState
+        });
       })
-    })
+      .catch( err => {
+        this.setState({
+          message: err.response.data,
+          messageClass: 'text-danger',
+          isLoading: false,
+          isDisabled: false
+        })
+      })
+    } else {
+      this.setState({
+        mode: 'Edit',
+        message: '',
+        messageClass: ''
+      })
+    }
+  }
+
+  handleDeactivateClick = () => {
+    if(this.state.mode === 'Delete') {
+      this.setState({isLoading: true, isDisabled: true});
+      CurrencyRequest.deactivateCurrency(this.props.currency.currencyCode)
+      .then( () => {
+        if (typeof this.props.onDeactivate=== 'function') {
+          this.props.onDeactivate();
+        }
+        this.setState({
+          ...initialState,
+        });
+      })
+      .catch( err => {
+        this.setState({
+          message: err.response.data,
+          messageClass: 'text-danger',
+          isLoading: false,
+          isDisabled: false
+        })
+      })
+    } else {
+      this.setState({
+        mode: 'Delete',
+        message: '',
+        messageClass: ''
+      })
+    }
   }
 
   handleActivateClick = () => {
@@ -94,11 +155,18 @@ class CurrencyTableRow extends Component {
       })
     })
   }
+
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name] : event.target.value
+    });
+  }
 }
 
 CurrencyTableRow.propTypes = {
   onDeactivate: PropTypes.func,
-  onActivate: PropTypes.func
+  onActivate: PropTypes.func,
+  onUpdate: PropTypes.func
 }
 
 export default CurrencyTableRow;

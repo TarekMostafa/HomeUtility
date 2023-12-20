@@ -13,7 +13,7 @@ function CardTransactionPaymentAlert (props) {
                         props.cardTransactions && props.card && amountFormatter(
                             props.cardTransactions.reduce( (prv, current) => 
                                 prv += Number(current.cardTransBillAmount), 0), 
-                                props.card.currency.currencyDecimalPlace
+                                props.card.currencyDecimalPlace
                             ) + ' ' + props.card.cardCurrency
                     }
                     </strong>

@@ -16,6 +16,10 @@ class CurrencyRepo {
   static async addCurrency(currency) {
     CurrencyModel.build(currency).save();
   }
+
+  static async saveCurrency(currency) {
+    return await currency.save();
+  } 
 }
 
 module.exports = CurrencyRepo;

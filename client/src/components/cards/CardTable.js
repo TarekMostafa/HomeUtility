@@ -3,6 +3,7 @@ import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
 
 import amountFormatter from '../../utilities/amountFormatter';
+import cardNumberFormatter from '../../utilities/cardNumberFormatter';
 
 function CardTable (props) {
   return (
@@ -13,8 +14,9 @@ function CardTable (props) {
           <th>Bank Name</th>
           <th>Card Number</th>
           <th>Currency</th>
-          <th>Card Limit</th>
-          <th>Card Balance</th>
+          <th>Limit</th>
+          <th>Balance</th>
+          <th>Consumption</th>
           <th>Start Date</th>
           <th>Expiry Date</th>
           <th>Status</th>
@@ -27,14 +29,17 @@ function CardTable (props) {
           return (
             <tr key={card.cardId} className={card.cardStatus==="CLOSED"?"table-danger":""}>
               <td>{index+1}</td>
-              <td>{card.bank.bankName}</td>
-              <td>{card.cardNumber}</td>
+              <td>{card.bankName}</td>
+              <td>{cardNumberFormatter(card.cardNumber)}</td>
               <td>{card.cardCurrency}</td>
               <td className="text-right">
-                {amountFormatter(card.cardLimit, card.currency.currencyDecimalPlace)}
+                {amountFormatter(card.cardLimit, card.currencyDecimalPlace)}
               </td>
               <td className="text-right">
-                {amountFormatter(card.cardBalance, card.currency.currencyDecimalPlace)}
+                {amountFormatter(card.cardBalance, card.currencyDecimalPlace)}
+              </td>
+              <td className="text-right">
+                {amountFormatter(card.cardLimit - card.cardBalance, card.currencyDecimalPlace)}
               </td>
               <td>
                 {moment(card.cardStartDate).format('DD/MM/YYYY')}

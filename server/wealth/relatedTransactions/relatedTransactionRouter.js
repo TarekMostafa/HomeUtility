@@ -1,28 +1,20 @@
 const express = require('express');
-const RelatedTransaction = require('./relatedTransaction');
+const RelatedTransactionBusiness = require('./relatedTransactionBusiness');
 
 const router = express.Router();
-const relatedTransaction = new RelatedTransaction();
+const relatedTransactionBusiness = new RelatedTransactionBusiness();
 
 router.get('/', function(req, res, next) {
-  relatedTransaction.getRelatedTransactions(req.query).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+  relatedTransactionBusiness.getRelatedTransactions(req.query).then( result => {
+    res.json(result);
   }).catch( err => {
     next(err);
   })
 });
 
 router.get('/details', function(req, res, next) {
-  relatedTransaction.getRelatedTransactionsDetails(req.query).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+  relatedTransactionBusiness.getRelatedTransactionsDetails(req.query).then( result => {
+    res.json(result);
   }).catch( err => {
     next(err);
   })

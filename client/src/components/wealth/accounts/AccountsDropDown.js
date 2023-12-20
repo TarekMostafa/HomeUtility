@@ -20,8 +20,8 @@ function AccountsDropDown(props) {
   return accounts.map( (account) => {
     return (
       <option key={account.accountId} value={account.accountId}
-      decimalplaces={account.currency.currencyDecimalPlace} currency={account.accountCurrency}>
-      {`${account.accountNumber} - ${account.bank.bankName} - ${account.accountCurrency}`}
+      decimalplaces={account.currencyDecimalPlace} currency={account.accountCurrency}>
+      {`${account.accountNumber} - ${account.bankName} - ${account.accountCurrency}`}
       </option>
     )
   });

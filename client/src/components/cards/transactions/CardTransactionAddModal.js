@@ -24,7 +24,8 @@ const initialState = {
     transDate: "",
     transDesc: "",
     billAmount: 0,
-    instId: ""
+    instId: "",
+    payForOthers: 0
 }
 
 function CardTransactionAddModal(props) {
@@ -65,7 +66,7 @@ function CardTransactionAddModal(props) {
       // add new card transaction
       CardTransRequest.addCardTransaction(formData.cardId, formData.transCurrency,
         formData.transAmount, formData.transDate, formData.transDesc,
-        formData.billAmount, formData.instId)
+        formData.billAmount, formData.instId, formData.payForOthers)
       .then( () => {
           if (typeof props.onSave=== 'function') {
               props.onSave();
@@ -81,7 +82,7 @@ function CardTransactionAddModal(props) {
     const handleChange = (event) => {
         setFormData({
           ...formData,
-          [event.target.name] : event.target.value
+          [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value)
         });
     }
 
@@ -122,6 +123,12 @@ function CardTransactionAddModal(props) {
           </Button>
         }>
             <form>
+            <Form.Group controlId="payForOthers">
+              <Form.Check name="payForOthers" type="checkbox" label="Pay for others" 
+              checked={formData.payForOthers} 
+              onChange={handleChange}>
+              </Form.Check>
+            </Form.Group>
             <Form.Group controlId="cardId">
               <Form.Label>Card</Form.Label>
               <Form.Control as="select" name="cardId" onChange={handleCardChange}
