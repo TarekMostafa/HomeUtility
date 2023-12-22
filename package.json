@@ -1,6 +1,6 @@
 {
   "name": "homeutility",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Home Utility Application",
   "main": "server.js",
   "scripts": {
