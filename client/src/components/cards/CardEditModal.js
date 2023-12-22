@@ -128,7 +128,7 @@ function CardEditModal(props) {
             <Form.Label>Card Limit</Form.Label>
             <Form.Control type="number" maxLength={20}
             name="cardLimit"
-            value={Number(formData.cardLimit).toFixed(card.currency.currencyDecimalPlace)}
+            value={Number(formData.cardLimit).toFixed(card.currencyDecimalPlace)}
             onChange={handleChange}/>
           </Form.Group>
           <Form.Group controlId="cardStartDate">
