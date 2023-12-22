@@ -6,7 +6,7 @@ import { getTransactionTypes, getAccounts, getBanks, getActiveCurrencies,
   from '../store/actions/lookupsAction';
 import { setUser } from '../store/actions/authActions';
 
-export default (user) => {
+const loadUser = (user) => {
   interceptor.setInterceptor(user.userToken);
   store.dispatch(getTransactionTypes());
   store.dispatch(getExpenseTypes());
@@ -23,3 +23,5 @@ export default (user) => {
   store.dispatch(setUser(user));
   localStorage.setItem("user", JSON.stringify(user));
 }
+
+export default loadUser;

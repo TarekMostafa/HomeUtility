@@ -18,10 +18,16 @@ function AccountsDropDown(props) {
     })
   }
   return accounts.map( (account) => {
+    const value = `${account.accountNumber} - ${account.bankName} - ${account.accountCurrency}`;
+    const key = account.accountId;
+    const display = account.accountNumber;
+    let style = {"font-weight":""};
+    if(props.selectedData.includes(key)) style["font-weight"]="bold";
     return (
-      <option key={account.accountId} value={account.accountId}
-      decimalplaces={account.currencyDecimalPlace} currency={account.accountCurrency}>
-      {`${account.accountNumber} - ${account.bankName} - ${account.accountCurrency}`}
+      <option key={key} value={key} style={{...style}}
+      decimalplaces={account.currencyDecimalPlace} currency={account.accountCurrency}
+      onClick={()=>typeof(props.onSelect)==='function' && props.onSelect(key, display)}>
+      {value}
       </option>
     )
   });
@@ -35,10 +41,13 @@ const mapStateToProps = (state) => {
 
 AccountsDropDown.propTypes = {
   status: PropTypes.string,
+  onSelect: PropTypes.func,
+  selectedData: PropTypes.array,
 };
 
 AccountsDropDown.defaultProps = {
   status: '',
+  selectedData: [],
 }
 
 export default connect(mapStateToProps)(AccountsDropDown)

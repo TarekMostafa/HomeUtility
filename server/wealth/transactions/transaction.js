@@ -9,7 +9,7 @@ const Op = Sequelize.Op;
 
 class Transaction {
 
-  async getTransactions({limit, skip, accountId, typeId, postingDateFrom,
+  async getTransactions({limit, skip, accountIds, typeIds, postingDateFrom,
     postingDateTo, narrative, id, includeNarrative}) {
 
     limit = Common.getNumber(limit, 10);
@@ -17,12 +17,18 @@ class Transaction {
     // Construct Where Condition
     let whereQuery = {};
     // account Id
-    if(accountId) {
-      whereQuery.transactionAccount = accountId;
+    if(accountIds) {
+      //whereQuery.transactionAccount = accountId;
+      whereQuery.transactionAccount = {
+        [Op.in]: accountIds
+      }
     }
     // Transaction Type Id
-    if(typeId) {
-      whereQuery.transactionTypeId = typeId;
+    if(typeIds) {
+      //whereQuery.transactionTypeId = typeId;
+      whereQuery.transactionTypeId = {
+        [Op.in]: typeIds
+      }
     }
     // Narrative
     if(narrative) {

@@ -12,10 +12,15 @@ function CurrenciesDropDown(props) {
   }
 
   return currencies && currencies.map( (currency) => {
+    const value = currency.currencyName;
+    const key = currency.currencyCode;
+    let style = {"font-weight":""};
+    if(props.selectedData.includes(key)) style["font-weight"]="bold";
     return (
-      <option key={currency.currencyCode} value={currency.currencyCode}
-      decimalplaces={currency.currencyDecimalPlace}>
-        {currency.currencyName}
+      <option key={key} value={key} style={{...style}}
+      decimalplaces={currency.currencyDecimalPlace}
+      onClick={()=>typeof(props.onSelect)==='function' && props.onSelect(key, value)}>
+        {value}
       </option>
     )
   });
@@ -28,11 +33,14 @@ const mapStateToProps = (state) => {
 }
 
 CurrenciesDropDown.propTypes = {
-  status: PropTypes.string
-};
+  status: PropTypes.string,
+  onSelect: PropTypes.func,
+  selectedData: PropTypes.array,
+}
 
 CurrenciesDropDown.defaultProps = {
-  status: "YES"
+  status: "YES",
+  selectedData: [],
 }
 
 export default connect(mapStateToProps)(CurrenciesDropDown)

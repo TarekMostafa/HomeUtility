@@ -1,3 +1,4 @@
+const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const AccountRepo = require('./accountRepo');
 //const AppSettingsRepo = require('../../appSettings/appSettingsRepo');
@@ -5,6 +6,8 @@ const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 //const APIResponse = require('../../utilities/apiResponse');
 const Exception = require('../../features/exception');
+
+const Op = Sequelize.Op;
 
 class Account {
   async getAccountsForDropDown() {
@@ -23,7 +26,7 @@ class Account {
     return accounts;
   }
 
-  async getAccounts({bank, status, currency}) {
+  async getAccounts({banks, statuses, currencies}) {
     //Get param value
     let isAutomatic = true;
     const automaticOrManual = await AppParametersRepo.getAppParameterValue(
@@ -36,16 +39,25 @@ class Account {
     // Construct Where Condition
     let whereQuery = {};
     // Bank Code
-    if(bank) {
-      whereQuery.accountBankCode = bank;
+    if(banks) {
+      //whereQuery.accountBankCode = banks;
+      whereQuery.accountBankCode = {
+        [Op.in]: banks
+      }
     }
     // Status
-    if(status) {
-      whereQuery.accountStatus = status;
+    if(statuses) {
+      //whereQuery.accountStatus = status;
+      whereQuery.accountStatus = {
+        [Op.in]: statuses
+      }
     }
     // Currency
-    if(currency) {
-      whereQuery.accountCurrency = currency;
+    if(currencies) {
+      //whereQuery.accountCurrency = currency;
+      whereQuery.accountCurrency = {
+        [Op.in]: currencies
+      }
     }
     
     let accounts = await AccountRepo.getAccounts(whereQuery);

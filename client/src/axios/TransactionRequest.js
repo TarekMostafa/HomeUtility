@@ -1,14 +1,14 @@
 import axios from 'axios';
 
 class TransctionRequest {
-  static async getTransactions (limit, skip, accountId, typeId, postingDateFrom,
+  static async getTransactions (limit, skip, accountIds, typeIds, postingDateFrom,
     postingDateTo, narrative, id, includeNarrative) {
     const response = await axios.get('/api/wealth/transactions', {
       params: {
         limit,
         skip,
-        accountId,
-        typeId,
+        accountIds,
+        typeIds,
         postingDateFrom,
         postingDateTo,
         narrative,

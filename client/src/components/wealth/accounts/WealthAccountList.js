@@ -12,13 +12,17 @@ import FormContainer from '../../common/FormContainer';
 import BanksDropDown from '../banks/BanksDropDown';
 import AccountStatusesDropDown from './AccountStatusesDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
+import MultiSelectDropDown from '../../common/MultiSelectDropDown';
 
 import AccountRequest from '../../../axios/AccountRequest';
 
 const initialState = {
-  accountStatus: 'ACTIVE',
-  accountBank: '',
-  accountCurrency: '',
+  //accountStatus: 'ACTIVE',
+  //accountBank: '',
+  //accountCurrency: '',
+  selectedBanks: [],
+  selectedCurrencies: [],
+  selectedStatuses: [{key:'ACTIVE',value:'ACTIVE'}]
 }
 
 class WealthAccountList extends Component {
@@ -33,8 +37,9 @@ class WealthAccountList extends Component {
   }
 
   loadAccounts() {
-    AccountRequest.getAccounts(this.state.accountBank, this.state.accountStatus,
-    this.state.accountCurrency)
+    AccountRequest.getAccounts(this.state.selectedBanks.map(bank=>bank.key), 
+    this.state.selectedStatuses.map(sts=>sts.key),
+    this.state.selectedCurrencies.map(ccy=>ccy.key))
     .then( (accounts) => {
       this.setState({
         accounts
@@ -55,25 +60,40 @@ class WealthAccountList extends Component {
           <Form>
             <Row>
               <Col xs={3}>
-                <Form.Control as="select" size="sm" name="accountBank" onChange={this.handleChange}
+                {/* <Form.Control as="select" size="sm" name="accountBank" onChange={this.handleChange}
                   value={this.state.accountBank}>
                   <option value=''>Banks</option>
                   <BanksDropDown />
-                </Form.Control>
+                </Form.Control> */}
+                <MultiSelectDropDown labelSelect={"Banks"} 
+                selectedValues={this.state.selectedBanks.map(bank=>bank.value)}>
+                  <BanksDropDown  onSelect={this.handleBankSelect} 
+                  selectedData={this.state.selectedBanks.map(bank=>bank.key)}/>
+                </MultiSelectDropDown>
               </Col>
               <Col xs={3}>
-                <Form.Control as="select" size="sm" name="accountCurrency" onChange={this.handleChange}
+                {/* <Form.Control as="select" size="sm" name="accountCurrency" onChange={this.handleChange}
                   value={this.state.accountCurrency}>
                   <option value=''>Currencies</option>
                   <CurrenciesDropDown />
-                </Form.Control>
+                </Form.Control> */}
+                <MultiSelectDropDown labelSelect={"Currencies"} 
+                selectedValues={this.state.selectedCurrencies.map(ccy=>ccy.value)}>
+                  <CurrenciesDropDown  onSelect={this.handleCurrencySelect} 
+                  selectedData={this.state.selectedCurrencies.map(ccy=>ccy.key)}/>
+                </MultiSelectDropDown>
               </Col>
               <Col xs={3}>
-                <Form.Control as="select" size="sm" name="accountStatus" onChange={this.handleChange}
+                {/* <Form.Control as="select" size="sm" name="accountStatus" onChange={this.handleChange}
                   value={this.state.accountStatus}>
                   <option value=''>Account Statuses</option>
                   <AccountStatusesDropDown />
-                </Form.Control>
+                </Form.Control> */}
+                <MultiSelectDropDown labelSelect={"Account Statuses"} 
+                selectedValues={this.state.selectedStatuses.map(sts=>sts.value)}>
+                  <AccountStatusesDropDown onSelect={this.handleStatusSelect} 
+                  selectedData={this.state.selectedStatuses.map(sts=>sts.key)}/>
+                </MultiSelectDropDown>
               </Col>
               {/* <Col xs={{offset:1, span:1}}> */}
               <Col xs={1}>
@@ -123,6 +143,36 @@ class WealthAccountList extends Component {
       </React.Fragment>
     )
   }//end of render
+
+  handleBankSelect = (key, value) => {
+    let _selectedBanks = this.state.selectedBanks;
+    if(_selectedBanks.some(bank=>bank.key === key)) {
+      _selectedBanks = _selectedBanks.filter(bank=>bank.key!==key);
+    } else {
+      _selectedBanks = [..._selectedBanks, {key, value}];
+    }
+    this.setState({selectedBanks: _selectedBanks});
+  }
+
+  handleCurrencySelect = (key, value) => {
+    let _selectedCurrencies = this.state.selectedCurrencies;
+    if(_selectedCurrencies.some(ccy=>ccy.key === key)) {
+      _selectedCurrencies = _selectedCurrencies.filter(ccy=>ccy.key!==key);
+    } else {
+      _selectedCurrencies = [..._selectedCurrencies, {key, value}];
+    }
+    this.setState({selectedCurrencies: _selectedCurrencies});
+  }
+
+  handleStatusSelect = (key, value) => {
+    let _selectedStatuses = this.state.selectedStatuses;
+    if(_selectedStatuses.some(sts=>sts.key === key)) {
+      _selectedStatuses = _selectedStatuses.filter(sts=>sts.key!==key);
+    } else {
+      _selectedStatuses = [..._selectedStatuses, {key, value}];
+    }
+    this.setState({selectedStatuses: _selectedStatuses});
+  }
 
   handleAddNewAccount = () => {
     this.setState({modalAddShow: true});

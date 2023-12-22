@@ -13,18 +13,21 @@ import AddSingleTransactionModal from './AddSingleTransactionModal';
 import AddInternalTransactionModal from './AddInternalTransactionModal';
 import EditSingleTransactionModal from './EditSingleTransactionModal';
 import DeleteSingleTransactionModal from './DeleteSingleTransactionModal';
+import MultiSelectDropDown from '../../common/MultiSelectDropDown';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
 const initialState = {
-  account: '',
-  transactionType: '',
+  //account: '',
+  //transactionType: '',
   postingDateFrom: '',
   postingDateTo: '',
   narrative: '',
   limit: 10,
   id: '',
   includeNarrative: true,
+  transactionTypes: [],
+  accounts: [],
 }
 
 class WealthTransactionList extends Component {
@@ -43,7 +46,8 @@ class WealthTransactionList extends Component {
   loadTransctions(append) {
     TransactionRequest.getTransactions(this.state.limit,
       (append?this.state.transactions.length:0),
-      this.state.account, this.state.transactionType,
+      this.state.accounts.map(acc=>acc.key), 
+      this.state.transactionTypes.map(typ=>typ.key),
       this.state.postingDateFrom, this.state.postingDateTo,
       this.state.narrative, this.state.id, this.state.includeNarrative)
     .then( (transactions) => {
@@ -80,18 +84,28 @@ class WealthTransactionList extends Component {
           <Form>
           <Row>
             <Col>
-              <Form.Control as="select" size="sm" name="account" onChange={this.handleChange}
+              {/* <Form.Control as="select" size="sm" name="account" onChange={this.handleChange}
                 value={this.state.account}>
                 <option value=''>Accounts</option>
                 <AccountsDropDown />
-              </Form.Control>
+              </Form.Control> */}
+              <MultiSelectDropDown labelSelect={"Accounts"} 
+                selectedValues={this.state.accounts.map(acc=>acc.value)}>
+                  <AccountsDropDown onSelect={this.handleAccounts} 
+                  selectedData={this.state.accounts.map(acc=>acc.key)}/>
+                </MultiSelectDropDown>
             </Col>
             <Col>
-              <Form.Control as="select" size="sm" name="transactionType"
+              {/* <Form.Control as="select" size="sm" name="transactionType"
                 onChange={this.handleChange} value={this.state.transactionType}>
                 <option value=''>Transaction Types</option>
                 <TransactionTypesDropDown />
-              </Form.Control>
+              </Form.Control> */}
+              <MultiSelectDropDown labelSelect={"Transaction Types"} 
+                selectedValues={this.state.transactionTypes.map(typ=>typ.value)}>
+                  <TransactionTypesDropDown onSelect={this.handleTransactionTypes} 
+                  selectedData={this.state.transactionTypes.map(typ=>typ.key)}/>
+                </MultiSelectDropDown>
             </Col>
             <Col>
               <DatePickerInput value={this.state.postingDateFrom}
@@ -159,6 +173,26 @@ class WealthTransactionList extends Component {
       </React.Fragment>
     )
   }// end of render
+
+  handleAccounts = (key, value) => {
+    let _accounts = this.state.accounts;
+    if(_accounts.some(acc=>acc.key === key)) {
+      _accounts = _accounts.filter(acc=>acc.key!==key);
+    } else {
+      _accounts = [..._accounts, {key, value}];
+    }
+    this.setState({accounts: _accounts});
+  }
+
+  handleTransactionTypes = (key, value) => {
+    let _transactionTypes = this.state.transactionTypes;
+    if(_transactionTypes.some(typ=>typ.key === key)) {
+      _transactionTypes = _transactionTypes.filter(typ=>typ.key!==key);
+    } else {
+      _transactionTypes = [..._transactionTypes, {key, value}];
+    }
+    this.setState({transactionTypes: _transactionTypes});
+  }
 
   handleListClick = () => {
     this.loadTransctions(false);
