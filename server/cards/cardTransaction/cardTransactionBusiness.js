@@ -103,7 +103,8 @@ class CardTransactionBusiness {
 
   async updateCardTransaction(cardTransId, {transCurrency, transAmount, transDate, 
     transDesc, billAmount, instId, payForOthers}) {
-    var cardTrans = await this.getCardTransaction(cardTransId);
+    //var cardTrans = await this.getCardTransaction(cardTransId);
+    let cardTrans = await CardTransactionRepo.getCardTransaction(cardTransId);
     if(!cardTrans) throw new Exception('CARD_TRANS_NOT_EXIST');
 
     if(cardTrans.cardTransIsInstallment) throw new Exception('CARD_TRANS_INST_FAIL');
@@ -130,7 +131,8 @@ class CardTransactionBusiness {
   }
 
   async deleteCardTransaction(cardTransId) {
-    var cardTrans = await this.getCardTransaction(cardTransId);
+    //var cardTrans = await this.getCardTransaction(cardTransId);
+    let cardTrans = await CardTransactionRepo.getCardTransaction(cardTransId);
     if(!cardTrans) throw new Exception('CARD_TRANS_NOT_EXIST');
 
     let dbTransaction;

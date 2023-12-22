@@ -63,7 +63,8 @@ class CardBusiness {
   }
 
   async updateCard(id, {cardLimit, cardStatus, cardStartDate, cardExpiryDate}) {
-    var card = await this.getCard(id);
+    //var card = await this.getCard(id);
+    let card = await CardRepo.getCard(id);
     if(!card) throw new Exception('CARD_NOT_EXIST');
 
     if (cardStatus === CARD_STATUS.CLOSED){
@@ -96,7 +97,8 @@ class CardBusiness {
   }
 
   async deleteCard(id) {
-    const card = await this.getCard(id);
+    //const card = await this.getCard(id);
+    const card = await CardRepo.getCard(id);
     if(!card) throw new Exception('CARD_NOT_EXIST');
     await card.destroy();
   }
