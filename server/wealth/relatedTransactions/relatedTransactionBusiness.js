@@ -61,18 +61,24 @@ class RelatedTransaction {
     transactions = transactions.map( trans => {
       return {
         transactionId: trans.transactionId,
-        transactionAmount: trans.transactionAmount,
-        transactionNarrative: trans.transactionNarrative,
         transactionPostingDate: trans.transactionPostingDate,
+        transactionAmount: trans.transactionAmount,
         transactionCRDR: trans.transactionCRDR,
-        transactionAccount: trans.transactionAccount,
-        accountCurrency: trans.account.accountCurrency,
-        currencyDecimalPlace: trans.account.currency.currencyDecimalPlace,
-        transactionTypeId: trans.transactionTypeId,
+        transactionNarrative: trans.transactionNarrative,
         transactionRelatedTransactionId: trans.transactionRelatedTransactionId,
-        transactionModule: trans.transactionModule
+        transactionModule: trans.transactionModule,
+        accountNumber: trans.account.accountNumber,
+        accountCurrency: trans.account.accountCurrency,
+        currencyRateAgainstBase: trans.account.currency.currencyRateAgainstBase,
+        currencyDecimalPlace: trans.account.currency.currencyDecimalPlace,
+        typeName: (trans.transactionType? trans.transactionType.typeName: ''),
       }
     });
+
+    relatedTransactionsByDetails = {
+      relatedTransaction,
+      transactions
+    }
 
     return relatedTransactionsByDetails;
   }

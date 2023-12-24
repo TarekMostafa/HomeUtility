@@ -3,7 +3,7 @@ const CardRepo = require('../cardRepo');
 const CardInstallmentRepo = require('../cardInstallment/cardInstallmentRepo');
 const AccountRepo = require('../../wealth/accounts/accountRepo');
 const TransactionTypeRepo = require('../../wealth/transactionTypes/transactionTypeRepo');
-const Transaction = require('../../wealth/transactions/transaction');
+const TransactionBusiness = require('../../wealth/transactions/transactionBusiness');
 const RelatedTransactionRepo = require('../../wealth/relatedTransactions/relatedTransactionRepo');
 const Exception = require('../../features/exception');
 const sequelize = require('../../db/dbConnection').getSequelize();
@@ -187,7 +187,7 @@ class CardTransactionBusiness {
       }
     }
     //Pay
-    const transaction = new Transaction();
+    const transactionBusiness = new TransactionBusiness();
     let errorTransIds = [];
     let dbTransaction;
     for(let cardTrans of cardTranses) {
@@ -212,7 +212,7 @@ class CardTransactionBusiness {
           }
         }
         //Add Transaction
-        const result = await transaction.addTransaction({
+        const savedTrans = await transactionBusiness.addTransaction({
           transactionAmount: Math.abs(cardTrans.cardTransBillAmount),
           transactionNarrative: 
           `${cardTrans.cardTransDesc} on ${DateHelper.getFullDateFormat(cardTrans.cardTransDate)}`,
@@ -223,11 +223,11 @@ class CardTransactionBusiness {
           transactionModule: "CRD",
           transactionRelatedTransactionId: relId,
         }, dbTransaction);
-        if(!result.success) throw new Exception('CARD_TRANS_PAY_FAIL');
+        if(!savedTrans) throw new Exception('CARD_TRANS_PAY_FAIL');
         //Increase Card Balance
         await CardRepo.updateCardBalance(cardTrans.cardId, cardTrans.cardTransBillAmount, dbTransaction);
         //Save Transaction Id in Card Transaction
-        cardTrans.cardTransAccountTransId = result.payload.transactionId;
+        cardTrans.cardTransAccountTransId = savedTrans.transactionId;
         cardTrans.cardTransIsPaid = true;
         cardTrans.cardTransBillDate = postingDate;
         await cardTrans.save({transaction: dbTransaction});

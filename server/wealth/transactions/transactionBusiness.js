@@ -1,9 +1,10 @@
 const Sequelize = require('sequelize');
-const APIResponse = require('../../utilities/apiResponse');
+//const APIResponse = require('../../utilities/apiResponse');
 const TransactionRepo = require('./transactionRepo');
 const AccountRepo = require('../accounts/accountRepo');
 const Common = require('../../utilities/common');
 const ReportRepo = require('../transactionReports/reportRepo');
+const Exception = require('../../features/exception');
 
 const Op = Sequelize.Op;
 
@@ -59,8 +60,24 @@ class Transaction {
       whereQuery.transactionId = id;
     }
 
-    const transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery);
-    return APIResponse.getAPIResponse(true, transactions);
+    let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery);
+    transactions = transactions.map(trans => {
+      return {
+        transactionId: trans.transactionId,
+        transactionPostingDate: trans.transactionPostingDate,
+        transactionAmount: trans.transactionAmount,
+        transactionCRDR: trans.transactionCRDR,
+        transactionNarrative: trans.transactionNarrative,
+        transactionRelatedTransactionId: trans.transactionRelatedTransactionId,
+        transactionModule: trans.transactionModule,
+        accountNumber: trans.account.accountNumber,
+        accountCurrency: trans.account.accountCurrency,
+        currencyRateAgainstBase: trans.account.currency.currencyRateAgainstBase,
+        currencyDecimalPlace: trans.account.currency.currencyDecimalPlace,
+        typeName: (trans.transactionType? trans.transactionType.typeName: ''),
+      }
+    });
+    return transactions;
   }
 
   async getTotalTransactionsByType({reportId, postingDateFrom, postingDateTo}) {
@@ -70,12 +87,13 @@ class Transaction {
     const _dateFrom = Common.getDate(postingDateFrom, '', false);
     const _dateTo = Common.getDate(postingDateTo, '', true);
     if( _dateFrom === '' || _dateTo === '') {
-      return APIResponse.getAPIResponse(false, null, '043');
+      //return APIResponse.getAPIResponse(false, null, '043');
+      return new Exception('POST_DATE_INVALID');
     }
     // Get Report Information
     const report = await ReportRepo.getReport(reportId);
     if(!report) {
-      return APIResponse.getAPIResponse(false, null, '044');
+      return new Exception('REPORT_ID_INVALID');
     }
     const reportdetails = report.reportdetails;
     // Format Result
@@ -112,92 +130,119 @@ class Transaction {
       result.push(resultDetails);
     } while(to < new Date(_dateTo))
 
-    return APIResponse.getAPIResponse(true, result);
+    return result;
   }
 
   async getTransaction(id) {
-    const transaction = await TransactionRepo.getTransaction(id);
-    return APIResponse.getAPIResponse(true, transaction);
+    let transaction = await TransactionRepo.getTransaction(id);
+    transaction = {
+      transactionId: transaction.transactionId,
+      transactionAmount: transaction.transactionAmount,
+      transactionNarrative: transaction.transactionNarrative,
+      transactionPostingDate: transaction.transactionPostingDate,
+      transactionCRDR: transaction.transactionCRDR,
+      transactionAccount: transaction.transactionAccount,
+      transactionTypeId: transaction.transactionTypeId,
+      transactionRelatedTransactionId: transaction.transactionRelatedTransactionId,
+      transactionModule: transaction.transactionModule,
+      accountCurrency: transaction.account.accountCurrency,
+      currencyDecimalPlace: transaction.account.currency.currencyDecimalPlace
+    };
+    return transaction;
   }
 
-  async addTransaction(transaction, dbTransaction) {
+  async addTransaction({transactionAmount, transactionNarrative, transactionPostingDate,
+    transactionCRDR, transactionAccount, transactionTypeId, transactionRelatedTransactionId,
+    transactionModule}, dbTransaction) {
     // Get account related to this transaction
-    let account = await AccountRepo.getAccount(transaction.transactionAccount);
+    let account = await AccountRepo.getAccount(transactionAccount);
     if(!account){
-      return APIResponse.getAPIResponse(false, null, '032');
+      return new Exception('ACC_INVALID');
     }
     //Increase/Decrease account balance depending on transaction CRDR field
-    const amount = this.evalTransactionAmount(transaction.transactionAmount,
-      transaction.transactionCRDR, false);
+    const amount = this.evalTransactionAmount(transactionAmount,
+      transactionCRDR, false);
     if(!amount) {
-      return APIResponse.getAPIResponse(false, null, '033');
+      return new Exception('TRANS_TYPE_INVALID');
     }
     // Save Transaction
-    const savedTrans = await TransactionRepo.addTransaction(transaction, dbTransaction);
+    const savedTrans = await TransactionRepo.addTransaction({
+      transactionAmount,
+      transactionNarrative,
+      transactionPostingDate,
+      transactionCRDR,
+      transactionAccount,
+      transactionTypeId,
+      transactionRelatedTransactionId,
+      transactionModule,
+    }, dbTransaction);
     // Update Account Current Balance & Last Balance Update
     await AccountRepo.updateAccountCurrentBalance(account, amount, dbTransaction);
-    return APIResponse.getAPIResponse(true, savedTrans, '030');
+    //return APIResponse.getAPIResponse(true, savedTrans, '030');
+    return savedTrans;
   }
 
   async deleteTransaction(id, dbTransaction) {
     // Get Saved transaction that want to be deleted
     let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
-      return APIResponse.getAPIResponse(false, null, '034');
+      return new Exception('TRANS_NOT_EXIST');
     }
     // Get account related to saved transaction
     let _account = await AccountRepo.getAccount(_transaction.transactionAccount);
     if(!_account){
-      return APIResponse.getAPIResponse(false, null, '032');
+      return new Exception('ACC_INVALID');
     }
     // Rollback
     const amount = this.evalTransactionAmount(_transaction.transactionAmount,
       _transaction.transactionCRDR, true);
     if(!amount) {
-      return APIResponse.getAPIResponse(false, null, '033');
+      return new Exception('TRANS_TYPE_INVALID');
     }
     // Delete Transaction
     await _transaction.destroy({transaction: dbTransaction});
     // Update Account
     await AccountRepo.updateAccountCurrentBalance(_account, amount, dbTransaction);
-    return APIResponse.getAPIResponse(true, null, '037');
+    //return APIResponse.getAPIResponse(true, null, '037');
+    return true;
   }
 
-  async editTransaction(id, transaction, dbTransaction) {
+  async editTransaction(id, {transactionAmount, transactionNarrative, transactionPostingDate,
+    transactionCRDR, transactionAccount, transactionTypeId}, dbTransaction) {
     // Get Saved transaction that want to be updated
     let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
-      return APIResponse.getAPIResponse(false, null, '034');
+      return new Exception('TRANS_NOT_EXIST');
     }
     // Get account related to saved transaction
     let _account = await AccountRepo.getAccount(_transaction.transactionAccount);
     if(!_account){
-      return APIResponse.getAPIResponse(false, null, '032');
+      return new Exception('ACC_INVALID');
     }
     // Rollback
     let amountRollback = this.evalTransactionAmount(_transaction.transactionAmount,
       _transaction.transactionCRDR, true);
     if(!amountRollback) {
-      return APIResponse.getAPIResponse(false, null, '033');
+      return new Exception('TRANS_TYPE_INVALID');
     }
     // Get account related to passed transaction
-    let account = await AccountRepo.getAccount(transaction.transactionAccount);
+    let account = await AccountRepo.getAccount(transactionAccount);
     if(!account){
-      return APIResponse.getAPIResponse(false, null, '032');
+      return new Exception('ACC_INVALID');
     }
     //Increase/Decrease account balance depending on transaction CRDR field
-    let amount = this.evalTransactionAmount(transaction.transactionAmount,
-      transaction.transactionCRDR, false);
+    let amount = this.evalTransactionAmount(transactionAmount,
+      transactionCRDR, false);
     if(!amount) {
-      return APIResponse.getAPIResponse(false, null, '033');
+      return new Exception('TRANS_TYPE_INVALID');
     }
     // update transaction
-    _transaction.transactionAmount = transaction.transactionAmount;
-    _transaction.transactionNarrative = transaction.transactionNarrative;
-    _transaction.transactionPostingDate = transaction.transactionPostingDate;
-    _transaction.transactionCRDR = transaction.transactionCRDR;
-    _transaction.transactionAccount = transaction.transactionAccount;
-    _transaction.transactionTypeId = transaction.transactionTypeId;
+    _transaction.transactionAmount = transactionAmount;
+    _transaction.transactionNarrative = transactionNarrative;
+    _transaction.transactionPostingDate = transactionPostingDate;
+    _transaction.transactionCRDR = transactionCRDR;
+    _transaction.transactionAccount = transactionAccount;
+    _transaction.transactionTypeId = transactionTypeId;
     await _transaction.save({transaction: dbTransaction});
     if(_account.accountId !== account.accountId) {
       await AccountRepo.updateAccountCurrentBalance(_account, amountRollback, dbTransaction);
@@ -205,7 +250,8 @@ class Transaction {
     } else {
       await AccountRepo.updateAccountCurrentBalance(_account, amountRollback+amount, dbTransaction);
     }
-    return APIResponse.getAPIResponse(true, null, '035');
+    //return APIResponse.getAPIResponse(true, null, '035');
+    return true;
   }
 
   evalTransactionAmount(amount, type, isRollback) {

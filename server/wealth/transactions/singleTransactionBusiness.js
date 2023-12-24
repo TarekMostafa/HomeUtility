@@ -1,26 +1,26 @@
-const Transaction = require('./transaction');
+const TransactionBusiness = require('./transactionBusiness');
 const sequelize = require('../../db/dbConnection').getSequelize();
-const APIResponse = require('../../utilities/apiResponse');
+//const APIResponse = require('../../utilities/apiResponse');
+const Exception = require('../../features/exception');
 
 class SingleTransaction {
     constructor(){
-        this.transaction = new Transaction();
+        this.transactionBusiness = new TransactionBusiness();
     }
 
     async addSingleTransaction(transaction) {
         let dbTransaction;
         try{
             dbTransaction = await sequelize.transaction();
-            const result = await this.transaction.addTransaction(transaction, dbTransaction);
-            if(result.success) {
+            const savedTrans = await this.transactionBusiness.addTransaction(transaction, dbTransaction);
+            if(savedTrans) {
                 await dbTransaction.commit();
             } else {
                 await dbTransaction.rollback();
             }
-            return result;
         } catch (err) {
             await dbTransaction.rollback();
-            return APIResponse.getAPIResponse(false, null, '031');
+            return new Exception('TRANS_ADD_FAIL');
         }
     }
 
@@ -28,16 +28,15 @@ class SingleTransaction {
         let dbTransaction;
         try{
             dbTransaction = await sequelize.transaction();
-            const result = await this.transaction.deleteTransaction(id, dbTransaction);
-            if(result.success) {
+            const savedTrans = await this.transactionBusiness.deleteTransaction(id, dbTransaction);
+            if(savedTrans) {
                 await dbTransaction.commit();
             } else {
                 await dbTransaction.rollback();
             }
-            return result;
         } catch (err) {
             await dbTransaction.rollback();
-            return APIResponse.getAPIResponse(false, null, '038');
+            return new Exception('TRANS_DELETE_FAIL');
         }
     }
 
@@ -45,16 +44,16 @@ class SingleTransaction {
         let dbTransaction;
         try{
             dbTransaction = await sequelize.transaction();
-            let result = await this.transaction.editTransaction(id, transaction, dbTransaction);
-            if(result.success) {
+            let savedTrans = await this.transactionBusiness.editTransaction(id, transaction, dbTransaction);
+            if(savedTrans) {
                 await dbTransaction.commit();
             } else {
                 await dbTransaction.rollback();
             }
-            return result;
         } catch (err) {
+            console.log(err);
             await dbTransaction.rollback();
-            return APIResponse.getAPIResponse(false, null, '036');
+            return new Exception('TRANS_UPDATE_FAIL');
         }
     }
 }

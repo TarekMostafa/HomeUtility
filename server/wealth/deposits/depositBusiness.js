@@ -3,7 +3,7 @@ const DepositRepo = require('./depositRepo');
 const AccountRepo = require('../accounts/accountRepo');
 const TransactionRepo = require('../transactions/transactionRepo');
 //const APIResponse = require('../../utilities/apiResponse');
-const Transaction = require('../transactions/transaction');
+const TransactionBusiness = require('../transactions/transactionBusiness');
 const RelatedTransactionRepo = require('../relatedTransactions/relatedTransactionRepo');
 const Exception = require('../../features/exception');
 const AppParametersRepo = require('../../appSettings/appParametersRepo');
@@ -126,9 +126,9 @@ class Deposit {
       //Add New Deposit
       deposit.relatedId = relatedId;
       let savedDeposit = await DepositRepo.addDeposit(deposit, dbTransaction);
-      const transaction = new Transaction();
+      const transactionBusiness = new TransactionBusiness();
       //Add Deposit Transaction
-      const result = await transaction.addTransaction({
+      const savedTrans = await transactionBusiness.addTransaction({
           transactionAmount: deposit.amount,
           transactionNarrative: 'Add Deposit (' + deposit.reference + ')',
           transactionPostingDate: deposit.startDate,
@@ -138,12 +138,12 @@ class Deposit {
           transactionModule: 'DEP',
           transactionRelatedTransactionId: relatedId,
         }, dbTransaction);
-      if(!result.success) {
+      if(!savedTrans) {
         await dbTransaction.rollback();
         throw new Exception('DEP_ADD_FAIL');
       }
       //Save Deposit Original Transaction Id
-      savedDeposit.originalTransId = result.payload.transactionId;
+      savedDeposit.originalTransId = savedTrans.transactionId;
       await savedDeposit.save({transaction: dbTransaction});
       await dbTransaction.commit();
     } catch (err) {
@@ -169,8 +169,8 @@ class Deposit {
     try {
       dbTransaction = await sequelize.transaction();
       await _deposit.destroy({transaction: dbTransaction});
-      const transaction = new Transaction();
-      await transaction.deleteTransaction(_originalTrans.transactionId, dbTransaction);
+      const transactionBusiness = new TransactionBusiness();
+      await transactionBusiness.deleteTransaction(_originalTrans.transactionId, dbTransaction);
       await dbTransaction.commit();
     } catch (err) {
       console.log(err);
@@ -189,8 +189,8 @@ class Deposit {
     try {
       dbTransaction = await sequelize.transaction();
       //Add Deposit Transaction
-      const transaction = new Transaction();
-      const result = await transaction.addTransaction({
+      const transactionBusiness = new TransactionBusiness();
+      const savedTrans = await transactionBusiness.addTransaction({
           transactionAmount: amount,
           transactionNarrative: 'Deposit Interest (' + _deposit.reference + ')',
           transactionPostingDate: date,
@@ -199,7 +199,7 @@ class Deposit {
           transactionTypeId: _deposit.interestTransType,
           transactionRelatedTransactionId: _deposit.relatedId,
         }, dbTransaction);
-      if(!result.success) {
+      if(!savedTrans) {
         await dbTransaction.rollback();
         throw new Exception('DEP_INT_ADD_FAIL')
       }
@@ -220,8 +220,8 @@ class Deposit {
     try {
       dbTransaction = await sequelize.transaction();
       //Add Deposit Transaction
-      const transaction = new Transaction();
-      const result = await transaction.addTransaction({
+      const transactionBusiness = new TransactionBusiness();
+      const savedTrans = await transactionBusiness.addTransaction({
           transactionAmount: _deposit.amount,
           transactionNarrative: 'Release Deposit (' + _deposit.reference + ')',
           transactionPostingDate: releaseDate,
@@ -231,13 +231,13 @@ class Deposit {
           transactionModule: 'DEP',
           transactionRelatedTransactionId: _deposit.relatedId,
         }, dbTransaction);
-      if(!result.success) {
+      if(!savedTrans) {
         await dbTransaction.rollback();
         throw new Exception('DEP_REL_FAIL');
       }
       //Save Deposit related Id
       _deposit.releaseDate = releaseDate;
-      _deposit.releaseTransId = result.payload.transactionId;
+      _deposit.releaseTransId = savedTrans.transactionId;
       _deposit.status = 'CLOSED';
       await _deposit.save({transaction: dbTransaction});
       await dbTransaction.commit();

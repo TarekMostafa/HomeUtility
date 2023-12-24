@@ -37,8 +37,8 @@ class DeleteSingleTransactionModal extends Component {
         crdr: transaction.transactionCRDR,
         type: transaction.transactionTypeId,
         narrative: transaction.transactionNarrative,
-        accountCurrencyDecimalPlaces: transaction.account.currency.currencyDecimalPlace,
-        currency: transaction.account.accountCurrency
+        accountCurrencyDecimalPlaces: transaction.currencyDecimalPlace,
+        currency: transaction.accountCurrency
       });
     })
     .catch( (err) => {

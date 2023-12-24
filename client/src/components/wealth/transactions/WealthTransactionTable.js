@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, OverlayTrigger, Tooltip, ButtonGroup, Button, Badge } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
-import _ from 'lodash';
+//import _ from 'lodash';
 import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthTransactionTable (props) {
@@ -28,14 +28,14 @@ function WealthTransactionTable (props) {
           return (
             <tr key={transaction.transactionId}>
               <td>{index+1}</td>
-              <td>{transaction.account.accountNumber}</td>
+              <td>{transaction.accountNumber}</td>
               <td>{moment(transaction.transactionPostingDate).format('DD/MM/YYYY')}</td>
               <td className="text-right">
-                {amountFormatter(transaction.transactionAmount, transaction.account.currency.currencyDecimalPlace)}
+                {amountFormatter(transaction.transactionAmount, transaction.currencyDecimalPlace)}
               </td>
-              <td>{transaction.account.accountCurrency}</td>
+              <td>{transaction.accountCurrency}</td>
               <td>{transaction.transactionCRDR}</td>
-              <td>{_.isNil(transaction.transactionType) ? '' : transaction.transactionType.typeName}</td>
+              <td>{transaction.typeName}</td>
               <td>
                 <OverlayTrigger placement="right"
                   delay={{ show: 250, hide: 400 }} overlay={(
