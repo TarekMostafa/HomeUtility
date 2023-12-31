@@ -4,10 +4,28 @@ const sequelize = require('../../db/dbConnection').getSequelize();
 const AccountRepo = require('../accounts/accountRepo');
 const Exception = require('../../features/exception');
 //const APIResponse = require('../../utilities/apiResponse');
+const AppParametersRepo = require('../../appSettings/appParametersRepo');
+const AppParametersConstants = require('../../appSettings/appParametersConstants');
 
 class InternalTransaction {
     constructor(){
         this.transactionBusiness = new TransactionBusiness();
+    }
+
+    async getDefaultData() {
+        const typeFrom = await AppParametersRepo.getAppParameterValue(
+            AppParametersConstants.INTERNAL_TRANSACTION_TYPE_FROM); 
+        const typeTo = await AppParametersRepo.getAppParameterValue(
+            AppParametersConstants.INTERNAL_TRANSACTION_TYPE_TO);
+
+        return {
+            accountFrom: '',
+            typeFrom,
+            postingDate: '',
+            amount:'',
+            accountTo: '',
+            typeTo,
+        }
     }
 
     async addInternalTransaction({accountFrom, typeFrom, postingDate, 
@@ -15,19 +33,19 @@ class InternalTransaction {
         // Validation
         // Account From must not be equal to Account To
         if(accountFrom === accountTo) {
-            return new Exception('TRANS_ACC1_NOT_EQUAL_ACC2');
+            throw new Exception('TRANS_ACC1_NOT_EQUAL_ACC2');
         }
         // Account From Currency must be equal to Account To Currency
         let _accountFrom = await AccountRepo.getAccount(accountFrom);
         if(!_accountFrom){
-            return new Exception('ACC_INVALID');
+            throw new Exception('ACC_INVALID');
         }
         let _accountTo = await AccountRepo.getAccount(accountTo);
         if(!_accountTo){
-            return new Exception('ACC_INVALID');
+            throw new Exception('ACC_INVALID');
         }
         if(_accountFrom.accountCurrency !== _accountTo.accountCurrency) {
-            return new Exception('TRANS_CCY1_EQUAL_CCY2');
+            throw new Exception('TRANS_CCY1_EQUAL_CCY2');
         }
         // Begin Transaction
         let dbTransaction;
@@ -55,7 +73,7 @@ class InternalTransaction {
             let savedTrans = await this.transactionBusiness.addTransaction(transactionDR, dbTransaction);
             if(!savedTrans){
                 await dbTransaction.rollback();
-                return new Exception('TRANS_ADD_FAIL');
+                throw new Exception('TRANS_ADD_FAIL');
             }
             // Credit Side
             let transactionCR = {
@@ -77,7 +95,7 @@ class InternalTransaction {
         } catch (err) {
             console.log(err);
             await dbTransaction.rollback();
-            return new Exception('TRANS_ADD_FAIL');
+            throw new Exception('TRANS_ADD_FAIL');
         }
     }
 

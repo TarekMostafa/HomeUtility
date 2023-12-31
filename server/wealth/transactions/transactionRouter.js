@@ -2,11 +2,13 @@ const express = require('express');
 const TransactionBusiness = require('./transactionBusiness');
 const SingleTransactionBusiness = require('./singleTransactionBusiness');
 const InternalTransactionBusiness = require('./internalTransactionBusiness');
+const DebtTransactionBusiness = require('./debtTransactionBusiness');
 
 const router = express.Router();
 const transactionBusiness = new TransactionBusiness();
 const singleTransactionBusiness = new SingleTransactionBusiness();
 const internalTransactionBusiness = new InternalTransactionBusiness();
+const debtTransactionBusiness = new DebtTransactionBusiness();
 
 router.get('/', function(req, res, next) {
   transactionBusiness.getTransactions(req.query).then( result => {
@@ -42,6 +44,14 @@ router.post('/internal', function(req, res, next) {
   })
 })
 
+router.get('/internal/getDefaults', (req, res, next) => {
+  internalTransactionBusiness.getDefaultData().then(result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+});
+
 router.get('/single/:id', function(req, res, next) {
   transactionBusiness.getTransaction(req.params.id).then( result => {
     res.json(result);
@@ -67,5 +77,32 @@ router.delete('/single/:id', function(req, res, next) {
     next(err);
   })
 })
+
+router.post('/debt', (req, res, next) => {
+  debtTransactionBusiness.addDebtTransaction(req.body).then( result => {
+    res.messageCode = 'TRANS_DBT_ADD_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
+
+router.put('/debt/:id', (req, res, next) => {
+  debtTransactionBusiness.updateDebtTransaction(req.params.id, req.body).then( result => {
+    res.messageCode = 'TRANS_DBT_UPDATE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
+
+router.delete('/debt/:id', (req, res, next) => {
+  debtTransactionBusiness.deleteDebtTransaction(req.params.id).then( result => {
+    res.messageCode = 'TRANS_DBT_DELETE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
 
 module.exports = router;

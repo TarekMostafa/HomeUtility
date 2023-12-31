@@ -10,6 +10,7 @@ const initState = {
   billFrequencies: null,
   bills: null,
   currencies: null,
+  activeDebtors: null,
 }
 
 const lookupReducer = (state=initState, action) => {
@@ -73,7 +74,12 @@ const lookupReducer = (state=initState, action) => {
       return {
         ...state,
         relatedTypes: action.data
-      }
+      };
+    case 'SET_DEBTORS':
+      return {
+        ...state,
+        activeDebtors: action.data
+      };
     default:
       return state;
   }

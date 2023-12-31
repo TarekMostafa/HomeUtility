@@ -28,6 +28,24 @@ class AddInternalTransactionModal extends Component {
   state = {
     ...initialState
   }
+
+  componentDidMount() {
+    TransactionRequest.getInternalTransactionDefaults()
+    .then(defaults => {
+      this.setState({
+        accountFrom: defaults.accountFrom,
+        typeFrom: defaults.typeFrom,
+        //postingDate: defaults.postingDate,
+        amount: defaults.amount,
+        accountTo: defaults.accountTo,
+        typeTo: defaults.typeTo,
+      })
+    })
+    .catch( (err) => {
+      this.setState({message: 'Error occured while loading default values'});
+    })
+  }
+
   render () {
     return (
       <ModalContainer title="Add Internal Transaction" show={this.props.show}
@@ -44,14 +62,16 @@ class AddInternalTransactionModal extends Component {
         <Form>
           <Form.Group controlId="accountFrom">
             <Form.Label>Account From</Form.Label>
-            <Form.Control as="select" name="accountFrom" onChange={this.handleAccountFromChange}>
+            <Form.Control as="select" name="accountFrom" onChange={this.handleAccountFromChange}
+            value={this.state.accountFrom}>
               <option value=''></option>
               <AccountsDropDown status='ACTIVE'/>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="typeFrom">
             <Form.Label>Type From</Form.Label>
-            <Form.Control as="select" name="typeFrom" onChange={this.handleChange}>
+            <Form.Control as="select" name="typeFrom" onChange={this.handleChange}
+            value={this.state.typeFrom}>
               <option value=''></option>
               <TransactionTypesDropDown typeCRDR="Debit"/>
             </Form.Control>
@@ -77,14 +97,16 @@ class AddInternalTransactionModal extends Component {
           </Form.Group>
           <Form.Group controlId="accountTo">
             <Form.Label>Account To</Form.Label>
-            <Form.Control as="select" name="accountTo" onChange={this.handleAccountToChange}>
+            <Form.Control as="select" name="accountTo" onChange={this.handleAccountToChange}
+            value={this.state.accountTo}>
               <option value=''></option>
               <AccountsDropDown status='ACTIVE'/>
             </Form.Control>
           </Form.Group>
           <Form.Group controlId="typeTo">
             <Form.Label>Type To</Form.Label>
-            <Form.Control as="select" name="typeTo" onChange={this.handleChange}>
+            <Form.Control as="select" name="typeTo" onChange={this.handleChange}
+            value={this.state.typeTo}>
               <option value=''></option>
               <TransactionTypesDropDown typeCRDR="Credit"/>
             </Form.Control>

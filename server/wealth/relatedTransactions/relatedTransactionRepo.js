@@ -8,6 +8,14 @@ class RelatedTransactionRepo {
     .save({transaction: dbTransaction});
   }
 
+  static async saveRelatedTransaction(relatedTransaction, dbTransaction) {
+    return await relatedTransaction.save({transaction: dbTransaction});
+  } 
+
+  static async deleteRelatedTransaction(relatedTransaction, dbTransaction) {
+    return await relatedTransaction.destroy({transaction: dbTransaction});
+  }
+
   static async getRelatedTransactions(skip, limit, whereQuery) {
     return await RelatedTransactionModel.findAll({
       offset: skip,
@@ -19,6 +27,10 @@ class RelatedTransactionRepo {
       where: whereQuery,
       order: [['relatedTransactionsId', 'DESC']]
     });
+  }
+
+  static async getRelatedTransaction(id) {
+    return await RelatedTransactionModel.findByPk(id);
   }
 
   static async getRelatedTransactionsById(id) {

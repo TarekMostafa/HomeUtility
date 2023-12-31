@@ -2,7 +2,7 @@ import interceptor from '../axios/Interceptor';
 import store from '../store/store';
 import { getTransactionTypes, getAccounts, getBanks, getActiveCurrencies,
   getAppSettings, getAccountStatuses, getRelatedTypes, getBillStatuses, 
-  getBillFrequencies, getBills, getExpenseTypes, getCurrencies} 
+  getBillFrequencies, getBills, getExpenseTypes, getCurrencies, getActiveDebtors} 
   from '../store/actions/lookupsAction';
 import { setUser } from '../store/actions/authActions';
 
@@ -20,6 +20,7 @@ const loadUser = (user) => {
   store.dispatch(getBillFrequencies());
   store.dispatch(getRelatedTypes());
   store.dispatch(getBills());
+  store.dispatch(getActiveDebtors());
   store.dispatch(setUser(user));
   localStorage.setItem("user", JSON.stringify(user));
 }

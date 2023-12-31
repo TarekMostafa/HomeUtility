@@ -6,6 +6,7 @@ import AppSettingsRequest from '../../axios/AppSettingsRequest';
 import RelatedTypeRequest from '../../axios/RelatedTypeRequest';
 import BillRequest from '../../axios/BillRequest';
 import ExpenseTypeRequest from '../../axios/ExpenseTypeRequest';
+import DebtorRequest from '../../axios/DebtorRequest';
 
 export const getAppSettings = () => {
   return (dispatch, getState) => {
@@ -99,6 +100,14 @@ export const getRelatedTypes = () => {
   return (dispatch, getState) => {
     RelatedTypeRequest.getRelatedTypes()
     .then( (relatedTypes) => dispatch({type: "SET_RELATED_TYPES", data: relatedTypes}) )
+    .catch( () => dispatch({type: "ERROR"}) )
+  }
+}
+
+export const getActiveDebtors = () => {
+  return (dispatch, getState) => {
+    DebtorRequest.getDebtors('', 'ACTIVE')
+    .then( (debtors) => dispatch({type: "SET_DEBTORS", data: debtors}) )
     .catch( () => dispatch({type: "ERROR"}) )
   }
 }

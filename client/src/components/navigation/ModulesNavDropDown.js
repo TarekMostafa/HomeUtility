@@ -61,6 +61,16 @@ function ModulesNavDropDown(props) {
         </Dropdown.Menu>
       </Dropdown>
       <Dropdown drop={'right'}>
+        <Dropdown.Toggle as={Nav.Link} id={'dropdown-expenses'}>
+          Debts
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <LinkContainer to="/debts/debtors">
+            <NavDropdown.Item>Debtors Summary</NavDropdown.Item>
+          </LinkContainer>
+        </Dropdown.Menu>
+      </Dropdown>
+      <Dropdown drop={'right'}>
         <Dropdown.Toggle as={Nav.Link} id={'dropdown-bills'}>
           Bills
         </Dropdown.Toggle>

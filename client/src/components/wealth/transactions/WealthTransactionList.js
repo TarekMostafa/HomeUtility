@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Form, Row, Col, Button, ButtonToolbar, ButtonGroup, InputGroup } from 'react-bootstrap';
+import { Form, Row, Col, Button, ButtonToolbar, /*ButtonGroup,*/ InputGroup, 
+  Dropdown, DropdownButton } from 'react-bootstrap';
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
@@ -14,6 +15,9 @@ import AddInternalTransactionModal from './AddInternalTransactionModal';
 import EditSingleTransactionModal from './EditSingleTransactionModal';
 import DeleteSingleTransactionModal from './DeleteSingleTransactionModal';
 import MultiSelectDropDown from '../../common/MultiSelectDropDown';
+import AddDebtTransactionModal from './AddDebtTransactionModal';
+import EditDebtTransactionModal from './EditDebtTransactionModal';
+import DeleteDebtTransactionModal from './DeleteDebtTransactionModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -39,6 +43,9 @@ class WealthTransactionList extends Component {
     modalAddInternalShow: false,
     modalEditSingleShow: false,
     modalDeleteSingleShow: false,
+    modalAddDebtShow: false,
+    modalEditDebtShow: false,
+    modalDeleteDebtShow: false,
     transactionId: '',
     ...initialState,
   }
@@ -73,12 +80,24 @@ class WealthTransactionList extends Component {
       <React.Fragment>
         <FormContainer title="Accounts Transactions" toolbar={
           <ButtonToolbar aria-label="Toolbar with button groups">
-            <ButtonGroup className="mr-2" aria-label="First group">
+            {/* <ButtonGroup className="mr-2" aria-label="First group">
               <Button variant="info" size="sm" onClick={this.handleAddSingleTransaction}>Add Single Transaction</Button>
             </ButtonGroup>
             <ButtonGroup className="mr-2" aria-label="Second group">
               <Button variant="info" size="sm" onClick={this.handleAddInternalTransaction}>Add Internal Transaction</Button>
-            </ButtonGroup>
+            </ButtonGroup> */}
+            <DropdownButton variant="info" id="dropdown-basic-button" title="Actions"
+              size="sm">
+                <Dropdown.Item onClick={this.handleAddSingleTransaction}>
+                  Add Single Transaction
+                </Dropdown.Item>
+                <Dropdown.Item onClick={this.handleAddInternalTransaction}>
+                  Add Internal Transaction
+                </Dropdown.Item>
+                <Dropdown.Item onClick={this.handleAddDebtTransaction}>
+                  Add Debt Transaction
+                </Dropdown.Item>
+            </DropdownButton>
           </ButtonToolbar>
         }>
           <Form>
@@ -158,8 +177,11 @@ class WealthTransactionList extends Component {
         </FormContainer>
         <AddSingleTransactionModal show={this.state.modalAddSingleShow} onHide={this.handleHide}
         onSave={this.handleListClick}/>
-        <AddInternalTransactionModal show={this.state.modalAddInternalShow} onHide={this.handleHide}
-        onSave={this.handleListClick}/>
+        {
+          this.state.modalAddInternalShow && 
+          <AddInternalTransactionModal show={this.state.modalAddInternalShow} onHide={this.handleHide}
+          onSave={this.handleListClick}/>
+        }
         {
           this.state.modalEditSingleShow &&
           <EditSingleTransactionModal show={this.state.modalEditSingleShow} onHide={this.handleHide}
@@ -168,6 +190,21 @@ class WealthTransactionList extends Component {
         {
           this.state.modalDeleteSingleShow &&
           <DeleteSingleTransactionModal show={this.state.modalDeleteSingleShow} onHide={this.handleHide}
+          onDelete={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
+        {
+          this.state.modalAddDebtShow &&
+          <AddDebtTransactionModal show={this.state.modalAddDebtShow} onHide={this.handleHide}
+          onSave={this.handleListClick} />
+        }
+        {
+          this.state.modalEditDebtShow && 
+          <EditDebtTransactionModal show={this.state.modalEditDebtShow} onHide={this.handleHide}
+          onSave={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
+        {
+          this.state.modalDeleteDebtShow &&
+          <DeleteDebtTransactionModal show={this.state.modalDeleteDebtShow} onHide={this.handleHide}
           onDelete={this.handleListClick} transactionId={this.state.transactionId}/>
         }
       </React.Fragment>
@@ -238,25 +275,36 @@ class WealthTransactionList extends Component {
     });
   }
 
+  handleAddDebtTransaction = () => {
+    this.setState({
+      modalAddDebtShow: true
+    });
+  }
+
   handleHide = () => {
     this.setState({
       modalAddSingleShow: false,
       modalAddInternalShow: false,
       modalEditSingleShow: false,
-      modalDeleteSingleShow: false
+      modalDeleteSingleShow: false,
+      modalAddDebtShow: false,
+      modalEditDebtShow: false,
+      modalDeleteDebtShow: false,
     });
   }
 
-  handleEditTransaction = (transactionId) => {
+  handleEditTransaction = (transactionId, module) => {
     this.setState({
-      modalEditSingleShow: true,
+      modalEditSingleShow: (!module),
+      modalEditDebtShow: (module==='DBT'),
       transactionId
     });
   }
 
-  handleDeleteTransaction = (transactionId) => {
+  handleDeleteTransaction = (transactionId, module) => {
     this.setState({
-      modalDeleteSingleShow: true,
+      modalDeleteSingleShow: (!module),
+      modalDeleteDebtShow: (module==='DBT'),
       transactionId
     });
   }

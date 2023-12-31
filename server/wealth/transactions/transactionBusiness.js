@@ -8,7 +8,7 @@ const Exception = require('../../features/exception');
 
 const Op = Sequelize.Op;
 
-class Transaction {
+class TransactionBusiness {
 
   async getTransactions({limit, skip, accountIds, typeIds, postingDateFrom,
     postingDateTo, narrative, id, includeNarrative}) {
@@ -88,12 +88,12 @@ class Transaction {
     const _dateTo = Common.getDate(postingDateTo, '', true);
     if( _dateFrom === '' || _dateTo === '') {
       //return APIResponse.getAPIResponse(false, null, '043');
-      return new Exception('POST_DATE_INVALID');
+      throw new Exception('POST_DATE_INVALID');
     }
     // Get Report Information
     const report = await ReportRepo.getReport(reportId);
     if(!report) {
-      return new Exception('REPORT_ID_INVALID');
+      throw new Exception('REPORT_ID_INVALID');
     }
     const reportdetails = report.reportdetails;
     // Format Result
@@ -146,24 +146,25 @@ class Transaction {
       transactionRelatedTransactionId: transaction.transactionRelatedTransactionId,
       transactionModule: transaction.transactionModule,
       accountCurrency: transaction.account.accountCurrency,
-      currencyDecimalPlace: transaction.account.currency.currencyDecimalPlace
+      currencyDecimalPlace: transaction.account.currency.currencyDecimalPlace,
+      transactionModuleId: transaction.transactionModuleId
     };
     return transaction;
   }
 
   async addTransaction({transactionAmount, transactionNarrative, transactionPostingDate,
     transactionCRDR, transactionAccount, transactionTypeId, transactionRelatedTransactionId,
-    transactionModule}, dbTransaction) {
+    transactionModule, transactionModuleId}, dbTransaction) {
     // Get account related to this transaction
     let account = await AccountRepo.getAccount(transactionAccount);
     if(!account){
-      return new Exception('ACC_INVALID');
+      throw new Exception('ACC_INVALID');
     }
     //Increase/Decrease account balance depending on transaction CRDR field
     const amount = this.evalTransactionAmount(transactionAmount,
       transactionCRDR, false);
     if(!amount) {
-      return new Exception('TRANS_TYPE_INVALID');
+      throw new Exception('TRANS_TYPE_INVALID');
     }
     // Save Transaction
     const savedTrans = await TransactionRepo.addTransaction({
@@ -175,6 +176,7 @@ class Transaction {
       transactionTypeId,
       transactionRelatedTransactionId,
       transactionModule,
+      transactionModuleId,
     }, dbTransaction);
     // Update Account Current Balance & Last Balance Update
     await AccountRepo.updateAccountCurrentBalance(account, amount, dbTransaction);
@@ -186,18 +188,18 @@ class Transaction {
     // Get Saved transaction that want to be deleted
     let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
-      return new Exception('TRANS_NOT_EXIST');
+      throw new Exception('TRANS_NOT_EXIST');
     }
     // Get account related to saved transaction
     let _account = await AccountRepo.getAccount(_transaction.transactionAccount);
     if(!_account){
-      return new Exception('ACC_INVALID');
+      throw new Exception('ACC_INVALID');
     }
     // Rollback
     const amount = this.evalTransactionAmount(_transaction.transactionAmount,
       _transaction.transactionCRDR, true);
     if(!amount) {
-      return new Exception('TRANS_TYPE_INVALID');
+      throw new Exception('TRANS_TYPE_INVALID');
     }
     // Delete Transaction
     await _transaction.destroy({transaction: dbTransaction});
@@ -208,33 +210,33 @@ class Transaction {
   }
 
   async editTransaction(id, {transactionAmount, transactionNarrative, transactionPostingDate,
-    transactionCRDR, transactionAccount, transactionTypeId}, dbTransaction) {
+    transactionCRDR, transactionAccount, transactionTypeId, transactionModuleId}, dbTransaction) {
     // Get Saved transaction that want to be updated
     let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
-      return new Exception('TRANS_NOT_EXIST');
+      throw new Exception('TRANS_NOT_EXIST');
     }
     // Get account related to saved transaction
     let _account = await AccountRepo.getAccount(_transaction.transactionAccount);
     if(!_account){
-      return new Exception('ACC_INVALID');
+      throw new Exception('ACC_INVALID');
     }
     // Rollback
     let amountRollback = this.evalTransactionAmount(_transaction.transactionAmount,
       _transaction.transactionCRDR, true);
     if(!amountRollback) {
-      return new Exception('TRANS_TYPE_INVALID');
+      throw new Exception('TRANS_TYPE_INVALID');
     }
     // Get account related to passed transaction
     let account = await AccountRepo.getAccount(transactionAccount);
     if(!account){
-      return new Exception('ACC_INVALID');
+      throw new Exception('ACC_INVALID');
     }
     //Increase/Decrease account balance depending on transaction CRDR field
     let amount = this.evalTransactionAmount(transactionAmount,
       transactionCRDR, false);
     if(!amount) {
-      return new Exception('TRANS_TYPE_INVALID');
+      throw new Exception('TRANS_TYPE_INVALID');
     }
     // update transaction
     _transaction.transactionAmount = transactionAmount;
@@ -243,6 +245,7 @@ class Transaction {
     _transaction.transactionCRDR = transactionCRDR;
     _transaction.transactionAccount = transactionAccount;
     _transaction.transactionTypeId = transactionTypeId;
+    _transaction.transactionModuleId = transactionModuleId;
     await _transaction.save({transaction: dbTransaction});
     if(_account.accountId !== account.accountId) {
       await AccountRepo.updateAccountCurrentBalance(_account, amountRollback, dbTransaction);
@@ -266,4 +269,4 @@ class Transaction {
 
 }
 
-module.exports = Transaction;
+module.exports = TransactionBusiness;

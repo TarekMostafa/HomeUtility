@@ -20,7 +20,7 @@ class SingleTransaction {
             }
         } catch (err) {
             await dbTransaction.rollback();
-            return new Exception('TRANS_ADD_FAIL');
+            throw new Exception('TRANS_ADD_FAIL');
         }
     }
 
@@ -36,7 +36,7 @@ class SingleTransaction {
             }
         } catch (err) {
             await dbTransaction.rollback();
-            return new Exception('TRANS_DELETE_FAIL');
+            throw new Exception('TRANS_DELETE_FAIL');
         }
     }
 
@@ -53,7 +53,7 @@ class SingleTransaction {
         } catch (err) {
             console.log(err);
             await dbTransaction.rollback();
-            return new Exception('TRANS_UPDATE_FAIL');
+            throw new Exception('TRANS_UPDATE_FAIL');
         }
     }
 }

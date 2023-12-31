@@ -80,7 +80,7 @@ function CardDeleteModal(props) {
             <Form.Label>Card Limit</Form.Label>
             <Form.Control type="number" maxLength={20}
             name="cardLimit"
-            value={Number(card.cardLimit).toFixed(card.currency.currencyDecimalPlace)}
+            value={Number(card.cardLimit).toFixed(card.currencyDecimalPlace)}
             readOnly/>
           </Form.Group>
           <Form.Group controlId="cardStartDate">

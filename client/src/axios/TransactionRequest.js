@@ -71,6 +71,37 @@ class TransctionRequest {
     const response = await axios.get('/api/wealth/transactions/single/'+id);
     return response.data;
   }
+
+  static async getInternalTransactionDefaults(){
+    const response = await axios.get('/api/wealth/transactions/internal/getDefaults/');
+    return response.data;
+  }
+
+  static async addDebtTransaction (account, postingDate, amount, crOrDr, debtorId, narrative) {
+    return await axios.post('/api/wealth/transactions/debt', {
+      account,
+      postingDate,
+      amount,
+      crOrDr,
+      debtorId,
+      narrative
+    });
+  }
+
+  static async updateDebtTransaction (id, account, postingDate, amount, crOrDr, debtorId, narrative) {
+    return await axios.put('/api/wealth/transactions/debt/'+id, {
+      account,
+      postingDate,
+      amount,
+      crOrDr,
+      debtorId,
+      narrative
+    });
+  }
+
+  static async deleteDebtTransaction (id) {
+    return await axios.delete('/api/wealth/transactions/debt/'+id);
+  }
 }
 
 export default TransctionRequest;

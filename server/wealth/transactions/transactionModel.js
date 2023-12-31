@@ -15,6 +15,7 @@ TransactionModel.init({
   transactionTypeId: Sequelize.INTEGER,
   transactionRelatedTransactionId: Sequelize.BIGINT(20),
   transactionModule: { type: Sequelize.STRING(3), allowNull: true },
+  transactionModuleId: { type: Sequelize.BIGINT(20), allowNull: true},
 }, {
   tableName: 'transactions',
   createdAt: false,
