@@ -102,6 +102,12 @@ class TransctionRequest {
   static async deleteDebtTransaction (id) {
     return await axios.delete('/api/wealth/transactions/debt/'+id);
   }
+
+  static async convertToDebtTransaction(id, debtorId) {
+    return await axios.post('/api/wealth/transactions/debt/converttodebt/'+id, {
+      debtorId
+    });
+  }
 }
 
 export default TransctionRequest;

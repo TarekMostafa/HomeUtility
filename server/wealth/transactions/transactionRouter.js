@@ -105,4 +105,13 @@ router.delete('/debt/:id', (req, res, next) => {
   })
 });
 
+router.post('/debt/converttodebt/:id', (req, res, next) => {
+  debtTransactionBusiness.convertSingleTransactionToDebtTransaction(req.params.id, req.body).then( result => {
+    res.messageCode = 'TRANS_DBT_CONVERT_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
+
 module.exports = router;

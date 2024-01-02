@@ -76,6 +76,7 @@ class DebtTransactionBusiness {
             }
             // get debt transaction
             const accountTransaction = await TransactionRepo.getTransaction(id);
+            if(!accountTransaction) throw new Exception('TRANS_NOT_EXIST');
             // edit debt transaction
             await this.transactionBusiness.editTransaction(id, {
                 transactionAmount: amount,
@@ -119,6 +120,7 @@ class DebtTransactionBusiness {
             dbTransaction = await sequelize.transaction();
             // get debt transaction
             const accountTransaction = await TransactionRepo.getTransaction(id);
+            if(!accountTransaction) throw new Exception('TRANS_NOT_EXIST');
             // delete debt transaction
             await this.transactionBusiness.deleteTransaction(id, dbTransaction);
             //update debtor balance 
@@ -136,6 +138,46 @@ class DebtTransactionBusiness {
             console.log(err);
             await dbTransaction.rollback();
             throw new Exception('TRANS_DBT_DELETE_FAIL');
+        }
+    }
+
+    async convertSingleTransactionToDebtTransaction(id, {debtorId}){
+        let dbTransaction;
+        try{
+            dbTransaction = await sequelize.transaction();
+            //Get debtor info
+            const debtor = await DebtorRepo.getDebtor(debtorId);
+            if(!debtor) throw new Exception('DEBT_NOT_EXIST');
+            // get single transaction
+            const accountTransaction = await TransactionRepo.getTransaction(id);
+            if(!accountTransaction) throw new Exception('TRANS_NOT_EXIST');
+            //adjust amount
+            let debtAmount = 0;
+            if(accountTransaction.transactionCRDR === 'Credit') {
+                debtAmount = accountTransaction.transactionAmount * -1;
+            } else if(accountTransaction.transactionCRDR === 'Debit'){
+                debtAmount = accountTransaction.transactionAmount;
+            }
+            //update transaction
+            const savedTrans = await this.transactionBusiness.editTransaction(accountTransaction.transactionId, {
+                transactionAmount: accountTransaction.transactionAmount,
+                transactionNarrative: accountTransaction.transactionNarrative,
+                transactionPostingDate: accountTransaction.transactionPostingDate,
+                transactionCRDR: accountTransaction.transactionCRDR,
+                transactionAccount: accountTransaction.transactionAccount,
+                transactionTypeId: accountTransaction.transactionTypeId,
+                transactionModule: 'DBT',
+                transactionRelatedTransactionId: debtor.debtRelId,
+                transactionModuleId: debtorId,  
+            }, dbTransaction);
+            //update debtor balance 
+            await DebtorRepo.updateDebtorBalance(debtorId, debtAmount, dbTransaction);
+
+            await dbTransaction.commit();
+        } catch (err) {
+            console.log(err);
+            await dbTransaction.rollback();
+            throw new Exception('TRANS_DBT_CONVERT_FAIL');
         }
     }
 }

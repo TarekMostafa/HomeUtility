@@ -68,6 +68,13 @@ function WealthTransactionTable (props) {
                     {props.onDeleteTransaction && <Button variant="link" size="sm"
                     onClick={() => props.onDeleteTransaction(transaction.transactionId, 
                     transaction.transactionModule)}>Delete</Button>}
+                    {
+                      props.onMigration && transaction.migrationType &&
+                      <Button variant="link" size="sm"
+                      onClick={() => props.onMigration(transaction)}>
+                        {transaction.migrationText}
+                      </Button>
+                    }
                   </ButtonGroup>
                 }
               </td>

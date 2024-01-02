@@ -5,6 +5,8 @@ const AccountRepo = require('../accounts/accountRepo');
 const Common = require('../../utilities/common');
 const ReportRepo = require('../transactionReports/reportRepo');
 const Exception = require('../../features/exception');
+const AppParametersRepo = require('../../appSettings/appParametersRepo');
+const AppParametersConstants = require('../../appSettings/appParametersConstants');
 
 const Op = Sequelize.Op;
 
@@ -61,7 +63,8 @@ class TransactionBusiness {
     }
 
     let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery);
-    transactions = transactions.map(trans => {
+    transactions = await Promise.all(transactions.map(async trans => {
+      const migration = await this.getMigrationObject(trans);
       return {
         transactionId: trans.transactionId,
         transactionPostingDate: trans.transactionPostingDate,
@@ -75,8 +78,10 @@ class TransactionBusiness {
         currencyRateAgainstBase: trans.account.currency.currencyRateAgainstBase,
         currencyDecimalPlace: trans.account.currency.currencyDecimalPlace,
         typeName: (trans.transactionType? trans.transactionType.typeName: ''),
+        migrationType: migration.type,
+        migrationText: migration.text,
       }
-    });
+    }));
     return transactions;
   }
 
@@ -135,6 +140,7 @@ class TransactionBusiness {
 
   async getTransaction(id) {
     let transaction = await TransactionRepo.getTransaction(id);
+    const migration = await this.getMigrationObject(transaction);
     transaction = {
       transactionId: transaction.transactionId,
       transactionAmount: transaction.transactionAmount,
@@ -147,7 +153,9 @@ class TransactionBusiness {
       transactionModule: transaction.transactionModule,
       accountCurrency: transaction.account.accountCurrency,
       currencyDecimalPlace: transaction.account.currency.currencyDecimalPlace,
-      transactionModuleId: transaction.transactionModuleId
+      transactionModuleId: transaction.transactionModuleId,
+      migrationType: migration.type,
+      migrationText: migration.text,
     };
     return transaction;
   }
@@ -210,7 +218,8 @@ class TransactionBusiness {
   }
 
   async editTransaction(id, {transactionAmount, transactionNarrative, transactionPostingDate,
-    transactionCRDR, transactionAccount, transactionTypeId, transactionModuleId}, dbTransaction) {
+    transactionCRDR, transactionAccount, transactionTypeId, transactionModuleId,
+    transactionRelatedTransactionId, transactionModule}, dbTransaction) {
     // Get Saved transaction that want to be updated
     let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
@@ -245,7 +254,12 @@ class TransactionBusiness {
     _transaction.transactionCRDR = transactionCRDR;
     _transaction.transactionAccount = transactionAccount;
     _transaction.transactionTypeId = transactionTypeId;
-    _transaction.transactionModuleId = transactionModuleId;
+    if(transactionModuleId)
+      _transaction.transactionModuleId = transactionModuleId;
+    if(transactionRelatedTransactionId)  
+      _transaction.transactionRelatedTransactionId = transactionRelatedTransactionId;
+    if(transactionModule)
+      _transaction.transactionModule = transactionModule;
     await _transaction.save({transaction: dbTransaction});
     if(_account.accountId !== account.accountId) {
       await AccountRepo.updateAccountCurrentBalance(_account, amountRollback, dbTransaction);
@@ -265,6 +279,26 @@ class TransactionBusiness {
     } else {
       return null;
     }
+  }
+
+  async getMigrationObject(transaction){
+    const typeCRDebt = await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.DEBT_TRANSACTION_CREDIT);
+    const typeDRDebt = await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.DEBT_TRANSACTION_DEBIT);
+
+    let migration = {
+      type: '',
+      text: '',
+    };
+    if((transaction.transactionTypeId == typeCRDebt ||
+      transaction.transactionTypeId == typeDRDebt) && 
+      !transaction.transactionRelatedTransactionId)
+    {
+      migration.type = 'DBT';
+      migration.text = 'Convert To Debt'
+    }
+    return migration;
   }
 
 }

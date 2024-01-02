@@ -53,6 +53,8 @@ module.exports = {
   'TRANS_DBT_UPDATE_SUCCESS': 'This debt transaction has been successfully updated',
   'TRANS_DBT_DELETE_FAIL': 'Failed to delete this debt transaction',
   'TRANS_DBT_DELETE_SUCCESS': 'This debt transaction has been successfully deleted',
+  'TRANS_DBT_CONVERT_FAIL': 'Failed to convert this single transaction to debt transction',
+  'TRANS_DBT_CONVERT_SUCCESS': 'This transaction has been successfully converted',
   '042' : 'User name has been successfully changed',
   'POST_DATE_INVALID' : 'Posting Date from and Posting Date to must be correct dates',
   'REPORT_ID_INVALID' : 'Invalid Report Id',

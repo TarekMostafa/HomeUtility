@@ -18,6 +18,7 @@ import MultiSelectDropDown from '../../common/MultiSelectDropDown';
 import AddDebtTransactionModal from './AddDebtTransactionModal';
 import EditDebtTransactionModal from './EditDebtTransactionModal';
 import DeleteDebtTransactionModal from './DeleteDebtTransactionModal';
+import ConvertSingleToDebtModal from './ConvertSingleToDebtModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -46,6 +47,7 @@ class WealthTransactionList extends Component {
     modalAddDebtShow: false,
     modalEditDebtShow: false,
     modalDeleteDebtShow: false,
+    modalConvertToDebtShow: false,
     transactionId: '',
     ...initialState,
   }
@@ -170,7 +172,8 @@ class WealthTransactionList extends Component {
           <WealthTransactionTable transactions={this.state.transactions}
           onEditTransaction={this.handleEditTransaction}
           onDeleteTransaction={this.handleDeleteTransaction}
-          onRelatedTransaction={this.handleRelatedTransaction}/>
+          onRelatedTransaction={this.handleRelatedTransaction}
+          onMigration={this.handleMigration}/>
           <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
             hidden={!this.state.appearMoreButton}>
             more...</Button>
@@ -206,6 +209,11 @@ class WealthTransactionList extends Component {
           this.state.modalDeleteDebtShow &&
           <DeleteDebtTransactionModal show={this.state.modalDeleteDebtShow} onHide={this.handleHide}
           onDelete={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
+        {
+          this.state.modalConvertToDebtShow && 
+          <ConvertSingleToDebtModal show={this.state.modalConvertToDebtShow} onHide={this.handleHide}
+          onConvert={this.handleListClick} transactionId={this.state.transactionId}/>
         }
       </React.Fragment>
     )
@@ -290,6 +298,7 @@ class WealthTransactionList extends Component {
       modalAddDebtShow: false,
       modalEditDebtShow: false,
       modalDeleteDebtShow: false,
+      modalConvertToDebtShow: false,
     });
   }
 
@@ -307,6 +316,15 @@ class WealthTransactionList extends Component {
       modalDeleteDebtShow: (module==='DBT'),
       transactionId
     });
+  }
+
+  handleMigration = (transaction) => {
+    if(transaction.migrationType === 'DBT'){
+      this.setState({
+        modalConvertToDebtShow: true,
+        transactionId: transaction.transactionId
+      });
+    }
   }
 
   handleRelatedTransaction = (relatedId) => {
