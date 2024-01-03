@@ -1,6 +1,6 @@
 {
   "name": "homeutility",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Home Utility Application",
   "main": "server.js",
   "scripts": {
@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "aes-js": "^3.1.2",
+    "axios": "^1.6.3",
     "body-parser": "^1.18.3",
     "concurrently": "^6.3.0",
     "currency-codes": "^1.5.0",

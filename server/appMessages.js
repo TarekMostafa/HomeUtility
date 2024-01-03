@@ -127,4 +127,5 @@ module.exports = {
   'DEBT_ADD_FAIL': 'Failed to add this debtor',
   'DEBT_UPDATE_FAIL': 'Failed to update this debtor',
   'DEBT_DELETE_FAIL': 'Failed to delete this debtor',
+  'INV_API_KEY': 'Invalid API key',
 }

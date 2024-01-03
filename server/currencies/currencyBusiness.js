@@ -128,26 +128,21 @@ class Currency {
     if(!baseCurrency){
       throw new Exception('CURR_INV_BASE');
     }
+    //Get API Key
+    const apiKey = await AppParametersRepo.getAppParameterValue(AppParametersConstants.CURRENCY_CONVERSION_API_KEY);
+    if(!apiKey) {
+      throw new Exception('INV_API_KEY');
+    }
     // Get list of active currencies
-    const currencies = await CurrencyRepo.getActiveCurrencies();
-    // Create promises array to get all rates based on base currency
-    let promises = currencies.map( (currency) => {
-      return new Promise( (resolve, reject) => {
-        currencyConversion(currency.currencyCode, baseCurrency.currencyCode,
-          baseCurrency.currencyConversionAPIKey, function(err, amt){
-            if(err) {
-              reject(err);
-            } else {
-              currency.currencyRateAgainstBase = amt;
-              resolve(currency);
-            }
-        });
-      });
-    });
-    // Wait for rates and update database
-    await Promise.all(promises).then( (data) => {
-      return data.map( async currency => await currency.save());
-    });
+    let currencies = await CurrencyRepo.getActiveCurrencies();
+    //process all active currencies
+    currencies = await Promise.all(currencies.map(async currency => {
+      let rate = 1;
+      if(currency.currencyCode!==baseCurrency.currencyCode)
+        rate = await currencyConversion(currency.currencyCode, baseCurrency.currencyCode, apiKey);
+      currency.currencyRateAgainstBase = rate;
+      await currency.save();
+    }));
   }
 }
 

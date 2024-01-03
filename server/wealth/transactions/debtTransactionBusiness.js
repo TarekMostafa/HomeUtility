@@ -86,6 +86,7 @@ class DebtTransactionBusiness {
                 transactionAccount: account,
                 transactionTypeId: typeId,
                 transactionModuleId: debtorId,
+                transactionRelatedTransactionId: debtor.debtRelId,
             }, dbTransaction);
             //update debtor balance 
             const oldAmount = this.transactionBusiness.evalTransactionAmount(
