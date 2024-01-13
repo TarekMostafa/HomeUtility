@@ -11,7 +11,7 @@ class DebtorRepo {
     return await DebtorModel.findAll({
       include: [
         { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace', 
-        'currencyDecimalPlace', 'currencyManualRateAgainstBase'] },
+        'currencyRateAgainstBase', 'currencyManualRateAgainstBase'] },
       ],
       where: query,
       order: [ ['debtName', 'ASC'] ]
