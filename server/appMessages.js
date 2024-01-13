@@ -101,6 +101,7 @@ module.exports = {
   'CARD_NOT_EXIST': 'This card does not exist',
   'CARD_UPDATE_FAIL': 'Failed to update card information',
   'CARD_ADD_SUCCESS': 'This card has been successfully saved',
+  'CARD_TRANS_EXIST': 'You can not delete this card as there are card transactions',
   'CARD_INST_ADD_SUCCESS': 'This card installment has been successfully saved',
   'CARD_INST_NOT_EXIST': 'This card installment does not exist',
   'CARD_INST_ADD_FAIL': 'Failed to Add card installment',

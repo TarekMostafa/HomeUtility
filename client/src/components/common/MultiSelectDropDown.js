@@ -8,7 +8,7 @@ function MultiSelectDropDown (props){
         text=text+ ' ('+props.selectedValues.length+')';
     return (
         <React.Fragment>
-        <Form.Control as="select" size="sm" value=''>
+        <Form.Control as="select" size="sm" value='' onChange={()=>{''}}>
             <option value=''>{text}</option>
             {props.children}
         </Form.Control>

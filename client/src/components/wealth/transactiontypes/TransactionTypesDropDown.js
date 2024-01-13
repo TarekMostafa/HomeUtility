@@ -12,8 +12,8 @@ function TransactionTypesDropDown(props) {
   return transactionTypes && transactionTypes.map( (transactionType) => {
     const value = transactionType.typeName;
     const key = transactionType.typeId;
-    let style = {"font-weight":""};
-    if(props.selectedData.includes(key)) style["font-weight"]="bold";
+    let style = {"fontWeight":""};
+    if(props.selectedData.includes(key)) style["fontWeight"]="bold";
     return (
       <option key={key} value={key} style={{...style}}
       onClick={()=>typeof(props.onSelect)==='function' && props.onSelect(key, value)}>

@@ -1,6 +1,7 @@
 const CardRepo = require('./cardRepo');
 const Exception = require('../features/exception');
 const sequelize = require('../db/dbConnection').getSequelize();
+const CardTransactionRepo = require('./cardTransaction/cardTransactionRepo');
 
 const CARD_STATUS = {
   ACTIVE: 'ACTIVE',
@@ -100,6 +101,8 @@ class CardBusiness {
     //const card = await this.getCard(id);
     const card = await CardRepo.getCard(id);
     if(!card) throw new Exception('CARD_NOT_EXIST');
+    const isExist = await CardTransactionRepo.IsCardTransactionExist(id);
+    if(isExist) throw new Exception('CARD_TRANS_EXIST');
     await card.destroy();
   }
 }

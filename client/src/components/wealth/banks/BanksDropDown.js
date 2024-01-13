@@ -6,8 +6,8 @@ function BanksDropDown(props) {
   return props.banks && props.banks.map( (bank) => {
     const value = bank.bankName;
     const key = bank.bankCode;
-    let style = {"font-weight":""};
-    if(props.selectedData.includes(key)) style["font-weight"]="bold";
+    let style = {"fontWeight":""};
+    if(props.selectedData.includes(key)) style["fontWeight"]="bold";
     return (
       <option key={key} value={key} style={{...style}}
       onClick={()=>typeof(props.onSelect)==='function' && props.onSelect(key, value)}>

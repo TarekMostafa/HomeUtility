@@ -14,8 +14,8 @@ function CurrenciesDropDown(props) {
   return currencies && currencies.map( (currency) => {
     const value = currency.currencyName;
     const key = currency.currencyCode;
-    let style = {"font-weight":""};
-    if(props.selectedData.includes(key)) style["font-weight"]="bold";
+    let style = {"fontWeight":""};
+    if(props.selectedData.includes(key)) style["fontWeight"]="bold";
     return (
       <option key={key} value={key} style={{...style}}
       decimalplaces={currency.currencyDecimalPlace}

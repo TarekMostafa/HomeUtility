@@ -75,6 +75,15 @@ class CardTransactionRepo {
   static async addCardTransaction(cardTrans, dbTransaction) {
     await CardTransactionModel.build(cardTrans).save({transaction: dbTransaction});
   }
+
+  static async IsCardTransactionExist(cardId) {
+    let cardTransaction = await CardTransactionModel.findOne({
+      where: {
+        cardId
+      }
+    });
+    return cardTransaction?true:false;
+  }
 }
 
 module.exports = CardTransactionRepo;

@@ -14,7 +14,7 @@ class CurrencyRepo {
   }
 
   static async addCurrency(currency) {
-    CurrencyModel.build(currency).save();
+    await CurrencyModel.build(currency).save();
   }
 
   static async saveCurrency(currency) {

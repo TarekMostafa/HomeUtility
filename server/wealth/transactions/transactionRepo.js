@@ -1,8 +1,11 @@
+const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const TransactionModel = require('./transactionModel');
 const AccountModel = require('../accounts/accountModel');
 const CurrencyModel = require('../../currencies/currencyModel');
 const TransactionTypeModel = require('../transactionTypes/transactionTypeModel');
+
+const Op = Sequelize.Op;
 
 class TransactionRepo {
   static async getTransactions(skip, limit, whereQuery) {
@@ -63,6 +66,18 @@ class TransactionRepo {
       group: [sequelize.literal('case when transactionTypeId is not null then transactionType.typeName else \'\' end')],
       where: whereQuery,
     });
+  }
+
+  static async IsDepositTransactionExist(relatedId, originalTransId) {
+    let transaction = await TransactionModel.findOne({
+      where: {
+        transactionId: {
+          [Op.ne]: originalTransId
+        },
+        transactionRelatedTransactionId: relatedId
+      }
+    });
+    return transaction?true:false;
   }
 }
 

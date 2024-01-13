@@ -2,6 +2,8 @@ const DebtorRepo = require('./debtorRepo');
 const Exception = require('../features/exception');
 const sequelize = require('../db/dbConnection').getSequelize();
 const RelatedTransactionRepo = require('../wealth/relatedTransactions/relatedTransactionRepo');
+const AppParametersRepo = require('../appSettings/appParametersRepo');
+const AppParametersConstants = require('../appSettings/appParametersConstants');
 
 const DEBTOR_STATUS = {
   ACTIVE: 'ACTIVE',
@@ -10,6 +12,15 @@ const DEBTOR_STATUS = {
 
 class DebtorBusiness {
   async getDebtors({currency, status}) {
+    //Get param value
+    let isAutomatic = true;
+    const automaticOrManual = await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.AUTOMATIC_OR_MANUAL_RATE);
+    if(automaticOrManual) {
+      isAutomatic = (automaticOrManual === AppParametersConstants.AUTOMATIC ||
+        automaticOrManual !== AppParametersConstants.MANUAL);
+    }
+
     let debtors = await DebtorRepo.getDebtors({currency, status});
     debtors = debtors.map(debtor => {
       return  {
@@ -22,6 +33,8 @@ class DebtorBusiness {
         LastBalanceUpdate: debtor.debtLastBalanceUpdate,
         CurrencyDecimalPlace: debtor.currency.currencyDecimalPlace,
         RelId: debtor.debtRelId,
+        currencyRateAgainstBase: (isAutomatic? debtor.currency.currencyRateAgainstBase
+          :debtor.currency.currencyManualRateAgainstBase),
       }
     });
     return debtors;

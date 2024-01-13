@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import {useHistory} from 'react-router';
+import { connect } from 'react-redux';
 
 import FormContainer from '../../common/FormContainer';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
@@ -10,6 +11,7 @@ import DebtorAddModal from './DebtorAddModal';
 import DebtorEditModal from './DebtorEditModal';
 import DebtorDeleteModal from './DebtorDeleteModal';
 import DebtorViewModal from './DebtorViewModal';
+import DebtorTotalBalance from './DebtorTotalBalance';
 
 import DebtorRequest from '../../../axios/DebtorRequest';
 
@@ -18,7 +20,7 @@ const initialState = {
     debtorStatus: "ACTIVE"
 }
 
-function DebtorList() {
+function DebtorList(props) {
     const [formData, setFormData] = useState(initialState);
     const [debtors, setDebtors] = useState([]);
     const [modalAddShow, setModalAddShow] = useState(false);
@@ -102,6 +104,12 @@ function DebtorList() {
                 </Form>
             </FormContainer>
             <FormContainer>
+                {
+                    props.appSettings && props.appSettings.baseCurrency &&
+                    <DebtorTotalBalance debtors={debtors}
+                        baseCurrency={props.appSettings.baseCurrency}
+                        decimalPlace={props.appSettings.currency.currencyDecimalPlace}/>
+                }
                 <DebtorTable debtors={debtors} 
                 onEditDebtor={handleEditDebtor}
                 onDeleteDebtor={handleDeleteDebtor}
@@ -134,4 +142,10 @@ function DebtorList() {
     );
 }
 
-export default DebtorList;
+const mapStateToProps = (state) => {
+	return {
+    appSettings: state.lookups.appSettings,
+	}
+}
+
+export default connect(mapStateToProps)(DebtorList);

@@ -157,12 +157,14 @@ class Deposit {
     if(_deposit === null) {
       throw new Exception('DEP_NOT_EXIST');
     }
-    if(_deposit.relatedId) {
-      throw new Exception('DEP_REL_TRANS_ERR');
-    }
     const _originalTrans = await TransactionRepo.getTransaction(_deposit.originalTransId);
     if(_originalTrans === null) {
       throw new Exception('TRANS_NOT_EXIST');
+    }
+    const IsExist = await TransactionRepo.IsDepositTransactionExist(_deposit.relatedId, 
+      _deposit.originalTransId)
+    if(IsExist) {
+      throw new Exception('DEP_REL_TRANS_ERR');
     }
     //Start SQL transaction
     let dbTransaction;

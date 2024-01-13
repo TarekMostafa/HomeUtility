@@ -72,6 +72,9 @@ function WealthDepositTable (props) {
                       </Dropdown.Item>
                     </React.Fragment>
                   }
+                  <Dropdown.Item onClick={() => props.onViewDeposit(deposit.id)}>
+                  View
+                  </Dropdown.Item>
                 </DropdownButton>
               </td>
             </tr>

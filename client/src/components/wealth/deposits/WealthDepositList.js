@@ -12,6 +12,7 @@ import FormContainer from '../../common/FormContainer';
 import BanksDropDown from '../banks/BanksDropDown';
 import AccountStatusesDropDown from '../accounts/AccountStatusesDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
+import DepositViewModal from './DepositViewModal';
 
 import DepositRequest from '../../../axios/DepositRequest';
 
@@ -28,6 +29,7 @@ class WealthDepositList extends Component {
     modalDeleteShow: false,
     modalInterestShow: false,
     modalReleaseShow: false,
+    modalViewShow: false,
     depositId: '',
     ...initialState,
   }
@@ -89,7 +91,8 @@ class WealthDepositList extends Component {
           onDeleteDeposit={this.handleDeleteDeposit}
           onAddInterest={this.handleAddInterest}
           onReleaseDeposit={this.handleReleaseDeposit}
-          onDepositDetails={this.handleDepositDetails}/>
+          onDepositDetails={this.handleDepositDetails}
+          onViewDeposit={this.handleViewDeposit}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings && this.props.appSettings.baseCurrency &&
@@ -115,6 +118,11 @@ class WealthDepositList extends Component {
           this.state.modalReleaseShow && <ReleaseDepositModal
           show={this.state.modalReleaseShow} onHide={this.handleHide}
           onReleaseDeposit={this.handleListClick} depositId={this.state.depositId}/>
+        }
+        {
+          this.state.modalViewShow && <DepositViewModal
+          show={this.state.modalViewShow} onHide={this.handleHide}
+          onViewDeposit={this.handleListClick} depositId={this.state.depositId}/>
         }
       </React.Fragment>
     )
@@ -145,6 +153,13 @@ class WealthDepositList extends Component {
     });
   }
 
+  handleViewDeposit = (depositId) => {
+    this.setState({
+      modalViewShow: true,
+      depositId
+    })
+  }
+
   handleDepositDetails = (deposit) => {
     this.props.history.push('relatedtransactiondetails/'+deposit.relatedId)
   }
@@ -155,6 +170,7 @@ class WealthDepositList extends Component {
       modalDeleteShow: false,
       modalInterestShow: false,
       modalReleaseShow: false,
+      modalViewShow: false,
     });
   }
 

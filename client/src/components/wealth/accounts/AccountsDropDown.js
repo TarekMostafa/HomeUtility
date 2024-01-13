@@ -21,8 +21,9 @@ function AccountsDropDown(props) {
     const value = `${account.accountNumber} - ${account.bankName} - ${account.accountCurrency}`;
     const key = account.accountId;
     const display = account.accountNumber;
-    let style = {"font-weight":""};
-    if(props.selectedData.includes(key)) style["font-weight"]="bold";
+    let style = {"fontWeight":"","backgroundColor":"default"};
+    if(props.selectedData.includes(key)) style["fontWeight"]="bold";
+    if(account.accountStatus === 'CLOSED') style["backgroundColor"]="lightgray";
     return (
       <option key={key} value={key} style={{...style}}
       decimalplaces={account.currencyDecimalPlace} currency={account.accountCurrency}

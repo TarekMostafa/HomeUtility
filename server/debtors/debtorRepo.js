@@ -10,7 +10,8 @@ class DebtorRepo {
     if(status) query.debtStatus = status;
     return await DebtorModel.findAll({
       include: [
-        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] },
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace', 
+        'currencyDecimalPlace', 'currencyManualRateAgainstBase'] },
       ],
       where: query,
       order: [ ['debtName', 'ASC'] ]
