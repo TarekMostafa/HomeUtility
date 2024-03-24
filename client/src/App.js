@@ -24,6 +24,7 @@ import BillTransactionList from './components/bills/transactions/BillTransaction
 import ExpenseHeaderList from './components/expenses/ExpenseHeaderList';
 import ExpenseDetailList from './components/expenses/ExpenseDetailList';
 import ExpenseTypeList from './components/expenses/expensetypes/ExpenseTypeList';
+import ExpensesDetailsSearchList from './components/expenses/search/ExpenseDetailSearchList';
 import CardList from './components/cards/CardList';
 import CardInstallmentList from './components/cards/installments/CardInstallmentList';
 import CardTranactionList from './components/cards/transactions/CardTransactionList';
@@ -58,6 +59,7 @@ class App extends Component {
                 <Route path="/expenseHeaderList" exact component={ExpenseHeaderList}></Route>
                 <Route path="/expenseDetailList/:id?" exact component={ExpenseDetailList}></Route>
                 <Route path="/expensetypes" exact component={ExpenseTypeList}></Route>
+                <Route path="/expenseDetailSearchList" exact component={ExpensesDetailsSearchList}></Route>
                 <Route path="/cards" exact component={CardList}></Route>
                 <Route path="/cardsInstallments" exact component={CardInstallmentList}></Route>
                 <Route path="/cardsTranactions" exact component={CardTranactionList}></Route>

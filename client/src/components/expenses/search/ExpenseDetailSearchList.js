@@ -1,0 +1,166 @@
+import React, {useState, useEffect} from 'react';
+import { Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
+import 'moment/locale/en-gb.js';
+import { DatePickerInput } from 'rc-datepicker';
+import 'rc-datepicker/lib/style.css';
+
+import FormContainer from '../../common/FormContainer';
+import TableLimiterDropDown from '../../common/TableLimiterDropDown';
+import MultiSelectDropDown from '../../common/MultiSelectDropDown';
+import ExpenseTypesDropDown from '../expensetypes/ExpenseTypesDropDown';
+import ExpenseDetailTable from '../ExpenseDetailTable';
+
+import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
+import ExpenseTypeRequest from '../../../axios/ExpenseTypeRequest';
+
+const initialState = {
+    limit: 10,
+    description: '',
+    includeDescription: true,
+    expDateFrom: '',
+    expDateTo: '',
+    expTypes: '',
+}
+
+function ExpenseDetailSearchList(props) {
+
+    const [formData, setFormData] = useState(initialState);
+    const [expensesDetails, setExpensesDetails] = useState([]);
+    const [expenseTypes, setExpenseTypes] = useState([]);
+    const [appearMoreButton, setAppearMoreButton] = useState(true);
+
+    const loadExpenseTypes = () => 
+        ExpenseTypeRequest.getExpenseTypes()
+        .then(expTypes => setExpenseTypes(expTypes));
+
+    const loadExpensesDetails = (append) => 
+        ExpenseDetailRequest.getExpensesDetails(
+            formData.limit,
+            append?expensesDetails.length:0,
+            formData.description,
+            formData.includeDescription,
+            formData.expDateFrom,
+            formData.expDateTo,
+            true,
+            formData.expTypes)
+        .then(expsDetails => {
+            setExpensesDetails(
+                append? [...expensesDetails, ...expsDetails] : expsDetails
+            );
+            setAppearMoreButton((expsDetails.length >= formData.limit));
+        });
+
+    useEffect(()=>{
+        loadExpenseTypes();
+        loadExpensesDetails();
+    },[])
+
+    const handleChange = (event) => {
+        setFormData({
+            ...formData,
+            [event.target.name] : (event.target.type==='checkbox' ? event.target.checked : event.target.value)
+          })
+    }
+
+    const handleListClick = () => {
+        loadExpensesDetails(false);
+    }
+
+    const handleResetClick = () => {
+        setFormData({...initialState});
+    }
+
+    const handleMoreClick = () => {
+        loadExpensesDetails(true);
+    }
+
+    const handleExpDateFromChange = (jsDate, date) => {
+        setFormData({
+            ...formData,
+            expDateFrom: date
+        });
+    }
+    
+    const handleExpDateToChange = (jsDate, date) => {
+        setFormData({
+            ...formData,
+            expDateTo: date
+        });
+    }
+
+    const handleExpTypes = (key, value) => {
+        let _expTypes = formData.expTypes;
+        if(_expTypes.some(exp=>exp.key === key)) {
+            _expTypes = _expTypes.filter(exp=>exp.key!==key);
+        } else {
+            _expTypes = [..._expTypes, {key, value}];
+        }
+        setFormData({
+            ...formData,
+            expTypes: _expTypes
+        })
+      }
+
+    return (
+        <React.Fragment>
+            <FormContainer title="Expenses Details Search">
+                <Form>
+                    <Row>
+                    <Col xs={6}>
+                    <Form.Control as="select" size="sm" name="expTypes" onChange={handleChange}
+                        value={formData.expTypes}>
+                        <option value=''>Expense Type</option>
+                        <ExpenseTypesDropDown expenseTypes={expenseTypes}/>
+                        </Form.Control>
+                    </Col>
+                    <Col>
+                        <DatePickerInput value={formData.expDateFrom}
+                        onChange={handleExpDateFromChange} readOnly 
+                        placeholder="Expense Date From" small/>
+                    </Col>
+                    <Col>
+                        <DatePickerInput value={formData.expDateTo}
+                        onChange={handleExpDateToChange} readOnly 
+                        placeholder="Expense Date To" small/>
+                    </Col>
+                    </Row>
+                    <br />
+                    <Row>
+                    <Col xs={6}>
+                        <InputGroup className="mb-3">
+                            <InputGroup.Prepend>
+                            <InputGroup.Checkbox name="includeDescription"
+                                checked={formData.includeDescription} onChange={handleChange}/>
+                            </InputGroup.Prepend>
+                            <Form.Control type="input" placeholder="description" size="sm" name="description"
+                                onChange={handleChange} value={formData.description}/>
+                        </InputGroup>
+                    </Col> 
+                    <Col xs={2}>
+                        <Form.Control as="select" size="sm" name="limit" onChange={handleChange}
+                            value={formData.limit}>
+                            <TableLimiterDropDown />
+                        </Form.Control>
+                    </Col>   
+                    <Col xs={1}>
+                        <Button variant="primary" size="sm" block onClick={handleListClick}>
+                            List</Button>
+                    </Col>
+                    <Col xs={1}>
+                        <Button variant="secondary" size="sm" block onClick={handleResetClick}>
+                            Reset</Button>
+                    </Col>
+                    </Row>
+                </Form>
+            </FormContainer>
+            <FormContainer>
+                <ExpenseDetailTable expenseDetails={expensesDetails} readOnly/>
+                <Button variant="primary" size="sm" block onClick={handleMoreClick}
+                    hidden={!appearMoreButton}>
+                    more...</Button>
+            </FormContainer>
+        </React.Fragment>
+    )
+}
+
+export default ExpenseDetailSearchList;

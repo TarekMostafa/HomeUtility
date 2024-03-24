@@ -143,16 +143,18 @@ function ExpenseDetailRow(props) {
                 }
             </td>
             <td>{elem.expenseAdjusment?'YES':'NO'}</td>
-            <td>
-                <EditDeleteButton 
-                    onEditClick={()=>handleExpenseDetailEdit(elem.expenseDetailId)}
-                    onDeleteClick={()=>handleExpenseDetailDelete(elem.expenseDetailId)}
-                    onCancelClick={()=>initializeFormData()}
-                    disabled={formData.isDisabled}
-                    isLoading={formData.isLoading}
-                    mode={formData.mode}/>
-                <Form.Text className={formData.messageClass}>{formData.message}</Form.Text>
-            </td>
+            { !props.readOnly && 
+                <td>
+                    <EditDeleteButton 
+                        onEditClick={()=>handleExpenseDetailEdit(elem.expenseDetailId)}
+                        onDeleteClick={()=>handleExpenseDetailDelete(elem.expenseDetailId)}
+                        onCancelClick={()=>initializeFormData()}
+                        disabled={formData.isDisabled}
+                        isLoading={formData.isLoading}
+                        mode={formData.mode}/>
+                    <Form.Text className={formData.messageClass}>{formData.message}</Form.Text>
+                </td>
+            }
         </tr>
     );
 }

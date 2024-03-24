@@ -5,7 +5,15 @@ const router = express.Router();
 const expenseDetailBusiness = new ExpenseDetailBusiness();
 
 router.get('/', function(req, res, next) {
-    expenseDetailBusiness.getExpenseDetails(req.query).then( result => {
+  expenseDetailBusiness.getExpenseDetails(req.query).then( result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+});
+
+router.get('/search', function(req, res, next) {
+  expenseDetailBusiness.getExpensesDetails(req.query).then( result => {
     res.json(result);
   }).catch( err => {
     next(err);

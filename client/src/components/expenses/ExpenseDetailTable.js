@@ -17,11 +17,13 @@ function ExpenseDetailTable(props) {
                     <th>Description</th>
                     <th>Expense Type</th>
                     <th>Adjusment</th>
-                    <th></th>
+                    {!props.readOnly && <th></th>}
                 </tr>
             </thead>
             <tbody>
-                <ExpenseDetailAddRow expense={props.expense} onAdd={props.onAdd}/>
+                {
+                    props.expense && <ExpenseDetailAddRow expense={props.expense} onAdd={props.onAdd}/>
+                }
                 {
                     props.expenseDetails && props.expenseDetails.filter(elem => {
                         if(!props.searchFilter) return true;
@@ -40,7 +42,7 @@ function ExpenseDetailTable(props) {
                             <ExpenseDetailRow key={elem.expenseDetailId}
                                 expenseDetail={elem} 
                                 onDelete={props.onDelete}
-                                onEdit={props.onEdit}/>
+                                onEdit={props.onEdit} {...props}/>
                         )
                     })
                 }

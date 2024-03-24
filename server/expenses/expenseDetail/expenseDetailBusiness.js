@@ -4,6 +4,12 @@ const ExpenseRepo = require('../expenseHeader/expenseRepo');
 const Exception = require('../../features/exception');
 
 class expenseDetailBusiness {
+  async getExpensesDetails({description, includeDescription, expDateFrom, expDateTo,
+    expIsAdjusment, expTypes, skip, limit}){
+    return await ExpenseDetailRepo.getExpensesDetails({description, includeDescription, expDateFrom, 
+      expDateTo, expIsAdjusment, expTypes, skip, limit});
+  }
+
   async getExpenseDetails({expenseId}) {
     if(!expenseId) throw new Exception('EXP_ID_REQ');
     return await ExpenseDetailRepo.getExpenseDetails({expenseId});
@@ -11,7 +17,7 @@ class expenseDetailBusiness {
 
   async addExpenseDetail({expenseId, expenseDay, expenseAmount, expenseDescription, 
     expenseTypeId, expenseAdjusment}) {
-    var expense = await ExpenseRepo.getExpense(expenseId);
+    let expense = await ExpenseRepo.getExpense(expenseId);
     if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
     let dbTransaction;
     try {
@@ -23,7 +29,8 @@ class expenseDetailBusiness {
           expenseCurrency: expense.expenseCurrency,
           expenseDescription,
           expenseTypeId,
-          expenseAdjusment
+          expenseAdjusment,
+          expenseDate: new Date(expense.expenseYear,expense.expenseMonth-1,expenseDay)
       }, dbTransaction);
       await ExpenseRepo.increaseExpenseBalances(expenseId, expenseAmount, expenseAdjusment, dbTransaction);
       await dbTransaction.commit();
