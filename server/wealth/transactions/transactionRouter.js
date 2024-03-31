@@ -114,4 +114,13 @@ router.post('/debt/converttodebt/:id', (req, res, next) => {
   })
 });
 
+router.post('/debt/linktodebtor/:id', (req, res, next) => {
+  debtTransactionBusiness.linkSingleTransactionToDebtor(req.params.id, req.body).then( result => {
+    res.messageCode = 'TRANS_DBT_LINK_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
+
 module.exports = router;

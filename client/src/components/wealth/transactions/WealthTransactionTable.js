@@ -1,9 +1,14 @@
 import React from 'react';
-import { Table, OverlayTrigger, Tooltip, ButtonGroup, Button, Badge } from 'react-bootstrap';
+import { Table, OverlayTrigger, Tooltip, DropdownButton, 
+  Dropdown, Button, Badge } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 //import _ from 'lodash';
 import amountFormatter from '../../../utilities/amountFormatter';
+
+function IsModuleAllowed(module) {
+  return [null,'DBT'].includes(module);
+}
 
 function WealthTransactionTable (props) {
   return (
@@ -25,6 +30,12 @@ function WealthTransactionTable (props) {
       <tbody>
         {
           props.transactions && props.transactions.map( (transaction, index) => {
+            let isEditable = IsModuleAllowed(transaction.transactionModule)
+            && props.onEditTransaction; 
+            let isDeletable = IsModuleAllowed(transaction.transactionModule)
+            && props.onDeleteTransaction;
+            let isMigrable = transaction.migrationType
+            && props.onMigration;
           return (
             <tr key={transaction.transactionId}>
               <td>{index+1}</td>
@@ -60,22 +71,46 @@ function WealthTransactionTable (props) {
               </td>
               <td>
                 {
-                  (!transaction.transactionModule || transaction.transactionModule === 'DBT')  &&
-                  <ButtonGroup>
-                    {props.onEditTransaction && <Button variant="link" size="sm"
-                    onClick={() => props.onEditTransaction(transaction.transactionId, 
-                    transaction.transactionModule)}>Edit</Button>}
-                    {props.onDeleteTransaction && <Button variant="link" size="sm"
-                    onClick={() => props.onDeleteTransaction(transaction.transactionId, 
-                    transaction.transactionModule)}>Delete</Button>}
+                  // (!transaction.transactionModule || transaction.transactionModule === 'DBT')  &&
+                  // <ButtonGroup>
+                  //   {props.onEditTransaction && <Button variant="link" size="sm"
+                  //   onClick={() => props.onEditTransaction(transaction.transactionId, 
+                  //   transaction.transactionModule)}>Edit</Button>}
+                  //   {props.onDeleteTransaction && <Button variant="link" size="sm"
+                  //   onClick={() => props.onDeleteTransaction(transaction.transactionId, 
+                  //   transaction.transactionModule)}>Delete</Button>}
+                  //   {
+                  //     props.onMigration && transaction.migrationType &&
+                  //     <Button variant="link" size="sm"
+                  //     onClick={() => props.onMigration(transaction)}>
+                  //       {transaction.migrationText}
+                  //     </Button>
+                  //   }
+                  // </ButtonGroup>
+                  (isEditable || isDeletable || isMigrable) &&
+                  <DropdownButton id="dropdown-basic-button" title="Actions"
+                  size="sm" variant="secondary">
                     {
-                      props.onMigration && transaction.migrationType &&
-                      <Button variant="link" size="sm"
-                      onClick={() => props.onMigration(transaction)}>
-                        {transaction.migrationText}
-                      </Button>
+                      isEditable &&
+                      <Dropdown.Item onClick={() => props.onEditTransaction(transaction.transactionId, 
+                        transaction.transactionModule)}>
+                      Edit
+                      </Dropdown.Item>
                     }
-                  </ButtonGroup>
+                    {
+                      isDeletable &&
+                      <Dropdown.Item onClick={() => props.onDeleteTransaction(transaction.transactionId, 
+                        transaction.transactionModule)}>
+                      Delete
+                      </Dropdown.Item>
+                    }
+                    {
+                      isMigrable &&
+                      <Dropdown.Item onClick={() => props.onMigration(transaction)}>
+                      {transaction.migrationText}
+                      </Dropdown.Item>
+                    }
+                  </DropdownButton>
                 }
               </td>
             </tr>

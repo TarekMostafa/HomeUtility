@@ -108,6 +108,12 @@ class TransctionRequest {
       debtorId
     });
   }
+
+  static async linkToDebtor(id, debtorId) {
+    return await axios.post('/api/wealth/transactions/debt/linktodebtor/'+id, {
+      debtorId
+    });
+  }
 }
 
 export default TransctionRequest;

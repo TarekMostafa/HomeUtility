@@ -7,6 +7,7 @@ module.exports = {
     INTERNAL_TRANSACTION_TYPE_TO: 'internalTransactionTypeTo',
     DEBT_TRANSACTION_CREDIT: 'debtTransactionCredit',
     DEBT_TRANSACTION_DEBIT: 'debtTransacionDebit',
+    LINK_MODULES_TO_DEBTOR: 'linkModulesToDebtors',
     //Values constants
     AUTOMATIC: 'Automatic',
     MANUAL: 'Manual'

@@ -19,6 +19,7 @@ import AddDebtTransactionModal from './AddDebtTransactionModal';
 import EditDebtTransactionModal from './EditDebtTransactionModal';
 import DeleteDebtTransactionModal from './DeleteDebtTransactionModal';
 import ConvertSingleToDebtModal from './ConvertSingleToDebtModal';
+import LinkSingleToDebtorModal from './LinkSingleToDebtorModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -48,6 +49,7 @@ class WealthTransactionList extends Component {
     modalEditDebtShow: false,
     modalDeleteDebtShow: false,
     modalConvertToDebtShow: false,
+    modalLinkToDebtShow: false,
     transactionId: '',
     ...initialState,
   }
@@ -215,6 +217,11 @@ class WealthTransactionList extends Component {
           <ConvertSingleToDebtModal show={this.state.modalConvertToDebtShow} onHide={this.handleHide}
           onConvert={this.handleListClick} transactionId={this.state.transactionId}/>
         }
+        {
+          this.state.modalLinkToDebtShow &&
+          <LinkSingleToDebtorModal show={this.state.modalLinkToDebtShow} onHide={this.handleHide}
+          onLink={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
       </React.Fragment>
     )
   }// end of render
@@ -299,6 +306,7 @@ class WealthTransactionList extends Component {
       modalEditDebtShow: false,
       modalDeleteDebtShow: false,
       modalConvertToDebtShow: false,
+      modalLinkToDebtShow: false,
     });
   }
 
@@ -322,6 +330,11 @@ class WealthTransactionList extends Component {
     if(transaction.migrationType === 'DBT'){
       this.setState({
         modalConvertToDebtShow: true,
+        transactionId: transaction.transactionId
+      });
+    } else if(transaction.migrationType === 'LNK'){
+      this.setState({
+        modalLinkToDebtShow: true,
         transactionId: transaction.transactionId
       });
     }

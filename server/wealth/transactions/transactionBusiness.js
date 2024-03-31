@@ -282,22 +282,37 @@ class TransactionBusiness {
   }
 
   async getMigrationObject(transaction){
-    const typeCRDebt = await AppParametersRepo.getAppParameterValue(
-      AppParametersConstants.DEBT_TRANSACTION_CREDIT);
-    const typeDRDebt = await AppParametersRepo.getAppParameterValue(
-      AppParametersConstants.DEBT_TRANSACTION_DEBIT);
 
     let migration = {
       type: '',
       text: '',
     };
+
+    const typeCRDebt = await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.DEBT_TRANSACTION_CREDIT);
+    const typeDRDebt = await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.DEBT_TRANSACTION_DEBIT);
+
     if((transaction.transactionTypeId == typeCRDebt ||
       transaction.transactionTypeId == typeDRDebt) && 
       !transaction.transactionRelatedTransactionId)
     {
       migration.type = 'DBT';
-      migration.text = 'Convert To Debt'
+      migration.text = 'Convert To Debt';
+      return migration;
     }
+
+    const modules = await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.LINK_MODULES_TO_DEBTOR);
+    const modArray = modules.split(',');
+    if(modArray.includes(transaction.transactionModule) && 
+      !transaction.transactionRelatedTransactionId)
+    {
+      migration.type = 'LNK';
+      migration.text = 'Link To Debtor';
+      return migration;
+    }
+
     return migration;
   }
 
