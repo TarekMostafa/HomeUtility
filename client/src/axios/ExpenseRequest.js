@@ -23,9 +23,15 @@ class ExpenseRequest {
   }
 
   static async updateExpense(expenseId, openBalance, allowedDebitTransTypeIds, 
-    extractedDebitTransTypeIds) {
+    expenseStatus) {
     return await axios.put('/api/expenses/'+expenseId, {
-      openBalance, allowedDebitTransTypeIds, extractedDebitTransTypeIds
+      openBalance, allowedDebitTransTypeIds, expenseStatus
+    });
+  }
+
+  static async updateTotalAccountDebit(expenseId, diffAmount) {
+    return await axios.put('/api/expenses/updateTotalAccountDebit/'+expenseId, {
+      diffAmount
     });
   }
 

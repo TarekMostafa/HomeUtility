@@ -6,6 +6,7 @@ import 'rc-datepicker/lib/style.css';
 
 import FormContainer from '../../common/FormContainer';
 import TableLimiterDropDown from '../../common/TableLimiterDropDown';
+import YesNoDropDown from '../../common/YesNoDropDown';
 import CardTransactionTable from './CardTransactionTable';
 import CardsDropDown from '../CardsDropDown';
 import CardsInstallmentsDropDown from '../installments/CardsInstallmentsDropDown';
@@ -25,6 +26,7 @@ const initialState = {
     includeDescription: true,
     transDateFrom: '',
     transDateTo: '',
+    payForOthers: '',
 }
 
 function CardTransactionList(props) {
@@ -51,7 +53,8 @@ function CardTransactionList(props) {
             formData.description,
             formData.includeDescription,
             formData.transDateFrom,
-            formData.transDateTo)
+            formData.transDateTo,
+            formData.payForOthers)
         .then(cardsTrans => {
             setCardsTransactions(
                 append? [...cardsTransactions, ...cardsTrans] : cardsTrans
@@ -163,6 +166,13 @@ function CardTransactionList(props) {
                             <Form.Control type="input" placeholder="description" size="sm" name="description"
                                 onChange={handleChange} value={formData.description}/>
                         </InputGroup>
+                    </Col> 
+                    <Col xs={2}>
+                        <Form.Control as="select" size="sm" name="payForOthers" onChange={handleChange}
+                            value={formData.payForOthers}>
+                            <option value=''>Pay For Others</option>
+                            <YesNoDropDown yesText="Pay For Others (Yes)" noText="Pay For Others (No)"/>
+                        </Form.Control>
                     </Col> 
                     <Col xs={2}>
                         <Form.Control as="select" size="sm" name="limit" onChange={handleChange}

@@ -51,15 +51,27 @@ class ExpenseRepo {
     }, {transaction: dbTransaction});
   }
 
-  static async updateExpense(id, {openBalance, allowedDebitTransTypeIds, extractedDebitTransTypeIds}){
+  static async updateExpense(id, {openBalance, allowedDebitTransTypeIds, expenseStatus}){
     var expense = await this.getExpense(id);
     if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
     await expense.update({
       expenseOpenBalance: openBalance,
-      allowedDebitTransTypes: allowedDebitTransTypeIds?allowedDebitTransTypeIds:null,
-      extractedDebitTransTypes: extractedDebitTransTypeIds?extractedDebitTransTypeIds:null,
-      expenseCloseBalance: sequelize.literal('expenseAdjusments-expenseDebits+'+Number(openBalance))
+      expenseDebitTransTypes: allowedDebitTransTypeIds?allowedDebitTransTypeIds:null,
+      expenseCloseBalance: sequelize.literal('expenseAdjusments-expenseDebits+'+Number(openBalance)
+      +'+expenseTotalAccountDebit'),
+      expenseStatus,
+      expenseClosedStatusBalance: expenseStatus==='CLOSED'?
+        sequelize.literal('expenseCloseBalance'):sequelize.literal('expenseClosedStatusBalance')
     })
+  }
+
+  static async updateTotalAccountDebit(id, diffAmount, dbTransaction) {
+    var expense = await this.getExpense(id);
+    if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
+    await expense.update(
+      {expenseTotalAccountDebit: sequelize.literal('expenseTotalAccountDebit+'+diffAmount),
+      expenseCloseBalance: sequelize.literal('expenseCloseBalance+'+diffAmount)},
+      {transaction: dbTransaction});
   }
 }
 

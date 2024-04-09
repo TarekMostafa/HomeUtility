@@ -12,12 +12,12 @@ const Common = require('../../utilities/common');
 
 class CardTransactionBusiness {
   async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
-    description, includeDescription, transDateFrom, transDateTo}) {
+    description, includeDescription, transDateFrom, transDateTo, payForOthers}) {
     limit = Common.getNumber(limit, 10);
     skip = Common.getNumber(skip, 0);
     let cardTransactions = await CardTransactionRepo.getCardsTransactions({
       cardId, cardInstId, cardPayment, cardIsPaid, skip, limit, 
-      description, includeDescription, transDateFrom, transDateTo});
+      description, includeDescription, transDateFrom, transDateTo, payForOthers});
       cardTransactions = cardTransactions.map(trans =>{
         return {
           cardTransId: trans.cardTransId,
@@ -222,6 +222,7 @@ class CardTransactionBusiness {
           transactionTypeId: transactionTypeId,
           transactionModule: "CRD",
           transactionRelatedTransactionId: relId,
+          transactionModuleId: cardTrans.cardTransId
         }, dbTransaction);
         if(!savedTrans) throw new Exception('CARD_TRANS_PAY_FAIL');
         //Increase Card Balance

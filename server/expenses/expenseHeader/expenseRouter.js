@@ -31,6 +31,15 @@ router.post('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
   expenseBusiness.updateExpense(req.params.id, req.body).then( () => {
+    res.messageCode = 'EXP_UPDATE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
+
+router.put('/updateTotalAccountDebit/:id', function(req, res, next) {
+  expenseBusiness.updateTotalAccountDebit(req.params.id, req.body).then( () => {
     res.status(200).send();
   }).catch( err => {
     next(err);

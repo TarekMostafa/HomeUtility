@@ -3,7 +3,14 @@ const Exception = require('../../features/exception');
 
 class expenseTypeBusiness {
   async getExpenseTypes() {
-    return await ExpenseTypeRepo.getExpenseTypes();
+    let expTypes = await ExpenseTypeRepo.getExpenseTypes();
+    expTypes = expTypes.map(expType => {
+      return {
+        expenseTypeId: expType.expenseTypeId,
+        expenseTypeName: expType.expenseTypeName,
+      }
+    })
+    return expTypes;
   }
 
   async addExpenseType({expenseTypeName}) {

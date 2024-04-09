@@ -8,6 +8,7 @@ import FormContainer from '../../common/FormContainer';
 import TableLimiterDropDown from '../../common/TableLimiterDropDown';
 import MultiSelectDropDown from '../../common/MultiSelectDropDown';
 import ExpenseTypesDropDown from '../expensetypes/ExpenseTypesDropDown';
+import YesNoDropDown from '../../common/YesNoDropDown';
 import ExpenseDetailTable from '../ExpenseDetailTable';
 
 import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
@@ -20,6 +21,7 @@ const initialState = {
     expDateFrom: '',
     expDateTo: '',
     expTypes: '',
+    adjusment: '',
 }
 
 function ExpenseDetailSearchList(props) {
@@ -41,7 +43,7 @@ function ExpenseDetailSearchList(props) {
             formData.includeDescription,
             formData.expDateFrom,
             formData.expDateTo,
-            true,
+            formData.adjusment,
             formData.expTypes)
         .then(expsDetails => {
             setExpensesDetails(
@@ -135,6 +137,13 @@ function ExpenseDetailSearchList(props) {
                             <Form.Control type="input" placeholder="description" size="sm" name="description"
                                 onChange={handleChange} value={formData.description}/>
                         </InputGroup>
+                    </Col> 
+                    <Col xs={2}>
+                        <Form.Control as="select" size="sm" name="adjusment" onChange={handleChange}
+                            value={formData.adjusment}>
+                            <option value=''>Adjusment</option>
+                            <YesNoDropDown yesText="Adjusment (Yes)" noText="Adjusment (No)"/>
+                        </Form.Control>
                     </Col> 
                     <Col xs={2}>
                         <Form.Control as="select" size="sm" name="limit" onChange={handleChange}

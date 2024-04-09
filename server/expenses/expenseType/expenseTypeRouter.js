@@ -23,7 +23,8 @@ router.post('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
   expenseTypeBusiness.updateExpenseType(req.params.id, req.body).then( () => {
-    res.status(200).send();
+    res.messageCode = 'EXP_TYP_UPDATE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
@@ -31,7 +32,8 @@ router.put('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
   expenseTypeBusiness.deleteExpenseType(req.params.id).then( result => {
-    res.status(200).send();
+    res.messageCode = 'EXP_TYP_DEL_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })

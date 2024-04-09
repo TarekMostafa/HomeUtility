@@ -6,19 +6,86 @@ const Exception = require('../../features/exception');
 class expenseDetailBusiness {
   async getExpensesDetails({description, includeDescription, expDateFrom, expDateTo,
     expIsAdjusment, expTypes, skip, limit}){
-    return await ExpenseDetailRepo.getExpensesDetails({description, includeDescription, expDateFrom, 
+    let expensesDetails = await ExpenseDetailRepo.getExpensesDetails({description, includeDescription, expDateFrom, 
       expDateTo, expIsAdjusment, expTypes, skip, limit});
+    expensesDetails = expensesDetails.map( expDet => {
+      return {
+        expenseDetailId: expDet.expenseDetailId,
+        expenseId: expDet.expenseId,
+        expenseDay: expDet.expenseDay,
+        expenseAmount: expDet.expenseAmount,
+        expenseCurrency: expDet.expenseCurrency,
+        expenseDescription: expDet.expenseDescription,
+        expenseTypeId: expDet.expenseTypeId,
+        expenseAdjusment: expDet.expenseAdjusment,
+        expenseDate: expDet.expenseDate,
+        expenseType: {
+          expenseTypeId: expDet.expenseType?expDet.expenseType.expenseTypeId:'',
+          expenseTypeName: expDet.expenseType?expDet.expenseType.expenseTypeName:'',
+        },
+        currency: {
+          currencyDecimalPlace: expDet.currency.currencyDecimalPlace
+        },
+        expense: {
+          expenseId: expDet.expense.expenseId,
+          expenseYear: expDet.expense.expenseYear,
+          expenseMonth: expDet.expense.expenseMonth,
+          expenseCurrency: expDet.expense.expenseCurrency,
+          expenseOpenBalance: expDet.expense.expenseOpenBalance,
+          expenseCloseBalance: expDet.expense.expenseCloseBalance,
+          expenseDebits: expDet.expense.expenseDebits,
+          expenseAdjusments: expDet.expense.expenseAdjusments,
+          expenseTotalAccountDebit: expDet.expense.expenseTotalAccountDebit,
+          expenseDebitTransTypes: expDet.expense.expenseDebitTransTypes,
+        }
+      }
+    });
+    return expensesDetails;
   }
 
   async getExpenseDetails({expenseId}) {
     if(!expenseId) throw new Exception('EXP_ID_REQ');
-    return await ExpenseDetailRepo.getExpenseDetails({expenseId});
+    let expenseDetails = await ExpenseDetailRepo.getExpenseDetails({expenseId});
+    expenseDetails = expenseDetails.map( expDet => {
+      return {
+        expenseDetailId: expDet.expenseDetailId,
+        expenseId: expDet.expenseId,
+        expenseDay: expDet.expenseDay,
+        expenseAmount: expDet.expenseAmount,
+        expenseCurrency: expDet.expenseCurrency,
+        expenseDescription: expDet.expenseDescription,
+        expenseTypeId: expDet.expenseTypeId,
+        expenseAdjusment: expDet.expenseAdjusment,
+        expenseDate: expDet.expenseDate,
+        expenseType: {
+          expenseTypeId: expDet.expenseType?expDet.expenseType.expenseTypeId:'',
+          expenseTypeName: expDet.expenseType?expDet.expenseType.expenseTypeName:'',
+        },
+        currency: {
+          currencyDecimalPlace: expDet.currency.currencyDecimalPlace
+        },
+        expense: {
+          expenseId: expDet.expense.expenseId,
+          expenseYear: expDet.expense.expenseYear,
+          expenseMonth: expDet.expense.expenseMonth,
+          expenseCurrency: expDet.expense.expenseCurrency,
+          expenseOpenBalance: expDet.expense.expenseOpenBalance,
+          expenseCloseBalance: expDet.expense.expenseCloseBalance,
+          expenseDebits: expDet.expense.expenseDebits,
+          expenseAdjusments: expDet.expense.expenseAdjusments,
+          expenseTotalAccountDebit: expDet.expense.expenseTotalAccountDebit,
+          expenseDebitTransTypes: expDet.expense.expenseDebitTransTypes,
+        }
+      }
+    })
+    return expenseDetails;
   }
 
   async addExpenseDetail({expenseId, expenseDay, expenseAmount, expenseDescription, 
     expenseTypeId, expenseAdjusment}) {
     let expense = await ExpenseRepo.getExpense(expenseId);
     if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
+    if(expense.expenseStatus === 'CLOSED') throw new Exception('EXP_STATUS_CLOSED');
     let dbTransaction;
     try {
       dbTransaction = await sequelize.transaction();
@@ -45,14 +112,22 @@ class expenseDetailBusiness {
     let expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
     if(!expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
 
+    let expense = await ExpenseRepo.getExpense(expenseDetail.expenseId);
+    if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
+    if(expense.expenseStatus === 'CLOSED') throw new Exception('EXP_STATUS_CLOSED');
+
     expenseDetail.expenseTypeId = expenseTypeId;
     expenseDetail.expenseDescription = expenseDescription;
-    expenseDetail.save();
+    await expenseDetail.save();
   }
 
   async deleteExpenseDetail(id) {
     const expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
     if(!expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
+
+    let expense = await ExpenseRepo.getExpense(expenseDetail.expenseId);
+    if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
+    if(expense.expenseStatus === 'CLOSED') throw new Exception('EXP_STATUS_CLOSED');
 
     let dbTransaction;
     try {

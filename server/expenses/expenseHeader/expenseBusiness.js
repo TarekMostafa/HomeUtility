@@ -1,13 +1,69 @@
 const ExpenseRepo = require('./expenseRepo');
 const Exception = require('../../features/exception');
+const TransactionRepo = require('../../wealth/transactions/transactionRepo');
 
 class expenseBusiness {
   async getExpenses({year}) {
-    return await ExpenseRepo.getExpenses({year});
+    let expenses = await ExpenseRepo.getExpenses({year});
+    expenses = expenses.map(expense => {
+      return {
+        expenseId: expense.expenseId,
+        expenseYear: expense.expenseYear,
+        expenseMonth: expense.expenseMonth,
+        expenseCurrency: expense.expenseCurrency,
+        expenseOpenBalance: expense.expenseOpenBalance,
+        expenseCloseBalance: expense.expenseCloseBalance,
+        expenseDebits: expense.expenseDebits,
+        expenseAdjusments: expense.expenseAdjusments,
+        expenseTotalAccountDebit: expense.expenseTotalAccountDebit,
+        expenseDebitTransTypes: expense.expenseDebitTransTypes,
+        expenseClosedStatusBalance: expense.expenseClosedStatusBalance,
+        expenseStatus: expense.expenseStatus,
+        currency: {
+          currencyDecimalPlace: expense.currency.currencyDecimalPlace,
+        }
+      }
+    })
+    return expenses;
   }
 
   async getExpense(id) {
-    return await ExpenseRepo.getExpense(id);
+    let expense = await ExpenseRepo.getExpense(id);
+    if (!expense) throw new Exception('EXP_HEAD_NOTEXIST');
+
+    let sumOfAccountDebits = 0;
+    if(expense.expenseDebitTransTypes) {
+      let dateFrom = new Date(expense.expenseYear, expense.expenseMonth-1, 1);
+      let dateTo   = new Date(expense.expenseYear, expense.expenseMonth, 1);
+      dateTo.setDate(0);
+  
+      sumOfAccountDebits = await TransactionRepo.getSumTransactions(
+        expense.expenseDebitTransTypes.split(','),
+        expense.expenseCurrency,
+        dateFrom,
+        dateTo
+      );
+    }
+
+    expense = {
+      expenseId: expense.expenseId,
+      expenseYear: expense.expenseYear,
+      expenseMonth: expense.expenseMonth,
+      expenseCurrency: expense.expenseCurrency,
+      expenseOpenBalance: expense.expenseOpenBalance,
+      expenseCloseBalance: expense.expenseCloseBalance,
+      expenseDebits: expense.expenseDebits,
+      expenseAdjusments: expense.expenseAdjusments,
+      expenseTotalAccountDebit: expense.expenseTotalAccountDebit,
+      expenseDebitTransTypes: expense.expenseDebitTransTypes,
+      expenseClosedStatusBalance: expense.expenseClosedStatusBalance,
+      expenseStatus: expense.expenseStatus,
+      currency: {
+        currencyDecimalPlace: expense.currency.currencyDecimalPlace,
+      },
+      expenseCurrentAccountsDebit: Math.abs(sumOfAccountDebits)
+    };
+    return expense;
   }
 
   async addExpense({year,month,currency, openBalance, allowedDebitTransTypeIds, 
@@ -20,14 +76,19 @@ class expenseBusiness {
         expenseCurrency: currency,
         expenseOpenBalance: openBalance,
         expenseCloseBalance: openBalance,
-        allowedDebitTransTypes: allowedDebitTransTypeIds?allowedDebitTransTypeIds:null,
-        extractedDebitTransTypes: extractedDebitTransTypeIds?extractedDebitTransTypeIds:null,
+        expenseDebitTransTypes: allowedDebitTransTypeIds?allowedDebitTransTypeIds:null,
+        expenseClosedStatusBalance: 0,
+        expenseStatus: 'ACTIVE',
     });
   }
 
-  async updateExpense(id, {openBalance, allowedDebitTransTypeIds, extractedDebitTransTypeIds}) {
+  async updateExpense(id, {openBalance, allowedDebitTransTypeIds, expenseStatus}) {
     await ExpenseRepo.updateExpense(id, {openBalance, allowedDebitTransTypeIds, 
-      extractedDebitTransTypeIds});
+      expenseStatus});
+  }
+
+  async updateTotalAccountDebit(id, {diffAmount}){
+    await ExpenseRepo.updateTotalAccountDebit(id, diffAmount);
   }
 
 //   async deleteExpenseType(id) {

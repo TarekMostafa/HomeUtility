@@ -2,11 +2,12 @@ import axios from 'axios';
 
 class CardTransRequest {
   static async getCardsTransactions(cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
-    description, includeDescription, transDateFrom, transDateTo) {
+    description, includeDescription, transDateFrom, transDateTo, payForOthers) {
     const response = await axios.get('/api/cardTrans', {
         params: {
             cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
-            description, includeDescription, transDateFrom, transDateTo
+            description, includeDescription, transDateFrom, transDateTo, 
+            payForOthers
         }
       });
     return response.data;

@@ -16,7 +16,6 @@ const initialState = {
     decimalPlaces: 0,
     openBalance: 0,
     debitTransTypes: [],
-    extractedDebitTransTypes: []
 }
 
 function ExpenseHeaderAddModal(props) {
@@ -41,8 +40,7 @@ function ExpenseHeaderAddModal(props) {
         }
         // Add new expense
         ExpenseRequest.addExpense(formData.year, formData.month, formData.currency,
-            formData.openBalance, formData.debitTransTypes.map(e=>e.typeId).join(','),
-            formData.extractedDebitTransTypes.map(e=>e.typeId).join(','))
+            formData.openBalance, formData.debitTransTypes.map(e=>e.typeId).join(','))
         .then( () => {
             if (typeof props.onSave=== 'function') {
                 props.onSave();
@@ -59,13 +57,6 @@ function ExpenseHeaderAddModal(props) {
         setFormData({
             ...formData,
             debitTransTypes: chips
-        })
-    }
-
-    const handleChip2Change = (chips) => {
-        setFormData({
-            ...formData,
-            extractedDebitTransTypes: chips
         })
     }
     
@@ -112,15 +103,6 @@ function ExpenseHeaderAddModal(props) {
                     <TransactionTypesChips value={formData.debitTransTypes}
                         onChange={handleChipChange} name="debitTransTypes"
                         onFilter={e => e.typeCRDR==='Debit'}/>
-                </Form.Group>
-                <Form.Group controlId="extractedDebitTransTypes">
-                    <Form.Label>
-                        {'Extracted Debit Transaction Types (' + 
-                        formData.extractedDebitTransTypes.length + ')' }
-                    </Form.Label>
-                    <TransactionTypesChips value={formData.extractedDebitTransTypes}
-                        onChange={handleChip2Change} name="extractedDebitTransTypes"
-                        onFilter={e => formData.debitTransTypes.some(type => type.typeId === e.typeId)}/>
                 </Form.Group>
                 <Form.Text className='text-danger'>{formData.message}</Form.Text>
             </Form>

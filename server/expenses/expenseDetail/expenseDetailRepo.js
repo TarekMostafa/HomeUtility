@@ -40,6 +40,8 @@ class ExpenseDetailRepo {
         }
       }
       //Adjusment
+      if(['Y', 'y'].indexOf(expIsAdjusment) > -1) query.expenseAdjusment = 1;
+      else if(['N', 'n'].indexOf(expIsAdjusment) > -1) query.expenseAdjusment = 0;
       //Expense Type
       if(expTypes) {
         query.expenseTypeId = expTypes;

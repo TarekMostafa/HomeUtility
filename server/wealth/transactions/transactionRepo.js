@@ -68,6 +68,40 @@ class TransactionRepo {
     });
   }
 
+  static async getSumTransactions(types, currency, dateFrom, dateTo){
+    let whereQuery = {};
+    let accountWhereQuery = {};
+    // Transaction Type Id
+    if(types) {
+      //whereQuery.transactionTypeId = typeId;
+      whereQuery.transactionTypeId = {
+        [Op.in]: types
+      }
+    }
+    //Currency
+    if(currency)
+      accountWhereQuery.accountCurrency = currency
+    //Date Range
+    if(dateFrom && dateTo)
+      whereQuery.transactionPostingDate = { [Op.between] : [dateFrom, dateTo] };
+    //whereQuery.
+    let sum = await TransactionModel.findAll({
+      attributes: [
+        [sequelize.fn('sum', 
+        sequelize.literal('transactionAmount*(case when transactionCRDR = \'Credit\' then 1 else -1 end)')),
+         "total"]],
+      include: [
+        { model: AccountModel, as: 'account', attributes: [], where:accountWhereQuery},
+      ],
+      //group: [sequelize.literal('transactionAmount*(case when transactionCRDR = \'Credit\' then 1 else -1 end)')],
+      where: whereQuery,
+      raw: true
+    });
+
+    if(sum && Array.isArray(sum) && sum.length > 0) return sum[0].total;
+    else return 0;
+  }
+
   static async IsDepositTransactionExist(relatedId, originalTransId) {
     let transaction = await TransactionModel.findOne({
       where: {

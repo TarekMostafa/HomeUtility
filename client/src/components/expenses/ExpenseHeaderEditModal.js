@@ -6,13 +6,14 @@ import ModalContainer from '../common/ModalContainer';
 import MonthYearField from '../common/MonthYearField';
 import TransactionTypesChips from '../wealth/transactiontypes/TransactionTypesChips';
 import ExpenseRequest from '../../axios/ExpenseRequest';
+import AccountStatusesDropDown from '../wealth/accounts/AccountStatusesDropDown'; 
 
 const initialState = {
     isLoading: false,
     message: "",
     openBalance: 0,
     debitTransTypes: [],
-    extractedDebitTransTypes: []
+    expenseStatus: '',
 }
 
 function ExpenseHeaderEditModal(props) {
@@ -25,14 +26,11 @@ function ExpenseHeaderEditModal(props) {
         if(expense) setFormData({
             ...formData, 
             openBalance: expense.expenseOpenBalance,
-            debitTransTypes: (expense.allowedDebitTransTypes ? 
+            debitTransTypes: (expense.expenseDebitTransTypes ? 
                 props.transactionTypes.filter(
-                    e=> expense.allowedDebitTransTypes.split(',').includes(e.typeId+''))
+                    e=> expense.expenseDebitTransTypes.split(',').includes(e.typeId+''))
             : []),
-            extractedDebitTransTypes: (expense.extractedDebitTransTypes ? 
-                props.transactionTypes.filter(
-                    e=> expense.extractedDebitTransTypes.split(',').includes(e.typeId+''))
-            : [])
+            expenseStatus: expense.expenseStatus,
         });
     });
 
@@ -40,13 +38,20 @@ function ExpenseHeaderEditModal(props) {
         if(props.expenseId) loadExpense(props.expenseId);
     },[props.expenseId])
 
+    const handleChange = (event) => {
+        setFormData({
+            ...formData,
+            [event.target.name] : event.target.value
+        })
+    }
+
     const handleOnClick = () => {
         setFormData({...formData, message: "", isLoading: true});
         // update expense
         ExpenseRequest.updateExpense(expense.expenseId, 
             formData.openBalance, 
             formData.debitTransTypes.map(e=>e.typeId).join(','),
-            formData.extractedDebitTransTypes.map(e=>e.typeId).join(','))                      
+            formData.expenseStatus)                      
         .then( () => {
             if (typeof props.onSave=== 'function') {
                 props.onSave();
@@ -63,13 +68,6 @@ function ExpenseHeaderEditModal(props) {
         setFormData({
             ...formData,
             debitTransTypes: chips
-        })
-    }
-    
-    const handleChip2Change = (chips) => {
-        setFormData({
-            ...formData,
-            extractedDebitTransTypes: chips
         })
     }
 
@@ -113,14 +111,13 @@ function ExpenseHeaderEditModal(props) {
                             onChange={handleChipChange} name="debitTransTypes"
                             onFilter={e => e.typeCRDR==='Debit'}/>
                     </Form.Group>
-                    <Form.Group controlId="extractedDebitTransTypes">
-                        <Form.Label>
-                            {'Extracted Debit Transaction Types (' + 
-                            formData.extractedDebitTransTypes.length + ')' }
-                        </Form.Label>
-                        <TransactionTypesChips value={formData.extractedDebitTransTypes}
-                            onChange={handleChip2Change} name="extractedDebitTransTypes"
-                            onFilter={e => formData.debitTransTypes.some(type => type.typeId === e.typeId)}/>
+                    <Form.Group controlId="expenseStatus">
+                        <Form.Label>Expense Status</Form.Label>
+                        <Form.Control as="select" name="expenseStatus" onChange={handleChange}
+                        value={formData.expenseStatus}>
+                            <option value=''></option>
+                            <AccountStatusesDropDown />
+                        </Form.Control>
                     </Form.Group>
                     <Form.Text className='text-danger'>{formData.message}</Form.Text>
                 </Form>

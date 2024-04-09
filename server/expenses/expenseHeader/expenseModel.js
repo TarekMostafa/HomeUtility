@@ -12,9 +12,10 @@ ExpenseModel.init({
   expenseCloseBalance: Sequelize.DECIMAL(18, 3),
   expenseDebits: Sequelize.DECIMAL(18, 3),
   expenseAdjusments: Sequelize.DECIMAL(18, 3),
-  totalAccountsDebitTrans: Sequelize.DECIMAL(18, 3),
-  allowedDebitTransTypes: Sequelize.STRING(200),
-  extractedDebitTransTypes: Sequelize.STRING(200)
+  expenseTotalAccountDebit: Sequelize.DECIMAL(18, 3),
+  expenseDebitTransTypes: Sequelize.STRING(200),
+  expenseClosedStatusBalance: Sequelize.DECIMAL(18, 3),
+  expenseStatus: Sequelize.ENUM('ACTIVE', 'CLOSED'),
 }, {
   tableName: 'expenses',
   createdAt: false,

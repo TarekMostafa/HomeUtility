@@ -9,25 +9,29 @@ function ExpenseHeaderCardBody(props) {
     return (
         expense && <Card.Body>
             <Row>
-                <Col xs={5}><strong>Open Balance:</strong></Col>
-                <Col xs={5}>{amountFormatter(expense.expenseOpenBalance, expense.currency.currencyDecimalPlace)}</Col>
-                <Col xs={2}><Badge variant="success">{expense && expense.status}</Badge></Col>
+                <Col xs={6}><strong>Open Balance:</strong></Col>
+                <Col xs={3}>{amountFormatter(expense.expenseOpenBalance, expense.currency.currencyDecimalPlace)}</Col>
+                <Col xs={1}><Badge variant="success">{expense && expense.expenseStatus}</Badge></Col>
             </Row>
             <Row>
-                <Col xs={5}><strong>Accounts Debits:</strong></Col>
-                <Col xs={5}>{amountFormatter(expense.totalAccountsDebitTrans, expense.currency.currencyDecimalPlace)}</Col>
+                <Col xs={6}><strong>Accounts Debits:</strong></Col>
+                <Col xs={3}>{amountFormatter(expense.expenseTotalAccountDebit, expense.currency.currencyDecimalPlace)}</Col>
             </Row>
             <Row>
-                <Col xs={5}><strong>Adjusments:</strong></Col>
-                <Col xs={5}>{amountFormatter(expense.expenseAdjusments, expense.currency.currencyDecimalPlace)}</Col>
+                <Col xs={6}><strong>Adjusments:</strong></Col>
+                <Col xs={3}>{amountFormatter(expense.expenseAdjusments, expense.currency.currencyDecimalPlace)}</Col>
             </Row>
             <Row>
-                <Col xs={5}><strong>Expense Debits:</strong></Col>
-                <Col xs={5}>{amountFormatter(expense.expenseDebits, expense.currency.currencyDecimalPlace)}</Col>
+                <Col xs={6}><strong>Expense Debits:</strong></Col>
+                <Col xs={3}>{amountFormatter(expense.expenseDebits, expense.currency.currencyDecimalPlace)}</Col>
             </Row>
             <Row>
-                <Col xs={5}><strong>Close Balance:</strong></Col>
-                <Col xs={5}>{amountFormatter(expense.expenseCloseBalance, expense.currency.currencyDecimalPlace)}</Col>
+                <Col xs={6}><strong>Close Balance:</strong></Col>
+                <Col xs={3}>{amountFormatter(expense.expenseCloseBalance, expense.currency.currencyDecimalPlace)}</Col>
+            </Row>
+            <Row>
+                <Col xs={6}><strong>Closed Status Balance:</strong></Col>
+                <Col xs={3}>{amountFormatter(expense.expenseClosedStatusBalance, expense.currency.currencyDecimalPlace)}</Col>
             </Row>
         </Card.Body>
     )

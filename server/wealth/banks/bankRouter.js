@@ -23,7 +23,8 @@ router.post('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
   bankBusiness.updateBank(req.params.id, req.body).then( () => {
-    res.status(200).send();
+    res.messageCode = 'BANK_UPDATE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
@@ -31,7 +32,8 @@ router.put('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
   bankBusiness.deleteBank(req.params.id).then( () => {
-    res.status(200).send();
+    res.messageCode = 'BANK_DELETE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })

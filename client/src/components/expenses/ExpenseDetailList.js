@@ -7,12 +7,15 @@ import ExpenseTypeRowList from './ExpenseTypeRowList';
 import ExpenseDetailSummary from './ExpenseDetailSummary';
 import ExpenseRequest from '../../axios/ExpenseRequest'
 import ExpenseDetailRequest from '../../axios/ExpenseDetailRequest';
+import ExpenseTotalAccountDebitDifference from './ExpenseTotalAccountDebitDifference';
+import ExpenseApplyTotalAccountDebitDifference from './ExpenseApplyTotalAccountDebitDifference';
 
 function ExpenseDetailList(props) {
 
     const [expense, setExpense] = useState(null);
     const [expenseDetails, setExpenseDetails] = useState([]);
     const [searchFilter, setSearchFilter] = useState(null);
+    const [modalApplyShow, setModalApplyShow] = useState(false);
 
     const loadData = id => {
         ExpenseRequest.getExpense(id)
@@ -36,10 +39,22 @@ function ExpenseDetailList(props) {
         loadData(props.match.params.id);
     },[])
 
+    let diffAmount = 0;
+    if(expense) {
+        diffAmount = expense.expenseCurrentAccountsDebit - expense.expenseTotalAccountDebit;
+    }
+
     return (
         <FormContainer title="Expense Details">
         {
             expense && <React.Fragment>
+                {diffAmount !== 0 &&
+                <ExpenseTotalAccountDebitDifference 
+                amount={diffAmount}
+                decimalPlace={expense.currency.currencyDecimalPlace}
+                currency={expense.expenseCurrency} 
+                onApply={()=>setModalApplyShow(true)}/>
+                }
                 <ExpenseHeaderCard expense={expense} inline/>
                 <FormContainer>
                     <ExpenseDetailSummary expenseDetails={expenseDetails}
@@ -57,6 +72,13 @@ function ExpenseDetailList(props) {
                     onDelete={()=> loadData(props.match.params.id)}
                     onEdit={()=> loadData(props.match.params.id)}/>
             </React.Fragment>
+        }
+        {
+            modalApplyShow && <ExpenseApplyTotalAccountDebitDifference 
+            expense={expense} 
+            show={modalApplyShow}
+            onHide={()=>setModalApplyShow(false)}
+            onApply={()=>loadData(expense.expenseId)}/>
         }
         </FormContainer>
     );

@@ -11,7 +11,7 @@ const Op = Sequelize.Op;
 
 class CardTransactionRepo {
   static async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
-    description, includeDescription, transDateFrom, transDateTo}) {
+    description, includeDescription, transDateFrom, transDateTo, payForOthers}) {
     var query = {};
     if(cardId) query.cardId = cardId;
     if(cardInstId) query.cardTransInstallmentId = cardInstId;
@@ -28,6 +28,9 @@ class CardTransactionRepo {
         }
       }
     }
+    //Pay for others 
+    if(['Y', 'y'].indexOf(payForOthers) > -1) query.cardTransPayForOthers = 1;
+    else if(['N', 'n'].indexOf(payForOthers) > -1) query.cardTransPayForOthers = 0;
     // Check Transaction Date from and Transaction Date To
     let _dateFrom = Common.getDate(transDateFrom, '', false);
     let _dateTo = Common.getDate(transDateTo, '', true);
