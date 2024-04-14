@@ -15,14 +15,21 @@ class Common {
   //   }
   // }
 
-  static getDate(value, defaultValue, next) {
+  static getDate(value, defaultValue) {
     if(value) {
       const parsedDate = Date.parse(value);
+      console.log(value); 
       return Number.isNaN(parsedDate) ? defaultValue :
-        (next? new Date(parsedDate).setHours(23,59,59) : new Date(parsedDate).setHours(0,0,0));
+       this.extractDateOnly(value);
     } else {
       return defaultValue;
     }
+  }
+
+  static extractDateOnly(dateTimeString) {
+    // Extract date parts from the datetime string
+    var parts = dateTimeString.split('T');    
+    return parts[0];
   }
 }
 

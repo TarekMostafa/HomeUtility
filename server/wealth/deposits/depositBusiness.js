@@ -104,8 +104,8 @@ class Deposit {
       accountId,
       amount,
       rate,
-      startDate,
-      endDate,
+      startDate: Common.getDate(startDate, ''),
+      endDate: Common.getDate(endDate, ''),
       interestTransType,
       status: 'ACTIVE',
       bankCode: account.accountBankCode,
@@ -195,7 +195,7 @@ class Deposit {
       const savedTrans = await transactionBusiness.addTransaction({
           transactionAmount: amount,
           transactionNarrative: 'Deposit Interest (' + _deposit.reference + ')',
-          transactionPostingDate: date,
+          transactionPostingDate: Common.getDate(date, ''),
           transactionCRDR: 'Credit',
           transactionAccount: _deposit.accountId,
           transactionTypeId: _deposit.interestTransType,
@@ -226,7 +226,7 @@ class Deposit {
       const savedTrans = await transactionBusiness.addTransaction({
           transactionAmount: _deposit.amount,
           transactionNarrative: 'Release Deposit (' + _deposit.reference + ')',
-          transactionPostingDate: releaseDate,
+          transactionPostingDate: Common.getDate(releaseDate, ''),
           transactionCRDR: 'Credit',
           transactionAccount: _deposit.accountId,
           transactionTypeId: transCreditType,
@@ -238,7 +238,7 @@ class Deposit {
         throw new Exception('DEP_REL_FAIL');
       }
       //Save Deposit related Id
-      _deposit.releaseDate = releaseDate;
+      _deposit.releaseDate = Common.getDate(releaseDate, '');
       _deposit.releaseTransId = savedTrans.transactionId;
       _deposit.status = 'CLOSED';
       await _deposit.save({transaction: dbTransaction});

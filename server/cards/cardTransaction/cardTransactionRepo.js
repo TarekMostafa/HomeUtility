@@ -32,8 +32,8 @@ class CardTransactionRepo {
     if(['Y', 'y'].indexOf(payForOthers) > -1) query.cardTransPayForOthers = 1;
     else if(['N', 'n'].indexOf(payForOthers) > -1) query.cardTransPayForOthers = 0;
     // Check Transaction Date from and Transaction Date To
-    let _dateFrom = Common.getDate(transDateFrom, '', false);
-    let _dateTo = Common.getDate(transDateTo, '', true);
+    let _dateFrom = Common.getDate(transDateFrom, '');
+    let _dateTo = Common.getDate(transDateTo, '');
     if( _dateFrom !== '' && _dateTo !== '') {
       query.cardTransDate = { [Op.between] : [_dateFrom, _dateTo] };
     } else {

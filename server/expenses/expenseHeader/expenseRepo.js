@@ -36,7 +36,7 @@ class ExpenseRepo {
     await expense.update({
       expenseAdjusments: sequelize.literal('expenseAdjusments+'+AdjBal),
       expenseDebits: sequelize.literal('expenseDebits+'+DebitBal),
-      expenseCloseBalance: sequelize.literal('expenseCloseBalance+'+Number(AdjBal-DebitBal))
+      expenseCalculatedBalance: sequelize.literal('expenseCalculatedBalance+'+Number(AdjBal-DebitBal))
     }, {transaction: dbTransaction});
   }
 
@@ -47,7 +47,7 @@ class ExpenseRepo {
     await expense.update({
       expenseAdjusments: sequelize.literal('expenseAdjusments-'+AdjBal),
       expenseDebits: sequelize.literal('expenseDebits-'+DebitBal),
-      expenseCloseBalance: sequelize.literal('expenseCloseBalance+'+Number(DebitBal-AdjBal))
+      expenseCalculatedBalance: sequelize.literal('expenseCalculatedBalance+'+Number(DebitBal-AdjBal))
     }, {transaction: dbTransaction});
   }
 
@@ -57,11 +57,11 @@ class ExpenseRepo {
     await expense.update({
       expenseOpenBalance: openBalance,
       expenseDebitTransTypes: allowedDebitTransTypeIds?allowedDebitTransTypeIds:null,
-      expenseCloseBalance: sequelize.literal('expenseAdjusments-expenseDebits+'+Number(openBalance)
+      expenseCalculatedBalance: sequelize.literal('expenseAdjusments-expenseDebits+'+Number(openBalance)
       +'+expenseTotalAccountDebit'),
       expenseStatus,
-      expenseClosedStatusBalance: expenseStatus==='CLOSED'?
-        sequelize.literal('expenseCloseBalance'):sequelize.literal('expenseClosedStatusBalance')
+      expenseCloseBalance: expenseStatus==='CLOSED'?
+        sequelize.literal('expenseCalculatedBalance'):sequelize.literal('expenseCloseBalance')
     })
   }
 
@@ -70,7 +70,7 @@ class ExpenseRepo {
     if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
     await expense.update(
       {expenseTotalAccountDebit: sequelize.literal('expenseTotalAccountDebit+'+diffAmount),
-      expenseCloseBalance: sequelize.literal('expenseCloseBalance+'+diffAmount)},
+      expenseCalculatedBalance: sequelize.literal('expenseCalculatedBalance+'+diffAmount)},
       {transaction: dbTransaction});
   }
 }

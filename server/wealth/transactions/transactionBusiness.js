@@ -46,8 +46,8 @@ class TransactionBusiness {
       }
     }
     // Check Posting Date from and Posting Date To
-    let _dateFrom = Common.getDate(postingDateFrom, '', false);
-    let _dateTo = Common.getDate(postingDateTo, '', true);
+    let _dateFrom = Common.getDate(postingDateFrom, '');
+    let _dateTo = Common.getDate(postingDateTo, '');
     if( _dateFrom !== '' && _dateTo !== '') {
       whereQuery.transactionPostingDate = { [Op.between] : [_dateFrom, _dateTo] };
     } else {
@@ -89,8 +89,8 @@ class TransactionBusiness {
     // Construct Where Condition
     let whereQuery = {};
     // Check Posting Date from and Posting Date To
-    const _dateFrom = Common.getDate(postingDateFrom, '', false);
-    const _dateTo = Common.getDate(postingDateTo, '', true);
+    const _dateFrom = Common.getDate(postingDateFrom, '');
+    const _dateTo = Common.getDate(postingDateTo, '');
     if( _dateFrom === '' || _dateTo === '') {
       //return APIResponse.getAPIResponse(false, null, '043');
       throw new Exception('POST_DATE_INVALID');
@@ -114,9 +114,8 @@ class TransactionBusiness {
       to = new Date(from.getFullYear(), from.getMonth()+1, 0);
       if(to > new Date(_dateTo)){
         to = new Date(_dateTo);
-        console.log(to);
       }
-      whereQuery.transactionPostingDate = { [Op.between] : [from.setHours(0,0,0), to.setHours(23,59,59)] };
+      whereQuery.transactionPostingDate = { [Op.between] : [Common.getDate(from, ''), Common.getDate(to, '')] };
       let resultDetails = {};
       resultDetails.fromDate = from;
       resultDetails.toDate = to;
@@ -178,7 +177,7 @@ class TransactionBusiness {
     const savedTrans = await TransactionRepo.addTransaction({
       transactionAmount,
       transactionNarrative,
-      transactionPostingDate,
+      transactionPostingDate: Common.getDate(transactionPostingDate, ''),
       transactionCRDR,
       transactionAccount,
       transactionTypeId,
@@ -250,7 +249,7 @@ class TransactionBusiness {
     // update transaction
     _transaction.transactionAmount = transactionAmount;
     _transaction.transactionNarrative = transactionNarrative;
-    _transaction.transactionPostingDate = transactionPostingDate;
+    _transaction.transactionPostingDate = Common.getDate(transactionPostingDate, '');
     _transaction.transactionCRDR = transactionCRDR;
     _transaction.transactionAccount = transactionAccount;
     _transaction.transactionTypeId = transactionTypeId;

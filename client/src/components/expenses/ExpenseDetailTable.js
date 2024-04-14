@@ -10,13 +10,14 @@ function ExpenseDetailTable(props) {
         <Table hover bordered size="sm" responsive="sm">
             <thead>
                 <tr>
-                    <th>Id</th>
+                    <th>#</th>
                     <th>Date</th>
                     <th>Amount</th>
                     <th>Currency</th>
                     <th>Description</th>
                     <th>Expense Type</th>
                     <th>Adjusment</th>
+                    <th>Id</th>
                     {!props.readOnly && <th></th>}
                 </tr>
             </thead>
@@ -37,12 +38,12 @@ function ExpenseDetailTable(props) {
                             default:
                                 return true;
                         } 
-                    }).map(elem => {
+                    }).map((elem, index) => {
                         return (
                             <ExpenseDetailRow key={elem.expenseDetailId}
                                 expenseDetail={elem} 
                                 onDelete={props.onDelete}
-                                onEdit={props.onEdit} {...props}/>
+                                onEdit={props.onEdit} index={index+1} {...props}/>
                         )
                     })
                 }

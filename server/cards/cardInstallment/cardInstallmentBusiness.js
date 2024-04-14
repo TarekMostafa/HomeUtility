@@ -60,7 +60,7 @@ class CardInstallmentBusiness {
         cardId,
         cInstCurrency: card.cardCurrency,
         cInstItemDesc: itemDesc,
-        cInstPurchaseDate: purchaseDate,
+        cInstPurchaseDate: Common.getDate(purchaseDate, ''),
         cInstFirstInstDate: null,
         cInstNoOfInst: noOfInst,
         cInstPrice: price,
@@ -86,7 +86,7 @@ class CardInstallmentBusiness {
     if(cardInst.cInstStatus === 'FINISHED') throw new Exception('CARD_INST_FINISHED');
 
     cardInst.cInstItemDesc = itemDesc;
-    cardInst.cInstPurchaseDate = purchaseDate;
+    cardInst.cInstPurchaseDate = Common.getDate(purchaseDate, '');
     cardInst.cInstNoOfInst = noOfInst;
     await cardInst.save();
   }
@@ -125,7 +125,7 @@ class CardInstallmentBusiness {
         cardId: cardInst.cardId,
         cardTransAmount: transAmt,
         cardTransCurrency: cardInst.cInstCurrency,
-        cardTransDate: transDate,
+        cardTransDate: Common.getDate(transDate, ''),
         cardTransDesc: transDesc,
         cardTransBillAmount: transAmt,
         cardTransBillDate: null,

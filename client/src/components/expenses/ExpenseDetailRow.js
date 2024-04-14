@@ -113,7 +113,7 @@ function ExpenseDetailRow(props) {
 
     return (
         <tr key={elem.expenseDetailId} style={getRowColor(elem)}>
-            <td>{elem.expenseDetailId}</td>
+            <td>{props.index}</td>
             <td>
                 {moment(new Date(elem.expense.expenseYear, elem.expense.expenseMonth-1, 
                     elem.expenseDay)).format('DD/MM/YYYY')}
@@ -143,6 +143,7 @@ function ExpenseDetailRow(props) {
                 }
             </td>
             <td>{elem.expenseAdjusment?'YES':'NO'}</td>
+            <td>{elem.expenseDetailId}</td>
             { !props.readOnly && 
                 <td>
                     <EditDeleteButton 

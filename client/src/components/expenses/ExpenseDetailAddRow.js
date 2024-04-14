@@ -122,6 +122,7 @@ function ExpenseDetailAddRow(props) {
                 <Form.Check name="expenseAdj" type="checkbox" label="Adjusment" checked={formData.expenseAdj} 
                     onChange={handleChangeAdj}></Form.Check>
             </td>
+            <td></td>
             <td>
                 <Row>
                 <Col xs={4}><Button variant="primary" size="sm" onClick={handleExpenseDetailAdd}>

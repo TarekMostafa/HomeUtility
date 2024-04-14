@@ -21,8 +21,8 @@ class BillTransaction {
       whereQuery.billId = billId;
     }
     // Check Bill Date from and Posting Date To
-    let _billdateFrom = Common.getDate(billDateFrom, '', false);
-    let _billdateTo = Common.getDate(billDateTo, '', true);
+    let _billdateFrom = Common.getDate(billDateFrom, '');
+    let _billdateTo = Common.getDate(billDateTo, '');
     if(_billdateFrom !== '' && _billdateTo !== '') {
       whereQuery.transBillDate = { [Op.between] : [_billdateFrom, _billdateTo] };
     } else {
@@ -33,8 +33,8 @@ class BillTransaction {
       }
     }
     // Check Posting Date from and Posting Date To
-    let _dateFrom = Common.getDate(postingDateFrom, '', false);
-    let _dateTo = Common.getDate(postingDateTo, '', true);
+    let _dateFrom = Common.getDate(postingDateFrom, '');
+    let _dateTo = Common.getDate(postingDateTo, '');
     if(_dateFrom !== '' && _dateTo !== '') {
       whereQuery.transPostingDate = { [Op.between] : [_dateFrom, _dateTo] };
     } else {

@@ -36,7 +36,7 @@ class DebtTransactionBusiness {
             const savedTrans = await this.transactionBusiness.addTransaction({
                 transactionAmount: amount,
                 transactionNarrative: narrative,
-                transactionPostingDate: postingDate,
+                transactionPostingDate: Common.getDate(postingDate, ''),
                 transactionCRDR: crOrDr,
                 transactionAccount: account,
                 transactionTypeId: typeId,
@@ -81,7 +81,7 @@ class DebtTransactionBusiness {
             await this.transactionBusiness.editTransaction(id, {
                 transactionAmount: amount,
                 transactionNarrative: narrative,
-                transactionPostingDate: postingDate,
+                transactionPostingDate: Common.getDate(postingDate, ''),
                 transactionCRDR: crOrDr,
                 transactionAccount: account,
                 transactionTypeId: typeId,

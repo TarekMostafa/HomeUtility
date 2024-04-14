@@ -28,8 +28,8 @@ class ExpenseDetailRepo {
         }
       }
       // Check expense Date from and expense Date To
-      let _dateFrom = Common.getDate(expDateFrom, '', false);
-      let _dateTo = Common.getDate(expDateTo, '', true);
+      let _dateFrom = Common.getDate(expDateFrom, '');
+      let _dateTo = Common.getDate(expDateTo, '');
       if( _dateFrom !== '' && _dateTo !== '') {
         query.expenseDate = { [Op.between] : [_dateFrom, _dateTo] };
       } else {

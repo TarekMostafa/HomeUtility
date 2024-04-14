@@ -53,7 +53,7 @@ function ExpenseDetailList(props) {
                 amount={diffAmount}
                 decimalPlace={expense.currency.currencyDecimalPlace}
                 currency={expense.expenseCurrency} 
-                onApply={()=>setModalApplyShow(true)}/>
+                onApply={expense.expenseStatus==='CLOSED'?null:()=>setModalApplyShow(true)}/>
                 }
                 <ExpenseHeaderCard expense={expense} inline/>
                 <FormContainer>
@@ -65,9 +65,10 @@ function ExpenseDetailList(props) {
                     <ExpenseTypeRowList groupExpenseTypes={groupExpenseTypes(expenseDetails)}
                         onExpenseTypeClick={type => setSearchFilter({name:'expenseType', value:type})}/>
                 </FormContainer>
-                <ExpenseDetailTable expense={expense} 
+                <ExpenseDetailTable expense={expense.expenseStatus==='CLOSED'?null:expense} 
                     expenseDetails={expenseDetails} 
                     searchFilter={searchFilter}
+                    readOnly={expense.expenseStatus==='CLOSED'}
                     onAdd={()=> loadData(props.match.params.id)}
                     onDelete={()=> loadData(props.match.params.id)}
                     onEdit={()=> loadData(props.match.params.id)}/>

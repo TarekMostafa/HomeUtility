@@ -57,8 +57,8 @@ class CardBusiness {
         cardStatus: 'ACTIVE',
         cardBank: cardBank,
         cardCurrency: cardCurrency,
-        cardStartDate: cardStartDate,
-        cardExpiryDate: cardExpiryDate,
+        cardStartDate: Common.getDate(cardStartDate, ''),
+        cardExpiryDate: Common.getDate(cardExpiryDate, ''),
         cardLastBalanceUpdate: null
     });
   }
@@ -85,8 +85,8 @@ class CardBusiness {
         const cardOldLimit = card.cardLimit;
         card.cardLimit = cardLimit;
         card.cardStatus = cardStatus;
-        card.cardStartDate = cardStartDate;
-        card.cardExpiryDate = cardExpiryDate;
+        card.cardStartDate = Common.getDate(cardStartDate, '');
+        card.cardExpiryDate = Common.getDate(cardExpiryDate, '');
         await card.save({transaction: dbTransaction});
         await CardRepo.updateCardBalance(id, (cardLimit-cardOldLimit), dbTransaction);
         await dbTransaction.commit();

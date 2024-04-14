@@ -35,7 +35,7 @@ class CardInstallmentRepo {
     var cardInst = await this.getCardInstallment(id);
     if(!cardInst) throw new Exception('CARD_INST_NOT_EXIST');
     await cardInst.update({
-      cInstFirstInstDate: (cardInst.cInstFirstInstDate?cardInst.cInstFirstInstDate:instDate),
+      cInstFirstInstDate: (cardInst.cInstFirstInstDate?cardInst.cInstFirstInstDate:Common.getDate(instDate, '')),
       cInstNoOfPostedInst: sequelize.literal('cInstNoOfPostedInst+'+1),
       cInstPosted: sequelize.literal('cInstPosted+'+Number(instAmount)),
       cInstStatus: 'ACTIVE'

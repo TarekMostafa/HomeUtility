@@ -13,10 +13,10 @@ function ExpenseHeaderCardBodyInline(props) {
                 <Col><strong>Accounts Debits</strong></Col>
                 <Col><strong>Adjusments</strong></Col>
                 <Col><strong>Expense Debits</strong></Col>
+                <Col><strong>Calculated Balance</strong></Col>
                 <Col><strong>Close Balance</strong></Col>
-                <Col><strong>Closed Status Balance</strong></Col>
                 <Col>
-                    <Badge variant="success">{expense && expense.status}</Badge>
+                    <Badge variant={expense.expenseStatus==="CLOSED"?"warning":"success"}>{expense && expense.expenseStatus}</Badge>
                 </Col>
             </Row>
             <Row>
@@ -33,13 +33,12 @@ function ExpenseHeaderCardBodyInline(props) {
                     {amountFormatter(expense.expenseDebits, expense.currency.currencyDecimalPlace)}
                 </Col>
                 <Col>
+                    {amountFormatter(expense.expenseCalculatedBalance, expense.currency.currencyDecimalPlace)}
+                </Col>
+                <Col>
                     {amountFormatter(expense.expenseCloseBalance, expense.currency.currencyDecimalPlace)}
                 </Col>
                 <Col>
-                    {amountFormatter(expense.expenseClosedStatusBalance, expense.currency.currencyDecimalPlace)}
-                </Col>
-                <Col>
-                    <Badge variant="success">{expense && expense.expenseStatus}</Badge>
                 </Col>
             </Row>
         </Card.Body>
@@ -65,8 +64,8 @@ function ExpenseHeaderCardBodyInline(props) {
     //                 {amountFormatter(expense.expenseDebits, expense.currency.currencyDecimalPlace)}
     //             </Col>
     //             <Col xs={2}>
-    //                 <strong>Close Balance: </strong>
-    //                 {amountFormatter(expense.expenseCloseBalance, expense.currency.currencyDecimalPlace)}
+    //                 <strong>Calculated Balance: </strong>
+    //                 {amountFormatter(expense.expenseCalculatedBalance, expense.currency.currencyDecimalPlace)}
     //             </Col>
     //             <Col xs={2}>
     //                 <Badge variant="success">{expense && expense.status}</Badge>

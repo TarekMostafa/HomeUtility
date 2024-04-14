@@ -64,7 +64,7 @@ class InternalTransaction {
             transactionAmount: amount,
             transactionNarrative: _accountTo.bank.bankName + ' (' +
                 _accountTo.accountNumber + ')',
-            transactionPostingDate: postingDate,
+            transactionPostingDate: Common.getDate(postingDate, ''),
             transactionCRDR: 'Debit',
             transactionAccount: accountFrom,
             transactionTypeId: typeFrom,
@@ -80,7 +80,7 @@ class InternalTransaction {
             transactionAmount: amount,
             transactionNarrative: _accountFrom.bank.bankName + ' (' +
                 _accountFrom.accountNumber + ')',
-            transactionPostingDate: postingDate,
+            transactionPostingDate: Common.getDate(postingDate, ''),
             transactionCRDR: 'Credit',
             transactionAccount: accountTo,
             transactionTypeId: typeTo,

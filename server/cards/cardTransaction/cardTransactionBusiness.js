@@ -82,7 +82,7 @@ class CardTransactionBusiness {
         cardId,
         cardTransAmount: transAmount,
         cardTransCurrency: transCurrency,
-        cardTransDate: transDate,
+        cardTransDate: Common.getDate(transDate, ''),
         cardTransDesc: transDesc,
         cardTransBillAmount: billAmount,
         cardTransBillDate: null,
@@ -116,7 +116,7 @@ class CardTransactionBusiness {
         cardTrans.cardTransBillAmount - billAmount, dbTransaction);
       cardTrans.cardTransCurrency = transCurrency;
       cardTrans.cardTransAmount = transAmount;
-      cardTrans.cardTransDate = transDate;
+      cardTrans.cardTransDate = Common.getDate(transDate, '');
       cardTrans.cardTransDesc = transDesc;
       cardTrans.cardTransBillAmount = billAmount;
       cardTrans.cardTransInstallmentId = instId?instId:null;
@@ -216,7 +216,7 @@ class CardTransactionBusiness {
           transactionAmount: Math.abs(cardTrans.cardTransBillAmount),
           transactionNarrative: 
           `${cardTrans.cardTransDesc} on ${DateHelper.getFullDateFormat(cardTrans.cardTransDate)}`,
-          transactionPostingDate: postingDate,
+          transactionPostingDate: Common.getDate(postingDate, ''),
           transactionCRDR: (cardTrans.cardTransBillAmount > 0 ? 'Debit' : 'Credit') ,
           transactionAccount: accountId,
           transactionTypeId: transactionTypeId,
@@ -230,7 +230,7 @@ class CardTransactionBusiness {
         //Save Transaction Id in Card Transaction
         cardTrans.cardTransAccountTransId = savedTrans.transactionId;
         cardTrans.cardTransIsPaid = true;
-        cardTrans.cardTransBillDate = postingDate;
+        cardTrans.cardTransBillDate = Common.getDate(postingDate, '');
         await cardTrans.save({transaction: dbTransaction});
         await dbTransaction.commit();
       } catch (err) {
