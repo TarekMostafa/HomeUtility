@@ -8,6 +8,8 @@ module.exports = {
     DEBT_TRANSACTION_CREDIT: 'debtTransactionCredit',
     DEBT_TRANSACTION_DEBIT: 'debtTransacionDebit',
     LINK_MODULES_TO_DEBTOR: 'linkModulesToDebtors',
+    FX_TRANSACTION_TYPE_FROM: 'fxTransactionTypeFrom',
+    FX_TRANSACTION_TYPE_TO: 'fxTransactionTypeTo',
     //Values constants
     AUTOMATIC: 'Automatic',
     MANUAL: 'Manual'

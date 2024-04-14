@@ -8,6 +8,7 @@ const RelatedTransactionRepo = require('../relatedTransactions/relatedTransactio
 const Exception = require('../../features/exception');
 const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
+const Common = require('../../utilities/common');
 
 class Deposit {
   async getDeposits({bank, status, currency}) {

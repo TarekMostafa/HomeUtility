@@ -3,6 +3,7 @@ const CardRepo = require('../cardRepo');
 const Exception = require('../../features/exception');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const CardTransactionRepo = require('../cardTransaction/cardTransactionRepo');
+const Common = require('../../utilities/common');
 
 class CardInstallmentBusiness {
   async getCardsInstallments({cardId}) {

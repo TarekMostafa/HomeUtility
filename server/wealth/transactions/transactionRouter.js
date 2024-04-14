@@ -3,12 +3,14 @@ const TransactionBusiness = require('./transactionBusiness');
 const SingleTransactionBusiness = require('./singleTransactionBusiness');
 const InternalTransactionBusiness = require('./internalTransactionBusiness');
 const DebtTransactionBusiness = require('./debtTransactionBusiness');
+const FXTransactionBusiness = require('./fxTransactionBusiness');
 
 const router = express.Router();
 const transactionBusiness = new TransactionBusiness();
 const singleTransactionBusiness = new SingleTransactionBusiness();
 const internalTransactionBusiness = new InternalTransactionBusiness();
 const debtTransactionBusiness = new DebtTransactionBusiness();
+const fxTransactionBusiness = new FXTransactionBusiness();
 
 router.get('/', function(req, res, next) {
   transactionBusiness.getTransactions(req.query).then( result => {
@@ -122,5 +124,22 @@ router.post('/debt/linktodebtor/:id', (req, res, next) => {
     next(err);
   })
 });
+
+router.get('/fx/getDefaults', (req, res, next) => {
+  fxTransactionBusiness.getDefaultData().then(result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+});
+
+router.post('/fx', function(req, res, next) {
+  fxTransactionBusiness.addFXTransaction(req.body).then( result => {
+    res.messageCode = 'TRANS_ADD_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+})
 
 module.exports = router;

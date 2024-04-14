@@ -42,6 +42,7 @@ module.exports = {
   //'039' : 'Invalid base currency in the application settings',
   'TRANS_ACC1_NOT_EQUAL_ACC2' : 'Account From must not be equal to Account To',
   'TRANS_CCY1_EQUAL_CCY2' : 'Account From currency must be equal to Account To Currency',
+  'TRANS_CCY1_NOTEQUAL_CCY2' : 'Account From currency must not be equal to Account To Currency',
   'TRANS_DBT_ADD_FAIL': 'Failed to add this debt transaction',
   'TRANS_DBT_ADD_SUCCESS': 'This debt transaction has been successfully created',
   'TRANS_DBT_UPDATE_FAIL': 'Failed to update this debt transaction',

@@ -114,6 +114,25 @@ class TransctionRequest {
       debtorId
     });
   }
+
+  static async getFXTransactionDefaults(){
+    const response = await axios.get('/api/wealth/transactions/fx/getDefaults/');
+    return response.data;
+  }
+
+  static async addFXTransaction (accountFrom, accountTo, typeFrom, typeTo, postingDate, 
+      rate, amountFrom, amountTo) {
+    return await axios.post('/api/wealth/transactions/fx', {
+      accountFrom,
+      accountTo,
+      typeFrom,
+      typeTo,
+      postingDate,
+      rate,
+      amountFrom,
+      amountTo
+    });
+  }
 }
 
 export default TransctionRequest;

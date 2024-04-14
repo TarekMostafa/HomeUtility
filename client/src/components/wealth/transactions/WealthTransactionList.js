@@ -20,6 +20,7 @@ import EditDebtTransactionModal from './EditDebtTransactionModal';
 import DeleteDebtTransactionModal from './DeleteDebtTransactionModal';
 import ConvertSingleToDebtModal from './ConvertSingleToDebtModal';
 import LinkSingleToDebtorModal from './LinkSingleToDebtorModal';
+import AddFXTransactionModal from './AddFXTransactionModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -50,6 +51,7 @@ class WealthTransactionList extends Component {
     modalDeleteDebtShow: false,
     modalConvertToDebtShow: false,
     modalLinkToDebtShow: false,
+    modalAddFXShow: false,
     transactionId: '',
     ...initialState,
   }
@@ -100,6 +102,9 @@ class WealthTransactionList extends Component {
                 </Dropdown.Item>
                 <Dropdown.Item onClick={this.handleAddDebtTransaction}>
                   Add Debt Transaction
+                </Dropdown.Item>
+                <Dropdown.Item onClick={this.handleAddFXTransaction}>
+                  Add FX Transaction
                 </Dropdown.Item>
             </DropdownButton>
           </ButtonToolbar>
@@ -222,6 +227,11 @@ class WealthTransactionList extends Component {
           <LinkSingleToDebtorModal show={this.state.modalLinkToDebtShow} onHide={this.handleHide}
           onLink={this.handleListClick} transactionId={this.state.transactionId}/>
         }
+        {
+          this.state.modalAddFXShow &&
+          <AddFXTransactionModal show={this.state.modalAddFXShow} onHide={this.handleHide}
+          onSave={this.handleListClick} />
+        }
       </React.Fragment>
     )
   }// end of render
@@ -296,6 +306,12 @@ class WealthTransactionList extends Component {
     });
   }
 
+  handleAddFXTransaction = () => {
+    this.setState({
+      modalAddFXShow: true
+    });
+  }
+
   handleHide = () => {
     this.setState({
       modalAddSingleShow: false,
@@ -307,6 +323,7 @@ class WealthTransactionList extends Component {
       modalDeleteDebtShow: false,
       modalConvertToDebtShow: false,
       modalLinkToDebtShow: false,
+      modalAddFXShow: false,
     });
   }
 

@@ -6,6 +6,7 @@ const Exception = require('../../features/exception');
 //const APIResponse = require('../../utilities/apiResponse');
 const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
+const Common = require('../../utilities/common');
 
 class InternalTransaction {
     constructor(){

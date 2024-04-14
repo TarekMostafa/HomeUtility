@@ -5,6 +5,7 @@ const DebtorRepo = require('../../debtors/debtorRepo');
 const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 const Exception = require('../../features/exception');
+const Common = require('../../utilities/common');
 
 class DebtTransactionBusiness {
     constructor(){
