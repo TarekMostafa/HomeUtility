@@ -19,12 +19,13 @@ class TransctionRequest {
     return response.data;
   }
 
-  static async getMonthlyStatistics (postingDateFrom, postingDateTo, reportId) {
+  static async getMonthlyStatistics (postingDateFrom, postingDateTo, reportId, currency) {
     const response = await axios.get('/api/wealth/transactions/monthlystatistics', {
       params: {
         postingDateFrom,
         postingDateTo,
-        reportId
+        reportId,
+        currency
       }
     });
     return response.data;

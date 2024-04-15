@@ -50,21 +50,27 @@ class TransactionRepo {
     });
   }
 
-  static async getTotalTransactionsGroupByType(whereQuery) {
+  static async getTotalTransactionsGroupByType(whereQuery, currency) {
     return await TransactionModel.findAll({
       attributes: [
         [sequelize.fn('sum', sequelize.literal(
-          'Round(transactionAmount*currencyRateAgainstBase*(case when transactionCRDR = \'Credit\' then 1 else -1 end),3)')), "total"]],
+          'Round(transactionAmount*(case when transactionCRDR = \'Credit\' then 1 else -1 end),3)')), "total"]
+        ,'transactionType.typeName'],
       include: [
         { model: AccountModel, as: 'account', attributes: [],
           include: [
             { model: CurrencyModel, as: 'currency', attributes: [] }
-          ]
+          ], 
+          where: {
+            accountCurrency: currency
+          }
         },
-        { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeName'] }
+        { model: TransactionTypeModel, as: 'transactionType', attributes: [] }
       ],
-      group: [sequelize.literal('case when transactionTypeId is not null then transactionType.typeName else \'\' end')],
+      //group: [sequelize.literal('case when transactionTypeId is not null then transactionType.typeName else \'\' end')],
+      group: [sequelize.literal('typeName')],
       where: whereQuery,
+      raw: true
     });
   }
 

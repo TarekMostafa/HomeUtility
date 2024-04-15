@@ -18,7 +18,6 @@ class Common {
   static getDate(value, defaultValue) {
     if(value) {
       const parsedDate = Date.parse(value);
-      console.log(value); 
       return Number.isNaN(parsedDate) ? defaultValue :
        this.extractDateOnly(value);
     } else {

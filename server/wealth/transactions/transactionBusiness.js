@@ -85,7 +85,7 @@ class TransactionBusiness {
     return transactions;
   }
 
-  async getTotalTransactionsByType({reportId, postingDateFrom, postingDateTo}) {
+  async getTotalTransactionsByType({reportId, postingDateFrom, postingDateTo, currency}) {
     // Construct Where Condition
     let whereQuery = {};
     // Check Posting Date from and Posting Date To
@@ -107,25 +107,31 @@ class TransactionBusiness {
     let to = null;
     do {
       if(from) {
-        from = new Date(from.getFullYear(), from.getMonth()+1, 1);
+        //from = new Date(from.getFullYear(), from.getMonth()+1, 1);
+        from.setMonth(from.getMonth()+1);
       } else {
         from = new Date(_dateFrom);
       }
-      to = new Date(from.getFullYear(), from.getMonth()+1, 0);
+      //to = new Date(from.getFullYear(), from.getMonth()+1, 0);
+      to = new Date(_dateFrom);
+      to.setFullYear(from.getFullYear());
+      to.setMonth(from.getMonth()+1);
+      to.setDate(0);
       if(to > new Date(_dateTo)){
         to = new Date(_dateTo);
       }
-      whereQuery.transactionPostingDate = { [Op.between] : [Common.getDate(from, ''), Common.getDate(to, '')] };
+      whereQuery.transactionPostingDate = { [Op.between] : [Common.getDate(from.toISOString(), ''), 
+        Common.getDate(to.toISOString(), '')] };
       let resultDetails = {};
-      resultDetails.fromDate = from;
-      resultDetails.toDate = to;
+      resultDetails.fromDate = Common.getDate(from.toISOString(), '');
+      resultDetails.toDate = Common.getDate(to.toISOString(), '');
       resultDetails.monthlyStatistics = [];
       for(let counter = 0; counter < reportdetails.length; counter++) {
         whereQuery.transactionTypeId = { [Op.or] : [
           {[Op.in] : reportdetails[counter].detailTypes.split(',')},
           {[Op.eq] : null}
         ]};
-        const details = await TransactionRepo.getTotalTransactionsGroupByType(whereQuery);
+        const details = await TransactionRepo.getTotalTransactionsGroupByType(whereQuery, currency);
         resultDetails.monthlyStatistics.push({
           detailName: reportdetails[counter].detailName,
           details

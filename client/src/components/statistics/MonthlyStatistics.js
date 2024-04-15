@@ -9,11 +9,13 @@ import MonthlyDetails from './MonthlyDetails';
 import FormContainer from '../common/FormContainer';
 import ReportRequest from '../../axios/ReportRequest';
 import TransactionRequest from '../../axios/TransactionRequest';
+import CurrenciesDropDown from '../currencies/CurrenciesDropDown';
 
 const initialState = {
   reportId: '',
   postingDateFrom: '',
   postingDateTo: '',
+  currency: '',
   message: '',
   isLoading: false,
 }
@@ -57,6 +59,13 @@ class MonthlyStatistics extends Component {
                   value={this.state.reportId}>
                   <option value=''>Reports</option>
                   {this.getReportsList()}
+                </Form.Control>
+              </Col>
+              <Col>
+                <Form.Control as="select" size="sm" name="currency" onChange={this.handleChange}
+                  value={this.state.currency}>
+                  <option value=''>Currencies</option>
+                  <CurrenciesDropDown />
                 </Form.Control>
               </Col>
               <Col>
@@ -113,6 +122,9 @@ class MonthlyStatistics extends Component {
     if(!this.state.reportId) {
       this.setState({message: 'Invalid report, should not be empty'});
       return;
+    } else if(!this.state.currency) {
+      this.setState({message: 'Invalid currency, should not be empty'});
+      return;
     } else if(!this.state.postingDateFrom) {
       this.setState({message: 'Invalid posting date from, should not be empty'});
       return;
@@ -131,7 +143,7 @@ class MonthlyStatistics extends Component {
     // Get Monthly Statistics
     // Add single transaction
     TransactionRequest.getMonthlyStatistics(this.state.postingDateFrom,
-      this.state.postingDateTo, this.state.reportId)
+      this.state.postingDateTo, this.state.reportId, this.state.currency)
     .then( (result) => {
       this.setState({
         stat: result,
