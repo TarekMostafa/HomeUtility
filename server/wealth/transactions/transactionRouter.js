@@ -28,6 +28,14 @@ router.get('/monthlystatistics', function(req, res, next) {
   })
 });
 
+router.get('/accountbalanceasofdate', function(req, res, next) {
+  transactionBusiness.getAccountBalanceAsOfDate(req.query).then( result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+});
+
 router.post('/single', function(req, res, next) {
   singleTransactionBusiness.addSingleTransaction(req.body).then( result => {
     res.messageCode = 'TRANS_ADD_SUCCESS';

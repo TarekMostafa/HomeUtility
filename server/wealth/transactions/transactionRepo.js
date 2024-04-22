@@ -124,6 +124,21 @@ class TransactionRepo {
     });
     return transaction?true:false;
   }
+
+  static async getAccountBalanceAsOfDate(accountId, balanceDate){
+    return await TransactionModel.findOne({
+      attributes: [ [sequelize.fn("SUM", sequelize.literal(
+        'Round(transactionAmount*(case when transactionCRDR = \'Credit\' then 1 else -1 end),3)'
+      )), 'balanceSum'] ],
+      raw: true,
+      where: {
+        transactionAccount: accountId,
+        transactionPostingDate: {
+          [Op.lte]: balanceDate
+        }
+      }
+    });
+  }
 }
 
 module.exports = TransactionRepo;

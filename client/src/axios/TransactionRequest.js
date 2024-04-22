@@ -19,6 +19,16 @@ class TransctionRequest {
     return response.data;
   }
 
+  static async getAccountBalanceAsOfDate (accountId, balanceDate) {
+    const response = await axios.get('/api/wealth/transactions/accountbalanceasofdate', {
+      params: {
+        accountId,
+        balanceDate
+      }
+    });
+    return response.data;
+  }
+
   static async getMonthlyStatistics (postingDateFrom, postingDateTo, reportId, currency) {
     const response = await axios.get('/api/wealth/transactions/monthlystatistics', {
       params: {

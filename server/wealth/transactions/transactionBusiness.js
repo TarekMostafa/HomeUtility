@@ -349,6 +349,25 @@ class TransactionBusiness {
     return migration;
   }
 
+  async getAccountBalanceAsOfDate({accountId, balanceDate}){
+    const account = await AccountRepo.getAccount(accountId);
+    if(!account) throw new Exception('ACC_INVALID');
+
+    const _balanceDate = Common.getDate(balanceDate, '');
+    const resultObj = await TransactionRepo.getAccountBalanceAsOfDate(accountId, balanceDate);
+
+    const decimalPlace = account.currency.currencyDecimalPlace;
+    const transBalance = parseFloat(resultObj.balanceSum).toFixed(decimalPlace);
+    const startBalance = parseFloat(account.accountStartBalance).toFixed(decimalPlace);
+    const balance = (Number(transBalance)+Number(startBalance)).toFixed(decimalPlace);
+    return {
+      balance: balance,
+      currency: account.accountCurrency,
+      currencyDecimalPlace: decimalPlace,
+      balanceDate: _balanceDate
+    }
+  }
+
 }
 
 module.exports = TransactionBusiness;
