@@ -222,6 +222,46 @@ class DebtTransactionBusiness {
             throw new Exception('TRANS_DBT_LINK_FAIL');
         }
     }
+
+    async releaseSingleTransactionFromDebtor(id, {debtorId}){
+        let dbTransaction;
+        try{
+            dbTransaction = await sequelize.transaction();
+            //Get debtor info
+            const debtor = await DebtorRepo.getDebtor(debtorId);
+            if(!debtor) throw new Exception('DEBT_NOT_EXIST');
+            // get single transaction
+            const accountTransaction = await TransactionRepo.getTransaction(id);
+            if(!accountTransaction) throw new Exception('TRANS_NOT_EXIST');
+            //adjust amount
+            let debtAmount = 0;
+            if(accountTransaction.transactionCRDR === 'Credit') {
+                debtAmount = accountTransaction.transactionAmount;
+            } else if(accountTransaction.transactionCRDR === 'Debit'){
+                debtAmount = accountTransaction.transactionAmount * -1;
+            }
+            //update transaction
+            const savedTrans = await this.transactionBusiness.editTransaction(accountTransaction.transactionId, {
+                transactionAmount: accountTransaction.transactionAmount,
+                transactionNarrative: accountTransaction.transactionNarrative,
+                transactionPostingDate: accountTransaction.transactionPostingDate,
+                transactionCRDR: accountTransaction.transactionCRDR,
+                transactionAccount: accountTransaction.transactionAccount,
+                transactionTypeId: accountTransaction.transactionTypeId,
+                transactionModule: accountTransaction.transactionModule,
+                transactionRelatedTransactionId: 'NULL',
+                //transactionModuleId: debtorId,  
+            }, dbTransaction);
+            //update debtor balance 
+            await DebtorRepo.updateDebtorBalance(debtorId, debtAmount, dbTransaction);
+
+            await dbTransaction.commit();
+        } catch (err) {
+            console.log(err);
+            await dbTransaction.rollback();
+            throw new Exception('TRANS_DBT_RELEASE_FAIL');
+        }
+    }
 }
 
 module.exports = DebtTransactionBusiness;

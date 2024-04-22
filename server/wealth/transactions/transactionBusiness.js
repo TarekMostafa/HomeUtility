@@ -7,6 +7,7 @@ const ReportRepo = require('../transactionReports/reportRepo');
 const Exception = require('../../features/exception');
 const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
+const DebtorRepo = require('../../debtors/debtorRepo');
 
 const Op = Sequelize.Op;
 
@@ -80,6 +81,7 @@ class TransactionBusiness {
         typeName: (trans.transactionType? trans.transactionType.typeName: ''),
         migrationType: migration.type,
         migrationText: migration.text,
+        relatedType: trans.relatedTransaction? trans.relatedTransaction.relatedTransactionType: '',
       }
     }));
     return transactions;
@@ -145,7 +147,21 @@ class TransactionBusiness {
 
   async getTransaction(id) {
     let transaction = await TransactionRepo.getTransaction(id);
-    const migration = await this.getMigrationObject(transaction);
+    //find debtor Id
+    let debtorId = null;
+    //in case of debtor module
+    if(transaction.transactionModule === 'DBT'){
+      debtorId = transaction.transactionModuleId;
+    } else { //in case of not a debtor module
+      if(transaction.transactionRelatedTransactionId) {
+        const debtor = await DebtorRepo.getDebtorByRelId(transaction.transactionRelatedTransactionId);
+        console.log(debtor);
+        if(debtor) {
+          debtorId = debtor.debtId;
+        }
+      }
+    }
+
     transaction = {
       transactionId: transaction.transactionId,
       transactionAmount: transaction.transactionAmount,
@@ -159,8 +175,7 @@ class TransactionBusiness {
       accountCurrency: transaction.account.accountCurrency,
       currencyDecimalPlace: transaction.account.currency.currencyDecimalPlace,
       transactionModuleId: transaction.transactionModuleId,
-      migrationType: migration.type,
-      migrationText: migration.text,
+      debtorId: debtorId,
     };
     return transaction;
   }
@@ -261,8 +276,14 @@ class TransactionBusiness {
     _transaction.transactionTypeId = transactionTypeId;
     if(transactionModuleId)
       _transaction.transactionModuleId = transactionModuleId;
-    if(transactionRelatedTransactionId)  
-      _transaction.transactionRelatedTransactionId = transactionRelatedTransactionId;
+    if(transactionRelatedTransactionId) {
+      if(transactionRelatedTransactionId === 'NULL') {
+        _transaction.transactionRelatedTransactionId = null;
+      } else {
+        _transaction.transactionRelatedTransactionId = transactionRelatedTransactionId;
+      }
+    } 
+      
     if(transactionModule)
       _transaction.transactionModule = transactionModule;
     await _transaction.save({transaction: dbTransaction});
@@ -302,7 +323,7 @@ class TransactionBusiness {
       transaction.transactionTypeId == typeDRDebt) && 
       !transaction.transactionRelatedTransactionId)
     {
-      migration.type = 'DBT';
+      migration.type = 'DBT_CNV';
       migration.text = 'Convert To Debt';
       return migration;
     }
@@ -310,12 +331,19 @@ class TransactionBusiness {
     const modules = await AppParametersRepo.getAppParameterValue(
       AppParametersConstants.LINK_MODULES_TO_DEBTOR);
     const modArray = modules.split(',');
-    if(modArray.includes(transaction.transactionModule) && 
-      !transaction.transactionRelatedTransactionId)
-    {
-      migration.type = 'LNK';
-      migration.text = 'Link To Debtor';
-      return migration;
+    if(modArray.includes(transaction.transactionModule)) {
+      if(!transaction.transactionRelatedTransactionId) {
+        migration.type = 'DBT_LNK';
+        migration.text = 'Link To Debtor';
+        return migration;
+      } else {
+        if(transaction.relatedtransaction && 
+          transaction.relatedtransaction.relatedTransactionType === 'DBT'){
+            migration.type = 'DBT_RLS';
+            migration.text = 'Release From Debtor';
+            return migration;
+          }
+      }
     }
 
     return migration;

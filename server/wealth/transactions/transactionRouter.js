@@ -125,6 +125,15 @@ router.post('/debt/linktodebtor/:id', (req, res, next) => {
   })
 });
 
+router.post('/debt/releasefromdebtor/:id', (req, res, next) => {
+  debtTransactionBusiness.releaseSingleTransactionFromDebtor(req.params.id, req.body).then( result => {
+    res.messageCode = 'TRANS_DBT_RELEASE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
+
 router.get('/fx/getDefaults', (req, res, next) => {
   fxTransactionBusiness.getDefaultData().then(result => {
     res.json(result);

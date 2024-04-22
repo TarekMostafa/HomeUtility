@@ -21,6 +21,7 @@ import DeleteDebtTransactionModal from './DeleteDebtTransactionModal';
 import ConvertSingleToDebtModal from './ConvertSingleToDebtModal';
 import LinkSingleToDebtorModal from './LinkSingleToDebtorModal';
 import AddFXTransactionModal from './AddFXTransactionModal';
+import ReleaseDebtorModal from './ReleaseDebtorModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -52,6 +53,7 @@ class WealthTransactionList extends Component {
     modalConvertToDebtShow: false,
     modalLinkToDebtShow: false,
     modalAddFXShow: false,
+    modalReleaseDebtShow: false,
     transactionId: '',
     ...initialState,
   }
@@ -232,6 +234,11 @@ class WealthTransactionList extends Component {
           <AddFXTransactionModal show={this.state.modalAddFXShow} onHide={this.handleHide}
           onSave={this.handleListClick} />
         }
+        {
+          this.state.modalReleaseDebtShow &&
+          <ReleaseDebtorModal show={this.state.modalReleaseDebtShow} onHide={this.handleHide}
+          onRelease={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
       </React.Fragment>
     )
   }// end of render
@@ -324,6 +331,7 @@ class WealthTransactionList extends Component {
       modalConvertToDebtShow: false,
       modalLinkToDebtShow: false,
       modalAddFXShow: false,
+      modalReleaseDebtShow: false,
     });
   }
 
@@ -344,14 +352,19 @@ class WealthTransactionList extends Component {
   }
 
   handleMigration = (transaction) => {
-    if(transaction.migrationType === 'DBT'){
+    if(transaction.migrationType === 'DBT_CNV'){
       this.setState({
         modalConvertToDebtShow: true,
         transactionId: transaction.transactionId
       });
-    } else if(transaction.migrationType === 'LNK'){
+    } else if(transaction.migrationType === 'DBT_LNK'){
       this.setState({
         modalLinkToDebtShow: true,
+        transactionId: transaction.transactionId
+      });
+    } else if(transaction.migrationType === 'DBT_RLS'){
+      this.setState({
+        modalReleaseDebtShow: true,
         transactionId: transaction.transactionId
       });
     }

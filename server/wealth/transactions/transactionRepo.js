@@ -4,6 +4,7 @@ const TransactionModel = require('./transactionModel');
 const AccountModel = require('../accounts/accountModel');
 const CurrencyModel = require('../../currencies/currencyModel');
 const TransactionTypeModel = require('../transactionTypes/transactionTypeModel');
+const RelatedTransactionModel = require('../relatedTransactions/relatedTransactionModel');
 
 const Op = Sequelize.Op;
 
@@ -18,10 +19,14 @@ class TransactionRepo {
       include: [
         { model: AccountModel, as: 'account', attributes: ['accountNumber','accountCurrency'],
           include: [
-            { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 'currencyDecimalPlace'] }
+            { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 
+              'currencyDecimalPlace'] }
           ]
         },
-        { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeName'] }
+        { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeName'] },
+        { model: RelatedTransactionModel, as: 'relatedtransaction', 
+          attributes: ['relatedTransactionType']
+        }
       ],
       where: whereQuery,
       order: [ ['transactionPostingDate', 'DESC'] , ['transactionId', 'DESC'] ]

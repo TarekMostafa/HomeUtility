@@ -116,6 +116,12 @@ class TransctionRequest {
     });
   }
 
+  static async releaseFromDebtor(id, debtorId) {
+    return await axios.post('/api/wealth/transactions/debt/releasefromdebtor/'+id, {
+      debtorId
+    });
+  }
+
   static async getFXTransactionDefaults(){
     const response = await axios.get('/api/wealth/transactions/fx/getDefaults/');
     return response.data;

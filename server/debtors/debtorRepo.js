@@ -46,6 +46,14 @@ class DebtorRepo {
         debtLastBalanceUpdate: sequelize.fn('NOW')
     }, {transaction: dbTransaction});
   }
+
+  static async getDebtorByRelId(relId){
+    return await DebtorModel.findOne({
+      where: {
+        debtRelId: relId
+      }
+    })
+  }
 }
 
 module.exports = DebtorRepo;
