@@ -30,8 +30,8 @@ class FXTransactionBusiness {
         }
     }
 
-    async addFXTransaction({accountFrom, accountTo, typeFrom, typeTo, postingDate, 
-        rate, amountFrom, amountTo}) {
+    async addFXTransaction({accountFrom, accountTo, typeFrom, typeTo, postingDateFrom, 
+        rate, amountFrom, amountTo, postingDateTo}) {
         // Validation
         // Account From must not be equal to Account To
         if(accountFrom === accountTo) {
@@ -59,7 +59,7 @@ class FXTransactionBusiness {
                 relatedTransactionDesc: this.getDescription(_accountFrom.accountBankCode,
                     _accountFrom.accountNumber, _accountTo.accountBankCode, _accountTo.accountNumber,
                     amountFrom, amountTo, _accountFrom.accountCurrency, _accountTo.accountCurrency,
-                    postingDate, rate)
+                    postingDateFrom, rate)
             }
             relatedTransaction = await RelatedTransactionRepo.addRelatedTransaction(relatedTransaction, dbTransaction);
             // Add FX Transaction
@@ -67,12 +67,13 @@ class FXTransactionBusiness {
                 fxRelTransId: relatedTransaction.relatedTransactionsId,
                 fxAmountFrom: amountFrom,
                 fxAmountTo: amountTo,
-                fxPostingDate: Common.getDate(postingDate, ''),
+                fxPostingDateFrom: Common.getDate(postingDateFrom, ''),
                 fxRate: rate,
                 fxAccountFrom: accountFrom,
                 fxAccountTo: accountTo,
                 fxCurrencyFrom: _accountFrom.accountCurrency,
-                fxCurrencyTo: _accountTo.accountCurrency
+                fxCurrencyTo: _accountTo.accountCurrency,
+                fxPostingDateTo: Common.getDate(postingDateTo, '')
             }
             fxTransaction = await FXTransactionRepo.addTransaction(fxTransaction, dbTransaction);
             // Debit Side
@@ -80,7 +81,7 @@ class FXTransactionBusiness {
                 transactionAmount: amountFrom,
                 transactionNarrative: 'Forex ('+ amountTo + ' ' +
                     _accountTo.accountCurrency + ' / ' + rate + ')',
-                transactionPostingDate: Common.getDate(postingDate, ''),
+                transactionPostingDate: Common.getDate(postingDateFrom, ''),
                 transactionCRDR: 'Debit',
                 transactionAccount: accountFrom,
                 transactionTypeId: typeFrom,
@@ -98,7 +99,7 @@ class FXTransactionBusiness {
                 transactionAmount: amountTo,
                 transactionNarrative: 'Forex ('+ amountFrom + ' ' +
                     _accountFrom.accountCurrency + ' * ' + rate + ')',
-                transactionPostingDate: Common.getDate(postingDate, ''),
+                transactionPostingDate: Common.getDate(postingDateTo, ''),
                 transactionCRDR: 'Credit',
                 transactionAccount: accountTo,
                 transactionTypeId: typeTo,

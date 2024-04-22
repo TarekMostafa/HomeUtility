@@ -13,7 +13,8 @@ import TransactionRequest from '../../../axios/TransactionRequest';
 const initialState = {
   accountFrom: '',
   typeFrom: '',
-  postingDate: '',
+  postingDateFrom: '',
+  postingDateTo: '',
   amountFrom: 0,
   amountTo: 0,
   accountTo: '',
@@ -37,7 +38,6 @@ class AddFXTransactionModal extends Component {
       this.setState({
         accountFrom: defaults.accountFrom,
         typeFrom: defaults.typeFrom,
-        //postingDate: defaults.postingDate,
         amountFrom: defaults.amountFrom,
         amountTo: defaults.amountTo,
         accountTo: defaults.accountTo,
@@ -109,12 +109,21 @@ class AddFXTransactionModal extends Component {
           </Row>
           <Row>
             <Col>
-              <Form.Group controlId="postingDate">
-                <Form.Label>Posting Date</Form.Label>
-                <DatePickerInput value={this.state.postingDate}
-                onChange={this.handlePostingDateChange} readOnly/>
+              <Form.Group controlId="postingDateFrom">
+                <Form.Label>Posting Date From</Form.Label>
+                <DatePickerInput value={this.state.postingDateFrom}
+                onChange={this.handlePostingDateFromChange} readOnly/>
               </Form.Group>
             </Col>
+            <Col>
+              <Form.Group controlId="postingDateTo">
+                <Form.Label>Posting Date To</Form.Label>
+                <DatePickerInput value={this.state.postingDateTo}
+                onChange={this.handlePostingDateToChange} readOnly/>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
             <Col>
               <Form.Group controlId="rate">
                 <Form.Label>Rate</Form.Label>
@@ -189,9 +198,17 @@ class AddFXTransactionModal extends Component {
     });
   }
 
-  handlePostingDateChange = (jsDate, date) => {
+  handlePostingDateFromChange = (jsDate, date) => {
     this.setState({
-      postingDate: date
+      postingDateFrom: date,
+      postingDateTo: this.state.postingDateTo?this.state.postingDateTo:date
+    });
+  }
+
+  handlePostingDateToChange = (jsDate, date) => {
+    this.setState({
+      postingDateTo: date,
+      postingDateFrom: this.state.postingDateFrom?this.state.postingDateFrom:date
     });
   }
 
@@ -209,8 +226,11 @@ class AddFXTransactionModal extends Component {
     } else if(!this.state.typeTo) {
       this.setState({message: 'Invalid type To, should not be empty'});
       return;
-    } else if(!this.state.postingDate) {
-      this.setState({message: 'Invalid posting date, should not be empty'});
+    } else if(!this.state.postingDateFrom) {
+      this.setState({message: 'Invalid posting date from, should not be empty'});
+      return;
+    } else if(!this.state.postingDateTo) {
+      this.setState({message: 'Invalid posting date to, should not be empty'});
       return;
     } else if(!this.state.rate) {
       this.setState({message: 'Invalid rate, should not be empty'});
@@ -229,8 +249,8 @@ class AddFXTransactionModal extends Component {
     }
     // Add internal transaction
     TransactionRequest.addFXTransaction(this.state.accountFrom, this.state.accountTo, 
-      this.state.typeFrom, this.state.typeTo, this.state.postingDate, this.state.rate, 
-      this.state.amountFrom, this.state.amountTo)
+      this.state.typeFrom, this.state.typeTo, this.state.postingDateFrom, this.state.rate, 
+      this.state.amountFrom, this.state.amountTo, this.state.postingDateTo)
     .then( (response) => {
       if (typeof this.props.onSave=== 'function') {
         this.props.onSave();
