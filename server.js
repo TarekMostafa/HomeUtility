@@ -3,6 +3,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const sequelize = require('./server/db/dbConnection');
+const AppMessageTranslation = require('./server/features/appMessageTranslation');
+const Exception = require('./server/features/exception');
+const Config = require('./server/config');
+const UserRepo = require('./server/auth/userRepo');
+const AppLogBusiness = require('./server/appLog/appLogBusiness');
 //Routers Declarations
 const transactionRouter = require('./server/wealth/transactions/transactionRouter');
 const relatedTransactionRouter = require('./server/wealth/relatedTransactions/relatedTransactionRouter');
@@ -16,12 +21,8 @@ const appSettingsRouter = require('./server/appSettings/appSettingsRouter');
 const userRouter = require('./server/auth/userRouter');
 const reportRouter = require('./server/wealth/transactionReports/reportRouter');
 const dbRouter = require('./server/db/dbRouter');
-const UserRepo = require('./server/auth/userRepo');
-const Config = require('./server/config');
 const billRouter = require('./server/bills/billRouter');
 const billTransactionRouter = require('./server/bills/billTransactionRouter');
-const Exception = require('./server/features/exception');
-const AppMessageTranslation = require('./server/features/appMessageTranslation');
 const expenseTypeRouter = require('./server/expenses/expenseType/expenseTypeRouter');
 const expenseRouter = require('./server/expenses/expenseHeader/expenseRouter');
 const expenseDetailRouter = require('./server/expenses/expenseDetail/expenseDetailRouter');
@@ -34,6 +35,8 @@ const port = Config.port || 5000;
 // Initialize App Message Transalation
 const messageFile = require('./server/appMessages');
 const appMessageTranslation = new AppMessageTranslation(messageFile);
+// Initialize App Log
+const appLog = new AppLogBusiness();
 //Start Express Application
 const app = express();
 app.use(express.static(path.join(__dirname, 'build')));
@@ -62,6 +65,30 @@ app.use(function(req, res, next){
     })
   }
 })
+//Logging
+app.use((req, res, next) => {
+  if(!req.url.includes('authentication')
+     && req.method !== 'GET') {
+    let _body = {...req.body};
+    delete _body.user;
+    appLog.addAppLog({
+      method: req.method,
+      pathname: req._parsedUrl.pathname,
+      query: req._parsedUrl.query,
+      userId: req.body.user.userId,
+      userName: req.body.user.userName,
+      reqBody: JSON.stringify(_body)
+    }).then( logId => {
+      req.headers.logId = logId;
+      next();
+    }).catch( err => {
+      console.log(err);
+      next();
+    });
+  } else {
+    next();
+  }
+});
 //Routing Modules
 app.use('/api/users', userRouter);
 app.use('/api/appsettings', appSettingsRouter);
@@ -88,15 +115,33 @@ app.use('/api/debt/debtor', debtorRouter);
 app.use(function(req, res, next){
   const message = appMessageTranslation.translate(res.messageCode, res.params);
   res.status(200).send(message);
+  if(req.headers.logId) {
+    appLog.updateAppLog(req.headers.logId, {
+      resStatus: 'SUCCESS',
+      resStatusCode: res.statusCode,
+      resErrorMsg: null
+    });
+  }
 })
 //Middleware for Errors
 app.use(function(err, req, res, next){
+  let errorMsg = null;
   if(err instanceof Exception){
     const message = appMessageTranslation.translate(err.message, err.params);
     res.status(400).send(message);
+    errorMsg = `${err.message}, ${message}`;
   } else {
-    console.log(`Internal Server Error ${err}`)
-    res.status(500).send('Internal Server Error');
+    const message = 'Internal Server Error';
+    res.status(500).send(message);
+    errorMsg = `${message}, ${err}`;
+    console.log(errorMsg)
+  }
+  if(req.headers.logId) {
+    appLog.updateAppLog(req.headers.logId, {
+      resStatus: 'FAILED',
+      resStatusCode: res.statusCode,
+      resErrorMsg: errorMsg
+    });
   }
 })
 //Connect to MySql database
