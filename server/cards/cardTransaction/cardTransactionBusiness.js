@@ -9,6 +9,7 @@ const Exception = require('../../features/exception');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const DateHelper = require('../../helper/DateHelper');
 const Common = require('../../utilities/common');
+const TransactionModules = require('../../wealth/transactions/transactionModules').Modules;
 
 class CardTransactionBusiness {
   async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
@@ -220,7 +221,7 @@ class CardTransactionBusiness {
           transactionCRDR: (cardTrans.cardTransBillAmount > 0 ? 'Debit' : 'Credit') ,
           transactionAccount: accountId,
           transactionTypeId: transactionTypeId,
-          transactionModule: "CRD",
+          transactionModule: TransactionModules.CREDIT_CARD.Code,
           transactionRelatedTransactionId: relId,
           transactionModuleId: cardTrans.cardTransId
         }, dbTransaction);

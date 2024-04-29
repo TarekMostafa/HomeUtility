@@ -3,12 +3,11 @@ import { Table, OverlayTrigger, Tooltip, DropdownButton,
   Dropdown, Button, Badge } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
-//import _ from 'lodash';
 import amountFormatter from '../../../utilities/amountFormatter';
 
-function IsModuleAllowed(module) {
-  return [null,'DBT'].includes(module);
-}
+// function IsModuleAllowed(module) {
+//   return [null,'DBT'].includes(module);
+// }
 
 function WealthTransactionTable (props) {
   return (
@@ -30,9 +29,9 @@ function WealthTransactionTable (props) {
       <tbody>
         {
           props.transactions && props.transactions.map( (transaction, index) => {
-            let isEditable = IsModuleAllowed(transaction.transactionModule)
+            let isEditable = transaction.isEditable
             && props.onEditTransaction; 
-            let isDeletable = IsModuleAllowed(transaction.transactionModule)
+            let isDeletable = transaction.isDeletable
             && props.onDeleteTransaction;
             let isMigrable = transaction.migrationType
             && props.onMigration;
@@ -87,7 +86,7 @@ function WealthTransactionTable (props) {
                   //     </Button>
                   //   }
                   // </ButtonGroup>
-                  (isEditable || isDeletable || isMigrable) &&
+                  //(isEditable || isDeletable || isMigrable) &&
                   <DropdownButton id="dropdown-basic-button" title="Actions"
                   size="sm" variant="secondary">
                     {
@@ -104,6 +103,10 @@ function WealthTransactionTable (props) {
                       Delete
                       </Dropdown.Item>
                     }
+                    <Dropdown.Item onClick={() => props.onViewTransaction(transaction.transactionId, 
+                        transaction.transactionModule)}>
+                      View
+                    </Dropdown.Item>
                     {
                       isMigrable &&
                       <Dropdown.Item onClick={() => props.onMigration(transaction)}>

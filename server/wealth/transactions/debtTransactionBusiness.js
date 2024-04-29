@@ -6,6 +6,7 @@ const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 const Exception = require('../../features/exception');
 const Common = require('../../utilities/common');
+const TransactionModule = require('./transactionModules').Modules;
 
 class DebtTransactionBusiness {
     constructor(){
@@ -42,7 +43,7 @@ class DebtTransactionBusiness {
                 transactionAccount: account,
                 transactionTypeId: typeId,
                 transactionRelatedTransactionId: debtor.debtRelId,
-                transactionModule: 'DBT',
+                transactionModule: TransactionModule.DEBT.Code,
                 transactionModuleId: debtorId,  
             }, dbTransaction);
             //update debtor balance 
@@ -168,7 +169,7 @@ class DebtTransactionBusiness {
                 transactionCRDR: accountTransaction.transactionCRDR,
                 transactionAccount: accountTransaction.transactionAccount,
                 transactionTypeId: accountTransaction.transactionTypeId,
-                transactionModule: 'DBT',
+                transactionModule: TransactionModule.DEBT.Code,
                 transactionRelatedTransactionId: debtor.debtRelId,
                 transactionModuleId: debtorId,  
             }, dbTransaction);

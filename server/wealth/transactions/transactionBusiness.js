@@ -8,8 +8,10 @@ const Exception = require('../../features/exception');
 const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 const DebtorRepo = require('../../debtors/debtorRepo');
+const transactionModules = require('./transactionModules');
 
 const Op = Sequelize.Op;
+const TransactionModules = transactionModules.Modules;
 
 class TransactionBusiness {
 
@@ -66,6 +68,7 @@ class TransactionBusiness {
     let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery);
     transactions = await Promise.all(transactions.map(async trans => {
       const migration = await this.getMigrationObject(trans);
+      const module = transactionModules.getModule(trans.transactionModule);
       return {
         transactionId: trans.transactionId,
         transactionPostingDate: trans.transactionPostingDate,
@@ -82,6 +85,8 @@ class TransactionBusiness {
         migrationType: migration.type,
         migrationText: migration.text,
         relatedType: trans.relatedTransaction? trans.relatedTransaction.relatedTransactionType: '',
+        isEditable: module? module.IsEditable: true,
+        isDeletable: module? module.IsDeletable: true,
       }
     }));
     return transactions;
@@ -150,7 +155,7 @@ class TransactionBusiness {
     //find debtor Id
     let debtorId = null;
     //in case of debtor module
-    if(transaction.transactionModule === 'DBT'){
+    if(transaction.transactionModule === TransactionModules.DEBT.Code){
       debtorId = transaction.transactionModuleId;
     } else { //in case of not a debtor module
       if(transaction.transactionRelatedTransactionId) {

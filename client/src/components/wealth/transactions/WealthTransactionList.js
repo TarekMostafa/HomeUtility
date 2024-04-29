@@ -22,6 +22,8 @@ import ConvertSingleToDebtModal from './ConvertSingleToDebtModal';
 import LinkSingleToDebtorModal from './LinkSingleToDebtorModal';
 import AddFXTransactionModal from './AddFXTransactionModal';
 import ReleaseDebtorModal from './ReleaseDebtorModal';
+import ViewDebtTransactionModal from './ViewDebtTransactionModal';
+import ViewSingleTransactionModal from './ViewSingleTransactionModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -47,9 +49,11 @@ class WealthTransactionList extends Component {
     modalAddInternalShow: false,
     modalEditSingleShow: false,
     modalDeleteSingleShow: false,
+    modalViewSingleShow: false,
     modalAddDebtShow: false,
     modalEditDebtShow: false,
     modalDeleteDebtShow: false,
+    modalViewDebtShow: false,
     modalConvertToDebtShow: false,
     modalLinkToDebtShow: false,
     modalAddFXShow: false,
@@ -181,6 +185,7 @@ class WealthTransactionList extends Component {
           <WealthTransactionTable transactions={this.state.transactions}
           onEditTransaction={this.handleEditTransaction}
           onDeleteTransaction={this.handleDeleteTransaction}
+          onViewTransaction={this.handleViewTransaction}
           onRelatedTransaction={this.handleRelatedTransaction}
           onMigration={this.handleMigration}/>
           <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
@@ -238,6 +243,16 @@ class WealthTransactionList extends Component {
           this.state.modalReleaseDebtShow &&
           <ReleaseDebtorModal show={this.state.modalReleaseDebtShow} onHide={this.handleHide}
           onRelease={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
+        {
+          this.state.modalViewSingleShow &&
+          <ViewSingleTransactionModal show={this.state.modalViewSingleShow} onHide={this.handleHide}
+          transactionId={this.state.transactionId}/>
+        }
+        {
+          this.state.modalViewDebtShow &&
+          <ViewDebtTransactionModal show={this.state.modalViewDebtShow} onHide={this.handleHide}
+          transactionId={this.state.transactionId}/>
         }
       </React.Fragment>
     )
@@ -325,9 +340,11 @@ class WealthTransactionList extends Component {
       modalAddInternalShow: false,
       modalEditSingleShow: false,
       modalDeleteSingleShow: false,
+      modalViewSingleShow: false,
       modalAddDebtShow: false,
       modalEditDebtShow: false,
       modalDeleteDebtShow: false,
+      modalViewDebtShow: false,
       modalConvertToDebtShow: false,
       modalLinkToDebtShow: false,
       modalAddFXShow: false,
@@ -347,6 +364,14 @@ class WealthTransactionList extends Component {
     this.setState({
       modalDeleteSingleShow: (!module),
       modalDeleteDebtShow: (module==='DBT'),
+      transactionId
+    });
+  }
+
+  handleViewTransaction = (transactionId, module) => {
+    this.setState({
+      modalViewSingleShow: (module!=='DBT'),
+      modalViewDebtShow: (module==='DBT'),
       transactionId
     });
   }

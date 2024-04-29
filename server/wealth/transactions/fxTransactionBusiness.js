@@ -7,6 +7,7 @@ const Exception = require('../../features/exception');
 const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 const Common = require('../../utilities/common');
+const TransactionModules = require('./transactionModules').Modules;
 
 class FXTransactionBusiness {
     constructor(){
@@ -86,7 +87,7 @@ class FXTransactionBusiness {
                 transactionAccount: accountFrom,
                 transactionTypeId: typeFrom,
                 transactionRelatedTransactionId: relatedTransaction.relatedTransactionsId,
-                transactionModule: 'FX',
+                transactionModule: TransactionModules.FX.Code,
                 transactionModuleId: fxTransaction.fxId,
             }
             let savedTrans = await this.transactionBusiness.addTransaction(transactionDR, dbTransaction);
@@ -104,7 +105,7 @@ class FXTransactionBusiness {
                 transactionAccount: accountTo,
                 transactionTypeId: typeTo,
                 transactionRelatedTransactionId: relatedTransaction.relatedTransactionsId,
-                transactionModule: 'FX',
+                transactionModule: TransactionModules.FX.Code,
                 transactionModuleId: fxTransaction.fxId,
             }
             savedTrans = await this.transactionBusiness.addTransaction(transactionCR, dbTransaction);

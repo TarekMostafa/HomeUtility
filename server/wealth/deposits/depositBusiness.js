@@ -9,6 +9,7 @@ const Exception = require('../../features/exception');
 const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 const Common = require('../../utilities/common');
+const TransactionModules = require('../transactions/transactionModules').Modules;
 
 class Deposit {
   async getDeposits({bank, status, currency}) {
@@ -136,7 +137,7 @@ class Deposit {
           transactionCRDR: 'Debit',
           transactionAccount: deposit.accountId,
           transactionTypeId: transDebitType,
-          transactionModule: 'DEP',
+          transactionModule: TransactionModules.DEPOSIT.Code,
           transactionRelatedTransactionId: relatedId,
         }, dbTransaction);
       if(!savedTrans) {
@@ -231,7 +232,7 @@ class Deposit {
           transactionCRDR: 'Credit',
           transactionAccount: _deposit.accountId,
           transactionTypeId: transCreditType,
-          transactionModule: 'DEP',
+          transactionModule: TransactionModules.DEPOSIT.Code,
           transactionRelatedTransactionId: _deposit.relatedId,
         }, dbTransaction);
       if(!savedTrans) {
