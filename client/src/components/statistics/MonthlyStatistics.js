@@ -10,6 +10,9 @@ import FormContainer from '../common/FormContainer';
 import ReportRequest from '../../axios/ReportRequest';
 import TransactionRequest from '../../axios/TransactionRequest';
 import CurrenciesDropDown from '../currencies/CurrenciesDropDown';
+import EditReportModal from './EditReportModal';
+import AddNewReportModal from './AddNewReportModal';
+import DeleteReportModal from './DeleteReportModal';
 
 const initialState = {
   reportId: '',
@@ -24,6 +27,9 @@ class MonthlyStatistics extends Component {
   state = {
     reports: [],
     stat: [],
+    modalEditShow: false,
+    modalAddShow: false,
+    modalDeleteShow: false,
     ...initialState,
   }
 
@@ -37,53 +43,74 @@ class MonthlyStatistics extends Component {
   }
 
   componentDidMount() {
+    this.loadReports();
+  }
+  
+  loadReports = () => {
     ReportRequest.getReportsForDropDown()
     .then( (reports) => {
       this.setState({
-        reports
+        reports,
+        reportId: reports.find(report => report.reportId+'' === this.state.reportId)? 
+          this.state.reportId: ''
       })
     })
     .catch( (err) => {
       this.setState({message: 'Error occured while loading reports list'});
-    })
+    });
   }
 
   render() {
     return (
       <React.Fragment>
-        <FormContainer title="Monthly Statistics">
+        <FormContainer title="Monthly Statistics" toolbar={
+          <Button variant="info" size="sm" onClick={this.handleAddNewReport}>Create New Report</Button>
+        }>
           <Form>
             <Row>
-              <Col>
+              <Col xs={3}>
                 <Form.Control as="select" size="sm" name="reportId" onChange={this.handleChange}
                   value={this.state.reportId}>
                   <option value=''>Reports</option>
                   {this.getReportsList()}
                 </Form.Control>
               </Col>
-              <Col>
+              <Col xs={2}>
                 <Form.Control as="select" size="sm" name="currency" onChange={this.handleChange}
                   value={this.state.currency}>
                   <option value=''>Currencies</option>
                   <CurrenciesDropDown />
                 </Form.Control>
               </Col>
-              <Col>
+              <Col xs={2}>
                 <DatePickerInput value={this.state.postingDateFrom} small
                 onChange={this.handlePostingDateFromChange} placeholder="Posting Date From" readOnly/>
               </Col>
-              <Col>
+              <Col xs={2}>
                 <DatePickerInput value={this.state.postingDateTo} small
                 onChange={this.handlePostingDateToChange} placeholder="Posting Date To" readOnly/>
               </Col>
-              <Col>
+              <Col xs={2}>
                 <Button variant="primary" onClick={this.handleClick}>
                 {
                   this.state.isLoading?
                   <Spinner as="span" animation="border" size="sm" role="status"
-                  aria-hidden="true"/> : 'Search'
+                  aria-hidden="true"/> : 'Run'
                 }
                 </Button>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={3}>
+                {
+                  this.state.reportId &&
+                  <React.Fragment>
+                  <Button variant="link" size="sm"
+                    onClick={this.handleEditReport}>Edit</Button>
+                  <Button variant="link" size="sm"
+                    onClick={this.handleDeleteReport}>Delete</Button>
+                  </React.Fragment>
+                }
               </Col>
             </Row>
             <Row>
@@ -106,6 +133,21 @@ class MonthlyStatistics extends Component {
           }
           </Row>
         </FormContainer>
+        { 
+          this.state.modalEditShow && this.state.reportId &&
+          <EditReportModal show={this.state.modalEditShow} onHide={this.handleHide}
+          reportId={this.state.reportId} onSave={this.loadReports}/>
+        }
+        {
+          this.state.modalAddShow && 
+          <AddNewReportModal show={this.state.modalAddShow} onHide={this.handleHide}
+          onCreate={this.loadReports}/>
+        }
+        {
+          this.state.modalDeleteShow && this.state.reportId &&
+          <DeleteReportModal show={this.state.modalDeleteShow} onHide={this.handleHide}
+          reportId={this.state.reportId} onDelete={this.loadReports}/>
+        }
       </React.Fragment>
     )
   }//end of render
@@ -115,6 +157,36 @@ class MonthlyStatistics extends Component {
       return (
         <option key={report.reportId} value={report.reportId}>{report.reportName}</option>
       )
+    });
+  }
+
+  handleAddNewReport = () => {
+    this.setState({
+      modalAddShow: true
+    });
+  }
+
+  handleEditReport = () => {
+    if(this.state.reportId) {
+      this.setState({
+        modalEditShow: true
+      });
+    }
+  }
+
+  handleDeleteReport = () => {
+    if(this.state.reportId) {
+      this.setState({
+        modalDeleteShow: true
+      });
+    }
+  }
+
+  handleHide = () => {
+    this.setState({
+      modalEditShow: false,
+      modalAddShow: false,
+      modalDeleteShow: false,
     });
   }
 
@@ -141,7 +213,6 @@ class MonthlyStatistics extends Component {
       });
     }
     // Get Monthly Statistics
-    // Add single transaction
     TransactionRequest.getMonthlyStatistics(this.state.postingDateFrom,
       this.state.postingDateTo, this.state.reportId, this.state.currency)
     .then( (result) => {

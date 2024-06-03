@@ -17,6 +17,18 @@ class ReportRepo {
       where: {reportActive: 'YES'}
     });
   }
+
+  static async getReportByName(reportName) {
+    return await ReportModel.findOne({where: {reportName: reportName}})
+  }
+
+  static async AddReport(report, {dbTransaction}) {
+    return await ReportModel.build(report).save({transaction: dbTransaction});
+  }
+
+  static async AddReportDetail(reportDetail, {dbTransaction}) {
+    return await ReportDetailModel.build(reportDetail).save({transaction: dbTransaction});
+  }
 }
 
 module.exports = ReportRepo;

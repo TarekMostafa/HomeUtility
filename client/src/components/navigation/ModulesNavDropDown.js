@@ -22,6 +22,9 @@ function ModulesNavDropDown(props) {
           <LinkContainer to="/accountbalanceasofdate">
             <NavDropdown.Item>Account Balance As Of Date</NavDropdown.Item>
           </LinkContainer>
+          <LinkContainer to="/statistics">
+            <NavDropdown.Item>Monthly Statistics</NavDropdown.Item>
+          </LinkContainer>
         </Dropdown.Menu>
       </Dropdown>
       <Dropdown drop={'right'}>
@@ -89,9 +92,6 @@ function ModulesNavDropDown(props) {
           </LinkContainer>
         </Dropdown.Menu>
       </Dropdown>
-      <LinkContainer to="/statistics">
-        <NavDropdown.Item>Statistics</NavDropdown.Item>
-      </LinkContainer>
     </NavDropdown>
   )
 }

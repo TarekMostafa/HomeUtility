@@ -4,7 +4,7 @@ const ReportDetailModel = require('./reportDetailModel');
 
 class ReportModel extends Sequelize.Model {}
 ReportModel.init({
-  reportId: { type: Sequelize.INTEGER(11), primaryKey: true },
+  reportId: { type: Sequelize.INTEGER(11), primaryKey: true, autoIncrement: true },
   reportName: Sequelize.STRING(45),
   reportActive: Sequelize.ENUM('YES', 'NO'),
 }, {
