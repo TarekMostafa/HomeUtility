@@ -14,7 +14,7 @@ function ExpenseHeaderCardBody(props) {
                 <Col xs={1}><Badge variant={expense.expenseStatus==="CLOSED"?"warning":"success"}>{expense && expense.expenseStatus}</Badge></Col>
             </Row>
             <Row>
-                <Col xs={6}><strong>Accounts Debits:</strong></Col>
+                <Col xs={6}><strong>Account Debits:</strong></Col>
                 <Col xs={3}>{amountFormatter(expense.expenseTotalAccountDebit, expense.currency.currencyDecimalPlace)}</Col>
             </Row>
             <Row>
@@ -22,7 +22,7 @@ function ExpenseHeaderCardBody(props) {
                 <Col xs={3}>{amountFormatter(expense.expenseAdjusments, expense.currency.currencyDecimalPlace)}</Col>
             </Row>
             <Row>
-                <Col xs={6}><strong>Expense Debits:</strong></Col>
+                <Col xs={6}><strong>Total Debits:</strong></Col>
                 <Col xs={3}>{amountFormatter(expense.expenseDebits, expense.currency.currencyDecimalPlace)}</Col>
             </Row>
             <Row>
@@ -32,6 +32,18 @@ function ExpenseHeaderCardBody(props) {
             <Row>
                 <Col xs={6}><strong>Close Balance:</strong></Col>
                 <Col xs={3}>{amountFormatter(expense.expenseCloseBalance, expense.currency.currencyDecimalPlace)}</Col>
+            </Row>
+            <Row>
+                <Col><hr /></Col>
+            </Row>
+            <Row>
+                <Col xs={6}><strong>Real Accounts Debits:</strong></Col>
+                <Col xs={3}>{amountFormatter(expense.expenseRealAccountDebits, expense.currency.currencyDecimalPlace)}</Col>
+            </Row>
+            <Row>
+                <Col xs={6}><strong>Difference:</strong></Col>
+                <Col xs={3}>{amountFormatter(expense.expenseRealAccountDebits-expense.expenseTotalAccountDebit
+                    , expense.currency.currencyDecimalPlace)}</Col>
             </Row>
         </Card.Body>
     )

@@ -5,7 +5,22 @@ const TransactionRepo = require('../../wealth/transactions/transactionRepo');
 class expenseBusiness {
   async getExpenses({year}) {
     let expenses = await ExpenseRepo.getExpenses({year});
-    expenses = expenses.map(expense => {
+    expenses = await Promise.all(expenses.map( async expense => {
+
+      let sumOfAccountDebits = 0;
+      if(expense.expenseDebitTransTypes) {
+        let dateFrom = new Date(expense.expenseYear, expense.expenseMonth-1, 1);
+        let dateTo   = new Date(expense.expenseYear, expense.expenseMonth, 1);
+        dateTo.setDate(0);
+    
+        sumOfAccountDebits = await TransactionRepo.getSumTransactions(
+          expense.expenseDebitTransTypes.split(','),
+          expense.expenseCurrency,
+          dateFrom,
+          dateTo
+        );
+      }
+
       return {
         expenseId: expense.expenseId,
         expenseYear: expense.expenseYear,
@@ -21,9 +36,10 @@ class expenseBusiness {
         expenseStatus: expense.expenseStatus,
         currency: {
           currencyDecimalPlace: expense.currency.currencyDecimalPlace,
-        }
+        },
+        expenseRealAccountDebits: Math.abs(sumOfAccountDebits)
       }
-    })
+    }));
     return expenses;
   }
 
