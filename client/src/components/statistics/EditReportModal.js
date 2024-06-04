@@ -53,11 +53,27 @@ function EditReportModal ({reportId, transactionTypes, show, onHide, onSave}) {
     }
 
     const handleSave = () => {
-        setFormData({
-            ...formData,
-            isLoading: true,
-            message: ""
-        });
+        if(formData.reportName === ''){
+            setFormData({
+                ...formData,
+                message: "Invalid report name, should not be empty"
+            });
+            return;
+        } else if(formData.creditTransTypes.length === 0 &&
+            formData.debitTransTypes.length === 0)
+        {
+            setFormData({
+                ...formData,
+                message: "Invalid transaction types, should not be empty in both credit/debit"
+            });
+            return;
+        } else {
+            setFormData({
+                ...formData,
+                isLoading: true,
+                message: ""
+            });
+        }
         ReportRequest.editReport(reportId, formData.reportName, 
         formData.creditTransTypes.map(e=>e.typeId+"").toString(),
         formData.debitTransTypes.map(e=>e.typeId+"").toString())
