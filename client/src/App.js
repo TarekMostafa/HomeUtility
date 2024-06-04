@@ -31,6 +31,7 @@ import CardTranactionList from './components/cards/transactions/CardTransactionL
 import CardTransactionPaymentList from './components/cards/transactions/CardTransactionPaymentList';
 import DebtorList from './components/debt/debtors/DebtorList';
 import AccountBalanceAsOfDateList from './components/wealth/transactions/AccountBalanceAsOfDateList';
+import FXTransactionList from './components/wealth/fxtransactions/FXTransactionList';
 
 class App extends Component {
   render() {
@@ -67,6 +68,7 @@ class App extends Component {
                 <Route path="/cardPayments" exact component={CardTransactionPaymentList}></Route>
                 <Route path="/debts/debtors" exact component={DebtorList}></Route>
                 <Route path="/accountbalanceasofdate" exact component={AccountBalanceAsOfDateList}></Route>
+                <Route path="/fxstatistics" exact component={FXTransactionList}></Route>
               </Switch> :
               <Switch>
                 <Route path="/" component={Home}></Route>

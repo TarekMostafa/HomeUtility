@@ -150,6 +150,14 @@ router.get('/fx/getDefaults', (req, res, next) => {
   })
 });
 
+router.get('/fx', (req, res, next) => {
+  fxTransactionBusiness.getFXTransactions(req.query).then(result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+});
+
 router.post('/fx', function(req, res, next) {
   fxTransactionBusiness.addFXTransaction(req.body).then( result => {
     res.messageCode = 'TRANS_ADD_SUCCESS';

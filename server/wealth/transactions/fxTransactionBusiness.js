@@ -1,3 +1,4 @@
+const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const TransactionBusiness = require('./transactionBusiness');
 const RelatedTransactionRepo = require('../relatedTransactions/relatedTransactionRepo');
@@ -8,6 +9,9 @@ const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 const Common = require('../../utilities/common');
 const TransactionModules = require('./transactionModules').Modules;
+const CurrencyRepo = require('../../currencies/currencyRepo');
+
+const Op = Sequelize.Op;
 
 class FXTransactionBusiness {
     constructor(){
@@ -126,6 +130,96 @@ class FXTransactionBusiness {
         return `FX Transfer from ${bankFrom}(${accountFrom}) to ${bankTo}(${accountTo}) with ` 
                + `amount from ${amountFrom} ${currencyFrom} to amount ${amountTo} ${currencyTo} `
                + `on ${postingDate.substring(0, 10)} with rate ${rate}`;
+    }
+
+    async getFXTransactions({currency, againstCurrency, dateFrom, dateTo}) {
+        const currencyObj = await CurrencyRepo.getCurrency(currency);
+        if(!currencyObj) {
+            throw new Exception('CURR_INVALID');
+        }
+
+        const againstCurrencyObj = await CurrencyRepo.getCurrency(againstCurrency);
+        if(!againstCurrencyObj) {
+            throw new Exception('CURR_INVALID');
+        }
+        // Construct Where Condition
+        let whereQuery = {};
+
+        whereQuery.fxCurrencyFrom = {
+            [Op.in]: [currency, againstCurrency]
+        }
+
+        whereQuery.fxCurrencyTo = {
+            [Op.in]: [currency, againstCurrency]
+        }
+
+        // Check Posting Date from and Posting Date To
+        let _dateFrom = Common.getDate(dateFrom, '');
+        let _dateTo = Common.getDate(dateTo, '');
+        if( _dateFrom !== '' && _dateTo !== '') {
+            whereQuery.fxPostingDateFrom = { [Op.between] : [_dateFrom, _dateTo] };
+        } else {
+            if(_dateFrom !== '') {
+                whereQuery.fxPostingDateFrom = { [Op.gte] : _dateFrom };
+            } else if(_dateTo !== '') {
+                whereQuery.fxPostingDateFrom = { [Op.lte] : _dateTo };
+            }
+        }
+
+        let fxTransactions = await FXTransactionRepo.getFXTransactions(whereQuery);
+        let fxInCurrencyTotal = 0;
+        let fxInAgainstCurrencyTotal = 0;
+        let fxOutCurrencyTotal = 0;
+        let fxOutAgainstCurrencyTotal = 0;
+        fxTransactions = fxTransactions.map( trans => {
+            //Calculate totals
+            if(trans.fxCurrencyFrom === currency) {
+                fxOutCurrencyTotal += Number(trans.fxAmountFrom);
+                fxOutAgainstCurrencyTotal += Number(trans.fxAmountTo);
+            } else {
+                fxInCurrencyTotal += Number(trans.fxAmountTo);
+                fxInAgainstCurrencyTotal += Number(trans.fxAmountFrom);
+            }
+            return {
+                fxId: trans.fxId,
+                fxAmountFrom: trans.fxAmountFrom,
+                fxAmountTo: trans.fxAmountTo,
+                fxPostingDateFrom: trans.fxPostingDateFrom,
+                fxRate: trans.fxRate,
+                fxCurrencyFrom: trans.fxCurrencyFrom,
+                fxCurrencyFromDecimalPlace: 
+                    (
+                        trans.fxCurrencyFrom === currency? 
+                        currencyObj.currencyDecimalPlace:
+                        againstCurrencyObj.currencyDecimalPlace
+                    ),
+                fxCurrencyTo: trans.fxCurrencyTo,
+                fxCurrencyToDecimalPlace: 
+                (
+                    trans.fxCurrencyTo === currency? 
+                    currencyObj.currencyDecimalPlace:
+                    againstCurrencyObj.currencyDecimalPlace
+                ),
+                fxPostingDateTo: trans.fxPostingDateTo,
+                accountFrom: 
+                    `${trans.accountFrom.accountNumber} (${trans.accountFrom.bank.bankCode})`,
+                accountTo: 
+                    `${trans.accountTo.accountNumber} (${trans.accountTo.bank.bankCode})`
+            }
+        });
+        return {
+            currency,
+            againstCurrency,
+            fxTransactions,
+            fxInCurrencyTotal,
+            fxInAgainstCurrencyTotal,
+            fxOutCurrencyTotal,
+            fxOutAgainstCurrencyTotal,
+            fxInAverage: fxInCurrencyTotal===0?0:(fxInAgainstCurrencyTotal/fxInCurrencyTotal),
+            fxOutAverage: fxOutCurrencyTotal===0?0:(fxOutAgainstCurrencyTotal/fxOutCurrencyTotal),
+            currencyDecimalPlace: currencyObj.currencyDecimalPlace,
+            againstCurrencyDecimalPlace: againstCurrencyObj.currencyDecimalPlace
+        };
     }
 }
 

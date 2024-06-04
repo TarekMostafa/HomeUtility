@@ -25,6 +25,9 @@ function ModulesNavDropDown(props) {
           <LinkContainer to="/statistics">
             <NavDropdown.Item>Monthly Statistics</NavDropdown.Item>
           </LinkContainer>
+          <LinkContainer to="/fxstatistics">
+            <NavDropdown.Item>FX Statistics</NavDropdown.Item>
+          </LinkContainer>
         </Dropdown.Menu>
       </Dropdown>
       <Dropdown drop={'right'}>

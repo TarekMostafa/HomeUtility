@@ -19,6 +19,18 @@ class TransctionRequest {
     return response.data;
   }
 
+  static async getFXTransactions (currency, againstCurrency, dateFrom, dateTo) {
+    const response = await axios.get('/api/wealth/transactions/fx', {
+      params: {
+        currency,
+        againstCurrency,
+        dateFrom,
+        dateTo
+      }
+    });
+    return response.data;
+  }
+
   static async getAccountBalanceAsOfDate (accountId, balanceDate) {
     const response = await axios.get('/api/wealth/transactions/accountbalanceasofdate', {
       params: {
