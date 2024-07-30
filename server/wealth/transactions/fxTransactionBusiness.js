@@ -10,6 +10,8 @@ const AppParametersConstants = require('../../appSettings/appParametersConstants
 const Common = require('../../utilities/common');
 const TransactionModules = require('./transactionModules').Modules;
 const CurrencyRepo = require('../../currencies/currencyRepo');
+const TransactionRepo = require('./transactionRepo');
+const { Modules } = require('./transactionModules');
 
 const Op = Sequelize.Op;
 
@@ -220,6 +222,122 @@ class FXTransactionBusiness {
             currencyDecimalPlace: currencyObj.currencyDecimalPlace,
             againstCurrencyDecimalPlace: againstCurrencyObj.currencyDecimalPlace
         };
+    }
+
+    async getFXTransaction(id) {
+        const transaction = await TransactionRepo.getTransaction(id);
+        //Check valid transaction Id
+        if(!transaction) {
+            throw new Exception('TRANS_INVALID');
+        }
+        //Check if it is FX transaction with FX Id
+        if(transaction.transactionModule !== Modules.FX.Code ||
+            !transaction.transactionModuleId
+        ) {
+            throw new Exception('TRANS_FX_INVALID');
+        }
+        //Get FX transaction record
+        const fxTransaction = await FXTransactionRepo.getFXTransaction(transaction.transactionModuleId);
+        if(!fxTransaction) {
+            throw new Exception('TRANS_FX_INVALID');
+        }
+
+        //Get Opposite FX transaction for FX
+        let whereQuery = {
+            transactionId: {
+                [Op.ne]: transaction.transactionId
+            },
+            transactionCRDR: {
+                [Op.ne]: transaction.transactionCRDR
+            },
+            transactionModule : Modules.FX.Code,
+            transactionModuleId: transaction.transactionModuleId,
+            transactionRelatedTransactionId: transaction.transactionRelatedTransactionId
+        }
+        const oppositeTransaction = await TransactionRepo.getOppositeTransaction(whereQuery);
+        if(!oppositeTransaction) {
+            throw new Exception('TRANS_FX_INVALID');
+        }
+        
+        //Debit means from
+        //Credit means to
+        let retFxTransaction = {};
+        if(transaction.transactionCRDR === "Credit") {
+            retFxTransaction.fxFromId = oppositeTransaction.transactionId;
+            retFxTransaction.fxFromAccountId = oppositeTransaction.transactionAccount;
+            retFxTransaction.fxFromTypeId = oppositeTransaction.transactionTypeId;
+            retFxTransaction.fxFromPostingDate = oppositeTransaction.transactionPostingDate;
+            retFxTransaction.fxFromAmount = oppositeTransaction.transactionAmount;
+            retFxTransaction.fxFromCurrency = oppositeTransaction.account.accountCurrency;
+            retFxTransaction.fxFromCurrencyDecimal = oppositeTransaction.account.currency.currencyDecimalPlace;
+
+            retFxTransaction.fxToId = transaction.transactionId;
+            retFxTransaction.fxToAccountId = transaction.transactionAccount;
+            retFxTransaction.fxToTypeId = transaction.transactionTypeId;
+            retFxTransaction.fxToPostingDate = transaction.transactionPostingDate;
+            retFxTransaction.fxToAmount = transaction.transactionAmount;
+            retFxTransaction.fxToCurrency = transaction.account.accountCurrency;
+            retFxTransaction.fxToCurrencyDecimal = transaction.account.currency.currencyDecimalPlace;
+        } else {
+            retFxTransaction.fxFromId = transaction.transactionId;
+            retFxTransaction.fxFromAccountId = transaction.transactionAccount;
+            retFxTransaction.fxFromTypeId = transaction.transactionTypeId;
+            retFxTransaction.fxFromPostingDate = transaction.transactionPostingDate;
+            retFxTransaction.fxFromAmount = transaction.transactionAmount;
+            retFxTransaction.fxFromCurrency = transaction.account.accountCurrency;
+            retFxTransaction.fxFromCurrencyDecimal = transaction.account.currency.currencyDecimalPlace;
+
+            retFxTransaction.fxToId = oppositeTransaction.transactionId;
+            retFxTransaction.fxToAccountId = oppositeTransaction.transactionAccount;
+            retFxTransaction.fxToTypeId = oppositeTransaction.transactionTypeId;
+            retFxTransaction.fxToPostingDate = oppositeTransaction.transactionPostingDate;
+            retFxTransaction.fxToAmount = oppositeTransaction.transactionAmount;
+            retFxTransaction.fxToCurrency = oppositeTransaction.account.accountCurrency;
+            retFxTransaction.fxToCurrencyDecimal = oppositeTransaction.account.currency.currencyDecimalPlace;
+        }
+
+        retFxTransaction.fxRate = fxTransaction.fxRate;
+        retFxTransaction.fxId = fxTransaction.fxId;
+
+        return retFxTransaction;
+    }
+
+    async deleteFXTransaction(fxId, {fromId, toId}) {
+        //Check FX transaction
+        const fxTransaction = await FXTransactionRepo.getFXTransaction(fxId);
+        if(!fxTransaction) {
+            throw new Exception('TRANS_FX_INVALID');
+        }
+        //Check valid from transaction Id
+        let transactionFrom = await TransactionRepo.getTransaction(fromId);
+        if(!transactionFrom) {
+            throw new Exception('TRANS_INVALID');
+        }
+        //Check valid to transaction Id
+        let transactionTo = await TransactionRepo.getTransaction(toId);
+        if(!transactionTo) {
+            throw new Exception('TRANS_INVALID');
+        }
+        //Check related transaction
+        let relatedTransaction = await RelatedTransactionRepo.getRelatedTransaction(fxTransaction.fxRelTransId);
+        if(!relatedTransaction) {
+            throw new Exception('TRANS_INVALID');
+        }
+
+        // Begin Transaction
+        let dbTransaction;
+        try{
+            dbTransaction = await sequelize.transaction();
+            await this.transactionBusiness.deleteTransaction(transactionFrom.transactionId, dbTransaction);
+            await this.transactionBusiness.deleteTransaction(transactionTo.transactionId, dbTransaction);
+            await FXTransactionRepo.deleteFXTransaction(fxTransaction, dbTransaction);
+            await RelatedTransactionRepo.deleteRelatedTransaction(relatedTransaction, dbTransaction);
+            await dbTransaction.commit();
+        } catch (err) {
+            console.log(err);
+            await dbTransaction.rollback();
+            throw new Exception('TRANS_DELETE_FAIL');
+        }    
     }
 }
 

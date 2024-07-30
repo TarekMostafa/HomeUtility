@@ -45,6 +45,19 @@ class TransactionRepo {
     });
   }
 
+  static async getOppositeTransaction(whereQuery) {
+    return await TransactionModel.findOne({
+      include: [
+        { model: AccountModel, as: 'account', attributes: ['accountCurrency'],
+          include: [
+            { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] }
+          ]
+        }
+      ],
+      where: whereQuery
+    });
+  }
+
   static async addTransaction(transaction, dbTransaction) {
     return await TransactionModel.build(transaction).save({transaction: dbTransaction});
   }

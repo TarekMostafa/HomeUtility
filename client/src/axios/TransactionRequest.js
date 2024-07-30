@@ -95,6 +95,11 @@ class TransctionRequest {
     return response.data;
   }
 
+  static async getFXTransaction(id) {
+    const response = await axios.get('/api/wealth/transactions/fx/'+id);
+    return response.data;
+  }
+
   static async getInternalTransactionDefaults(){
     const response = await axios.get('/api/wealth/transactions/internal/getDefaults/');
     return response.data;
@@ -161,6 +166,12 @@ class TransctionRequest {
       amountFrom,
       amountTo,
       postingDateTo
+    });
+  }
+
+  static async deleteFXTransaction(fxId, fromId, toId) {
+    return await axios.post('/api/wealth/transactions/fx/delete/'+fxId, {
+      fromId, toId 
     });
   }
 }

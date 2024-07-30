@@ -158,9 +158,26 @@ router.get('/fx', (req, res, next) => {
   })
 });
 
+router.get('/fx/:id', function(req, res, next) {
+  fxTransactionBusiness.getFXTransaction(req.params.id).then( result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+})
+
 router.post('/fx', function(req, res, next) {
   fxTransactionBusiness.addFXTransaction(req.body).then( result => {
     res.messageCode = 'TRANS_ADD_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+})
+
+router.post('/fx/delete/:id', function(req, res, next) {
+  fxTransactionBusiness.deleteFXTransaction(req.params.id, req.body).then( result => {
+    res.messageCode = 'TRANS_DELETE_SUCCESS';
     next();
   }).catch( err => {
     next(err);

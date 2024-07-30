@@ -24,6 +24,8 @@ import AddFXTransactionModal from './AddFXTransactionModal';
 import ReleaseDebtorModal from './ReleaseDebtorModal';
 import ViewDebtTransactionModal from './ViewDebtTransactionModal';
 import ViewSingleTransactionModal from './ViewSingleTransactionModal';
+import ViewFXTransactionModal from './ViewFXTransactionModal';
+import DeleteFXTransactionModal from './DeleteFXTransactionModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -58,6 +60,8 @@ class WealthTransactionList extends Component {
     modalLinkToDebtShow: false,
     modalAddFXShow: false,
     modalReleaseDebtShow: false,
+    modalViewFXShow: false,
+    modalDeleteFXShow: false,
     transactionId: '',
     ...initialState,
   }
@@ -254,6 +258,16 @@ class WealthTransactionList extends Component {
           <ViewDebtTransactionModal show={this.state.modalViewDebtShow} onHide={this.handleHide}
           transactionId={this.state.transactionId}/>
         }
+        {
+          this.state.modalViewFXShow &&
+          <ViewFXTransactionModal show={this.state.modalViewFXShow} onHide={this.handleHide}
+          transactionId={this.state.transactionId}/>
+        }
+        {
+          this.state.modalDeleteFXShow && 
+          <DeleteFXTransactionModal show={this.state.modalDeleteFXShow} onHide={this.handleHide}
+          onDelete={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
       </React.Fragment>
     )
   }// end of render
@@ -349,6 +363,8 @@ class WealthTransactionList extends Component {
       modalLinkToDebtShow: false,
       modalAddFXShow: false,
       modalReleaseDebtShow: false,
+      modalViewFXShow: false,
+      modalDeleteFXShow: false,
     });
   }
 
@@ -364,14 +380,17 @@ class WealthTransactionList extends Component {
     this.setState({
       modalDeleteSingleShow: (!module),
       modalDeleteDebtShow: (module==='DBT'),
+      modalDeleteFXShow: (module==='FX'),
       transactionId
     });
   }
 
   handleViewTransaction = (transactionId, module) => {
     this.setState({
-      modalViewSingleShow: (module!=='DBT'),
+      //modalViewSingleShow: (module!=='DBT'),
+      modalViewSingleShow: !['DBT','FX'].includes(module),
       modalViewDebtShow: (module==='DBT'),
+      modalViewFXShow: (module==='FX'),
       transactionId
     });
   }

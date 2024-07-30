@@ -33,6 +33,8 @@ module.exports = {
   'TRANS_ADD_SUCCESS' : 'This transaction has been successfully added',
   'TRANS_ADD_FAIL' : 'Failed to add this transaction',
   'ACC_INVALID' : 'Invalid account',
+  'TRANS_INVALID': 'Invalid Transaction',
+  'TRANS_FX_INVALID': 'Invalid FX Transaction',
   'TRANS_TYPE_INVALID' : 'Invalid transaction type',
   'TRANS_NOT_EXIST' : 'This transaction does not exist in the database',
   'TRANS_UPDATE_SUCCESS' : 'This transaction has been successfully updated',
