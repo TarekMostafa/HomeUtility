@@ -223,7 +223,8 @@ class CardTransactionBusiness {
           transactionTypeId: transactionTypeId,
           transactionModule: TransactionModules.CREDIT_CARD.Code,
           transactionRelatedTransactionId: relId,
-          transactionModuleId: cardTrans.cardTransId
+          transactionModuleId: cardTrans.cardTransId,
+          transactionValueDate: cardTrans.cardTransDate,
         }, dbTransaction);
         if(!savedTrans) throw new Exception('CARD_TRANS_PAY_FAIL');
         //Increase Card Balance

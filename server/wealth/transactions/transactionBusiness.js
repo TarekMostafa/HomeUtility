@@ -187,7 +187,7 @@ class TransactionBusiness {
 
   async addTransaction({transactionAmount, transactionNarrative, transactionPostingDate,
     transactionCRDR, transactionAccount, transactionTypeId, transactionRelatedTransactionId,
-    transactionModule, transactionModuleId}, dbTransaction) {
+    transactionModule, transactionModuleId, transactionValueDate}, dbTransaction) {
     // Get account related to this transaction
     let account = await AccountRepo.getAccount(transactionAccount);
     if(!account){
@@ -210,6 +210,9 @@ class TransactionBusiness {
       transactionRelatedTransactionId,
       transactionModule,
       transactionModuleId,
+      transactionValueDate: (transactionValueDate?
+        Common.getDate(transactionValueDate, ''):
+        Common.getDate(transactionPostingDate, ''))
     }, dbTransaction);
     // Update Account Current Balance & Last Balance Update
     await AccountRepo.updateAccountCurrentBalance(account, amount, dbTransaction);
@@ -244,7 +247,7 @@ class TransactionBusiness {
 
   async editTransaction(id, {transactionAmount, transactionNarrative, transactionPostingDate,
     transactionCRDR, transactionAccount, transactionTypeId, transactionModuleId,
-    transactionRelatedTransactionId, transactionModule}, dbTransaction) {
+    transactionRelatedTransactionId, transactionModule, transactionValueDate}, dbTransaction) {
     // Get Saved transaction that want to be updated
     let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
@@ -276,6 +279,11 @@ class TransactionBusiness {
     _transaction.transactionAmount = transactionAmount;
     _transaction.transactionNarrative = transactionNarrative;
     _transaction.transactionPostingDate = Common.getDate(transactionPostingDate, '');
+    if(transactionValueDate) {
+      _transaction.transactionValueDate = Common.getDate(transactionValueDate, '');
+    } else {
+      _transaction.transactionValueDate = Common.getDate(transactionPostingDate, '');
+    }
     _transaction.transactionCRDR = transactionCRDR;
     _transaction.transactionAccount = transactionAccount;
     _transaction.transactionTypeId = transactionTypeId;
