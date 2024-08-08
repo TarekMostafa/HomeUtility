@@ -30,6 +30,7 @@ const cardRouter = require('./server/cards/cardRouter');
 const cardInstRouter = require('./server/cards/cardInstallment/cardInstallmentRouter');
 const cardTransRouter = require('./server/cards/cardTransaction/cardTransactionRouter');
 const debtorRouter = require('./server/debtors/debtorRouter');
+const homeRouter = require('./server/home/homeRouter');
 //Constant Variables
 const port = Config.port || 5000;
 // Initialize App Message Transalation
@@ -111,6 +112,7 @@ app.use('/api/cards', cardRouter);
 app.use('/api/cardInst', cardInstRouter);
 app.use('/api/cardTrans', cardTransRouter);
 app.use('/api/debt/debtor', debtorRouter);
+app.use('/api/home', homeRouter);
 //Middleware for Success
 app.use(function(req, res, next){
   const message = appMessageTranslation.translate(res.messageCode, res.params);

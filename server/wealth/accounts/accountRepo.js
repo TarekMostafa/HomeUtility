@@ -34,6 +34,23 @@ class AccountRepo {
     });
   }
 
+  static async getAccountsTotalByCurrency() {
+    return await AccountModel.findAll({
+      attributes: ['accountCurrency', 
+        [sequelize.fn('sum', sequelize.literal('accountCurrentBalance')), 'totalBalance'],
+        [sequelize.fn('count', sequelize.literal('accountCurrentBalance')), 'totalCount']
+      ],
+      include: [
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace','currencyRateAgainstBase'] }
+      ],
+      group: ["accountCurrency","currency.currencyDecimalPlace","currency.currencyRateAgainstBase"],
+      where: {
+        accountStatus: "ACTIVE"
+      },
+      //raw: true
+    });
+  }
+
   static async addAccount(account) {
     await AccountModel.build(account).save();
   }

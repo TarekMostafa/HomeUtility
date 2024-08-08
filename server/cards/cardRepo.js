@@ -28,6 +28,23 @@ class CardRepo {
     });
   }
 
+  static async getCardsTotalByCurrency() {
+    return await CardModel.findAll({
+      attributes: ['cardCurrency', 
+        [sequelize.fn('sum', sequelize.literal('cardLimit-cardBalance')), 'totalBalance'],
+        [sequelize.fn('count', sequelize.literal('cardLimit')), 'totalCount']
+      ],
+      include: [
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace','currencyRateAgainstBase'] }
+      ],
+      group: ["cardCurrency","currency.currencyDecimalPlace","currency.currencyRateAgainstBase"],
+      where: {
+        cardStatus: "ACTIVE"
+      },
+      //raw: true
+    });
+  }
+
   static async addCard(card) {
     await CardModel.build(card).save();
   }

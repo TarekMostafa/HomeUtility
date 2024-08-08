@@ -26,6 +26,23 @@ class DebtorRepo {
     });
   }
 
+  static async getDebtorsTotalByCurrency() {
+    return await DebtorModel.findAll({
+      attributes: ['debtCurrency', 
+        [sequelize.fn('sum', sequelize.literal('debtBalance')), 'totalBalance'],
+        [sequelize.fn('count', sequelize.literal('debtBalance')), 'totalCount']
+      ],
+      include: [
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace','currencyRateAgainstBase'] }
+      ],
+      group: ["debtCurrency","currency.currencyDecimalPlace","currency.currencyRateAgainstBase"],
+      where: {
+        debtStatus: "ACTIVE"
+      },
+      //raw: true
+    });
+  }
+
   static async addDebtor(debtor, dbTransaction) {
     return await DebtorModel.build(debtor).save({transaction: dbTransaction});
   }

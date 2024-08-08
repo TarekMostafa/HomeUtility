@@ -23,6 +23,7 @@ function WealthTransactionTable (props) {
           <th>Type Name</th>
           <th>Narrative</th>
           <th>Id</th>
+          <th>Mod</th>
           <th></th>
         </tr>
       </thead>
@@ -66,6 +67,14 @@ function WealthTransactionTable (props) {
                       {transaction.transactionRelatedTransactionId}
                     </Badge>
                   </Button>
+                }
+              </td>
+              <td>
+                {
+                  transaction.transactionModule &&
+                  <Badge pill variant="info">
+                    {transaction.transactionModule}
+                  </Badge>
                 }
               </td>
               <td>
