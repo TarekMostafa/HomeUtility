@@ -6,7 +6,6 @@ import 'rc-datepicker/lib/style.css';
 
 import FormContainer from '../../common/FormContainer';
 import TableLimiterDropDown from '../../common/TableLimiterDropDown';
-import MultiSelectDropDown from '../../common/MultiSelectDropDown';
 import ExpenseTypesDropDown from '../expensetypes/ExpenseTypesDropDown';
 import YesNoDropDown from '../../common/YesNoDropDown';
 import ExpenseDetailTable from '../ExpenseDetailTable';
@@ -90,18 +89,18 @@ function ExpenseDetailSearchList(props) {
         });
     }
 
-    const handleExpTypes = (key, value) => {
-        let _expTypes = formData.expTypes;
-        if(_expTypes.some(exp=>exp.key === key)) {
-            _expTypes = _expTypes.filter(exp=>exp.key!==key);
-        } else {
-            _expTypes = [..._expTypes, {key, value}];
-        }
-        setFormData({
-            ...formData,
-            expTypes: _expTypes
-        })
-      }
+    //const handleExpTypes = (key, value) => {
+    //    let _expTypes = formData.expTypes;
+    //    if(_expTypes.some(exp=>exp.key === key)) {
+    //        _expTypes = _expTypes.filter(exp=>exp.key!==key);
+    //    } else {
+    //        _expTypes = [..._expTypes, {key, value}];
+    //    }
+    //    setFormData({
+    //        ...formData,
+    //        expTypes: _expTypes
+    //    })
+    //  }
 
     return (
         <React.Fragment>

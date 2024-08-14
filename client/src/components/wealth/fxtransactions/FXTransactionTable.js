@@ -1,6 +1,5 @@
 import React from 'react';
-import { Table, OverlayTrigger, Tooltip, DropdownButton, 
-  Dropdown, Button, Badge } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 import amountFormatter from '../../../utilities/amountFormatter';

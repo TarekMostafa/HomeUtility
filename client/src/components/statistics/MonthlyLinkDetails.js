@@ -1,5 +1,4 @@
 import React from 'react';
-import { Alert } from 'react-bootstrap';
 
 import WealthTransactionTable from '../wealth/transactions/WealthTransactionTable';
 import ModalContainer from '../common/ModalContainer';
