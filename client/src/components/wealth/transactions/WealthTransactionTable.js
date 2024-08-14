@@ -30,12 +30,14 @@ function WealthTransactionTable (props) {
       <tbody>
         {
           props.transactions && props.transactions.map( (transaction, index) => {
-            let isEditable = transaction.isEditable
+            const isEditable = transaction.isEditable
             && props.onEditTransaction; 
-            let isDeletable = transaction.isDeletable
+            const isDeletable = transaction.isDeletable
             && props.onDeleteTransaction;
-            let isMigrable = transaction.migrationType
+            const isMigrable = transaction.migrationType
             && props.onMigration;
+            const isViewable = props.onViewTransaction;
+            const isButtonColVisible = isEditable || isDeletable || isMigrable || isViewable;
           return (
             <tr key={transaction.transactionId}>
               <td>{index+1}</td>
@@ -62,7 +64,11 @@ function WealthTransactionTable (props) {
                 {
                   transaction.transactionRelatedTransactionId &&
                   <Button variant="link"
-                  onClick={() => props.onRelatedTransaction(transaction.transactionRelatedTransactionId)}>
+                  onClick={() => {
+                      if (typeof props.onRelatedTransaction === 'function') {
+                        props.onRelatedTransaction(transaction.transactionRelatedTransactionId)
+                      }
+                    }}>
                     <Badge pill variant="success">
                       {transaction.transactionRelatedTransactionId}
                     </Badge>
@@ -96,6 +102,7 @@ function WealthTransactionTable (props) {
                   //   }
                   // </ButtonGroup>
                   //(isEditable || isDeletable || isMigrable) &&
+                  isButtonColVisible &&
                   <DropdownButton id="dropdown-basic-button" title="Actions"
                   size="sm" variant="secondary">
                     {
@@ -112,10 +119,13 @@ function WealthTransactionTable (props) {
                       Delete
                       </Dropdown.Item>
                     }
-                    <Dropdown.Item onClick={() => props.onViewTransaction(transaction.transactionId, 
+                    {
+                      isViewable &&
+                      <Dropdown.Item onClick={() => props.onViewTransaction(transaction.transactionId, 
                         transaction.transactionModule)}>
                       View
-                    </Dropdown.Item>
+                      </Dropdown.Item>
+                    }
                     {
                       isMigrable &&
                       <Dropdown.Item onClick={() => props.onMigration(transaction)}>

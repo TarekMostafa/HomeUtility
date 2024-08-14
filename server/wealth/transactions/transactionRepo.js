@@ -73,7 +73,7 @@ class TransactionRepo {
       attributes: [
         [sequelize.fn('sum', sequelize.literal(
           'Round(transactionAmount*(case when transactionCRDR = \'Credit\' then 1 else -1 end),3)')), "total"]
-        ,'transactionType.typeName'],
+        ,'transactionType.typeName', 'transactionType.typeId'],
       include: [
         { model: AccountModel, as: 'account', attributes: [],
           include: [
@@ -86,7 +86,7 @@ class TransactionRepo {
         { model: TransactionTypeModel, as: 'transactionType', attributes: [] }
       ],
       //group: [sequelize.literal('case when transactionTypeId is not null then transactionType.typeName else \'\' end')],
-      group: [sequelize.literal('typeName')],
+      group: [sequelize.literal('typeName'), sequelize.literal('typeId')],
       where: whereQuery,
       raw: true
     });

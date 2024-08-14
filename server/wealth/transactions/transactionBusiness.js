@@ -66,6 +66,7 @@ class TransactionBusiness {
     }
 
     let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery);
+    await this.loadParameters(); //to load parameters once
     transactions = await Promise.all(transactions.map(async trans => {
       const migration = await this.getMigrationObject(trans);
       const module = transactionModules.getModule(trans.transactionModule);
@@ -381,6 +382,14 @@ class TransactionBusiness {
     }
   }
 
+  async loadParameters() {
+    await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.DEBT_TRANSACTION_CREDIT);
+    await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.DEBT_TRANSACTION_DEBIT);
+    await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.LINK_MODULES_TO_DEBTOR);
+  }
 }
 
 module.exports = TransactionBusiness;

@@ -13,6 +13,7 @@ import CurrenciesDropDown from '../currencies/CurrenciesDropDown';
 import EditReportModal from './EditReportModal';
 import AddNewReportModal from './AddNewReportModal';
 import DeleteReportModal from './DeleteReportModal';
+import MonthlyLinkDetails from './MonthlyLinkDetails';
 
 const initialState = {
   reportId: '',
@@ -27,9 +28,12 @@ class MonthlyStatistics extends Component {
   state = {
     reports: [],
     stat: [],
+    transactions: [],
+    transactionsData: {},
     modalEditShow: false,
     modalAddShow: false,
     modalDeleteShow: false,
+    modalLinkDetailShow: false,
     ...initialState,
   }
 
@@ -126,7 +130,9 @@ class MonthlyStatistics extends Component {
             this.state.stat.map( (data, index) => {
               return (
                 <Col key={index} style={{ marginTop: 10}} xs={4}>
-                  <MonthlyDetails data={data} decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>
+                  <MonthlyDetails data={data} 
+                  decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}
+                  onTransactionTypeClick={this.handleTransactionTypeClick}/>
                 </Col>
               )
             })
@@ -148,9 +154,30 @@ class MonthlyStatistics extends Component {
           <DeleteReportModal show={this.state.modalDeleteShow} onHide={this.handleHide}
           reportId={this.state.reportId} onDelete={this.loadReports}/>
         }
+        {
+          this.state.modalLinkDetailShow &&
+          <MonthlyLinkDetails transactions={this.state.transactions}
+          data={this.state.transactionsData}
+          show={this.state.modalLinkDetailShow} onHide={this.handleHide}/>
+        }
       </React.Fragment>
     )
   }//end of render
+
+  handleTransactionTypeClick = (typeId, fromDate, toDate, typeName) => {
+    //console.log(typeId, fromDate, toDate);
+    TransactionRequest.getTransactions(999, 0, [], [typeId], fromDate, toDate)
+    .then((transactions) => {
+        this.setState({
+          transactions,
+          modalLinkDetailShow: true,
+          transactionsData: {
+            typeId, fromDate, toDate, typeName
+          }
+        })
+      }
+    );
+  }
 
   getReportsList = () => {
     return this.state.reports.map( (report) => {
@@ -187,6 +214,7 @@ class MonthlyStatistics extends Component {
       modalEditShow: false,
       modalAddShow: false,
       modalDeleteShow: false,
+      modalLinkDetailShow: false,
     });
   }
 

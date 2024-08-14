@@ -25,20 +25,27 @@ class MonthlyDetails extends Component {
                 <React.Fragment key={'ms'+index}>
                   <Row>
                     <Col><strong>{ms.detailName}</strong></Col>
-                    <Col>
+                    <Col className="text-right"><strong>
                     {
                       amountFormatter(Math.abs(getTotalItems(ms.details)), this.props.decimalPlace)
                     }
-                    </Col>
+                    </strong></Col>
                   </Row>
                     {
                       ms.details && ms.details.map( (detail, index) => {
                         return (
                           <Row key={'dt'+index}>
-                            <Col>
-                              {detail.typeName? detail.typeName : ''}
+                            <Col xs={8}>
+                              { detail.typeName ? 
+                                <Button variant="link" size="sm" 
+                                onClick={() => this.onTransactionTypeClick(detail.typeId, 
+                                this.props.data.fromDate, this.props.data.toDate, detail.typeName)}>
+                                  {detail.typeName}
+                                </Button>
+                                 : <Button variant="link" size="sm">No Transaction Type</Button>
+                              }
                             </Col>
-                            <Col>
+                            <Col className="text-right">
                               {amountFormatter(Math.abs(detail.total), this.props.decimalPlace)}
                             </Col>
                           </Row>
@@ -59,13 +66,19 @@ class MonthlyDetails extends Component {
             <Col>
               <strong>Total</strong>
             </Col>
-            <Col>
+            <Col><strong>
               {amountFormatter(getTotalMonthlyStatistics(this.props.data.monthlyStatistics), this.props.decimalPlace)}
-            </Col>
+            </strong></Col>
           </Row>
         </Card.Footer>
       </Card>
     )
+  }
+
+  onTransactionTypeClick = (typeId, fromDate, toDate, typeName) => {
+    if (typeof this.props.onTransactionTypeClick === 'function') {
+      this.props.onTransactionTypeClick(typeId, fromDate, toDate, typeName);
+    }
   }
 }
 
