@@ -106,6 +106,7 @@ function DebtorList(props) {
             <FormContainer>
                 {
                     props.appSettings && props.appSettings.baseCurrency &&
+                    props.appSettings.currency &&
                     <DebtorTotalBalance debtors={debtors}
                         baseCurrency={props.appSettings.baseCurrency}
                         decimalPlace={props.appSettings.currency.currencyDecimalPlace}/>

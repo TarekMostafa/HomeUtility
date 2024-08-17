@@ -1,6 +1,8 @@
 import React from 'react';
 import { Badge, Alert, ListGroup } from 'react-bootstrap';
 
+import NoData from '../common/NoData';
+
 function HomeDetails(props) {
 
     let noData = true;
@@ -37,9 +39,7 @@ function HomeDetails(props) {
           {
             noData && props.data &&
             <ListGroup.Item>
-            <Alert variant="warning" className="text-center">
-              <h5>No Data</h5>
-            </Alert>
+             <NoData />
             </ListGroup.Item>
           }
           {

@@ -2,6 +2,7 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 
 import CurrencyTableRow from './CurrencyTableRow';
+import NoData from '../common/NoData';
 
 function CurrencyTable (props) {
   return (
@@ -24,6 +25,12 @@ function CurrencyTable (props) {
             {...props}/>
           )
         })}
+        {
+          props.currencies && props.currencies.length === 0 && 
+          <tr>
+            <th colSpan={7}><NoData /></th>
+          </tr>
+        }
       </tbody>
     </Table>
   )

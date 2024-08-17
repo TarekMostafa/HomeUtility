@@ -5,23 +5,19 @@ const AppParametersConstants = require('../appSettings/appParametersConstants');
 const DepositRepo = require('../wealth/deposits/depositRepo');
 const CardRepo = require('../cards/cardRepo');
 const DebtorRepo = require('../debtors/debtorRepo');
+const Exception = require('../features/exception');
+const AmountHelper = require('../helper/AmountHelper');
 
 class HomeBusiness {
-
-
-    formatAmount(amount, digit) {
-        return new Intl.NumberFormat("en-GB", {
-            minimumFractionDigits: digit,
-            maximumFractionDigits: digit
-        }).format(amount)
-    }
 
     async getTotals() {
 
         const baseCurrency = await AppParametersRepo.getAppParameterValue(
-            AppParametersConstants.BASE_CURRENCY
-        );
+            AppParametersConstants.BASE_CURRENCY);
+        if(!baseCurrency) throw new Exception('APP_PARAM_ERROR');
+        
         const baseCurrencyObj = await CurrencyRepo.getCurrency(baseCurrency);
+        if(!baseCurrencyObj) throw new Exception('CURR_INV_BASE');
 
         let accountsAggregate = await AccountRepo.getAccountsTotalByCurrency();
         accountsAggregate = accountsAggregate.map( aggregate => {
@@ -31,11 +27,11 @@ class HomeBusiness {
                 currency: aggregate.accountCurrency,
                 totalBalance: Number(aggregate.dataValues.totalBalance)
                     .toFixed(aggregate.currency.currencyDecimalPlace),
-                formattedTotalBalance: this.formatAmount(aggregate.dataValues.totalBalance, 
+                formattedTotalBalance: AmountHelper.formatAmount(aggregate.dataValues.totalBalance, 
                     aggregate.currency.currencyDecimalPlace),
                 totalCount: aggregate.dataValues.totalCount,
                 equivalentBalance,
-                formattedEquivalentBalance: this.formatAmount(equivalentBalance, 
+                formattedEquivalentBalance: AmountHelper.formatAmount(equivalentBalance, 
                     baseCurrencyObj.currencyDecimalPlace),
                 equivalentCurrency: baseCurrencyObj.currencyCode
             }
@@ -49,11 +45,11 @@ class HomeBusiness {
                 currency: aggregate.currencyCode,
                 totalBalance: Number(aggregate.dataValues.totalBalance)
                     .toFixed(aggregate.currency.currencyDecimalPlace),
-                formattedTotalBalance: this.formatAmount(aggregate.dataValues.totalBalance, 
+                formattedTotalBalance: AmountHelper.formatAmount(aggregate.dataValues.totalBalance, 
                     aggregate.currency.currencyDecimalPlace),
                 totalCount: aggregate.dataValues.totalCount,
                 equivalentBalance,
-                formattedEquivalentBalance: this.formatAmount(equivalentBalance, 
+                formattedEquivalentBalance: AmountHelper.formatAmount(equivalentBalance, 
                     baseCurrencyObj.currencyDecimalPlace),
                 equivalentCurrency: baseCurrencyObj.currencyCode
             }
@@ -67,11 +63,11 @@ class HomeBusiness {
                 currency: aggregate.cardCurrency,
                 totalBalance: Number(aggregate.dataValues.totalBalance)
                     .toFixed(aggregate.currency.currencyDecimalPlace),
-                formattedTotalBalance: this.formatAmount(aggregate.dataValues.totalBalance, 
+                formattedTotalBalance: AmountHelper.formatAmount(aggregate.dataValues.totalBalance, 
                     aggregate.currency.currencyDecimalPlace),
                 totalCount: aggregate.dataValues.totalCount,
                 equivalentBalance,
-                formattedEquivalentBalance: this.formatAmount(equivalentBalance, 
+                formattedEquivalentBalance: AmountHelper.formatAmount(equivalentBalance, 
                     baseCurrencyObj.currencyDecimalPlace),
                 equivalentCurrency: baseCurrencyObj.currencyCode
             }
@@ -85,11 +81,11 @@ class HomeBusiness {
                 currency: aggregate.debtCurrency,
                 totalBalance: Number(aggregate.dataValues.totalBalance)
                     .toFixed(aggregate.currency.currencyDecimalPlace),
-                formattedTotalBalance: this.formatAmount(aggregate.dataValues.totalBalance, 
+                formattedTotalBalance: AmountHelper.formatAmount(aggregate.dataValues.totalBalance, 
                     aggregate.currency.currencyDecimalPlace),
                 totalCount: aggregate.dataValues.totalCount,
                 equivalentBalance,
-                formattedEquivalentBalance: this.formatAmount(equivalentBalance, 
+                formattedEquivalentBalance: AmountHelper.formatAmount(equivalentBalance, 
                     baseCurrencyObj.currencyDecimalPlace),
                 equivalentCurrency: baseCurrencyObj.currencyCode
             }
@@ -104,32 +100,32 @@ class HomeBusiness {
         const debtorsSum = debtorsAggregate.reduce( 
             (debtor, obj) => Number(debtor)+Number(obj.equivalentBalance), 0);
 
-        const profileSum = Number(accountsSum)+Number(depositsSum)
+        const profileSum = Number(accountsSum) + Number(depositsSum)
                          - Number(cardsSum) + Number(debtorsSum);
 
         return {
             profile: {
-                sum: this.formatAmount(profileSum, baseCurrencyObj.currencyDecimalPlace),
+                sum: AmountHelper.formatAmount(profileSum, baseCurrencyObj.currencyDecimalPlace),
                 sumCurrency: baseCurrencyObj.currencyCode
             },
             accounts: {
                 aggregate: accountsAggregate,
-                sum: this.formatAmount(accountsSum, baseCurrencyObj.currencyDecimalPlace),
+                sum: AmountHelper.formatAmount(accountsSum, baseCurrencyObj.currencyDecimalPlace),
                 sumCurrency: baseCurrencyObj.currencyCode
             },
             deposits: {
                 aggregate: depositsAggregate,
-                sum: this.formatAmount(depositsSum, baseCurrencyObj.currencyDecimalPlace),
+                sum: AmountHelper.formatAmount(depositsSum, baseCurrencyObj.currencyDecimalPlace),
                 sumCurrency: baseCurrencyObj.currencyCode
             },
             cards: {
                 aggregate: cardsAggregate,
-                sum: this.formatAmount(cardsSum, baseCurrencyObj.currencyDecimalPlace),
+                sum: AmountHelper.formatAmount(cardsSum, baseCurrencyObj.currencyDecimalPlace),
                 sumCurrency: baseCurrencyObj.currencyCode
             },
             debtors: {
                 aggregate: debtorsAggregate,
-                sum: this.formatAmount(debtorsSum, baseCurrencyObj.currencyDecimalPlace),
+                sum: AmountHelper.formatAmount(debtorsSum, baseCurrencyObj.currencyDecimalPlace),
                 sumCurrency: baseCurrencyObj.currencyCode
             },
         }

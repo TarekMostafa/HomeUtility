@@ -3,6 +3,7 @@ import { Table } from 'react-bootstrap';
 
 import WealthBankTableRow from './WealthBankTableRow';
 import BankModel from './BankModel';
+import NoData from '../../common/NoData';
 
 function WealthBankTable(props) {
   return (
@@ -23,6 +24,12 @@ function WealthBankTable(props) {
             {...props}/>
           )
         })}
+        {
+          props.banks && props.banks.length === 0 && 
+          <tr>
+            <th colSpan={4}><NoData /></th>
+          </tr>
+        }
       </tbody>
     </Table>
   )

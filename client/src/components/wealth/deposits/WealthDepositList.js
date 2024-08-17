@@ -96,6 +96,7 @@ class WealthDepositList extends Component {
           <Row>
             <Col xs={{offset:4, span:4}}>
               {this.props.appSettings && this.props.appSettings.baseCurrency &&
+              this.props.appSettings.currency &&
               <WealthDepositTotal deposits={this.state.deposits}
               baseCurrency={this.props.appSettings.baseCurrency}
               decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>}

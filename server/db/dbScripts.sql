@@ -54,6 +54,41 @@ LOCK TABLES `accounts` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `applog`
+--
+
+DROP TABLE IF EXISTS `applog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `applog` (
+  `logId` int NOT NULL AUTO_INCREMENT,
+  `logUserId` int NOT NULL,
+  `logUserName` varchar(20) NOT NULL,
+  `logMethod` varchar(10) NOT NULL,
+  `logPathName` varchar(200) NOT NULL,
+  `logReqQuery` varchar(200) DEFAULT NULL,
+  `logReqBody` varchar(1000) DEFAULT NULL,
+  `logReqTimestamp` timestamp NOT NULL,
+  `logResStatus` enum('SUCCESS','FAILED') DEFAULT NULL,
+  `logResStatusCode` varchar(5) DEFAULT NULL,
+  `logResErrorMsg` varchar(1000) DEFAULT NULL,
+  `logResTimestamp` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`logId`),
+  KEY `loggerUser_fk_idx` (`logUserId`),
+  CONSTRAINT `loggerUser_fk` FOREIGN KEY (`logUserId`) REFERENCES `users` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `applog`
+--
+
+LOCK TABLES `applog` WRITE;
+/*!40000 ALTER TABLE `applog` DISABLE KEYS */;
+/*!40000 ALTER TABLE `applog` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `appparameters`
 --
 
@@ -74,6 +109,7 @@ CREATE TABLE `appparameters` (
 
 LOCK TABLES `appparameters` WRITE;
 /*!40000 ALTER TABLE `appparameters` DISABLE KEYS */;
+INSERT INTO `appparameters` VALUES ('automaticOrManualRate','Automatic','Automatic or Manual Rate'),('baseCurrency','EGP','App Base Currency'),('currencyConversionAPIKey','a903b6f2d1ec2e4fc61c','Automatic Currency Rate API Key'),('debtTransacionDebit','15','Debt Transaction Debit'),('debtTransactionCredit','14','Debt Transaction Credit'),('fxTransactionTypeFrom','17','FX Transaction Type From'),('fxTransactionTypeTo','16','FX Transaction Type To'),('internalTransactionTypeFrom','9','Internal Transaction Type From'),('internalTransactionTypeTo','10','Internal Transaction Type To'),('linkModulesToDebtors','CRD','Link Modules To Debtors');
 /*!40000 ALTER TABLE `appparameters` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -385,8 +421,8 @@ CREATE TABLE `debtors` (
   PRIMARY KEY (`debtId`),
   KEY `fk_debtor_currency_idx` (`debtCurrency`),
   KEY `fk_debtor_relTrans_idx` (`debtRelId`),
-  CONSTRAINT `fk_debtor_currency` FOREIGN KEY (`debtCurrency`) REFERENCES `currencies` (`currencyCode`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `fk_debtor_relTrans` FOREIGN KEY (`debtRelId`) REFERENCES `relatedtransactions` (`relatedTransactionsId`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `fk_debtor_currency` FOREIGN KEY (`debtCurrency`) REFERENCES `currencies` (`currencyCode`),
+  CONSTRAINT `fk_debtor_relTrans` FOREIGN KEY (`debtRelId`) REFERENCES `relatedtransactions` (`relatedTransactionsId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -542,6 +578,44 @@ LOCK TABLES `expensetypes` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `fxtransactions`
+--
+
+DROP TABLE IF EXISTS `fxtransactions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fxtransactions` (
+  `fxId` bigint NOT NULL AUTO_INCREMENT,
+  `fxRelTransId` bigint NOT NULL,
+  `fxAmountFrom` decimal(18,3) NOT NULL,
+  `fxAmountTo` decimal(18,3) NOT NULL,
+  `fxPostingDateFrom` date NOT NULL,
+  `fxRate` decimal(12,7) NOT NULL,
+  `fxAccountFrom` int NOT NULL,
+  `fxAccountTo` int NOT NULL,
+  `fxCurrencyFrom` varchar(3) NOT NULL,
+  `fxCurrencyTo` varchar(3) NOT NULL,
+  `fxPostingDateTo` date NOT NULL,
+  PRIMARY KEY (`fxId`),
+  KEY `fxRelatedTransactionfk_idx` (`fxRelTransId`),
+  KEY `fxAccountFromfk_idx` (`fxAccountFrom`),
+  KEY `fxAccountTofk_idx` (`fxAccountTo`),
+  CONSTRAINT `fxAccountFromfk` FOREIGN KEY (`fxAccountFrom`) REFERENCES `accounts` (`accountId`),
+  CONSTRAINT `fxAccountTofk` FOREIGN KEY (`fxAccountTo`) REFERENCES `accounts` (`accountId`),
+  CONSTRAINT `fxRelatedTransactionfk` FOREIGN KEY (`fxRelTransId`) REFERENCES `relatedtransactions` (`relatedTransactionsId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fxtransactions`
+--
+
+LOCK TABLES `fxtransactions` WRITE;
+/*!40000 ALTER TABLE `fxtransactions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `fxtransactions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `relatedtransactions`
 --
 
@@ -587,6 +661,7 @@ CREATE TABLE `relatedtypes` (
 
 LOCK TABLES `relatedtypes` WRITE;
 /*!40000 ALTER TABLE `relatedtypes` DISABLE KEYS */;
+INSERT INTO `relatedtypes` VALUES ('CRI','Card Related Installments'),('DBT','Debt Related Transactions'),('DEP','Deposit Related Transactions'),('FX','FX Related Transactions'),('IAT','Internal Account Transfer');
 /*!40000 ALTER TABLE `relatedtypes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -659,6 +734,7 @@ CREATE TABLE `transactions` (
   `transactionRelatedTransactionId` bigint DEFAULT NULL,
   `transactionModule` varchar(3) DEFAULT NULL,
   `transactionModuleId` bigint DEFAULT NULL,
+  `transactionValueDate` date NOT NULL,
   PRIMARY KEY (`transactionId`),
   KEY `transactionAccount_fk_idx` (`transactionAccount`),
   KEY `transactionType_fk_idx` (`transactionTypeId`),
@@ -740,4 +816,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-14 18:59:45
+-- Dump completed on 2024-08-17 19:35:22

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import FormContainer from '../common/FormContainer';
 import HomeDetails from './HomeDetails';
+import NoData from '../common/NoData';
 
 import HomeRequest from '../../axios/HomeRequest';
 
@@ -13,7 +14,9 @@ function Home(props) {
   const [key, setKey] = useState('home');
 
   const loadTotals = () => 
-    HomeRequest.getTotals().then(totals => setData(totals));
+    HomeRequest.getTotals()
+    .then(totals => setData(totals))
+    .catch( err => console.log(err));
 
   useEffect(()=>{
     if(props.user) loadTotals();
@@ -36,40 +39,45 @@ function Home(props) {
           <Tab eventKey="profile" title="Profile">
             <br />
             {
-              data.profile &&
-              <HomeDetails sum={data.profile.sum} sumCurrency={data.profile.sumCurrency}/>
+              (data && data.profile) ?
+              <HomeDetails sum={data.profile.sum} sumCurrency={data.profile.sumCurrency}/> :
+              <NoData />
             }
           </Tab>
           <Tab eventKey="accounts" title="Accounts">
             <br />
             {
-              data.accounts &&
+              (data && data.accounts) ?
               <HomeDetails data={data.accounts} sum={data.accounts.sum} 
-                sumCurrency={data.accounts.sumCurrency}/> 
+                sumCurrency={data.accounts.sumCurrency}/> :
+              <NoData />
             }
           </Tab>
           <Tab eventKey="deposits" title="Deposits">
             <br />
             {
-              data.deposits &&
+              (data && data.deposits) ?
               <HomeDetails data={data.deposits} sum={data.deposits.sum} 
-                sumCurrency={data.deposits.sumCurrency}/>
+                sumCurrency={data.deposits.sumCurrency}/> :
+              <NoData />  
             }
           </Tab>
           <Tab eventKey="cards" title="Cards">
             <br />
             {
-              data.cards &&
+              (data && data.cards) ?
               <HomeDetails data={data.cards} sum={data.cards.sum} 
-                sumCurrency={data.cards.sumCurrency}/>
+                sumCurrency={data.cards.sumCurrency}/> :
+              <NoData />
             }
           </Tab>
           <Tab eventKey="debts" title="Debts">
             <br />
             {
-              data.debtors &&
+              (data && data.debtors) ?
               <HomeDetails data={data.debtors} sum={data.debtors.sum} 
-                sumCurrency={data.debtors.sumCurrency}/>
+                sumCurrency={data.debtors.sumCurrency}/> :
+              <NoData />
             }
           </Tab>
         </Tabs>

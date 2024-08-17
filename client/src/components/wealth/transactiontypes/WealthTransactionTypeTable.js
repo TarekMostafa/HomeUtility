@@ -3,6 +3,7 @@ import { Table } from 'react-bootstrap';
 
 import WealthTransactionTypeTableRow from './WealthTransactionTypeTableRow';
 import TransactionTypeModel from './TransactionTypeModel';
+import NoData from '../../common/NoData';
 
 function WealthTransactionTypeTable (props) {
   return (
@@ -24,6 +25,12 @@ function WealthTransactionTypeTable (props) {
             {...props}/>
           )
         })}
+        {
+          props.transactionTypes && props.transactionTypes.length === 0 && 
+          <tr>
+            <th colSpan={4}><NoData /></th>
+          </tr>
+        }
       </tbody>
     </Table>
   )

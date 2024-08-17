@@ -3,6 +3,7 @@ import { Table } from 'react-bootstrap';
 
 import ExpenseTypeTableRow from './ExpenseTypeTableRow';
 import ExpenseTypeModel from './ExpenseTypeModel';
+import NoData from '../../common/NoData';
 
 function ExpenseTypeTable (props) {
   return (
@@ -23,6 +24,12 @@ function ExpenseTypeTable (props) {
             {...props}/>
           )
         })}
+        {
+          props.expenseTypes && props.expenseTypes.length === 0 && 
+          <tr>
+            <th colSpan={3}><NoData /></th>
+          </tr>
+        }
       </tbody>
     </Table>
   )

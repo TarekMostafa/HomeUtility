@@ -116,6 +116,7 @@ class WealthAccountList extends Component {
         <FormContainer>
           {
             this.props.appSettings && this.props.appSettings.baseCurrency &&
+            this.props.appSettings.currency &&
             <WealthAccountTotalBalance accounts={this.state.accounts}
               baseCurrency={this.props.appSettings.baseCurrency}
               decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>
