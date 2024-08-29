@@ -3,7 +3,7 @@ import { Table, Dropdown, DropdownButton, Button, Badge } from 'react-bootstrap'
 import moment from 'moment';
 
 // import amountFormatter from '../../../utilities/amountFormatter';
-import cardNumberFormatter from '../../../utilities/cardNumberFormatter';
+//import cardNumberFormatter from '../../../utilities/cardNumberFormatter';
 
 function CardInstallmentTable (props) {
   return (
@@ -29,7 +29,8 @@ function CardInstallmentTable (props) {
           return (
             <tr key={inst.cInstId}>
               <td>{index+1}</td>
-              <td>{cardNumberFormatter(inst.cardNumber)}</td>
+              {/* <td>{cardNumberFormatter(inst.cardNumber)}</td> */}
+              <td>{inst.cardNumberFormatted}</td>
               <td>{inst.cInstCurrency}</td>
               <td>{inst.cInstItemDesc}</td>
               <td>

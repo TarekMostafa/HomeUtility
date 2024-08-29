@@ -11,6 +11,7 @@ const DateHelper = require('../../helper/DateHelper');
 const Common = require('../../utilities/common');
 const TransactionModules = require('../../wealth/transactions/transactionModules').Modules;
 const AmountHelper = require('../../helper/AmountHelper');
+const CardNumberHelper = require('../../helper/CardNumberHelper');
 
 class CardTransactionBusiness {
   async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
@@ -41,6 +42,7 @@ class CardTransactionBusiness {
           cardTransPayForOthers: trans.cardTransPayForOthers,
           currencyDecimalPlace: trans.currency.currencyDecimalPlace,
           cardNumber: trans.card.cardNumber,
+          cardNumberFormatted: CardNumberHelper.formatCardNumber(trans.card.cardNumber),
           cardBank: trans.card.cardBank,
           cardCurrency: trans.card.cardCurrency,
           bankName: trans.card.bank.bankName,

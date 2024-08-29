@@ -5,6 +5,7 @@ const sequelize = require('../../db/dbConnection').getSequelize();
 const CardTransactionRepo = require('../cardTransaction/cardTransactionRepo');
 const Common = require('../../utilities/common');
 const AmountHelper = require('../../helper/AmountHelper');
+const CardNumberHelper = require('../../helper/CardNumberHelper');
 
 class CardInstallmentBusiness {
   async getCardsInstallments({cardId}) {
@@ -29,6 +30,7 @@ class CardInstallmentBusiness {
         cInstStatus: inst.cInstStatus,
         currencyDecimalPlace: inst.currency.currencyDecimalPlace,
         cardNumber: inst.card.cardNumber,
+        cardNumberFormatted: CardNumberHelper.formatCardNumber(inst.card.cardNumber),
       }
     });
     return cardInstallments;

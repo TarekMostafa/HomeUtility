@@ -3,7 +3,7 @@ import { Table, Dropdown, DropdownButton, OverlayTrigger, Tooltip } from 'react-
 import moment from 'moment';
 
 // import amountFormatter from '../../../utilities/amountFormatter';
-import cardNumberFormatter from '../../../utilities/cardNumberFormatter';
+//import cardNumberFormatter from '../../../utilities/cardNumberFormatter';
 
 function CardTransactionTable (props) {
   return (
@@ -27,8 +27,10 @@ function CardTransactionTable (props) {
       </thead>
       <tbody>
         {props.cardsTransactions && props.cardsTransactions.map( (trans, index) => {
-          const cardInfo = `${cardNumberFormatter(trans.cardNumber)} 
-                          - ${trans.bankName} - ${trans.cardCurrency}`;
+          // const cardInfo = `${cardNumberFormatter(trans.cardNumber)} 
+          //                 - ${trans.bankName} - ${trans.cardCurrency}`;
+          const cardInfo = `${trans.cardNumberFormatted} 
+                         - ${trans.bankName} - ${trans.cardCurrency}`;
           return (
             <tr key={trans.cardTransId}>
               <td>{index+1}</td>

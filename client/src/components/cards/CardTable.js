@@ -3,7 +3,7 @@ import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
 
 //import amountFormatter from '../../utilities/amountFormatter';
-import cardNumberFormatter from '../../utilities/cardNumberFormatter';
+// import cardNumberFormatter from '../../utilities/cardNumberFormatter';
 
 function CardTable (props) {
   return (
@@ -30,7 +30,8 @@ function CardTable (props) {
             <tr key={card.cardId} className={card.cardStatus==="CLOSED"?"table-danger":""}>
               <td>{index+1}</td>
               <td>{card.bankName}</td>
-              <td>{cardNumberFormatter(card.cardNumber)}</td>
+              {/* <td>{cardNumberFormatter(card.cardNumber)}</td> */}
+              <td>{card.cardNumberFormatted}</td>
               <td>{card.cardCurrency}</td>
               <td className="text-right">
                 {/* {amountFormatter(card.cardLimit, card.currencyDecimalPlace)} */}

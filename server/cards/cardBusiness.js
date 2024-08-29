@@ -4,6 +4,7 @@ const sequelize = require('../db/dbConnection').getSequelize();
 const CardTransactionRepo = require('./cardTransaction/cardTransactionRepo');
 const Common = require('../utilities/common');
 const AmountHelper = require('../helper/AmountHelper');
+const CardNumberHelper = require('../helper/CardNumberHelper');
 
 const CARD_STATUS = {
   ACTIVE: 'ACTIVE',
@@ -18,6 +19,7 @@ class CardBusiness {
       return  {
         cardId: card.cardId,
         cardNumber: card.cardNumber,
+        cardNumberFormatted: CardNumberHelper.formatCardNumber(card.cardNumber),
         cardLimit: card.cardLimit,
         cardLimitFormatted: AmountHelper.formatAmount(card.cardLimit, 
           card.currency.currencyDecimalPlace),
