@@ -20,7 +20,8 @@ function ExpenseApplyTotalAccountDebitDifference(props) {
     useEffect(()=>{
         setFormData({
             ...formData, 
-            diffAmount:expense.expenseCurrentAccountsDebit - expense.expenseTotalAccountDebit
+            //diffAmount:expense.expenseCurrentAccountsDebit - expense.expenseTotalAccountDebit
+            diffAmount: expense.expenseDifferenceAccountDebits
         });
     },[expense])
 
@@ -70,13 +71,19 @@ function ExpenseApplyTotalAccountDebitDifference(props) {
                         <Form.Label>Calculated Current Account Debit</Form.Label>
                         <Form.Control type="input" maxLength={20}
                         name="currentAccountsDebit" 
-                        value={Number(expense.expenseCurrentAccountsDebit).toFixed(expense.currency.currencyDecimalPlace)} readOnly/>
+                        //value={Number(expense.expenseCurrentAccountsDebit).toFixed(expense.currency.currencyDecimalPlace)} 
+                        value={expense.expenseRealAccountDebitsFormatted}
+                        readOnly
+                    />
                     </Form.Group>
                     <Form.Group controlId="totalAccountDebit">
                         <Form.Label>Registered Total Account Debit</Form.Label>
                         <Form.Control type="input" maxLength={20}
                         name="totalAccountDebit" 
-                        value={Number(expense.expenseTotalAccountDebit).toFixed(expense.currency.currencyDecimalPlace)} readOnly/>
+                        //value={Number(expense.expenseTotalAccountDebit).toFixed(expense.currency.currencyDecimalPlace)} 
+                        value={expense.expenseTotalAccountDebitFormatted}
+                        readOnly
+                    />
                     </Form.Group>
                     <Form.Group controlId="diffAmount">
                         <Form.Label>Difference Amount</Form.Label>

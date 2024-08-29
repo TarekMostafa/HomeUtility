@@ -3,7 +3,7 @@ import { Card, Row, Col, Button, Collapse } from 'react-bootstrap';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 
-import amountFormatter from '../../utilities/amountFormatter';
+//import amountFormatter from '../../utilities/amountFormatter';
 
 class MonthlyDetails extends Component {
   state = {
@@ -27,7 +27,8 @@ class MonthlyDetails extends Component {
                     <Col><strong>{ms.detailName}</strong></Col>
                     <Col className="text-right"><strong>
                     {
-                      amountFormatter(Math.abs(getTotalItems(ms.details)), this.props.decimalPlace)
+                      // amountFormatter(Math.abs(getTotalItems(ms.details)), this.props.decimalPlace)
+                      ms.totalItemFormatted
                     }
                     </strong></Col>
                   </Row>
@@ -46,7 +47,8 @@ class MonthlyDetails extends Component {
                               }
                             </Col>
                             <Col className="text-right">
-                              {amountFormatter(Math.abs(detail.total), this.props.decimalPlace)}
+                              {/* {amountFormatter(Math.abs(detail.total), this.props.decimalPlace)} */}
+                              {detail.totalFormatted}
                             </Col>
                           </Row>
                         )
@@ -67,7 +69,8 @@ class MonthlyDetails extends Component {
               <strong>Total</strong>
             </Col>
             <Col><strong>
-              {amountFormatter(getTotalMonthlyStatistics(this.props.data.monthlyStatistics), this.props.decimalPlace)}
+              {/* {amountFormatter(getTotalMonthlyStatistics(this.props.data.monthlyStatistics), this.props.decimalPlace)} */}
+              {this.props.data.finalTotalFormatted}
             </strong></Col>
           </Row>
         </Card.Footer>

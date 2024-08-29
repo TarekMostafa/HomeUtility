@@ -6,7 +6,7 @@ const router = express.Router();
 const depositBusiness = new DepositBusiness();
 
 router.get('/', function(req, res, next) {
-  depositBusiness.getDeposits(req.query).then( result => {
+  depositBusiness.getDeposits(req.query, req.body).then( result => {
     res.json(result);
   }).catch( err => {
     next(err);

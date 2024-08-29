@@ -1,9 +1,9 @@
 import React from 'react';
 import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthDepositTable (props) {
   return (
@@ -32,11 +32,13 @@ function WealthDepositTable (props) {
               <td>{deposit.reference}</td>
               <td>{deposit.currencyCode}</td>
               <td className="text-right">
-                {amountFormatter(deposit.amount, deposit.currencyDecimalPlace)}
+                {/* {amountFormatter(deposit.amount, deposit.currencyDecimalPlace)} */}
+                {deposit.amountFormatted}
               </td>
               <td className="text-right">
-                {amountFormatter(deposit.amount * deposit.currencyRateAgainstBase,
-                props.appSettings.currency.currencyDecimalPlace)}
+                {/* {amountFormatter(deposit.amount * deposit.currencyRateAgainstBase,
+                props.appSettings.currency.currencyDecimalPlace)} */}
+                {deposit.amountEquivalentFormatted}
               </td>
               <td>{deposit.status}</td>
               <td>{deposit.rate}</td>
@@ -85,10 +87,11 @@ function WealthDepositTable (props) {
   )
 }
 
-const mapStateToProps = (state) => {
-	return {
-    appSettings: state.lookups.appSettings,
-	}
-}
+// const mapStateToProps = (state) => {
+// 	return {
+//     appSettings: state.lookups.appSettings,
+// 	}
+// }
 
-export default connect(mapStateToProps)(WealthDepositTable);
+// export default connect(mapStateToProps)(WealthDepositTable);
+export default WealthDepositTable;

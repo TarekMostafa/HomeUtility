@@ -1,6 +1,7 @@
 const ExpenseRepo = require('./expenseRepo');
 const Exception = require('../../features/exception');
 const TransactionRepo = require('../../wealth/transactions/transactionRepo');
+const AmountHelper = require('../../helper/AmountHelper');
 
 class expenseBusiness {
   async getExpenses({year}) {
@@ -21,24 +22,8 @@ class expenseBusiness {
         );
       }
 
-      return {
-        expenseId: expense.expenseId,
-        expenseYear: expense.expenseYear,
-        expenseMonth: expense.expenseMonth,
-        expenseCurrency: expense.expenseCurrency,
-        expenseOpenBalance: expense.expenseOpenBalance,
-        expenseCalculatedBalance: expense.expenseCalculatedBalance,
-        expenseDebits: expense.expenseDebits,
-        expenseAdjusments: expense.expenseAdjusments,
-        expenseTotalAccountDebit: expense.expenseTotalAccountDebit,
-        expenseDebitTransTypes: expense.expenseDebitTransTypes,
-        expenseCloseBalance: expense.expenseCloseBalance,
-        expenseStatus: expense.expenseStatus,
-        currency: {
-          currencyDecimalPlace: expense.currency.currencyDecimalPlace,
-        },
-        expenseRealAccountDebits: Math.abs(sumOfAccountDebits)
-      }
+      return this.getExpenseObject(expense, Math.abs(sumOfAccountDebits));
+
     }));
     return expenses;
   }
@@ -61,25 +46,45 @@ class expenseBusiness {
       );
     }
 
-    expense = {
+    return this.getExpenseObject(expense, Math.abs(sumOfAccountDebits));
+  }
+
+  getExpenseObject(expense, sumOfAccountDebits) {
+    return {
       expenseId: expense.expenseId,
       expenseYear: expense.expenseYear,
       expenseMonth: expense.expenseMonth,
       expenseCurrency: expense.expenseCurrency,
       expenseOpenBalance: expense.expenseOpenBalance,
+      expenseOpenBalanceFormatted: AmountHelper.formatAmount(expense.expenseOpenBalance, 
+        expense.currency.currencyDecimalPlace),
       expenseCalculatedBalance: expense.expenseCalculatedBalance,
+      expenseCalculatedBalanceFormatted: AmountHelper.formatAmount(expense.expenseCalculatedBalance, 
+        expense.currency.currencyDecimalPlace),
       expenseDebits: expense.expenseDebits,
+      expenseDebitsFormatted: AmountHelper.formatAmount(expense.expenseDebits, 
+        expense.currency.currencyDecimalPlace),
       expenseAdjusments: expense.expenseAdjusments,
+      expenseAdjusmentsFormatted: AmountHelper.formatAmount(expense.expenseAdjusments, 
+        expense.currency.currencyDecimalPlace),
       expenseTotalAccountDebit: expense.expenseTotalAccountDebit,
+      expenseTotalAccountDebitFormatted: AmountHelper.formatAmount(expense.expenseTotalAccountDebit, 
+        expense.currency.currencyDecimalPlace),
       expenseDebitTransTypes: expense.expenseDebitTransTypes,
       expenseCloseBalance: expense.expenseCloseBalance,
+      expenseCloseBalanceFormatted: AmountHelper.formatAmount(expense.expenseCloseBalance, 
+        expense.currency.currencyDecimalPlace),
       expenseStatus: expense.expenseStatus,
       currency: {
         currencyDecimalPlace: expense.currency.currencyDecimalPlace,
       },
-      expenseCurrentAccountsDebit: Math.abs(sumOfAccountDebits)
-    };
-    return expense;
+      expenseRealAccountDebits: sumOfAccountDebits,
+      expenseRealAccountDebitsFormatted: 
+        AmountHelper.formatAmount(sumOfAccountDebits, expense.currency.currencyDecimalPlace),
+      expenseDifferenceAccountDebits: (sumOfAccountDebits-expense.expenseTotalAccountDebit),
+      expenseDifferenceAccountDebitsFormatted: AmountHelper.formatAmount(
+        (sumOfAccountDebits-expense.expenseTotalAccountDebit), expense.currency.currencyDecimalPlace),
+    }
   }
 
   async addExpense({year,month,currency, openBalance, allowedDebitTransTypeIds, 

@@ -10,6 +10,7 @@ const sequelize = require('../../db/dbConnection').getSequelize();
 const DateHelper = require('../../helper/DateHelper');
 const Common = require('../../utilities/common');
 const TransactionModules = require('../../wealth/transactions/transactionModules').Modules;
+const AmountHelper = require('../../helper/AmountHelper');
 
 class CardTransactionBusiness {
   async getCardsTransactions({cardId, cardInstId, cardPayment, cardIsPaid, skip, limit,
@@ -24,10 +25,14 @@ class CardTransactionBusiness {
           cardTransId: trans.cardTransId,
           cardId: trans.cardId,
           cardTransAmount: trans.cardTransAmount,
+          cardTransAmountFormatted: AmountHelper.formatAmount(trans.cardTransAmount, 
+            trans.currency.currencyDecimalPlace),
           cardTransCurrency: trans.cardTransCurrency,
           cardTransDate: trans.cardTransDate,
           cardTransDesc: trans.cardTransDesc,
           cardTransBillAmount: trans.cardTransBillAmount,
+          cardTransBillAmountFormatted: AmountHelper.formatAmount(trans.cardTransBillAmount, 
+            trans.currency.currencyDecimalPlace),
           cardTransBillDate: trans.cardTransBillDate,
           cardTransIsInstallment: trans.cardTransIsInstallment,
           cardTransAccountTransId: trans.cardTransAccountTransId,

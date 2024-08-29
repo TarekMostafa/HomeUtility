@@ -21,7 +21,7 @@ router.get('/accountstatuses', function(req, res, next) {
 });
 
 router.get('/', function(req, res, next) {
-  accountBusiness.getAccounts(req.query).then( result => {
+  accountBusiness.getAccounts(req.query, req.body).then( result => {
     res.json(result);
   }).catch( err => {
     next(err);

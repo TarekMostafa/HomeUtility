@@ -18,7 +18,7 @@ function HomeDetails(props) {
             !noData && props.data.aggregate.map(
               aggregate => {
                 return (
-                  <ListGroup.Item>
+                  <ListGroup.Item key={aggregate.currency}>
                     <Alert className="text-center">
                     <Badge variant="light">
                       {aggregate.totalCount} 

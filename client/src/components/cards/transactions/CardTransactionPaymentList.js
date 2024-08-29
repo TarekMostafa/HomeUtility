@@ -6,6 +6,8 @@ import CardsDropDown from '../CardsDropDown';
 import CardTransactionPaymentTable from './CardTransactionPaymentTable';
 import CardTransactionPaymentModal from './CardTransactionPaymentModal';
 
+import amountFormatter from '../../../utilities/amountFormatter';
+
 import CardRequest from '../../../axios/CardRequest';
 import CardTransRequest from '../../../axios/CardTransRequest';
 
@@ -76,12 +78,14 @@ function CardTransactionPaymentList(props) {
 
     const getTotalSelectedPayment = () => {
         var total = cardPayments.reduce( (prv, current) => prv += Number(current.cardTransBillAmount), 0);
-        return Number(total).toFixed(formData.decimalPlaces);
+        //return Number(total).toFixed(formData.decimalPlaces);
+        return amountFormatter(total, formData.decimalPlaces);
     }
 
     const getTotalPayment = () => {
         var total = cardTransactions.reduce( (prv, current) => prv += Number(current.cardTransBillAmount), 0);
-        return Number(total).toFixed(formData.decimalPlaces);
+        //return Number(total).toFixed(formData.decimalPlaces);
+        return amountFormatter(total, formData.decimalPlaces);
     }
 
     const handlePayClick = () => {

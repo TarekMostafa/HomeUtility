@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthDepositTotal (props) {
   return (
@@ -11,12 +11,13 @@ function WealthDepositTotal (props) {
       <Card.Body>
         <Card.Text>
           {
-            props.deposits && amountFormatter(props.deposits.reduce( (result, deposit) => {
-              if(deposit.status==='ACTIVE') {
-                result += deposit.amount * deposit.currencyRateAgainstBase;
-              }
-              return result;
-            }, 0), props.decimalPlace) + ' ' + props.baseCurrency
+            // props.deposits && amountFormatter(props.deposits.reduce( (result, deposit) => {
+            //   if(deposit.status==='ACTIVE') {
+            //     result += deposit.amount * deposit.currencyRateAgainstBase;
+            //   }
+            //   return result;
+            // }, 0), props.decimalPlace) + ' ' + props.baseCurrency
+            props.deposits && props.formattedTotal + ' ' + props.baseCurrency
           }
         </Card.Text>
       </Card.Body>
@@ -27,13 +28,15 @@ function WealthDepositTotal (props) {
 WealthDepositTotal.propTypes = {
   deposits: PropTypes.arrayOf(PropTypes.object),
   baseCurrency: PropTypes.string,
-  decimalPlace: PropTypes.number,
+  formattedTotal: PropTypes.string,
+  //decimalPlace: PropTypes.number,
 };
 
 WealthDepositTotal.defaultProps = {
   deposits: [],
   baseCurrency: '',
-  decimalPlace: 2,
+  formattedTotal: '0',
+  // decimalPlace: 2,
 }
 
 export default WealthDepositTotal;

@@ -3,16 +3,16 @@ import { Form, Col } from 'react-bootstrap';
 
 import FormContainer from '../../common/FormContainer';
 import WealthTransactionTable from '../transactions/WealthTransactionTable';
-import amountFormatter from '../../../utilities/amountFormatter';
+//import amountFormatter from '../../../utilities/amountFormatter';
 
 import RelatedTransactionRequest from '../../../axios/RelatedTransactionRequest';
 
 const initialState = {
   type: '',
   description: '',
-  totalCredit: 0,
-  totalDebit: 0,
-  decimalPlaces: 0,
+  totalCredit: '0',
+  totalDebit: '0',
+  //decimalPlaces: 0,
   transactions: []
 }
 
@@ -25,33 +25,35 @@ class RelatedTransactionDetails extends Component {
   loadRelatedTransactionsDetails(id){
     RelatedTransactionRequest.getRelatedTransactionsDetails(id)
     .then( relatedTransactionsDetails => {
-      this.calculateCreditAndDebit(relatedTransactionsDetails.transactions);
+      //this.calculateCreditAndDebit(relatedTransactionsDetails.transactions);
       this.setState({
         type: relatedTransactionsDetails.relatedTransaction.relatedTransactionType,
         description: relatedTransactionsDetails.relatedTransaction.relatedTransactionDesc,
-        transactions: relatedTransactionsDetails.transactions
+        transactions: relatedTransactionsDetails.transactions,
+        totalCredit: relatedTransactionsDetails.totalCreditFormatted,
+        totalDebit: relatedTransactionsDetails.totalDebitFormatted
       });
     });
   }
 
-  calculateCreditAndDebit(transactions) {
-    let totalCredit = 0;
-    let totalDebit = 0;
-    let decimalPlaces = 0;
+  // calculateCreditAndDebit(transactions) {
+  //   let totalCredit = 0;
+  //   let totalDebit = 0;
+  //   let decimalPlaces = 0;
 
-    transactions.forEach( (transaction, index) => {
-      if(index === 0) {
-        decimalPlaces = transaction.currencyDecimalPlace;
-      }
-      if(transaction.transactionCRDR === "Debit") {
-        totalDebit += Number(transaction.transactionAmount);
-      } else {
-        totalCredit += Number(transaction.transactionAmount);
-      }
-    });
+  //   transactions.forEach( (transaction, index) => {
+  //     if(index === 0) {
+  //       decimalPlaces = transaction.currencyDecimalPlace;
+  //     }
+  //     if(transaction.transactionCRDR === "Debit") {
+  //       totalDebit += Number(transaction.transactionAmount);
+  //     } else {
+  //       totalCredit += Number(transaction.transactionAmount);
+  //     }
+  //   });
 
-    this.setState({totalDebit, totalCredit, decimalPlaces});
-  }
+  //   this.setState({totalDebit, totalCredit, decimalPlaces});
+  // }
 
   componentDidMount() {
     this.loadRelatedTransactionsDetails(this.props.match.params.id);
@@ -80,13 +82,15 @@ class RelatedTransactionDetails extends Component {
                 <Form.Label>Total Credit</Form.Label>
                 <Form.Control type="input"
                 name="totalCredit" readOnly
-                value={amountFormatter(this.state.totalCredit, this.state.decimalPlaces)}/>
+                // value={amountFormatter(this.state.totalCredit, this.state.decimalPlaces)}/>
+                value={this.state.totalCredit} />
               </Form.Group>
               <Form.Group as={Col} sm="6" controlId="totalDebit">
                 <Form.Label>Total Debit</Form.Label>
                 <Form.Control type="input" 
                 name="totalDebit" readOnly
-                value={amountFormatter(this.state.totalDebit, this.state.decimalPlaces)}/>
+                //value={amountFormatter(this.state.totalDebit, this.state.decimalPlaces)}/>
+                value={this.state.totalDebit} />
               </Form.Group>
             </Form.Row>
           </Form>

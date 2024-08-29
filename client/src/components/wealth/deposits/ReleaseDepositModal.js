@@ -8,12 +8,12 @@ import 'rc-datepicker/lib/style.css';
 import ModalContainer from '../../common/ModalContainer';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
 import DepositRequest from '../../../axios/DepositRequest';
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 const initialState = {
   reference: '',
   account: '',
-  amount: 0,
+  amount: '0',
   currency: '',
   releaseDate: '',
   releaseTransType: '',
@@ -35,7 +35,7 @@ class ReleaseDepositModal extends Component {
       this.setState({
         reference: deposit.reference,
         account: deposit.accountNumber,
-        amount: deposit.amount,
+        amount: deposit.amountFormatted,
         currency: deposit.currencyCode,
         decimalPlaces: deposit.currencyDecimalPlace,
       });
@@ -73,7 +73,8 @@ class ReleaseDepositModal extends Component {
             <Form.Label>Deposit Amount</Form.Label>
             <InputGroup>
               <Form.Control type="input" name="amount"
-                value={amountFormatter(this.state.amount, this.state.decimalPlaces)}
+                // value={amountFormatter(this.state.amount, this.state.decimalPlaces)}
+                value={this.state.amount}
                 readOnly/>
               <InputGroup.Prepend>
                 <InputGroup.Text id="inputGroupPrepend">{this.state.currency}</InputGroup.Text>

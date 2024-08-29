@@ -1,28 +1,17 @@
 const AccountRepo = require('../wealth/accounts/accountRepo');
-const CurrencyRepo = require('../currencies/currencyRepo');
-const AppParametersRepo = require('../appSettings/appParametersRepo');
-const AppParametersConstants = require('../appSettings/appParametersConstants');
 const DepositRepo = require('../wealth/deposits/depositRepo');
 const CardRepo = require('../cards/cardRepo');
 const DebtorRepo = require('../debtors/debtorRepo');
-const Exception = require('../features/exception');
 const AmountHelper = require('../helper/AmountHelper');
 
 class HomeBusiness {
 
-    async getTotals() {
-
-        const baseCurrency = await AppParametersRepo.getAppParameterValue(
-            AppParametersConstants.BASE_CURRENCY);
-        if(!baseCurrency) throw new Exception('APP_PARAM_ERROR');
-        
-        const baseCurrencyObj = await CurrencyRepo.getCurrency(baseCurrency);
-        if(!baseCurrencyObj) throw new Exception('CURR_INV_BASE');
+    async getTotals({baseCurrency}) {
 
         let accountsAggregate = await AccountRepo.getAccountsTotalByCurrency();
         accountsAggregate = accountsAggregate.map( aggregate => {
             const equivalentBalance = Number(aggregate.dataValues.totalBalance * 
-                aggregate.currency.currencyRateAgainstBase).toFixed(baseCurrencyObj.currencyDecimalPlace)
+                aggregate.currency.currencyRateAgainstBase).toFixed(baseCurrency.currencyDecimalPlace)
             return {
                 currency: aggregate.accountCurrency,
                 totalBalance: Number(aggregate.dataValues.totalBalance)
@@ -32,15 +21,15 @@ class HomeBusiness {
                 totalCount: aggregate.dataValues.totalCount,
                 equivalentBalance,
                 formattedEquivalentBalance: AmountHelper.formatAmount(equivalentBalance, 
-                    baseCurrencyObj.currencyDecimalPlace),
-                equivalentCurrency: baseCurrencyObj.currencyCode
+                    baseCurrency.currencyDecimalPlace),
+                equivalentCurrency: baseCurrency.currencyCode
             }
         });
 
         let depositsAggregate = await DepositRepo.getDepositsTotalByCurrency();
         depositsAggregate = depositsAggregate.map( aggregate => {
             const equivalentBalance = Number(aggregate.dataValues.totalBalance * 
-                aggregate.currency.currencyRateAgainstBase).toFixed(baseCurrencyObj.currencyDecimalPlace)
+                aggregate.currency.currencyRateAgainstBase).toFixed(baseCurrency.currencyDecimalPlace)
             return {
                 currency: aggregate.currencyCode,
                 totalBalance: Number(aggregate.dataValues.totalBalance)
@@ -50,15 +39,15 @@ class HomeBusiness {
                 totalCount: aggregate.dataValues.totalCount,
                 equivalentBalance,
                 formattedEquivalentBalance: AmountHelper.formatAmount(equivalentBalance, 
-                    baseCurrencyObj.currencyDecimalPlace),
-                equivalentCurrency: baseCurrencyObj.currencyCode
+                    baseCurrency.currencyDecimalPlace),
+                equivalentCurrency: baseCurrency.currencyCode
             }
         });
 
         let cardsAggregate = await CardRepo.getCardsTotalByCurrency();
         cardsAggregate = cardsAggregate.map( aggregate => {
             const equivalentBalance = Number(aggregate.dataValues.totalBalance * 
-                aggregate.currency.currencyRateAgainstBase).toFixed(baseCurrencyObj.currencyDecimalPlace)
+                aggregate.currency.currencyRateAgainstBase).toFixed(baseCurrency.currencyDecimalPlace)
             return {
                 currency: aggregate.cardCurrency,
                 totalBalance: Number(aggregate.dataValues.totalBalance)
@@ -68,15 +57,15 @@ class HomeBusiness {
                 totalCount: aggregate.dataValues.totalCount,
                 equivalentBalance,
                 formattedEquivalentBalance: AmountHelper.formatAmount(equivalentBalance, 
-                    baseCurrencyObj.currencyDecimalPlace),
-                equivalentCurrency: baseCurrencyObj.currencyCode
+                    baseCurrency.currencyDecimalPlace),
+                equivalentCurrency: baseCurrency.currencyCode
             }
         });
 
         let debtorsAggregate = await DebtorRepo.getDebtorsTotalByCurrency();
         debtorsAggregate = debtorsAggregate.map( aggregate => {
             const equivalentBalance = Number(aggregate.dataValues.totalBalance * 
-                aggregate.currency.currencyRateAgainstBase).toFixed(baseCurrencyObj.currencyDecimalPlace)
+                aggregate.currency.currencyRateAgainstBase).toFixed(baseCurrency.currencyDecimalPlace)
             return {
                 currency: aggregate.debtCurrency,
                 totalBalance: Number(aggregate.dataValues.totalBalance)
@@ -86,8 +75,8 @@ class HomeBusiness {
                 totalCount: aggregate.dataValues.totalCount,
                 equivalentBalance,
                 formattedEquivalentBalance: AmountHelper.formatAmount(equivalentBalance, 
-                    baseCurrencyObj.currencyDecimalPlace),
-                equivalentCurrency: baseCurrencyObj.currencyCode
+                    baseCurrency.currencyDecimalPlace),
+                equivalentCurrency: baseCurrency.currencyCode
             }
         });
 
@@ -105,28 +94,28 @@ class HomeBusiness {
 
         return {
             profile: {
-                sum: AmountHelper.formatAmount(profileSum, baseCurrencyObj.currencyDecimalPlace),
-                sumCurrency: baseCurrencyObj.currencyCode
+                sum: AmountHelper.formatAmount(profileSum, baseCurrency.currencyDecimalPlace),
+                sumCurrency: baseCurrency.currencyCode
             },
             accounts: {
                 aggregate: accountsAggregate,
-                sum: AmountHelper.formatAmount(accountsSum, baseCurrencyObj.currencyDecimalPlace),
-                sumCurrency: baseCurrencyObj.currencyCode
+                sum: AmountHelper.formatAmount(accountsSum, baseCurrency.currencyDecimalPlace),
+                sumCurrency: baseCurrency.currencyCode
             },
             deposits: {
                 aggregate: depositsAggregate,
-                sum: AmountHelper.formatAmount(depositsSum, baseCurrencyObj.currencyDecimalPlace),
-                sumCurrency: baseCurrencyObj.currencyCode
+                sum: AmountHelper.formatAmount(depositsSum, baseCurrency.currencyDecimalPlace),
+                sumCurrency: baseCurrency.currencyCode
             },
             cards: {
                 aggregate: cardsAggregate,
-                sum: AmountHelper.formatAmount(cardsSum, baseCurrencyObj.currencyDecimalPlace),
-                sumCurrency: baseCurrencyObj.currencyCode
+                sum: AmountHelper.formatAmount(cardsSum, baseCurrency.currencyDecimalPlace),
+                sumCurrency: baseCurrency.currencyCode
             },
             debtors: {
                 aggregate: debtorsAggregate,
-                sum: AmountHelper.formatAmount(debtorsSum, baseCurrencyObj.currencyDecimalPlace),
-                sumCurrency: baseCurrencyObj.currencyCode
+                sum: AmountHelper.formatAmount(debtorsSum, baseCurrency.currencyDecimalPlace),
+                sumCurrency: baseCurrency.currencyCode
             },
         }
     }

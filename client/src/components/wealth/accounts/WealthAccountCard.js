@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, Table, ButtonGroup, Button, Badge } from 'react-bootstrap';
 import moment from 'moment';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthAccountCard(props) {
     let {account} = props;
@@ -15,7 +15,13 @@ function WealthAccountCard(props) {
                     <tbody>
                         <tr>
                             <td>{account.accountNumber}</td>
-                            <td className="text-right"><strong>{amountFormatter(account.accountCurrentBalance, account.currencyDecimalPlace)} {account.accountCurrency}</strong></td>
+                            <td className="text-right">
+                                <strong>
+                                    {/* {amountFormatter(account.accountCurrentBalance, 
+                                    account.currencyDecimalPlace)} {account.accountCurrency} */}
+                                    {account.accountCurrentBalanceFormatted} {account.accountCurrency}
+                                </strong>
+                            </td>
                         </tr>
                     </tbody>
                 </Table>
@@ -35,12 +41,21 @@ function WealthAccountCard(props) {
                     <tbody>
                         <tr>
                             <td>Start Balance:</td>
-                            <td className="text-right">{amountFormatter(account.accountStartBalance, account.currencyDecimalPlace)} {account.accountCurrency}</td>
+                            <td className="text-right">
+                                {/* {amountFormatter(account.accountStartBalance, 
+                                    account.currencyDecimalPlace)} {account.accountCurrency} */}
+                                {account.accountStartBalanceFormatted} {account.accountCurrency}
+                            </td>
                         </tr>
                         <tr>
                             <td>Equivalent Balance:</td>
-                            <td className="text-right">{amountFormatter(account.accountCurrentBalance * account.currencyRateAgainstBase,
-                                                props.appSettings.currency.currencyDecimalPlace)} {props.appSettings.baseCurrency}</td>
+                            <td className="text-right">
+                                {/* {amountFormatter(account.accountCurrentBalance * 
+                                account.currencyRateAgainstBase,
+                                props.appSettings.currency.currencyDecimalPlace)} 
+                                {props.appSettings.baseCurrency} */}
+                                {account.accountEquivalentBalanceFormatted} {props.baseCurrency}
+                            </td>
                         </tr>
                         <tr>
                             <td>Balance Last Update:</td>
@@ -66,10 +81,11 @@ function WealthAccountCard(props) {
     );
 }
 
-const mapStateToProps = (state) => {
-	return {
-    appSettings: state.lookups.appSettings,
-	}
-}
+// const mapStateToProps = (state) => {
+// 	return {
+//     appSettings: state.lookups.appSettings,
+// 	}
+// }
 
-export default connect(mapStateToProps)(WealthAccountCard);
+// export default connect(mapStateToProps)(WealthAccountCard);
+export default WealthAccountCard;

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import {useHistory} from 'react-router';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 
 import FormContainer from '../../common/FormContainer';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
@@ -23,6 +23,8 @@ const initialState = {
 function DebtorList(props) {
     const [formData, setFormData] = useState(initialState);
     const [debtors, setDebtors] = useState([]);
+    const [formattedTotal, setFormattedTotal] = useState('0');
+    const [baseCurrency, setBaseCurrency] = useState('');
     const [modalAddShow, setModalAddShow] = useState(false);
     const [modalEdit, setModalEdit] = useState({show: false, id: 0});
     const [modalDelete, setModalDelete] = useState({show: false, id: 0});
@@ -31,7 +33,11 @@ function DebtorList(props) {
 
     const loadDebtors = () => 
         DebtorRequest.getDebtors(formData.debtorCurrency, formData.debtorStatus)
-        .then(debtors => setDebtors(debtors));
+        .then(response => {
+            setDebtors(response.debtors);
+            setFormattedTotal(response.totalDebtorBalanceFormatted);
+            setBaseCurrency(response.baseCurrency)
+        });
 
     useEffect(()=>{
         loadDebtors();
@@ -105,11 +111,14 @@ function DebtorList(props) {
             </FormContainer>
             <FormContainer>
                 {
-                    props.appSettings && props.appSettings.baseCurrency &&
-                    props.appSettings.currency &&
+                    // props.appSettings && props.appSettings.baseCurrency &&
+                    // props.appSettings.currency &&
                     <DebtorTotalBalance debtors={debtors}
-                        baseCurrency={props.appSettings.baseCurrency}
-                        decimalPlace={props.appSettings.currency.currencyDecimalPlace}/>
+                        // baseCurrency={props.appSettings.baseCurrency}
+                        // decimalPlace={props.appSettings.currency.currencyDecimalPlace}
+                        baseCurrency={baseCurrency}
+                        formattedTotal={formattedTotal}
+                    />
                 }
                 <DebtorTable debtors={debtors} 
                 onEditDebtor={handleEditDebtor}
@@ -143,10 +152,11 @@ function DebtorList(props) {
     );
 }
 
-const mapStateToProps = (state) => {
-	return {
-    appSettings: state.lookups.appSettings,
-	}
-}
+// const mapStateToProps = (state) => {
+// 	return {
+//     appSettings: state.lookups.appSettings,
+// 	}
+// }
 
-export default connect(mapStateToProps)(DebtorList);
+//export default connect(mapStateToProps)(DebtorList);
+export default DebtorList;

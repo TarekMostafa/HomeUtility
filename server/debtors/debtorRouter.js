@@ -5,7 +5,7 @@ const router = express.Router();
 const debtorBusiness = new DebtorBusiness();
 
 router.get('/', function(req, res, next) {
-    debtorBusiness.getDebtors(req.query).then( result => {
+    debtorBusiness.getDebtors(req.query, req.body).then( result => {
     res.json(result);
   }).catch( err => {
     next(err);

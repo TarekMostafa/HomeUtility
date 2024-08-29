@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Row, Col, Badge } from 'react-bootstrap';
-import amountFormatter from '../../utilities/amountFormatter';
+// import amountFormatter from '../../utilities/amountFormatter';
 
 function ExpenseHeaderCardBodyInline(props) {
 
@@ -21,22 +21,28 @@ function ExpenseHeaderCardBodyInline(props) {
             </Row>
             <Row>
                 <Col>
-                    {amountFormatter(expense.expenseOpenBalance, expense.currency.currencyDecimalPlace)}
+                    {/* {amountFormatter(expense.expenseOpenBalance, expense.currency.currencyDecimalPlace)} */}
+                    {expense.expenseOpenBalanceFormatted}
                 </Col>
                 <Col>
-                    {amountFormatter(expense.expenseTotalAccountDebit, expense.currency.currencyDecimalPlace)}
+                    {/* {amountFormatter(expense.expenseTotalAccountDebit, expense.currency.currencyDecimalPlace)} */}
+                    {expense.expenseTotalAccountDebitFormatted}
                 </Col>
                 <Col>
-                    {amountFormatter(expense.expenseAdjusments, expense.currency.currencyDecimalPlace)}
+                    {/* {amountFormatter(expense.expenseAdjusments, expense.currency.currencyDecimalPlace)} */}
+                    {expense.expenseAdjusmentsFormatted}
                 </Col>
                 <Col>
-                    {amountFormatter(expense.expenseDebits, expense.currency.currencyDecimalPlace)}
+                    {/* {amountFormatter(expense.expenseDebits, expense.currency.currencyDecimalPlace)} */}
+                    {expense.expenseDebitsFormatted}
                 </Col>
                 <Col>
-                    {amountFormatter(expense.expenseCalculatedBalance, expense.currency.currencyDecimalPlace)}
+                    {/* {amountFormatter(expense.expenseCalculatedBalance, expense.currency.currencyDecimalPlace)} */}
+                    {expense.expenseCalculatedBalanceFormatted}
                 </Col>
                 <Col>
-                    {amountFormatter(expense.expenseCloseBalance, expense.currency.currencyDecimalPlace)}
+                    {/* {amountFormatter(expense.expenseCloseBalance, expense.currency.currencyDecimalPlace)} */}
+                    {expense.expenseCloseBalanceFormatted}
                 </Col>
                 <Col>
                 </Col>

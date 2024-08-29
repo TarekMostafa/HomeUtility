@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
 
-import amountFormatter from '../../utilities/amountFormatter';
+//import amountFormatter from '../../utilities/amountFormatter';
 import cardNumberFormatter from '../../utilities/cardNumberFormatter';
 
 function CardTable (props) {
@@ -33,13 +33,16 @@ function CardTable (props) {
               <td>{cardNumberFormatter(card.cardNumber)}</td>
               <td>{card.cardCurrency}</td>
               <td className="text-right">
-                {amountFormatter(card.cardLimit, card.currencyDecimalPlace)}
+                {/* {amountFormatter(card.cardLimit, card.currencyDecimalPlace)} */}
+                {card.cardLimitFormatted}
               </td>
               <td className="text-right">
-                {amountFormatter(card.cardBalance, card.currencyDecimalPlace)}
+                {/* {amountFormatter(card.cardBalance, card.currencyDecimalPlace)} */}
+                {card.cardBalanceFormatted}
               </td>
               <td className="text-right">
-                {amountFormatter(card.cardLimit - card.cardBalance, card.currencyDecimalPlace)}
+                {/* {amountFormatter(card.cardLimit - card.cardBalance, card.currencyDecimalPlace)} */}
+                {card.cardConsumptionFormatted}
               </td>
               <td>
                 {moment(card.cardStartDate).format('DD/MM/YYYY')}

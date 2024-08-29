@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 function DebtorTable(props) {
     return (
@@ -29,7 +29,8 @@ function DebtorTable(props) {
                                 <td>{debtor.Currency}</td>
                                 <td>{debtor.Status}</td>
                                 <td className="text-right">
-                                    {amountFormatter(debtor.Balance, debtor.CurrencyDecimalPlace)}
+                                    {/* {amountFormatter(debtor.Balance, debtor.CurrencyDecimalPlace)} */}
+                                    {debtor.BalanceFormatted}
                                 </td>
                                 <td>
                                     {

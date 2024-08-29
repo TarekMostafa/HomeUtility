@@ -17,9 +17,9 @@ const initialState = {
 
 class AccountBalanceAsOfDateList extends Component {
     state = {
-        balance: 0,
+        balance: '0',
         currency: '',
-        currencyDecimalPlace: 0,
+        //currencyDecimalPlace: 0,
         returnedBalanceDate: '',
         ...initialState,
     }
@@ -55,7 +55,8 @@ class AccountBalanceAsOfDateList extends Component {
                         this.state.currency &&
                         <AccountBalanceAsOfDate balance={this.state.balance} 
                         currency={this.state.currency} balanceDate={this.state.returnedBalanceDate} 
-                        currencyDecimalPlace={this.state.currencyDecimalPlace}/>
+                        //currencyDecimalPlace={this.state.currencyDecimalPlace}/>
+                        />
                     }
                 </FormContainer>
             </React.Fragment>
@@ -84,9 +85,9 @@ class AccountBalanceAsOfDateList extends Component {
         .then( res => {
             console.log(res);
             this.setState({
-                balance: res.balance,
+                balance: res.balanceFormatted,
                 currency: res.currency,
-                currencyDecimalPlace: res.currencyDecimalPlace,
+                //currencyDecimalPlace: res.currencyDecimalPlace,
                 returnedBalanceDate: res.balanceDate
             })
         });

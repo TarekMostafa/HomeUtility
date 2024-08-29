@@ -8,6 +8,7 @@ const Exception = require('./server/features/exception');
 const Config = require('./server/config');
 const UserRepo = require('./server/auth/userRepo');
 const AppLogBusiness = require('./server/appLog/appLogBusiness');
+const BaseCurrency = require('./server/currencies/baseCurrency');
 //Routers Declarations
 const transactionRouter = require('./server/wealth/transactions/transactionRouter');
 const relatedTransactionRouter = require('./server/wealth/relatedTransactions/relatedTransactionRouter');
@@ -89,6 +90,21 @@ app.use((req, res, next) => {
   } else {
     next();
   }
+});
+//Base Currency
+app.use((req, res, next) => {
+  BaseCurrency.getBaseCurrency()
+  .then( (baseCurrency) => {
+    if(baseCurrency){
+      req.body.baseCurrency = baseCurrency;
+      next();
+    } else {
+      res.status(401).send();
+    }
+  })
+  .catch( (err) => {
+    res.status(401).send();
+  });
 });
 //Routing Modules
 app.use('/api/users', userRouter);

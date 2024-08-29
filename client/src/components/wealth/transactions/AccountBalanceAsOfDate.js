@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+//import amountFormatter from '../../../utilities/amountFormatter';
 
 function AccountBalanceAsOfDate (props) {
   return (
@@ -11,7 +11,8 @@ function AccountBalanceAsOfDate (props) {
         <Col md={{span:4, offset:4}}>
           Total Balance: <strong>
           {
-            amountFormatter(props.balance, props.currencyDecimalPlace) + ' ' + props.currency
+            //amountFormatter(props.balance, props.currencyDecimalPlace) + ' ' + props.currency
+            props.balance + ' ' + props.currency
           } </strong> as of <strong>{props.balanceDate}</strong>
         </Col>
       </Row> 
@@ -22,14 +23,14 @@ function AccountBalanceAsOfDate (props) {
 AccountBalanceAsOfDate.propTypes = {
   balance: PropTypes.string,
   currency: PropTypes.string,
-  currencyDecimalPlace: PropTypes.number,
+  //currencyDecimalPlace: PropTypes.number,
   balanceDate: PropTypes.string,
 };
 
 AccountBalanceAsOfDate.defaultProps = {
   balance: '0',
   currency: '',
-  currencyDecimalPlace: 0,
+  //currencyDecimalPlace: 0,
   balanceDate: '',
 }
 

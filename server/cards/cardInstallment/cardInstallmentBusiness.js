@@ -4,6 +4,7 @@ const Exception = require('../../features/exception');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const CardTransactionRepo = require('../cardTransaction/cardTransactionRepo');
 const Common = require('../../utilities/common');
+const AmountHelper = require('../../helper/AmountHelper');
 
 class CardInstallmentBusiness {
   async getCardsInstallments({cardId}) {
@@ -18,8 +19,12 @@ class CardInstallmentBusiness {
         cInstFirstInstDate: inst.cInstFirstInstDate,
         cInstNoOfInst: inst.cInstNoOfInst,
         cInstPrice: inst.cInstPrice,
+        cInstPriceFormatted: AmountHelper.formatAmount(inst.cInstPrice, 
+          inst.currency.currencyDecimalPlace),
         cInstNoOfPostedInst: inst.cInstNoOfPostedInst,
         cInstPosted: inst.cInstPosted,
+        cInstPostedFormatted: AmountHelper.formatAmount(inst.cInstPosted,
+          inst.currency.currencyDecimalPlace),
         cInstRelTransId: inst.cInstRelTransId,
         cInstStatus: inst.cInstStatus,
         currencyDecimalPlace: inst.currency.currencyDecimalPlace,

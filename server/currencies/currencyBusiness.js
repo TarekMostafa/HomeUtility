@@ -69,9 +69,10 @@ class Currency {
     await CurrencyRepo.addCurrency(currency);
   }
 
-  async updateCurrency({code, manualRate}) {
-    const baseCurrencyCode = await AppParametersRepo.getAppParameterValue(AppParametersConstants.BASE_CURRENCY);
-    if(!baseCurrencyCode){
+  async updateCurrency({code, manualRate, baseCurrency}) {
+    //const baseCurrencyCode = await AppParametersRepo.getAppParameterValue(AppParametersConstants.BASE_CURRENCY);
+    //if(!baseCurrencyCode){
+    if(!baseCurrency) {
       throw new Exception('CURR_INV_BASE');
     }
 
@@ -80,7 +81,8 @@ class Currency {
       throw new Exception('CURR_NOT_EXIST', code);
     }
 
-    if(baseCurrencyCode === currency.currencyCode && manualRate != 1){
+    // if(baseCurrencyCode === currency.currencyCode && manualRate != 1){
+    if(baseCurrency.currencyCode === currency.currencyCode && manualRate != 1){
       throw new Exception('CURR_INV_MANUAL_RATE');
     }
 
@@ -97,18 +99,20 @@ class Currency {
     await currency.save();
   }
 
-  async deactivateCurrency({code}) {
+  async deactivateCurrency({code, baseCurrency}) {
     let currency = await CurrencyRepo.getCurrency(code);
     if(!currency) {
       throw new Exception('CURR_NOT_EXIST', code);
     }
     // Get Base Currency
     //const appSettings = await AppSettingsRepo.getAppSettings();
-    const baseCurrencyCode = await AppParametersRepo.getAppParameterValue(AppParametersConstants.BASE_CURRENCY);
-    if(baseCurrencyCode /*appSettings.baseCurrency*/)
+    //const baseCurrencyCode = await AppParametersRepo.getAppParameterValue(AppParametersConstants.BASE_CURRENCY);
+    //if(baseCurrencyCode /*appSettings.baseCurrency*/)
+    if(baseCurrency)
     {
       //Check base currency with the passed one
-      if(/*appSettings.baseCurrency*/baseCurrencyCode === currency.currencyCode) {
+      //if(/*appSettings.baseCurrency*/baseCurrencyCode === currency.currencyCode) {
+      if(baseCurrency.currencyCode === currency.currencyCode) {
         throw new Exception('CURR_DEACT_BASE', code);
       }
     }
@@ -117,17 +121,18 @@ class Currency {
     await currency.save();
   }
 
-  async updateRates() {
+  async updateRates({baseCurrency}) {
     // Get Base Currency
     //const appSettings = await AppSettingsRepo.getAppSettings();
-    const baseCurrencyCode = await AppParametersRepo.getAppParameterValue(AppParametersConstants.BASE_CURRENCY);
-    if(/*!appSettings.baseCurrency*/!baseCurrencyCode){
+    //const baseCurrencyCode = await AppParametersRepo.getAppParameterValue(AppParametersConstants.BASE_CURRENCY);
+    //if(/*!appSettings.baseCurrency*/!baseCurrencyCode){
+    if(!baseCurrency) {
       throw new Exception('CURR_INV_BASE');
     }
-    const baseCurrency = await CurrencyRepo.getCurrency(baseCurrencyCode);
-    if(!baseCurrency){
-      throw new Exception('CURR_INV_BASE');
-    }
+    // const baseCurrency = await CurrencyRepo.getCurrency(baseCurrencyCode);
+    // if(!baseCurrency){
+    //   throw new Exception('CURR_INV_BASE');
+    // }
     //Get API Key
     const apiKey = await AppParametersRepo.getAppParameterValue(AppParametersConstants.CURRENCY_CONVERSION_API_KEY);
     if(!apiKey) {

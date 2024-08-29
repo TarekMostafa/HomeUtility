@@ -5,7 +5,7 @@ const router = express.Router();
 const appSettings = new AppSettings();
 
 router.get('/', function(req, res, next) {
-  appSettings.getAppSettings().then( result => {
+  appSettings.getAppSettings(req.body).then( result => {
     if(result.success) {
       res.json(result.payload);
     } else {

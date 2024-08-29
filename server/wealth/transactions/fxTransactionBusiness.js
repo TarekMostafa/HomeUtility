@@ -12,6 +12,7 @@ const TransactionModules = require('./transactionModules').Modules;
 const CurrencyRepo = require('../../currencies/currencyRepo');
 const TransactionRepo = require('./transactionRepo');
 const { Modules } = require('./transactionModules');
+const AmountHelper = require('../../helper/AmountHelper');
 
 const Op = Sequelize.Op;
 
@@ -173,35 +174,49 @@ class FXTransactionBusiness {
         let fxInAgainstCurrencyTotal = 0;
         let fxOutCurrencyTotal = 0;
         let fxOutAgainstCurrencyTotal = 0;
+        let fxCurrencyFromDecimalPlace = 0;
+        let fxCurrencyToDecimalPlace = 0;
+
         fxTransactions = fxTransactions.map( trans => {
             //Calculate totals
             if(trans.fxCurrencyFrom === currency) {
                 fxOutCurrencyTotal += Number(trans.fxAmountFrom);
                 fxOutAgainstCurrencyTotal += Number(trans.fxAmountTo);
+                fxCurrencyFromDecimalPlace = currencyObj.currencyDecimalPlace;
+                fxCurrencyToDecimalPlace = againstCurrencyObj.currencyDecimalPlace;
             } else {
                 fxInCurrencyTotal += Number(trans.fxAmountTo);
                 fxInAgainstCurrencyTotal += Number(trans.fxAmountFrom);
+                fxCurrencyFromDecimalPlace = againstCurrencyObj.currencyDecimalPlace;
+                fxCurrencyToDecimalPlace = currencyObj.currencyDecimalPlace;
             }
+
             return {
                 fxId: trans.fxId,
                 fxAmountFrom: trans.fxAmountFrom,
+                fxAmountFromFormatted: 
+                    AmountHelper.formatAmount(trans.fxAmountFrom, fxCurrencyFromDecimalPlace),
                 fxAmountTo: trans.fxAmountTo,
+                fxAmountToFormatted: 
+                    AmountHelper.formatAmount(trans.fxAmountTo, fxCurrencyToDecimalPlace),
                 fxPostingDateFrom: trans.fxPostingDateFrom,
                 fxRate: trans.fxRate,
                 fxCurrencyFrom: trans.fxCurrencyFrom,
-                fxCurrencyFromDecimalPlace: 
-                    (
-                        trans.fxCurrencyFrom === currency? 
-                        currencyObj.currencyDecimalPlace:
-                        againstCurrencyObj.currencyDecimalPlace
-                    ),
+                // fxCurrencyFromDecimalPlace: 
+                //     (
+                //         trans.fxCurrencyFrom === currency? 
+                //         currencyObj.currencyDecimalPlace:
+                //         againstCurrencyObj.currencyDecimalPlace
+                //     ),
+                fxCurrencyFromDecimalPlace,
                 fxCurrencyTo: trans.fxCurrencyTo,
-                fxCurrencyToDecimalPlace: 
-                (
-                    trans.fxCurrencyTo === currency? 
-                    currencyObj.currencyDecimalPlace:
-                    againstCurrencyObj.currencyDecimalPlace
-                ),
+                // fxCurrencyToDecimalPlace: 
+                // (
+                //     trans.fxCurrencyTo === currency? 
+                //     currencyObj.currencyDecimalPlace:
+                //     againstCurrencyObj.currencyDecimalPlace
+                // ),
+                fxCurrencyToDecimalPlace,
                 fxPostingDateTo: trans.fxPostingDateTo,
                 accountFrom: 
                     `${trans.accountFrom.accountNumber} (${trans.accountFrom.bank.bankCode})`,
@@ -213,14 +228,18 @@ class FXTransactionBusiness {
             currency,
             againstCurrency,
             fxTransactions,
-            fxInCurrencyTotal,
-            fxInAgainstCurrencyTotal,
-            fxOutCurrencyTotal,
-            fxOutAgainstCurrencyTotal,
+            fxInCurrencyTotal: 
+                AmountHelper.formatAmount(fxInCurrencyTotal, currencyObj.currencyDecimalPlace),
+            fxInAgainstCurrencyTotal: 
+                AmountHelper.formatAmount(fxInAgainstCurrencyTotal, againstCurrencyObj.currencyDecimalPlace),
+            fxOutCurrencyTotal: 
+                AmountHelper.formatAmount(fxOutCurrencyTotal, currencyObj.currencyDecimalPlace),
+            fxOutAgainstCurrencyTotal:
+                AmountHelper.formatAmount(fxOutAgainstCurrencyTotal, againstCurrencyObj.currencyDecimalPlace),
             fxInAverage: fxInCurrencyTotal===0?0:(fxInAgainstCurrencyTotal/fxInCurrencyTotal),
             fxOutAverage: fxOutCurrencyTotal===0?0:(fxOutAgainstCurrencyTotal/fxOutCurrencyTotal),
-            currencyDecimalPlace: currencyObj.currencyDecimalPlace,
-            againstCurrencyDecimalPlace: againstCurrencyObj.currencyDecimalPlace
+            //currencyDecimalPlace: currencyObj.currencyDecimalPlace,
+            //againstCurrencyDecimalPlace: againstCurrencyObj.currencyDecimalPlace
         };
     }
 

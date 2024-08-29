@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Dropdown, DropdownButton, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import moment from 'moment';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 import cardNumberFormatter from '../../../utilities/cardNumberFormatter';
 
 function CardTransactionTable (props) {
@@ -43,7 +43,8 @@ function CardTransactionTable (props) {
                 </OverlayTrigger>
               </td>
               <td className="text-right">
-                {amountFormatter(trans.cardTransAmount, trans.currencyDecimalPlace)}
+                {/* {amountFormatter(trans.cardTransAmount, trans.currencyDecimalPlace)} */}
+                {trans.cardTransAmountFormatted}
               </td>
               <td>{trans.cardTransCurrency}</td>
               <td>
@@ -61,7 +62,8 @@ function CardTransactionTable (props) {
               </td>
               <td>{trans.cardTransPayForOthers?'YES':'NO'}</td>
               <td className="text-right">
-                {amountFormatter(trans.cardTransBillAmount, trans.cardCurrencyDecimalPlace)}
+                {/* {amountFormatter(trans.cardTransBillAmount, trans.cardCurrencyDecimalPlace)} */}
+                {trans.cardTransBillAmountFormatted}
               </td>
               <td>
                 {

@@ -12,7 +12,7 @@ function WealthAccountsContainer(props){
                         // <Col key={index} md="4" lg="3"><WealthAccountCard account={account} onEditAccount={props.onEditAccount}
                         //     onDeleteAccount={props.onDeleteAccount}/></Col> 
                         <WealthAccountCard key={account.accountId} account={account} onEditAccount={props.onEditAccount}
-                             onDeleteAccount={props.onDeleteAccount}/>
+                             onDeleteAccount={props.onDeleteAccount} {...props}/>
                     );
                 })
             }

@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+//import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthAccountTotalBalance (props) {
   return (
@@ -21,7 +21,7 @@ function WealthAccountTotalBalance (props) {
     // </Card>
     <Alert variant='primary'>
       <Row>
-        <Col md={{span:3, offset:3}}>
+        {/* <Col md={{span:3, offset:3}}>
           Total Current Balance: <strong>
           {
             props.accounts && amountFormatter(props.accounts.reduce( (result, account) => {
@@ -29,11 +29,18 @@ function WealthAccountTotalBalance (props) {
               return result;
             }, 0), props.decimalPlace) + ' ' + props.baseCurrency
           } </strong>
+        </Col> */}
+        <Col md={{span:3, offset:3}}>
+        Total Current Balance: <strong>
+          {
+            props.accounts && props.formattedTotal + ' ' + props.baseCurrency
+          }
+        </strong>
         </Col>
         <Col md="3">
           Total Number of Accounts: <strong>
           {
-            props.accounts && props.accounts.reduce( (result, account) => {
+            props.accounts && props.accounts.reduce( result => {
               result += 1
               return result;
             }, 0)
@@ -47,13 +54,15 @@ function WealthAccountTotalBalance (props) {
 WealthAccountTotalBalance.propTypes = {
   accounts: PropTypes.arrayOf(PropTypes.object),
   baseCurrency: PropTypes.string,
-  decimalPlace: PropTypes.number,
+  formattedTotal: PropTypes.string,
+  //decimalPlace: PropTypes.number,
 };
 
 WealthAccountTotalBalance.defaultProps = {
   accounts: [],
   baseCurrency: '',
-  decimalPlace: 2,
+  formattedTotal: '0',
+  //decimalPlace: 2,
 }
 
 export default WealthAccountTotalBalance;

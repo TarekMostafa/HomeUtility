@@ -39,18 +39,18 @@ function ExpenseDetailList(props) {
         loadData(props.match.params.id);
     },[])
 
-    let diffAmount = 0;
-    if(expense) {
-        diffAmount = expense.expenseCurrentAccountsDebit - expense.expenseTotalAccountDebit;
-    }
+    // let diffAmount = 0;
+    // if(expense) {
+    //     diffAmount = expense.expenseCurrentAccountsDebit - expense.expenseTotalAccountDebit;
+    // }
 
     return (
         <FormContainer title="Expense Details">
         {
             expense && <React.Fragment>
-                {diffAmount !== 0 &&
+                {expense.expenseDifferenceAccountDebits !== 0 &&
                 <ExpenseTotalAccountDebitDifference 
-                amount={diffAmount}
+                amount={expense.expenseDifferenceAccountDebitsFormatted}
                 decimalPlace={expense.currency.currencyDecimalPlace}
                 currency={expense.expenseCurrency} 
                 onApply={expense.expenseStatus==='CLOSED'?null:()=>setModalApplyShow(true)}/>

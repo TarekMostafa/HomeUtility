@@ -2,6 +2,7 @@ const sequelize = require('../../db/dbConnection').getSequelize();
 const ExpenseDetailRepo = require('./expenseDetailRepo');
 const ExpenseRepo = require('../expenseHeader/expenseRepo');
 const Exception = require('../../features/exception');
+const AmountHelper = require('../../helper/AmountHelper');
 
 class expenseDetailBusiness {
   async getExpensesDetails({description, includeDescription, expDateFrom, expDateTo,
@@ -14,6 +15,8 @@ class expenseDetailBusiness {
         expenseId: expDet.expenseId,
         expenseDay: expDet.expenseDay,
         expenseAmount: expDet.expenseAmount,
+        expenseAmountFormatted: AmountHelper.formatAmount(expDet.expenseAmount, 
+          expDet.currency.currencyDecimalPlace),
         expenseCurrency: expDet.expenseCurrency,
         expenseDescription: expDet.expenseDescription,
         expenseTypeId: expDet.expenseTypeId,
@@ -52,6 +55,8 @@ class expenseDetailBusiness {
         expenseId: expDet.expenseId,
         expenseDay: expDet.expenseDay,
         expenseAmount: expDet.expenseAmount,
+        expenseAmountFormatted: AmountHelper.formatAmount(expDet.expenseAmount, 
+          expDet.currency.currencyDecimalPlace),
         expenseCurrency: expDet.expenseCurrency,
         expenseDescription: expDet.expenseDescription,
         expenseTypeId: expDet.expenseTypeId,

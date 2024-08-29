@@ -3,6 +3,7 @@ const Exception = require('../features/exception');
 const sequelize = require('../db/dbConnection').getSequelize();
 const CardTransactionRepo = require('./cardTransaction/cardTransactionRepo');
 const Common = require('../utilities/common');
+const AmountHelper = require('../helper/AmountHelper');
 
 const CARD_STATUS = {
   ACTIVE: 'ACTIVE',
@@ -11,13 +12,21 @@ const CARD_STATUS = {
 
 class CardBusiness {
   async getCards({bank, currency, status}) {
+
     let cards = await CardRepo.getCards({bank, currency, status});
     cards = cards.map(card => {
       return  {
         cardId: card.cardId,
         cardNumber: card.cardNumber,
         cardLimit: card.cardLimit,
+        cardLimitFormatted: AmountHelper.formatAmount(card.cardLimit, 
+          card.currency.currencyDecimalPlace),
         cardBalance: card.cardBalance,
+        cardBalanceFormatted: AmountHelper.formatAmount(card.cardBalance,
+          card.currency.currencyDecimalPlace),
+        cardConsumption: (card.cardLimit - card.cardBalance),
+        cardConsumptionFormatted: AmountHelper.formatAmount((card.cardLimit - card.cardBalance),
+          card.currency.currencyDecimalPlace),
         cardStatus: card.cardStatus,
         cardBank: card.cardBank,
         cardCurrency: card.cardCurrency,

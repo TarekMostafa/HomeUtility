@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
-import { connect } from 'react-redux';
+//import { connect } from 'react-redux';
 
 import WealthAccountsContainer from './WealthAccountsContainer';
 import WealthAccountTable from './WealthAccountTable';
@@ -28,6 +28,8 @@ const initialState = {
 class WealthAccountList extends Component {
   state = {
     accounts: [],
+    formattedTotal: '0',
+    baseCurrency: '',
     modalAddShow: false,
     modalEditShow: false,
     modalDeleteShow: false,
@@ -40,9 +42,11 @@ class WealthAccountList extends Component {
     AccountRequest.getAccounts(this.state.selectedBanks.map(bank=>bank.key), 
     this.state.selectedStatuses.map(sts=>sts.key),
     this.state.selectedCurrencies.map(ccy=>ccy.key))
-    .then( (accounts) => {
+    .then( (response) => {
       this.setState({
-        accounts
+        accounts: response.accounts,
+        formattedTotal: response.totalCurrentBalanceFormatted,
+        baseCurrency: response.baseCurrencyCode
       })
     })
   }
@@ -115,16 +119,18 @@ class WealthAccountList extends Component {
         </FormContainer>
         <FormContainer>
           {
-            this.props.appSettings && this.props.appSettings.baseCurrency &&
-            this.props.appSettings.currency &&
+            // this.props.appSettings && this.props.appSettings.baseCurrency &&
+            // this.props.appSettings.currency &&
             <WealthAccountTotalBalance accounts={this.state.accounts}
-              baseCurrency={this.props.appSettings.baseCurrency}
-              decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>
+              // baseCurrency={this.props.appSettings.baseCurrency}
+              // decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>
+              baseCurrency={this.state.baseCurrency}
+              formattedTotal={this.state.formattedTotal}/>
           }  
           {
             this.state.view === 'Card' ? 
             <WealthAccountsContainer accounts={this.state.accounts} onEditAccount={this.handleEditAccount}
-              onDeleteAccount={this.handleDeleteAccount}/> :
+              onDeleteAccount={this.handleDeleteAccount} baseCurrency={this.state.baseCurrency}/> :
             <WealthAccountTable accounts={this.state.accounts} onEditAccount={this.handleEditAccount}
             onDeleteAccount={this.handleDeleteAccount}/>
           }
@@ -225,10 +231,11 @@ class WealthAccountList extends Component {
 
 }
 
-const mapStateToProps = (state) => {
-	return {
-    appSettings: state.lookups.appSettings,
-	}
-}
+// const mapStateToProps = (state) => {
+// 	return {
+//     appSettings: state.lookups.appSettings,
+// 	}
+// }
 
-export default connect(mapStateToProps)(WealthAccountList);
+//export default connect(mapStateToProps)(WealthAccountList);
+export default WealthAccountList;

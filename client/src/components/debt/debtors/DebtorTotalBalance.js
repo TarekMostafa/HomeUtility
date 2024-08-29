@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 function DebtorTotalBalance (props) {
   return (
@@ -11,16 +11,17 @@ function DebtorTotalBalance (props) {
         <Col md={{span:3, offset:3}}>
           Total Debtors Balance: <strong>
           {
-            props.debtors && amountFormatter(props.debtors.reduce( (result, debtor) => {
-              result += debtor.Balance * debtor.currencyRateAgainstBase
-              return result;
-            }, 0), props.decimalPlace) + ' ' + props.baseCurrency
+            // props.debtors && amountFormatter(props.debtors.reduce( (result, debtor) => {
+            //   result += debtor.Balance * debtor.currencyRateAgainstBase
+            //   return result;
+            // }, 0), props.decimalPlace) + ' ' + props.baseCurrency
+            props.debtors && props.formattedTotal + ' ' + props.baseCurrency
           } </strong>
         </Col>
         <Col md="3">
           Total Number of Debtors: <strong>
           {
-            props.debtors && props.debtors.reduce( (result, debtor) => {
+            props.debtors && props.debtors.reduce( result => {
               result += 1
               return result;
             }, 0)
@@ -34,13 +35,15 @@ function DebtorTotalBalance (props) {
 DebtorTotalBalance.propTypes = {
     debtors: PropTypes.arrayOf(PropTypes.object),
     baseCurrency: PropTypes.string,
-    decimalPlace: PropTypes.number,
+    formattedTotal: PropTypes.string,
+    //decimalPlace: PropTypes.number,
 };
 
 DebtorTotalBalance.defaultProps = {
     debtors: [],
     baseCurrency: '',
-    decimalPlace: 2,
+    formattedTotal: '0',
+    // decimalPlace: 2,
 }
 
 export default DebtorTotalBalance;

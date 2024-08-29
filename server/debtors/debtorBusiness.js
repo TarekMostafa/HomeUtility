@@ -4,6 +4,7 @@ const sequelize = require('../db/dbConnection').getSequelize();
 const RelatedTransactionRepo = require('../wealth/relatedTransactions/relatedTransactionRepo');
 const AppParametersRepo = require('../appSettings/appParametersRepo');
 const AppParametersConstants = require('../appSettings/appParametersConstants');
+const AmountHelper = require('../helper/AmountHelper');
 
 const DEBTOR_STATUS = {
   ACTIVE: 'ACTIVE',
@@ -11,7 +12,7 @@ const DEBTOR_STATUS = {
 }
 
 class DebtorBusiness {
-  async getDebtors({currency, status}) {
+  async getDebtors({currency, status}, {baseCurrency}) {
     //Get param value
     let isAutomatic = true;
     const automaticOrManual = await AppParametersRepo.getAppParameterValue(
@@ -23,21 +24,38 @@ class DebtorBusiness {
 
     let debtors = await DebtorRepo.getDebtors({currency, status});
     debtors = debtors.map(debtor => {
+
+      const currencyRateAgainstBase = (isAutomatic? debtor.currency.currencyRateAgainstBase
+        :debtor.currency.currencyManualRateAgainstBase);
+
       return  {
         Id: debtor.debtId,
         Name: debtor.debtName,
         Currency: debtor.debtCurrency,
         Balance: debtor.debtBalance,
+        BalanceFormatted: AmountHelper.formatAmount(debtor.debtBalance, 
+          debtor.currency.currencyDecimalPlace),
         Status: debtor.debtStatus,
         Notes: debtor.debtNotes,
         LastBalanceUpdate: debtor.debtLastBalanceUpdate,
         CurrencyDecimalPlace: debtor.currency.currencyDecimalPlace,
         RelId: debtor.debtRelId,
-        currencyRateAgainstBase: (isAutomatic? debtor.currency.currencyRateAgainstBase
-          :debtor.currency.currencyManualRateAgainstBase),
+        // currencyRateAgainstBase: (isAutomatic? debtor.currency.currencyRateAgainstBase
+        //   :debtor.currency.currencyManualRateAgainstBase),
+        currencyRateAgainstBase,
       }
     });
-    return debtors;
+
+    const totalDebtorBalance = debtors.reduce( 
+      (acc, obj) => Number(acc)+Number(obj.Balance * obj.currencyRateAgainstBase), 0);
+      
+    return {
+      debtors,
+      totalDebtorBalance,
+      totalDebtorBalanceFormatted: AmountHelper.formatAmount(totalDebtorBalance, 
+        baseCurrency.currencyDecimalPlace),
+      baseCurrencyCode: baseCurrency.currencyCode
+    };
   }
 
   async getDebtor(id) {
@@ -47,6 +65,8 @@ class DebtorBusiness {
         Name: debtor.debtName,
         Currency: debtor.debtCurrency,
         Balance: debtor.debtBalance,
+        BalanceFormatted: AmountHelper.formatAmount(debtor.debtBalance, 
+          debtor.currency.currencyDecimalPlace),
         Status: debtor.debtStatus,
         Notes: debtor.debtNotes,
         LastBalanceUpdate: debtor.debtLastBalanceUpdate,

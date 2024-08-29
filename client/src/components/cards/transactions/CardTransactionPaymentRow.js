@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { Form } from 'react-bootstrap';
 import moment from 'moment';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 function CardTransactionPaymentRow (props) {
 
@@ -18,7 +18,8 @@ function CardTransactionPaymentRow (props) {
         <tr key={trans.cardTransId}>
             <td>{props.index+1}</td>
             <td className="text-right">
-                {amountFormatter(trans.cardTransAmount, trans.currencyDecimalPlace)}
+                {/* {amountFormatter(trans.cardTransAmount, trans.currencyDecimalPlace)} */}
+                {trans.cardTransAmountFormatted}
             </td>
             <td>{trans.cardTransCurrency}</td>
             <td>
@@ -26,7 +27,8 @@ function CardTransactionPaymentRow (props) {
             </td>
             <td>{trans.cardTransDesc}</td>
             <td className="text-right">
-                {amountFormatter(trans.cardTransBillAmount, trans.cardCurrencyDecimalPlace)}
+                {/* {amountFormatter(trans.cardTransBillAmount, trans.cardCurrencyDecimalPlace)} */}
+                {trans.cardTransBillAmountFormatted}
             </td>
             <td>{trans.cardTransIsInstallment?'YES':'NO'}</td>
             <td>{trans.cardTransId}</td>

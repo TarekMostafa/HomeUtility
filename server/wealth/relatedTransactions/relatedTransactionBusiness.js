@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 //const APIResponse = require('../../utilities/apiResponse');
 const RelatedTransactionRepo = require('./RelatedTransactionRepo');
 const Common = require('../../utilities/common');
+const AmountHelper = require('../../helper/AmountHelper');
 
 const Op = Sequelize.Op;
 
@@ -58,11 +59,29 @@ class RelatedTransaction {
       relatedTransactionDesc: relatedTransaction.relatedTransactionDesc,
     };
 
+    let debitCurrencyDecimalPlace = 0;
+    let creditCurrencyDecimalPlace = 0;
+    let debitCurrencyCode = '';
+    let creditCurrencyCode = '';
+
     transactions = transactions.map( trans => {
+      //Get currency details for debits
+      if(!debitCurrencyCode && trans.transactionCRDR === 'Debit'){
+        debitCurrencyCode = trans.account.accountCurrency;
+        debitCurrencyDecimalPlace = trans.account.currency.currencyDecimalPlace;
+      }
+      //Get currency details for credits
+      if(!creditCurrencyCode && trans.transactionCRDR === 'Credit'){
+        creditCurrencyCode = trans.account.accountCurrency;
+        creditCurrencyDecimalPlace = trans.account.currency.currencyDecimalPlace;
+      }
+
       return {
         transactionId: trans.transactionId,
         transactionPostingDate: trans.transactionPostingDate,
         transactionAmount: trans.transactionAmount,
+        transactionAmountFormatted: 
+          AmountHelper.formatAmount(trans.transactionAmount, trans.account.currency.currencyDecimalPlace),
         transactionCRDR: trans.transactionCRDR,
         transactionNarrative: trans.transactionNarrative,
         transactionRelatedTransactionId: trans.transactionRelatedTransactionId,
@@ -75,9 +94,30 @@ class RelatedTransaction {
       }
     });
 
+    //Calculate total for debits
+    const totalDebit = transactions.reduce( 
+      (acc, trans) => {
+        if(trans.transactionCRDR === 'Debit')
+          return Number(acc)+Number(trans.transactionAmount);
+        else
+          return Number(acc);
+      }, 0);
+    //Calculate total for credits
+    const totalCredit = transactions.reduce( 
+      (acc, trans) => {
+        if(trans.transactionCRDR === 'Credit')
+          return Number(acc)+Number(trans.transactionAmount);
+        else
+          return Number(acc);
+      }, 0);
+
     relatedTransactionsByDetails = {
       relatedTransaction,
-      transactions
+      transactions,
+      totalDebitFormatted: AmountHelper.formatAmount(totalDebit, debitCurrencyDecimalPlace) + 
+        ' ' + debitCurrencyCode,
+      totalCreditFormatted: AmountHelper.formatAmount(totalCredit, creditCurrencyDecimalPlace) +
+        ' ' + creditCurrencyCode,
     }
 
     return relatedTransactionsByDetails;

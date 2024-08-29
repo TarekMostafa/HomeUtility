@@ -1,9 +1,9 @@
 import React from 'react';
 import { Table, Button, ButtonGroup } from 'react-bootstrap';
 import moment from 'moment';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 function WealthAccountTable (props) {
   return (
@@ -31,14 +31,17 @@ function WealthAccountTable (props) {
               <td>{account.accountNumber}</td>
               <td>{account.accountCurrency}</td>
               <td className="text-right">
-                {amountFormatter(account.accountStartBalance, account.currencyDecimalPlace)}
+                {/* {amountFormatter(account.accountStartBalance, account.currencyDecimalPlace)} */}
+                {account.accountStartBalanceFormatted}
               </td>
               <td className="text-right">
-                {amountFormatter(account.accountCurrentBalance, account.currencyDecimalPlace)}
+                {/* {amountFormatter(account.accountCurrentBalance, account.currencyDecimalPlace)} */}
+                {account.accountCurrentBalanceFormatted}
               </td>
               <td className="text-right">
-                {amountFormatter(account.accountCurrentBalance * account.currencyRateAgainstBase,
-                props.appSettings.currency.currencyDecimalPlace)}
+                {/* {amountFormatter(account.accountCurrentBalance * account.currencyRateAgainstBase,
+                props.appSettings.currency.currencyDecimalPlace)} */}
+                {account.accountEquivalentBalanceFormatted}
               </td>
               <td>{account.accountStatus}</td>
               <td>
@@ -64,10 +67,11 @@ function WealthAccountTable (props) {
   )
 }
 
-const mapStateToProps = (state) => {
-	return {
-    appSettings: state.lookups.appSettings,
-	}
-}
+// const mapStateToProps = (state) => {
+// 	return {
+//     appSettings: state.lookups.appSettings,
+// 	}
+// }
 
-export default connect(mapStateToProps)(WealthAccountTable);
+// export default connect(mapStateToProps)(WealthAccountTable);
+export default WealthAccountTable;

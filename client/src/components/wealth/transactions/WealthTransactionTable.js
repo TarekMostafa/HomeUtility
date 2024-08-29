@@ -3,7 +3,7 @@ import { Table, OverlayTrigger, Tooltip, DropdownButton,
   Dropdown, Button, Badge } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 // function IsModuleAllowed(module) {
 //   return [null,'DBT'].includes(module);
@@ -44,7 +44,8 @@ function WealthTransactionTable (props) {
               <td>{transaction.accountNumber}</td>
               <td>{moment(transaction.transactionPostingDate).format('DD/MM/YYYY')}</td>
               <td className="text-right">
-                {amountFormatter(transaction.transactionAmount, transaction.currencyDecimalPlace)}
+                {/* {amountFormatter(transaction.transactionAmount, transaction.currencyDecimalPlace)} */}
+                {transaction.transactionAmountFormatted}
               </td>
               <td>{transaction.accountCurrency}</td>
               <td>{transaction.transactionCRDR}</td>

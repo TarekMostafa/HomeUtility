@@ -5,7 +5,7 @@ const router = express.Router();
 const homeBusiness = new HomeBusiness();
 
 router.get('/', function(req, res, next) {
-    homeBusiness.getTotals().then( result => {
+    homeBusiness.getTotals(req.body).then( result => {
     res.json(result);
   }).catch( err => {
     next(err);

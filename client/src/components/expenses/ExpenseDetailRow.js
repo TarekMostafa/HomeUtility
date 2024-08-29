@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import ExpenseTypesDropDown from './expensetypes/ExpenseTypesDropDown';
 import EditDeleteButton from '../common/EditDeleteButton';
-import amountFormatter from '../../utilities/amountFormatter';
+// import amountFormatter from '../../utilities/amountFormatter';
 import ExpenseDetailRequest from '../../axios/ExpenseDetailRequest';
 
 const initialState = {
@@ -119,7 +119,8 @@ function ExpenseDetailRow(props) {
                     elem.expenseDay)).format('DD/MM/YYYY')}
             </td>
             <td className="text-right" style={getCellColor(elem.expenseAmount)}>
-                {amountFormatter(elem.expenseAmount, elem.currency.currencyDecimalPlace)}
+                {/* {amountFormatter(elem.expenseAmount, elem.currency.currencyDecimalPlace)} */}
+                {elem.expenseAmountFormatted}
             </td>
             <td>{elem.expenseCurrency}</td>
             <td>

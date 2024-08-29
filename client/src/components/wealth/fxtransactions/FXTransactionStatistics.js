@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+//import amountFormatter from '../../../utilities/amountFormatter';
 
 function FXTransactionStatistics (props) {
   return (
@@ -11,13 +11,15 @@ function FXTransactionStatistics (props) {
         <Col md="3">
         {`${props.currency} FX In:`} <strong>
           {
-            amountFormatter(props.fxInCurrencyTotal, props.currencyDecimalPlace)
+            // amountFormatter(props.fxInCurrencyTotal, props.currencyDecimalPlace)
+            props.fxInCurrencyTotal
           } </strong>
         </Col>
         <Col md="3">
         {`${props.againstCurrency} FX In:`} <strong>
           {
-            amountFormatter(props.fxInAgainstCurrencyTotal, props.againstCurrencyDecimalPlace)
+            // amountFormatter(props.fxInAgainstCurrencyTotal, props.againstCurrencyDecimalPlace)
+            props.fxInAgainstCurrencyTotal
           } </strong>
         </Col>
         <Col md="3">
@@ -28,13 +30,15 @@ function FXTransactionStatistics (props) {
         <Col md="3">
         {`${props.currency} FX Out:`} <strong>
           {
-            amountFormatter(props.fxOutCurrencyTotal, props.currencyDecimalPlace)
+            // amountFormatter(props.fxOutCurrencyTotal, props.currencyDecimalPlace)
+            props.fxOutCurrencyTotal
           } </strong>
         </Col>
         <Col md="3">
         {`${props.againstCurrency} FX Out:`} <strong>
           {
-            amountFormatter(props.fxOutAgainstCurrencyTotal, props.againstCurrencyDecimalPlace)
+            // amountFormatter(props.fxOutAgainstCurrencyTotal, props.againstCurrencyDecimalPlace)
+            props.fxOutAgainstCurrencyTotal
           } </strong>
         </Col>
         <Col md="3">
@@ -48,8 +52,8 @@ function FXTransactionStatistics (props) {
 FXTransactionStatistics.propTypes = {
   currency: PropTypes.string,
   againstCurrency: PropTypes.string,
-  currencyDecimalPlace: PropTypes.number,
-  againstCurrencyDecimalPlace: PropTypes.number,
+  //currencyDecimalPlace: PropTypes.number,
+  //againstCurrencyDecimalPlace: PropTypes.number,
   fxInCurrencyTotal: PropTypes.number,
   fxInAgainstCurrencyTotal: PropTypes.number,
   fxOutCurrencyTotal: PropTypes.number,
@@ -61,8 +65,8 @@ FXTransactionStatistics.propTypes = {
 FXTransactionStatistics.defaultProps = {
   currency: '',
   againstCurrency: '',
-  currencyDecimalPlace: 0,
-  againstCurrencyDecimalPlace: 0,
+  //currencyDecimalPlace: 0,
+  //againstCurrencyDecimalPlace: 0,
   fxInCurrencyTotal: 0,
   fxInAgainstCurrencyTotal: 0,
   fxOutCurrencyTotal: 0,

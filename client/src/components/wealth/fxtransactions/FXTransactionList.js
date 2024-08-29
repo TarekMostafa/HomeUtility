@@ -123,8 +123,8 @@ function FXTransactionList () {
                     <FXTransactionStatistics 
                     currency={fxTransactionsObj.currency}
                     againstCurrency={fxTransactionsObj.againstCurrency}
-                    currencyDecimalPlace={fxTransactionsObj.currencyDecimalPlace}
-                    againstCurrencyDecimalPlace={fxTransactionsObj.againstCurrencyDecimalPlace}
+                    // currencyDecimalPlace={fxTransactionsObj.currencyDecimalPlace}
+                    // againstCurrencyDecimalPlace={fxTransactionsObj.againstCurrencyDecimalPlace}
                     fxInCurrencyTotal={fxTransactionsObj.fxInCurrencyTotal}
                     fxInAgainstCurrencyTotal={fxTransactionsObj.fxInAgainstCurrencyTotal}
                     fxOutCurrencyTotal={fxTransactionsObj.fxOutCurrencyTotal}

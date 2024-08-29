@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 
 import WealthDepositTable from './WealthDepositTable';
 import WealthDepositTotal from './WealthDepositTotal';
@@ -25,6 +25,8 @@ const initialState = {
 class WealthDepositList extends Component {
   state = {
     deposits: [],
+    formattedTotal: '0',
+    baseCurrency: '',
     modalAddShow: false,
     modalDeleteShow: false,
     modalInterestShow: false,
@@ -37,9 +39,11 @@ class WealthDepositList extends Component {
   loadDeposits() {
     DepositRequest.getDeposits(this.state.depositBank, this.state.depositStatus,
     this.state.depositCurrency)
-    .then( (deposits) => {
+    .then( (response) => {
       this.setState({
-        deposits
+        deposits: response.deposits,
+        formattedTotal: response.totalDepositsFormatted,
+        baseCurrency: response.baseCurrencyCode
       })
     })
   }
@@ -95,11 +99,16 @@ class WealthDepositList extends Component {
           onViewDeposit={this.handleViewDeposit}/>
           <Row>
             <Col xs={{offset:4, span:4}}>
-              {this.props.appSettings && this.props.appSettings.baseCurrency &&
-              this.props.appSettings.currency &&
+              {
+              //this.props.appSettings && this.props.appSettings.baseCurrency &&
+              //this.props.appSettings.currency &&
               <WealthDepositTotal deposits={this.state.deposits}
-              baseCurrency={this.props.appSettings.baseCurrency}
-              decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}/>}
+              //baseCurrency={this.props.appSettings.baseCurrency}
+              //decimalPlace={this.props.appSettings.currency.currencyDecimalPlace}
+              baseCurrency={this.state.baseCurrency}
+              formattedTotal={this.state.formattedTotal}
+              />
+              }
             </Col>
           </Row>
         </FormContainer>
@@ -193,10 +202,11 @@ class WealthDepositList extends Component {
 
 }
 
-const mapStateToProps = (state) => {
-	return {
-    appSettings: state.lookups.appSettings,
-	}
-}
+// const mapStateToProps = (state) => {
+// 	return {
+//     appSettings: state.lookups.appSettings,
+// 	}
+// }
 
-export default connect(mapStateToProps)(WealthDepositList);
+//export default connect(mapStateToProps)(WealthDepositList);
+export default WealthDepositList;

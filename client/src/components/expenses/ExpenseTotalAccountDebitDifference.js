@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, Button, Spinner, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-import amountFormatter from '../../utilities/amountFormatter';
+//import amountFormatter from '../../utilities/amountFormatter';
 
 function ExpenseTotalAccountDebitDifference (props) {
     return (
@@ -11,7 +11,8 @@ function ExpenseTotalAccountDebitDifference (props) {
                 <Col md={{span:4, offset:4}}>
                 Total Account Debit Difference: <strong>
                     {
-                        amountFormatter(props.amount, props.decimalPlace) + ' ' + props.currency
+                        //amountFormatter(props.amount, props.decimalPlace) + ' ' + props.currency
+                        props.amount + ' ' + props.currency
                     }
                 </strong>
                 </Col>
@@ -33,16 +34,16 @@ function ExpenseTotalAccountDebitDifference (props) {
 }
 
 ExpenseTotalAccountDebitDifference.propTypes = {
-    amount: PropTypes.number,
-    decimalPlace: PropTypes.number,
+    amount: PropTypes.string,
+    //decimalPlace: PropTypes.number,
     currency: PropTypes.string,
     isLoading: PropTypes.bool,
     onApply: PropTypes.func,
 };
   
 ExpenseTotalAccountDebitDifference.defaultProps = {
-    amount: 0,
-    decimalPlace: 0,
+    amount: '0',
+    //decimalPlace: 0,
     currency: '',
     isLoading: false,
     onApply: null,

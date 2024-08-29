@@ -57,7 +57,7 @@ router.put('/deactivate', function(req, res, next){
 })
 
 router.put('/updaterates', function(req, res, next){
-  currencyBusiness.updateRates().then( () => {
+  currencyBusiness.updateRates(req.body).then( () => {
     //res.status(200).send('Rates have been successfully updated');
     res.messageCode = 'RATES_UPDATE_SUCCESS';
     next();

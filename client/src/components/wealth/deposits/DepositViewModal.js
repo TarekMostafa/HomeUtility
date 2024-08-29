@@ -6,13 +6,13 @@ import moment from 'moment';
 import ModalContainer from '../../common/ModalContainer';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import DepositRequest from '../../../axios/DepositRequest';
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 const initialState = {
   depositReference: '',
   depositAccount: '',
   depositCurrency: '',
-  depositAmount: 0,
+  depositAmount: '0',
   depositRate: 0,
   depositStartDate: '',
   depositEndDate: '',
@@ -37,7 +37,7 @@ class DeleteDepositModal extends Component {
         depositReference: deposit.reference,
         depositAccount: deposit.accountNumber,
         depositCurrency: deposit.currencyCode,
-        depositAmount: deposit.amount,
+        depositAmount: deposit.amountFormatted,
         depositRate: deposit.rate,
         depositStatus: deposit.status,
         depositStartDate: deposit.startDate,
@@ -77,7 +77,8 @@ class DeleteDepositModal extends Component {
               <Form.Group controlId="depositAmount">
                 <Form.Label>Deposit Amount</Form.Label>
                 <Form.Control type="input" name="depositAmount"
-                value={amountFormatter(this.state.depositAmount, this.state.depositCurrencyDecimalPlaces)}
+                // value={amountFormatter(this.state.depositAmount, this.state.depositCurrencyDecimalPlaces)}
+                value={this.state.depositAmount}
                 readOnly/>
               </Form.Group>
             </Col>

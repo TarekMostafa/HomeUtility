@@ -9,6 +9,8 @@ const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 const DebtorRepo = require('../../debtors/debtorRepo');
 const transactionModules = require('./transactionModules');
+const AmountHelper = require('../../helper/AmountHelper');
+const CurrencyRepo = require('../../currencies/currencyRepo');
 
 const Op = Sequelize.Op;
 const TransactionModules = transactionModules.Modules;
@@ -74,6 +76,8 @@ class TransactionBusiness {
         transactionId: trans.transactionId,
         transactionPostingDate: trans.transactionPostingDate,
         transactionAmount: trans.transactionAmount,
+        transactionAmountFormatted: 
+          AmountHelper.formatAmount(trans.transactionAmount, trans.account.currency.currencyDecimalPlace),
         transactionCRDR: trans.transactionCRDR,
         transactionNarrative: trans.transactionNarrative,
         transactionRelatedTransactionId: trans.transactionRelatedTransactionId,
@@ -103,6 +107,9 @@ class TransactionBusiness {
       //return APIResponse.getAPIResponse(false, null, '043');
       throw new Exception('POST_DATE_INVALID');
     }
+    //Check Currency
+    const currencyObj = await CurrencyRepo.getCurrency(currency);
+    if(!currencyObj) throw new Exception('CURR_NOT_EXIST', currency);
     // Get Report Information
     const report = await ReportRepo.getReport(reportId);
     if(!report) {
@@ -134,17 +141,41 @@ class TransactionBusiness {
       resultDetails.fromDate = Common.getDate(from.toISOString(), '');
       resultDetails.toDate = Common.getDate(to.toISOString(), '');
       resultDetails.monthlyStatistics = [];
+
+      let currencyDecimalPlace = 0;
+      let finalTotal = 0;
       for(let counter = 0; counter < reportdetails.length; counter++) {
+
+        let totalItem = 0;
+
         whereQuery.transactionTypeId = { [Op.or] : [
           {[Op.in] : reportdetails[counter].detailTypes.split(',')},
           {[Op.eq] : null}
         ]};
-        const details = await TransactionRepo.getTotalTransactionsGroupByType(whereQuery, currency);
+        let details = await TransactionRepo.getTotalTransactionsGroupByType(whereQuery, currency);
+        details = details.map( detail => {
+          currencyDecimalPlace = detail.currencyDecimalPlace;
+          totalItem = Number(totalItem) + Math.abs(detail.total);
+          finalTotal = Number(finalTotal) + Number(detail.total);
+          return {
+            total: Math.abs(detail.total),
+            totalFormatted: AmountHelper.formatAmount(Math.abs(detail.total), 
+              currencyObj.currencyDecimalPlace),
+            typeName: detail.typeName,
+            typeId: detail.typeId
+          }
+        });
         resultDetails.monthlyStatistics.push({
           detailName: reportdetails[counter].detailName,
+          totalItem: totalItem,
+          totalItemFormatted: AmountHelper.formatAmount(totalItem, 
+            currencyObj.currencyDecimalPlace),
           details
         });
       }
+      resultDetails.finalTotal = finalTotal;
+      resultDetails.finalTotalFormatted = AmountHelper.formatAmount(finalTotal, 
+        currencyObj.currencyDecimalPlace); 
       result.push(resultDetails);
     } while(to < new Date(_dateTo))
 
@@ -171,6 +202,9 @@ class TransactionBusiness {
     transaction = {
       transactionId: transaction.transactionId,
       transactionAmount: transaction.transactionAmount,
+      transactionAmountFormatted: 
+          AmountHelper.formatAmount(transaction.transactionAmount, 
+            transaction.account.currency.currencyDecimalPlace),
       transactionNarrative: transaction.transactionNarrative,
       transactionPostingDate: transaction.transactionPostingDate,
       transactionCRDR: transaction.transactionCRDR,
@@ -376,6 +410,7 @@ class TransactionBusiness {
     const balance = (Number(transBalance)+Number(startBalance)).toFixed(decimalPlace);
     return {
       balance: balance,
+      balanceFormatted: AmountHelper.formatAmount(balance, decimalPlace),
       currency: account.accountCurrency,
       currencyDecimalPlace: decimalPlace,
       balanceDate: _balanceDate

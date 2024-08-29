@@ -8,7 +8,7 @@ class AppSettingsRequest {
 
   static async updateAppSettings(baseCurrency) {
     return await axios.put('/api/appsettings/', {
-      baseCurrency
+      newBaseCurrency: baseCurrency
     });
   }
 }

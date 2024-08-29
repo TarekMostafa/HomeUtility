@@ -5,12 +5,12 @@ import ModalContainer from '../../common/ModalContainer';
 import AccountsDropDown from '../accounts/AccountsDropDown';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
 import TransactionRequest from '../../../axios/TransactionRequest';
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 
 const initialState = {
   account: '',
   postingDate: '',
-  amount: 0,
+  amount: '0',
   crdr: 0,
   type: '',
   narrative: '',
@@ -33,7 +33,7 @@ class ViewSingleTransactionModal extends Component {
       this.setState({
         account: transaction.transactionAccount,
         postingDate: transaction.transactionPostingDate,
-        amount: transaction.transactionAmount,
+        amount: transaction.transactionAmountFormatted,
         crdr: transaction.transactionCRDR,
         type: transaction.transactionTypeId,
         narrative: transaction.transactionNarrative,
@@ -69,7 +69,8 @@ class ViewSingleTransactionModal extends Component {
             <InputGroup>
               <Form.Control type="input"
               name="amount"
-              value={amountFormatter(this.state.amount, this.state.accountCurrencyDecimalPlaces)}
+              //value={amountFormatter(this.state.amount, this.state.accountCurrencyDecimalPlaces)}
+              value={this.state.amount}
               readOnly/>
               <InputGroup.Prepend>
                 <InputGroup.Text id="inputGroupPrepend">{this.state.currency}</InputGroup.Text>

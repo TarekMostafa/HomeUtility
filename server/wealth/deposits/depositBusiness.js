@@ -10,9 +10,10 @@ const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 const Common = require('../../utilities/common');
 const TransactionModules = require('../transactions/transactionModules').Modules;
+const AmountHelper = require('../../helper/AmountHelper');
 
 class Deposit {
-  async getDeposits({bank, status, currency}) {
+  async getDeposits({bank, status, currency}, {baseCurrency}) {
     //Get param value
     let isAutomatic = true;
     const automaticOrManual = await AppParametersRepo.getAppParameterValue(
@@ -39,18 +40,28 @@ class Deposit {
 
     let deposits = await DepositRepo.getDeposits(whereQuery);
     deposits = deposits.map( deposit => {
+
+      const currencyRateAgainstBase = (isAutomatic? deposit.currency.currencyRateAgainstBase
+        :deposit.currency.currencyManualRateAgainstBase);
+
       return {
         id: deposit.id,
         reference: deposit.reference,
         amount: deposit.amount,
+        amountFormatted: 
+          AmountHelper.formatAmount(deposit.amount, deposit.currency.currencyDecimalPlace),
+        amountEquivalent: deposit.amount * currencyRateAgainstBase,
+        amountEquivalentFormatted: AmountHelper.formatAmount(
+          (deposit.amount * currencyRateAgainstBase), baseCurrency.currencyDecimalPlace),
         status: deposit.status,
         rate: deposit.rate,
         bankCode: deposit.bank.bankCode,
         bankName: deposit.bank.bankName,
         accountId: deposit.accountId,
         currencyCode: deposit.currencyCode,
-        currencyRateAgainstBase: (isAutomatic? deposit.currency.currencyRateAgainstBase
-          :deposit.currency.currencyManualRateAgainstBase),
+        // currencyRateAgainstBase: (isAutomatic? deposit.currency.currencyRateAgainstBase
+        //   :deposit.currency.currencyManualRateAgainstBase),
+        currencyRateAgainstBase,
         currencyDecimalPlace: deposit.currency.currencyDecimalPlace,
         startDate: deposit.startDate,
         endDate: deposit.endDate,
@@ -62,7 +73,16 @@ class Deposit {
       }
     });
 
-    return deposits;
+    const totalDeposits = deposits.reduce( 
+      (acc, obj) => Number(acc)+Number(obj.amountEquivalent), 0);
+
+    return {
+      deposits,
+      totalDeposits,
+      totalDepositsFormatted: AmountHelper.formatAmount(totalDeposits, 
+        baseCurrency.currencyDecimalPlace),
+      baseCurrencyCode: baseCurrency.currencyCode
+    };
   }
 
   async getDeposit(id) {
@@ -71,6 +91,8 @@ class Deposit {
       id: deposit.id,
       reference: deposit.reference,
       amount: deposit.amount,
+      amountFormatted: 
+        AmountHelper.formatAmount(deposit.amount, deposit.currency.currencyDecimalPlace),
       status: deposit.status,
       rate: deposit.rate,
       bankCode: deposit.bankCode,

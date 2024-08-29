@@ -35,10 +35,11 @@ function DebtorViewModal(props){
           <Form.Group controlId="debtorBalance">
               <Form.Label>Debtor Balance</Form.Label>
               <InputGroup>
-                <Form.Control type="number" maxLength={20}
+                <Form.Control type="input" maxLength={20}
                 name="debtorBalance"
-                value={Number(debtor.Balance)
-                  .toFixed(debtor.CurrencyDecimalPlace)}
+                // value={Number(debtor.Balance)
+                //   .toFixed(debtor.CurrencyDecimalPlace)}
+                value={debtor.BalanceFormatted}
                   readOnly/>
                 <InputGroup.Prepend>
                   <InputGroup.Text id="inputGroupPrepend">

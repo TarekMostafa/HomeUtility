@@ -7,15 +7,15 @@ import BanksDropDown from '../banks/BanksDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import AccountStatusesDropDown from './AccountStatusesDropDown';
 import AccountRequest from '../../../axios/AccountRequest';
-import amountFormatter from '../../../utilities/amountFormatter';
+// import amountFormatter from '../../../utilities/amountFormatter';
 import { getAccounts } from '../../../store/actions/lookupsAction';
 
 const initialState = {
   accountBank: '',
   accountNumber: '',
   accountCurrency: '',
-  accountStartBalance: 0,
-  accountCurrentBalance: 0,
+  accountStartBalance: '0',
+  accountCurrentBalance: '0',
   accountStatus: '',
   accountLastBalanceUpdate: '',
   accountCurrencyDecimalPlaces: 0,
@@ -37,9 +37,9 @@ class DeleteAccountModal extends Component {
         accountBank: account.accountBankCode,
         accountNumber: account.accountNumber,
         accountCurrency: account.accountCurrency,
-        accountStartBalance: account.accountStartBalance,
+        accountStartBalance: account.accountStartBalanceFormatted,
         accountStatus: account.accountStatus,
-        accountCurrentBalance: account.accountCurrentBalance,
+        accountCurrentBalance: account.accountCurrentBalanceFormatted,
         accountLastBalanceUpdate: account.accountLastBalanceUpdate,
         accountCurrencyDecimalPlaces: account.currencyDecimalPlace,
       });
@@ -110,7 +110,8 @@ class DeleteAccountModal extends Component {
                 <Form.Label>Start Balance</Form.Label>
                 <Form.Control type="input"
                 name="accountStartBalance"
-                value={amountFormatter(this.state.accountStartBalance, this.state.accountCurrencyDecimalPlaces)}
+                // value={amountFormatter(this.state.accountStartBalance, this.state.accountCurrencyDecimalPlaces)}
+                value={this.state.accountStartBalance}
                 readOnly/>
               </Form.Group>
             </Col>
@@ -119,7 +120,8 @@ class DeleteAccountModal extends Component {
                 <Form.Label>Current Balance</Form.Label>
                 <Form.Control type="input"
                 name="accountCurrentBalance"
-                value={amountFormatter(this.state.accountCurrentBalance, this.state.accountCurrencyDecimalPlaces)}
+                // value={amountFormatter(this.state.accountCurrentBalance, this.state.accountCurrencyDecimalPlaces)}
+                value={this.state.accountCurrentBalance}
                 readOnly/>
               </Form.Group>
             </Col>

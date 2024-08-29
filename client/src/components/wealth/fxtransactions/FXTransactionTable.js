@@ -2,7 +2,7 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
-import amountFormatter from '../../../utilities/amountFormatter';
+//import amountFormatter from '../../../utilities/amountFormatter';
 
 function FXTransactionTable (props) {
   return (
@@ -30,11 +30,13 @@ function FXTransactionTable (props) {
               <td>{index+1}</td>
               <td>{moment(transaction.fxPostingDateFrom).format('DD/MM/YYYY')}</td>
               <td className="text-right">
-                {amountFormatter(transaction.fxAmountFrom, transaction.fxCurrencyFromDecimalPlace)}
+                {/* {amountFormatter(transaction.fxAmountFrom, transaction.fxCurrencyFromDecimalPlace)} */}
+                {transaction.fxAmountFromFormatted}
               </td>
               <td>{transaction.fxCurrencyFrom}</td>
               <td className="text-right">
-                {amountFormatter(transaction.fxAmountTo, transaction.fxCurrencyToDecimalPlace)}
+                {/* {amountFormatter(transaction.fxAmountTo, transaction.fxCurrencyToDecimalPlace)} */}
+                {transaction.fxAmountToFormatted}
               </td>
               <td>{transaction.fxCurrencyTo}</td>
               <td>{transaction.fxRate}</td>
