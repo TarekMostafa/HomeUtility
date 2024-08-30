@@ -45,6 +45,9 @@ function DebtorTable(props) {
                                         <Dropdown.Item onClick={() => props.onDebtRelTransactions(debtor)}>
                                             Transactions
                                         </Dropdown.Item>
+                                        <Dropdown.Item onClick={() => props.onAddExemption(debtor.Id)}>
+                                            Add Exemption
+                                        </Dropdown.Item>
                                         <Dropdown.Item onClick={() => props.onEditDebtor(debtor.Id)}>
                                             Edit
                                         </Dropdown.Item>

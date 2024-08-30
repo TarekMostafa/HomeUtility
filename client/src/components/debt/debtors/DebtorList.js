@@ -11,6 +11,7 @@ import DebtorAddModal from './DebtorAddModal';
 import DebtorEditModal from './DebtorEditModal';
 import DebtorDeleteModal from './DebtorDeleteModal';
 import DebtorViewModal from './DebtorViewModal';
+import DebtorAddExemptionModal from './DebtorAddExemptionModal';
 import DebtorTotalBalance from './DebtorTotalBalance';
 
 import DebtorRequest from '../../../axios/DebtorRequest';
@@ -29,6 +30,7 @@ function DebtorList(props) {
     const [modalEdit, setModalEdit] = useState({show: false, id: 0});
     const [modalDelete, setModalDelete] = useState({show: false, id: 0});
     const [modalView, setModalView] = useState({show: false, id: 0});
+    const [modalExemptionView, setModalExemptionView] = useState({show: false, id: 0});
     const history = useHistory();
 
     const loadDebtors = () => 
@@ -68,6 +70,10 @@ function DebtorList(props) {
 
     const handleViewDebtor = (id) => {
         setModalView({show: true, id});
+    }
+
+    const handleAddExemption = (id) => {
+        setModalExemptionView({show: true, id});
     }
 
     const handleDebtRelTransactions = (debtor) => {
@@ -124,6 +130,7 @@ function DebtorList(props) {
                 onEditDebtor={handleEditDebtor}
                 onDeleteDebtor={handleDeleteDebtor}
                 onViewDebtor={handleViewDebtor}
+                onAddExemption={handleAddExemption}
                 onDebtRelTransactions={handleDebtRelTransactions}/>
             </FormContainer>
             <DebtorAddModal 
@@ -147,6 +154,12 @@ function DebtorList(props) {
                 debtorId={modalView.id}
                 show={modalView.show}
                 onHide={()=>setModalView({show: false, id: 0})}
+            />
+            <DebtorAddExemptionModal
+                debtorId={modalExemptionView.id}
+                show={modalExemptionView.show}
+                onHide={()=>setModalExemptionView({show: false, id: 0})}
+                onExempt={()=>loadDebtors()}
             />
         </React.Fragment>
     );

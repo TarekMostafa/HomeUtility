@@ -43,6 +43,9 @@ class DebtorBusiness {
         // currencyRateAgainstBase: (isAutomatic? debtor.currency.currencyRateAgainstBase
         //   :debtor.currency.currencyManualRateAgainstBase),
         currencyRateAgainstBase,
+        ExemptionAmount: debtor.debtExemptionAmount,
+        ExemptionAmountFormatted: AmountHelper.formatAmount(debtor.debtExemptionAmount, 
+          debtor.currency.currencyDecimalPlace),
       }
     });
 
@@ -72,6 +75,9 @@ class DebtorBusiness {
         LastBalanceUpdate: debtor.debtLastBalanceUpdate,
         CurrencyDecimalPlace: debtor.currency.currencyDecimalPlace,
         RelId: debtor.debtRelId,
+        ExemptionAmount: debtor.debtExemptionAmount,
+        ExemptionAmountFormatted: AmountHelper.formatAmount(debtor.debtExemptionAmount, 
+          debtor.currency.currencyDecimalPlace),
     }
     return debtor;
   }
@@ -142,7 +148,7 @@ class DebtorBusiness {
     }
   }
 
-  async deleteDebetor(id) {
+  async deleteDebtor(id) {
     const debtor = await DebtorRepo.getDebtor(id);
     if(!debtor) throw new Exception('DEBT_NOT_EXIST');
 
@@ -164,6 +170,26 @@ class DebtorBusiness {
       console.log(err);
       await dbTransaction.rollback();
       throw new Exception('DEBT_DELETE_FAIL');
+    }
+  }
+
+  async addExemptionAmount(id, {exemptionAmount}) {
+    let debtor = await DebtorRepo.getDebtor(id);
+    if(!debtor) throw new Exception('DEBT_NOT_EXIST');
+
+    // begin transaction
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      //update debtor balance 
+      await DebtorRepo.updateDebtorBalance(id, (exemptionAmount*-1), dbTransaction);
+      //update debtor exemption
+      await DebtorRepo.updateDebtorExemptionBalance(id, exemptionAmount, dbTransaction);
+      await dbTransaction.commit();
+    } catch(err) {
+      console.log(err);
+      await dbTransaction.rollback();
+      throw new Exception('DEBT_UPDATE_FAIL');
     }
   }
 

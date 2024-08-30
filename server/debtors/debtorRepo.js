@@ -71,6 +71,15 @@ class DebtorRepo {
       }
     })
   }
+
+  static async updateDebtorExemptionBalance(id, amount, dbTransaction) {
+    let debtor = await this.getDebtor(id);
+    if(!debtor) throw new Exception('DEBT_NOT_EXIST');
+    await debtor.update({
+        debtExemptionAmount: sequelize.literal('debtExemptionAmount+'+Number(amount)),
+        debtLastExemptionUpdate: sequelize.fn('NOW')
+    }, {transaction: dbTransaction});
+  }
 }
 
 module.exports = DebtorRepo;

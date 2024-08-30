@@ -73,6 +73,20 @@ function DebtorDeleteModal(props){
                 </InputGroup.Prepend>
               </InputGroup>
             </Form.Group>
+            <Form.Group controlId="debtorExemption">
+              <Form.Label>Debtor Exemption</Form.Label>
+              <InputGroup>
+                <Form.Control type="input" maxLength={20}
+                name="debtorExemption"
+                value={debtor.ExemptionAmountFormatted}
+                  readOnly/>
+                <InputGroup.Prepend>
+                  <InputGroup.Text id="inputGroupPrepend">
+                    {debtor.Currency}
+                  </InputGroup.Text>
+                </InputGroup.Prepend>
+              </InputGroup>
+            </Form.Group>
           <Form.Group controlId="debtorNotes">
               <Form.Label>Debtor Notes</Form.Label>
               <Form.Control type="input" maxLength={50}

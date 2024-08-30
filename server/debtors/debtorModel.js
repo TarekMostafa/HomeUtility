@@ -12,6 +12,8 @@ DebtorModel.init({
     debtNotes: Sequelize.STRING(200),
     debtLastBalanceUpdate: Sequelize.DATE,
     debtRelId: Sequelize.BIGINT(20),
+    debtExemptionAmount: Sequelize.DECIMAL(18, 3),
+    debtLastExemptionUpdate: Sequelize.DATE,
 }, {
   tableName: 'debtors',
   createdAt: false,

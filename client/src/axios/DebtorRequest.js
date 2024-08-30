@@ -27,6 +27,12 @@ class DebtorRequest {
     });
   }
 
+  static async updateExemptionAmount(id, exemptionAmount) {
+    return await axios.put('/api/debt/debtor/exemption/'+id, {
+      exemptionAmount
+    });
+  }
+
   static async deleteDebtor(id) {
     return await axios.delete('/api/debt/debtor/'+id);
   }

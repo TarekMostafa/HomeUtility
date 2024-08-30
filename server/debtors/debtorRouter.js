@@ -38,8 +38,17 @@ router.put('/:id', function(req, res, next) {
   })
 });
 
+router.put('/exemption/:id', function(req, res, next) {
+  debtorBusiness.addExemptionAmount(req.params.id, req.body).then( () => {
+    res.messageCode = 'DEBT_UPDATE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
+
 router.delete('/:id', function(req, res, next) {
-    debtorBusiness.deleteDebetor(req.params.id).then( result => {
+    debtorBusiness.deleteDebtor(req.params.id).then( result => {
     res.messageCode = 'DEBT_DELETE_SUCCESS';
     next();
   }).catch( err => {
