@@ -1,6 +1,6 @@
 const { exec } = require('child_process');
 const Config = require('../config');
-const APIResponse = require('../utilities/apiResponse');
+//const APIResponse = require('../utilities/apiResponse');
 
 async function DBBackup() {
   //construct database file backup name
@@ -14,7 +14,7 @@ async function DBBackup() {
   //Execute Command
   console.log(command);
   await exec(command);
-  return APIResponse.getAPIResponse(true, null, '046');
+  //return APIResponse.getAPIResponse(true, null, '046');
 }
 
 module.exports = DBBackup;

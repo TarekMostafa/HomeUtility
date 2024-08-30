@@ -40,7 +40,8 @@ router.put('/:id', function(req, res, next) {
 
 router.put('/updateTotalAccountDebit/:id', function(req, res, next) {
   expenseBusiness.updateTotalAccountDebit(req.params.id, req.body).then( () => {
-    res.status(200).send();
+    res.messageCode = 'EXP_TOT_UPDATE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })

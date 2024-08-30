@@ -31,7 +31,8 @@ router.post('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
     cardBusiness.updateCard(req.params.id, req.body).then( () => {
-    res.status(200).send();
+    res.messageCode = 'CARD_UPDATE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
@@ -39,7 +40,8 @@ router.put('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
     cardBusiness.deleteCard(req.params.id).then( result => {
-    res.status(200).send();
+      res.messageCode = 'CARD_DELETE_SUCCESS';
+      next();
   }).catch( err => {
     next(err);
   })

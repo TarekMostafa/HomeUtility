@@ -128,6 +128,7 @@ class AppSettings extends Component {
       this.props.getActiveCurrencies();
     })
     .catch( err => {
+      this.props.getAppSettings();
       this.setState({
         message: err.response.data,
         messageClass: 'text-danger',

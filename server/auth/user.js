@@ -1,18 +1,21 @@
 const uuidv1 = require('uuid/v1');
 const UserRepo = require('./userRepo');
 const Authentication = require('./authentication');
-const APIResponse = require('../utilities/apiResponse');
+//const APIResponse = require('../utilities/apiResponse');
+const Exception = require('../features/exception');
 
 class User {
   async authenticate({userName, password}) {
     // Check user in the database
     const user = await UserRepo.getUserByUserName(userName);
     if(!user) {
-      return APIResponse.getAPIResponse(false, null, '003');
+      //return APIResponse.getAPIResponse(false, null, '003');
+      throw new Exception('LOGIN_INVALID');
     }
     // Check user is Active
     if(!user.userActive) {
-      return APIResponse.getAPIResponse(false, null, '004', user.userName);
+      //return APIResponse.getAPIResponse(false, null, '004', user.userName);
+      throw new Exception('USER_INACTIVE', user.userName);
     }
     // Compare password with the one stored in the database
     const encryptedPass = await Authentication.encrypt(password);
@@ -25,28 +28,40 @@ class User {
         user.userAttempt += 1;
       }
       await user.save();
-      return APIResponse.getAPIResponse(false, null, '003');
+      //return APIResponse.getAPIResponse(false, null, '003');
+      throw new Exception('LOGIN_INVALID');
     }
     user.userAttempt = 0;
     user.userToken = uuidv1();
     await user.save();
-    return APIResponse.getAPIResponse(true, {
+    // return APIResponse.getAPIResponse(true, {
+    //   userId:user.userId,
+    //   userName: user.userName,
+    //   userToken: user.userToken
+    // });
+    return {
       userId:user.userId,
       userName: user.userName,
       userToken: user.userToken
-    });
+    }
   }
 
   async tokenAuthentication({userToken}) {
     const user = await UserRepo.getUserByUserToken(userToken);
     if(!user) {
-      return APIResponse.getAPIResponse(false, null, '003');
+      //return APIResponse.getAPIResponse(false, null, '003');
+      throw new Exception('LOGIN_INVALID');
     } else {
-      return APIResponse.getAPIResponse(true, {
+      // return APIResponse.getAPIResponse(true, {
+      //   userId:user.userId,
+      //   userName: user.userName,
+      //   userToken: user.userToken
+      // });
+      return {
         userId:user.userId,
         userName: user.userName,
         userToken: user.userToken
-      });
+      }
     }
   }
 
@@ -54,40 +69,44 @@ class User {
     // Check user in the database
     const user = await UserRepo.getUser(userId);
     if(!user) {
-      return APIResponse.getAPIResponse(false, null, '003');
+      //return APIResponse.getAPIResponse(false, null, '003');
+      throw new Exception('LOGIN_INVALID');
     }
     user.userToken = null;
     await user.save();
-    return APIResponse.getAPIResponse(true, null, '045');
+    //return APIResponse.getAPIResponse(true, null, '045');
   }
 
   async changePassword({userId, oldPassword, newPassword}){
     // Check user in the database
     const user = await UserRepo.getUser(userId);
     if(!user) {
-      return APIResponse.getAPIResponse(false, null, '003');
+      //return APIResponse.getAPIResponse(false, null, '003');
+      throw new Exception('LOGIN_INVALID');
     }
     // Compare password with the one stored in the database
     const encryptedPass = await Authentication.encrypt(oldPassword);
     if(encryptedPass !== user.userPassword) {
-      return APIResponse.getAPIResponse(false, null, '003');
+      //return APIResponse.getAPIResponse(false, null, '003');
+      throw new Exception('LOGIN_INVALID');
     }
     // Encrypt new Password and store it
     const newEncryptedPass = await Authentication.encrypt(newPassword);
     user.userPassword = newEncryptedPass;
     await user.save();
-    return APIResponse.getAPIResponse(true, null, '024');
+    //return APIResponse.getAPIResponse(true, null, '024');
   }
 
   async changeUserName({userId, userName}){
     // Check user in the database
     const user = await UserRepo.getUser(userId);
     if(!user) {
-      return APIResponse.getAPIResponse(false, null, '003');
+      //return APIResponse.getAPIResponse(false, null, '003');
+      throw new Exception('LOGIN_INVALID');
     }
     user.userName = userName;
     await user.save();
-    return APIResponse.getAPIResponse(true, null, '042');
+    //return APIResponse.getAPIResponse(true, null, '042');
   }
 }
 

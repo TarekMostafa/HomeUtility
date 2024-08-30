@@ -5,11 +5,8 @@ const router = express.Router();
 
 router.post('/backup', function(req, res, next) {
   DBBackup().then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.messageCode = 'DB_BACKUP_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })

@@ -31,7 +31,8 @@ router.post('/', function(req, res, next) {
 
 router.post('/postInstallment/:id', function(req, res, next) {
   cardInstallmentBusiness.postInstallment(req.params.id, req.body).then( () => {
-    res.status(200).send();
+    res.messageCode = 'CARD_INST_POST_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
@@ -39,7 +40,8 @@ router.post('/postInstallment/:id', function(req, res, next) {
 
 router.post('/terminateInstallment/:id', function(req, res, next) {
   cardInstallmentBusiness.terminateInstallment(req.params.id).then( () => {
-    res.status(200).send();
+    res.messageCode = 'CARD_INST_TERM_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
@@ -47,7 +49,8 @@ router.post('/terminateInstallment/:id', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
   cardInstallmentBusiness.updateCardInstallment(req.params.id, req.body).then( () => {
-    res.status(200).send();
+    res.messageCode = 'CARD_INST_UPDATE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
@@ -55,7 +58,8 @@ router.put('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
   cardInstallmentBusiness.deleteCardInstallment(req.params.id).then( result => {
-    res.status(200).send();
+    res.messageCode = 'CARD_INST_DELETE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })

@@ -7,13 +7,14 @@ class AppParametersRepo {
     return await AppParametersModel.findByPk(paramName);
   }
 
-  static async getAppParameterValue(paramName) {
-    if(loadedParameters.hasOwnProperty(paramName)){
+  static async getAppParameterValue(paramName, force) {
+    if(loadedParameters.hasOwnProperty(paramName) && !force){
       return loadedParameters[paramName];
     } else {
       const appParam = await AppParametersModel.findByPk(paramName);
       if(!appParam) return null;
       else {
+        //console.log(`The parameter ${paramName} has been loaded`);
         loadedParameters[paramName] = appParam.paramValue;
         return loadedParameters[paramName];
       }

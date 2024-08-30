@@ -22,10 +22,12 @@ module.exports.getBaseCurrency = async () => {
     return baseCurrencyObj;
 }
 
-module.exports.updateBaseCurrency = async () => {
+module.exports.getBaseCurrencyWithForce = async () => {
     baseCurrency = await AppParametersRepo.getAppParameterValue(
-        AppParametersConstants.BASE_CURRENCY);
+        AppParametersConstants.BASE_CURRENCY, true);
     if(!baseCurrency) throw new Exception('APP_PARAM_ERROR');
     baseCurrencyObj = await CurrencyRepo.getCurrency(baseCurrency);
     if(!baseCurrencyObj) throw new Exception('CURR_INV_BASE');
+
+    return baseCurrencyObj;
 }

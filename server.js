@@ -70,6 +70,7 @@ app.use(function(req, res, next){
 //Logging
 app.use((req, res, next) => {
   if(!req.url.includes('authentication')
+     && !req.headers.logId 
      && req.method !== 'GET') {
     let _body = {...req.body};
     delete _body.user;

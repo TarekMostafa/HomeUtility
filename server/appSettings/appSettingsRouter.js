@@ -6,11 +6,7 @@ const appSettings = new AppSettings();
 
 router.get('/', function(req, res, next) {
   appSettings.getAppSettings(req.body).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.json(result);
   }).catch( err => {
     next(err);
   })
@@ -18,13 +14,10 @@ router.get('/', function(req, res, next) {
 
 router.put('/', function(req, res, next){
   appSettings.updateAppSettings(req.body).then( result => {
-    if(result.success) {
-      req.url = '/api/currencies/updaterates';
-      req.method = 'PUT';
-      req.app.handle(req, res);
-    } else {
-      res.status(400).send(result.message);
-    }
+    console.log(result);
+    req.url = '/api/currencies/updaterates';
+    req.method = 'PUT';
+    req.app.handle(req, res);
   }).catch( err => {
     next(err);
   })

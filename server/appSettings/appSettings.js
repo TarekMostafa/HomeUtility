@@ -1,13 +1,14 @@
 //const AppSettingsRepo = require('./appSettingsRepo');
 const AppParametersRepo = require('./appParametersRepo');
-const CurrencyRepo = require('../currencies/currencyRepo');
-const APIResponse = require('../utilities/apiResponse');
+//const CurrencyRepo = require('../currencies/currencyRepo');
+//const APIResponse = require('../utilities/apiResponse');
 const AppParametersConstants = require('../appSettings/appParametersConstants');
+const Exception = require('../features/exception');
 const BaseCurrency = require('../currencies/baseCurrency');
 
 class AppSettings {
 
-  async getAppSettings({baseCurrency}) {
+  async getAppSettings() {
     //const appSettings = await AppSettingsRepo.getAppSettingsWithCurrency();
     //if(appSettings) {
     //  return APIResponse.getAPIResponse(true, appSettings);
@@ -33,6 +34,7 @@ class AppSettings {
     //   } 
     // }
 
+    const baseCurrency = await BaseCurrency.getBaseCurrencyWithForce();
     const conversionParam = await AppParametersRepo.getParameter(
       AppParametersConstants.CURRENCY_CONVERSION_API_KEY);
     
@@ -45,7 +47,8 @@ class AppSettings {
       }
     }
       
-    return APIResponse.getAPIResponse(true, appSettings);
+    //return APIResponse.getAPIResponse(true, appSettings);
+    return appSettings;
   }
 
   async updateAppSettings({newBaseCurrency}) {
@@ -56,13 +59,14 @@ class AppSettings {
     //appSettings.baseCurrency = baseCurrency;
     //await appSettings.save();
     //return APIResponse.getAPIResponse(true, null, '002');
-    let appParameter = await AppParametersRepo.getParameter(AppParametersConstants.BASE_CURRENCY);
+    let appParameter = await AppParametersRepo.getParameter(AppParametersConstants.BASE_CURRENCY, true);
     if(!appParameter) {
-      return APIResponse.getAPIResponse(false, null, 'APP_PARAM_ERROR');
+      //return APIResponse.getAPIResponse(false, null, 'APP_PARAM_ERROR');
+      throw new Exception('APP_PARAM_ERROR');
     }
     appParameter.paramValue = newBaseCurrency;
     await appParameter.save();
-    return APIResponse.getAPIResponse(true, null, 'APP_PARAM_UPDATE');
+    //return APIResponse.getAPIResponse(true, null, 'APP_PARAM_UPDATE');
   }
 }
 
