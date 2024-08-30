@@ -40,7 +40,8 @@ class MonthlyDetails extends Component {
                               { detail.typeName ? 
                                 <Button variant="link" size="sm" 
                                 onClick={() => this.onTransactionTypeClick(detail.typeId, 
-                                this.props.data.fromDate, this.props.data.toDate, detail.typeName)}>
+                                this.props.data.fromDate, this.props.data.toDate, detail.typeName,
+                                this.props.data.currency, detail.totalFormatted)}>
                                   {detail.typeName}
                                 </Button>
                                  : <Button variant="link" size="sm">No Transaction Type</Button>
@@ -78,34 +79,34 @@ class MonthlyDetails extends Component {
     )
   }
 
-  onTransactionTypeClick = (typeId, fromDate, toDate, typeName) => {
+  onTransactionTypeClick = (typeId, fromDate, toDate, typeName, currency, totalFormatted) => {
     if (typeof this.props.onTransactionTypeClick === 'function') {
-      this.props.onTransactionTypeClick(typeId, fromDate, toDate, typeName);
+      this.props.onTransactionTypeClick(typeId, fromDate, toDate, typeName, currency, totalFormatted);
     }
   }
 }
 
-function getTotalItems (details) {
-  if(!details) {
-    return 0;
-  }
-  return details.reduce( (prv, detail) => {
-    return prv + parseFloat(detail.total);
-  }, 0)
-}
+// function getTotalItems (details) {
+//   if(!details) {
+//     return 0;
+//   }
+//   return details.reduce( (prv, detail) => {
+//     return prv + parseFloat(detail.total);
+//   }, 0)
+// }
 
-function getTotalMonthlyStatistics (monthlyStatistics) {
-  if(!monthlyStatistics) {
-    return 0;
-  }
+// function getTotalMonthlyStatistics (monthlyStatistics) {
+//   if(!monthlyStatistics) {
+//     return 0;
+//   }
 
-  const details = monthlyStatistics.map( (ms) => {
-    return getTotalItems(ms.details);
-  });
-  return details.reduce( (prv, total) => {
-    return Math.round((prv + total)*100) / 100;
-  }, 0)
-}
+//   const details = monthlyStatistics.map( (ms) => {
+//     return getTotalItems(ms.details);
+//   });
+//   return details.reduce( (prv, total) => {
+//     return Math.round((prv + total)*100) / 100;
+//   }, 0)
+// }
 
 MonthlyDetails.propTypes = {
   decimalPlace: PropTypes.number,

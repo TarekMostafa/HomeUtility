@@ -164,15 +164,16 @@ class MonthlyStatistics extends Component {
     )
   }//end of render
 
-  handleTransactionTypeClick = (typeId, fromDate, toDate, typeName) => {
+  handleTransactionTypeClick = (typeId, fromDate, toDate, typeName, currency, totalFormatted) => {
     //console.log(typeId, fromDate, toDate);
-    TransactionRequest.getTransactions(999, 0, [], [typeId], fromDate, toDate)
-    .then((transactions) => {
+    TransactionRequest.getTransactions(999, 0, [], [typeId], fromDate, toDate, 
+      null, null, null, [currency])
+      .then((transactions) => {
         this.setState({
           transactions,
           modalLinkDetailShow: true,
           transactionsData: {
-            typeId, fromDate, toDate, typeName
+            typeId, fromDate, toDate, typeName, currency, totalFormatted
           }
         })
       }

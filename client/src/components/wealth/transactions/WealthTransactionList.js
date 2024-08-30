@@ -9,6 +9,7 @@ import WealthTransactionTable from './WealthTransactionTable';
 import FormContainer from '../../common/FormContainer';
 import TableLimiterDropDown from '../../common/TableLimiterDropDown';
 import AccountsDropDown from '../accounts/AccountsDropDown';
+import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDown';
 import AddSingleTransactionModal from './AddSingleTransactionModal';
 import AddInternalTransactionModal from './AddInternalTransactionModal';
@@ -40,6 +41,7 @@ const initialState = {
   includeNarrative: true,
   transactionTypes: [],
   accounts: [],
+  currencies: [],
 }
 
 class WealthTransactionList extends Component {
@@ -72,7 +74,8 @@ class WealthTransactionList extends Component {
       this.state.accounts.map(acc=>acc.key), 
       this.state.transactionTypes.map(typ=>typ.key),
       this.state.postingDateFrom, this.state.postingDateTo,
-      this.state.narrative, this.state.id, this.state.includeNarrative)
+      this.state.narrative, this.state.id, this.state.includeNarrative,
+      this.state.currencies.map(ccy=>ccy.key))
     .then( (transactions) => {
       let _transactions = [];
       if(append) {
@@ -131,7 +134,7 @@ class WealthTransactionList extends Component {
                 selectedValues={this.state.accounts.map(acc=>acc.value)}>
                   <AccountsDropDown onSelect={this.handleAccounts} 
                   selectedData={this.state.accounts.map(acc=>acc.key)}/>
-                </MultiSelectDropDown>
+              </MultiSelectDropDown>
             </Col>
             <Col>
               {/* <Form.Control as="select" size="sm" name="transactionType"
@@ -156,7 +159,7 @@ class WealthTransactionList extends Component {
           </Row>
           <br />
           <Row>
-            <Col xs={6}>
+            <Col xs={3}>
               <InputGroup className="mb-3">
                 <InputGroup.Prepend>
                   <InputGroup.Checkbox name="includeNarrative"
@@ -165,6 +168,13 @@ class WealthTransactionList extends Component {
                 <Form.Control type="input" placeholder="Narrative" size="sm" name="narrative"
                 onChange={this.handleChange} value={this.state.narrative}/>
               </InputGroup>
+            </Col>
+            <Col xs={3}>
+              <MultiSelectDropDown labelSelect={"Currencies"} 
+                selectedValues={this.state.currencies.map(ccy=>ccy.value)}>
+                  <CurrenciesDropDown onSelect={this.handleCurrencies} 
+                  selectedData={this.state.currencies.map(ccy=>ccy.key)}/>
+              </MultiSelectDropDown>   
             </Col>
             <Col xs={2}>
               <Form.Control as="select" size="sm" name="limit" onChange={this.handleChange}
@@ -280,6 +290,16 @@ class WealthTransactionList extends Component {
       _accounts = [..._accounts, {key, value}];
     }
     this.setState({accounts: _accounts});
+  }
+
+  handleCurrencies = (key, value) => {
+    let _currencies = this.state.currencies;
+    if(_currencies.some(acc=>acc.key === key)) {
+      _currencies = _currencies.filter(acc=>acc.key!==key);
+    } else {
+      _currencies = [..._currencies, {key, value}];
+    }
+    this.setState({currencies: _currencies});
   }
 
   handleTransactionTypes = (key, value) => {

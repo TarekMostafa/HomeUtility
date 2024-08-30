@@ -18,12 +18,13 @@ const TransactionModules = transactionModules.Modules;
 class TransactionBusiness {
 
   async getTransactions({limit, skip, accountIds, typeIds, postingDateFrom,
-    postingDateTo, narrative, id, includeNarrative}) {
+    postingDateTo, narrative, id, includeNarrative, currencies}) {
 
     limit = Common.getNumber(limit, 10);
     skip = Common.getNumber(skip, 0);
-    // Construct Where Condition
+    // Construct Where Conditions
     let whereQuery = {};
+    let accountWhereQuery = {};
     // account Id
     if(accountIds) {
       //whereQuery.transactionAccount = accountId;
@@ -50,6 +51,12 @@ class TransactionBusiness {
         }
       }
     }
+    // Currency
+    if(currencies) {
+      accountWhereQuery.accountCurrency = {
+        [Op.in]: currencies
+      }
+    }
     // Check Posting Date from and Posting Date To
     let _dateFrom = Common.getDate(postingDateFrom, '');
     let _dateTo = Common.getDate(postingDateTo, '');
@@ -67,7 +74,7 @@ class TransactionBusiness {
       whereQuery.transactionId = id;
     }
 
-    let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery);
+    let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery, accountWhereQuery);
     await this.loadParameters(); //to load parameters once
     transactions = await Promise.all(transactions.map(async trans => {
       const migration = await this.getMigrationObject(trans);
@@ -140,6 +147,7 @@ class TransactionBusiness {
       let resultDetails = {};
       resultDetails.fromDate = Common.getDate(from.toISOString(), '');
       resultDetails.toDate = Common.getDate(to.toISOString(), '');
+      resultDetails.currency = currencyObj.currencyCode;
       resultDetails.monthlyStatistics = [];
 
       let currencyDecimalPlace = 0;

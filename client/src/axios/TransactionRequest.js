@@ -2,7 +2,7 @@ import axios from 'axios';
 
 class TransctionRequest {
   static async getTransactions (limit, skip, accountIds, typeIds, postingDateFrom,
-    postingDateTo, narrative, id, includeNarrative) {
+    postingDateTo, narrative, id, includeNarrative, currencies) {
     const response = await axios.get('/api/wealth/transactions', {
       params: {
         limit,
@@ -13,7 +13,8 @@ class TransctionRequest {
         postingDateTo,
         narrative,
         id,
-        includeNarrative
+        includeNarrative,
+        currencies
       }
     });
     return response.data;

@@ -9,7 +9,7 @@ const RelatedTransactionModel = require('../relatedTransactions/relatedTransacti
 const Op = Sequelize.Op;
 
 class TransactionRepo {
-  static async getTransactions(skip, limit, whereQuery) {
+  static async getTransactions(skip, limit, whereQuery, accountWhereQuery) {
     return await TransactionModel.findAll({
       offset: skip,
       limit: limit,
@@ -21,7 +21,8 @@ class TransactionRepo {
           include: [
             { model: CurrencyModel, as: 'currency', attributes: ['currencyRateAgainstBase', 
               'currencyDecimalPlace'] }
-          ]
+          ],
+          where: accountWhereQuery,
         },
         { model: TransactionTypeModel, as: 'transactionType', attributes: ['typeName'] },
         { model: RelatedTransactionModel, as: 'relatedtransaction', 
