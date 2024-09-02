@@ -107,7 +107,7 @@ export const getRelatedTypes = () => {
 export const getActiveDebtors = () => {
   return (dispatch, getState) => {
     DebtorRequest.getDebtors('', 'ACTIVE')
-    .then( (debtors) => dispatch({type: "SET_DEBTORS", data: debtors}) )
+    .then( (response) => dispatch({type: "SET_DEBTORS", data: response.debtors}) )
     .catch( () => dispatch({type: "ERROR"}) )
   }
 }
