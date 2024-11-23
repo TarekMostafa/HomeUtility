@@ -18,7 +18,7 @@ const TransactionModules = transactionModules.Modules;
 class TransactionBusiness {
 
   async getTransactions({limit, skip, accountIds, typeIds, postingDateFrom,
-    postingDateTo, narrative, id, includeNarrative, currencies}) {
+    postingDateTo, narrative, id, includeNarrative, currencies, dateType, payForOthers}) {
 
     limit = Common.getNumber(limit, 10);
     skip = Common.getNumber(skip, 0);
@@ -57,22 +57,29 @@ class TransactionBusiness {
         [Op.in]: currencies
       }
     }
+    //dateType will control if Posting Date or Value Date, by default Posting Date
     // Check Posting Date from and Posting Date To
     let _dateFrom = Common.getDate(postingDateFrom, '');
     let _dateTo = Common.getDate(postingDateTo, '');
     if( _dateFrom !== '' && _dateTo !== '') {
-      whereQuery.transactionPostingDate = { [Op.between] : [_dateFrom, _dateTo] };
+      if(dateType==='VALUE') whereQuery.transactionValueDate = { [Op.between] : [_dateFrom, _dateTo] }; 
+      else whereQuery.transactionPostingDate = { [Op.between] : [_dateFrom, _dateTo] };   
     } else {
       if(_dateFrom !== '') {
-        whereQuery.transactionPostingDate = { [Op.gte] : _dateFrom };
+        if(dateType==='VALUE') whereQuery.transactionValueDate = { [Op.gte] : _dateFrom };
+        else whereQuery.transactionPostingDate = { [Op.gte] : _dateFrom };
       } else if(_dateTo !== '') {
-        whereQuery.transactionPostingDate = { [Op.lte] : _dateTo };
+        if(dateType==='VALUE') whereQuery.transactionValueDate = { [Op.lte] : _dateTo };
+        else whereQuery.transactionPostingDate = { [Op.lte] : _dateTo };
       }
     }
     //Transaction Id
     if(id){
       whereQuery.transactionId = id;
     }
+    //Pay for Others
+    if(payForOthers!== null && payForOthers!== undefined)
+      whereQuery.transactionPayForOthers = payForOthers;
 
     let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery, accountWhereQuery);
     await this.loadParameters(); //to load parameters once
@@ -104,7 +111,7 @@ class TransactionBusiness {
     return transactions;
   }
 
-  async getTotalTransactionsByType({reportId, postingDateFrom, postingDateTo, currency}) {
+  async getTotalTransactionsByType({reportId, postingDateFrom, postingDateTo, currency, dateType}) {
     // Construct Where Condition
     let whereQuery = {};
     // Check Posting Date from and Posting Date To
@@ -142,8 +149,17 @@ class TransactionBusiness {
       if(to > new Date(_dateTo)){
         to = new Date(_dateTo);
       }
-      whereQuery.transactionPostingDate = { [Op.between] : [Common.getDate(from.toISOString(), ''), 
-        Common.getDate(to.toISOString(), '')] };
+      //Check dateType
+      if(dateType==='VALUE') {
+        whereQuery.transactionValueDate = { [Op.between] : [Common.getDate(from.toISOString(), ''), 
+          Common.getDate(to.toISOString(), '')] };
+      } else {
+        whereQuery.transactionPostingDate = { [Op.between] : [Common.getDate(from.toISOString(), ''), 
+          Common.getDate(to.toISOString(), '')] };
+      }
+      //Exclude pay for others
+      whereQuery.transactionPayForOthers = false;
+      //set result details
       let resultDetails = {};
       resultDetails.fromDate = Common.getDate(from.toISOString(), '');
       resultDetails.toDate = Common.getDate(to.toISOString(), '');
@@ -290,7 +306,8 @@ class TransactionBusiness {
 
   async editTransaction(id, {transactionAmount, transactionNarrative, transactionPostingDate,
     transactionCRDR, transactionAccount, transactionTypeId, transactionModuleId,
-    transactionRelatedTransactionId, transactionModule, transactionValueDate}, dbTransaction) {
+    transactionRelatedTransactionId, transactionModule, transactionValueDate, transactionPayForOthers}, 
+    dbTransaction) {
     // Get Saved transaction that want to be updated
     let _transaction = await TransactionRepo.getTransaction(id);
     if(!_transaction) {
@@ -342,6 +359,10 @@ class TransactionBusiness {
       
     if(transactionModule)
       _transaction.transactionModule = transactionModule;
+    
+    if(transactionPayForOthers!== null && transactionPayForOthers !== undefined)
+      _transaction.transactionPayForOthers = (transactionPayForOthers===true);
+
     await _transaction.save({transaction: dbTransaction});
     if(_account.accountId !== account.accountId) {
       await AccountRepo.updateAccountCurrentBalance(_account, amountRollback, dbTransaction);

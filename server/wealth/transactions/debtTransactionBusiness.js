@@ -212,6 +212,7 @@ class DebtTransactionBusiness {
                 transactionModule: accountTransaction.transactionModule,
                 transactionRelatedTransactionId: debtor.debtRelId,
                 //transactionModuleId: debtorId,  
+                transactionPayForOthers: true
             }, dbTransaction);
             //update debtor balance 
             await DebtorRepo.updateDebtorBalance(debtorId, debtAmount, dbTransaction);
@@ -251,7 +252,8 @@ class DebtTransactionBusiness {
                 transactionTypeId: accountTransaction.transactionTypeId,
                 transactionModule: accountTransaction.transactionModule,
                 transactionRelatedTransactionId: 'NULL',
-                //transactionModuleId: debtorId,  
+                //transactionModuleId: debtorId, 
+                transactionPayForOthers: false 
             }, dbTransaction);
             //update debtor balance 
             await DebtorRepo.updateDebtorBalance(debtorId, debtAmount, dbTransaction);

@@ -20,6 +20,7 @@ const initialState = {
   postingDateFrom: '',
   postingDateTo: '',
   currency: '',
+  dateType: 'POST',  //POST or VALUE
   message: '',
   isLoading: false,
 }
@@ -105,6 +106,18 @@ class MonthlyStatistics extends Component {
               </Col>
             </Row>
             <Row>
+              <Col xs={{span: 4, offset: 5}}>
+                <div>
+                  <Form.Check inline type='radio' id={`default-radioPosting`} 
+                    label={`Posting Date`} checked={this.state.dateType!=='VALUE'} 
+                    onChange={this.handleChange} name='dateType' value='POST'/>
+                  <Form.Check inline type='radio' id={`default-radioValue`} 
+                    label={`Value Date`} checked={this.state.dateType==='VALUE'} 
+                    onChange={this.handleChange} name='dateType' value='VALUE'/>
+                </div>
+              </Col>
+            </Row>
+            <Row>
               <Col xs={3}>
                 {
                   this.state.reportId &&
@@ -167,7 +180,7 @@ class MonthlyStatistics extends Component {
   handleTransactionTypeClick = (typeId, fromDate, toDate, typeName, currency, totalFormatted) => {
     //console.log(typeId, fromDate, toDate);
     TransactionRequest.getTransactions(999, 0, [], [typeId], fromDate, toDate, 
-      null, null, null, [currency])
+      null, null, null, [currency], this.state.dateType, false)
       .then((transactions) => {
         this.setState({
           transactions,
@@ -243,7 +256,8 @@ class MonthlyStatistics extends Component {
     }
     // Get Monthly Statistics
     TransactionRequest.getMonthlyStatistics(this.state.postingDateFrom,
-      this.state.postingDateTo, this.state.reportId, this.state.currency)
+      this.state.postingDateTo, this.state.reportId, this.state.currency,
+      this.state.dateType)
     .then( (result) => {
       this.setState({
         stat: result,
@@ -272,7 +286,7 @@ class MonthlyStatistics extends Component {
 
   handleChange = (event) => {
     this.setState({
-      [event.target.name] : event.target.value
+      [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value)
     });
   }
 

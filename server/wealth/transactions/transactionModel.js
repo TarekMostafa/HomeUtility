@@ -17,6 +17,7 @@ TransactionModel.init({
   transactionModule: { type: Sequelize.STRING(3), allowNull: true },
   transactionModuleId: { type: Sequelize.BIGINT(20), allowNull: true},
   transactionValueDate: Sequelize.DATEONLY,
+  transactionPayForOthers: Sequelize.BOOLEAN,
 }, {
   tableName: 'transactions',
   createdAt: false,

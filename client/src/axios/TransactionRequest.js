@@ -2,7 +2,7 @@ import axios from 'axios';
 
 class TransctionRequest {
   static async getTransactions (limit, skip, accountIds, typeIds, postingDateFrom,
-    postingDateTo, narrative, id, includeNarrative, currencies) {
+    postingDateTo, narrative, id, includeNarrative, currencies, dateType, payForOthers) {
     const response = await axios.get('/api/wealth/transactions', {
       params: {
         limit,
@@ -14,7 +14,9 @@ class TransctionRequest {
         narrative,
         id,
         includeNarrative,
-        currencies
+        currencies,
+        dateType,
+        payForOthers,
       }
     });
     return response.data;
@@ -42,13 +44,15 @@ class TransctionRequest {
     return response.data;
   }
 
-  static async getMonthlyStatistics (postingDateFrom, postingDateTo, reportId, currency) {
+  static async getMonthlyStatistics (postingDateFrom, postingDateTo, reportId, currency,
+    dateType) {
     const response = await axios.get('/api/wealth/transactions/monthlystatistics', {
       params: {
         postingDateFrom,
         postingDateTo,
         reportId,
-        currency
+        currency,
+        dateType
       }
     });
     return response.data;
