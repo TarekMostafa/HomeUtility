@@ -13,7 +13,10 @@ function ExpenseTypeRowList(props) {
                             <Button key={elem[0]} variant="outline-info" size="md"
                                 onClick={() => props.onExpenseTypeClick(elem[0])}>
                                 {elem[1].name}  
-                                {' '}<Badge pill variant="success">{elem[1].totalAmt}</Badge>
+                                {' '}
+                                <Badge pill variant="success">
+                                    {Number(elem[1].totalAmt).toFixed(props.decimalPlace)}
+                                </Badge>
                             </Button>{' '}
                             </React.Fragment>
                         );

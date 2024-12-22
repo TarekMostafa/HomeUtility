@@ -63,7 +63,8 @@ function ExpenseDetailList(props) {
                         onAdjClick={() => setSearchFilter({name:'adjusment', value:true})}
                         onNegClick={() => setSearchFilter({name:'negative', value:''})}/>
                     <ExpenseTypeRowList groupExpenseTypes={groupExpenseTypes(expenseDetails)}
-                        onExpenseTypeClick={type => setSearchFilter({name:'expenseType', value:type})}/>
+                        onExpenseTypeClick={type => setSearchFilter({name:'expenseType', value:type})}
+                        decimalPlace={expense.currency.currencyDecimalPlace}/>
                 </FormContainer>
                 <ExpenseDetailTable expense={expense.expenseStatus==='CLOSED'?null:expense} 
                     expenseDetails={expenseDetails} 
