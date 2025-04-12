@@ -206,6 +206,40 @@ class TransactionBusiness {
     return result;
   }
 
+  async getTotalTransactionsByLabel({label, currency, dateFrom, dateTo}) {
+    // Construct Where Condition
+    let whereQuery = {};
+    //Check Currency
+    const currencyObj = await CurrencyRepo.getCurrency(currency);
+    if(!currencyObj) throw new Exception('CURR_NOT_EXIST', currency);
+    // Check Posting Date from and Posting Date To
+    const _dateFrom = Common.getDate(dateFrom, '');
+    const _dateTo = Common.getDate(dateTo, '');
+    if( _dateFrom === '' || _dateTo === '') {
+        throw new Exception('POST_DATE_INVALID');
+    }
+
+    whereQuery.transactionPostingDate = { [Op.between] : [_dateFrom, _dateTo] };
+
+    let details = await TransactionRepo.getTotalTransactionsGroupByLabel(label, currency, whereQuery);
+    details = details.map(detail => {
+      return {
+        total: detail.total,
+        totalFormatted: AmountHelper.formatAmount(detail.total, 
+                currencyObj.currencyDecimalPlace),
+        label: detail.label,
+      }
+    });
+
+    return {
+      label,
+      currency,
+      dateFrom: _dateFrom,
+      dateTo: _dateTo,
+      details,
+    }
+  }
+
   async getTransaction(id) {
     let transaction = await TransactionRepo.getTransaction(id);
     //find debtor Id

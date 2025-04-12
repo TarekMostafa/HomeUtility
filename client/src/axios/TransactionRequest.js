@@ -58,6 +58,18 @@ class TransctionRequest {
     return response.data;
   }
 
+  static async getLabelStatistics (label, currency, dateFrom, dateTo) {
+    const response = await axios.get('/api/wealth/transactions/labelstatistics', {
+      params: {
+        label, 
+        currency,
+        dateFrom,
+        dateTo,
+      }
+    });
+    return response.data;
+  }
+
   static async addSingleTransaction (account, postingDate, amount, crdr, type, narrative) {
     return await axios.post('/api/wealth/transactions/single', {
       transactionAmount: amount,

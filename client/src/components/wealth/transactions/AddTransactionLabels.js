@@ -21,11 +21,11 @@ function AddTransactionLabels(props) {
     const loadLabels = (labels) => {
         setFormData({
             ...formData,
-            label1: labels.label1,
-            label2: labels.label2,
-            label3: labels.label3,
-            label4: labels.label4,
-            label5: labels.label5,
+            label1: (labels.label1===null?"":labels.label1),
+            label2: (labels.label2===null?"":labels.label2),
+            label3: (labels.label3===null?"":labels.label3),
+            label4: (labels.label4===null?"":labels.label4),
+            label5: (labels.label5===null?"":labels.label5),
         });
     }
 

@@ -93,6 +93,40 @@ class TransactionRepo {
     });
   }
 
+  static async getTotalTransactionsGroupByLabel(label, currency, whereQuery) {
+
+    let labelField = "transactionLabel1";
+    if(label==="2") labelField = "transactionLabel2";
+    else if(label==="3") labelField = "transactionLabel3";
+    else if(label==="4") labelField = "transactionLabel4";
+    else if(label==="5") labelField = "transactionLabel5";
+
+    return await TransactionModel.findAll({
+      attributes: [
+        [sequelize.fn('sum', sequelize.literal(
+          'Round(transactionAmount*(case when transactionCRDR = \'Credit\' then 1 else -1 end),3)')), "total"]
+        ,[labelField, "label"]],
+      include: [
+        { model: AccountModel, as: 'account', attributes: [],
+          include: [
+            { model: CurrencyModel, as: 'currency', attributes: [] }
+          ], 
+          where: {
+            accountCurrency: currency
+          }
+        }
+      ],
+      group: [labelField],
+      where: {
+        ...whereQuery,
+        [labelField]: {
+          [Op.ne]: null
+        }
+      },
+      raw: true
+    });
+  }
+
   static async getSumTransactions(types, currency, dateFrom, dateTo){
     let whereQuery = {};
     let accountWhereQuery = {};

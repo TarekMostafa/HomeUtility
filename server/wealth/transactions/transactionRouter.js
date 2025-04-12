@@ -28,6 +28,14 @@ router.get('/monthlystatistics', function(req, res, next) {
   })
 });
 
+router.get('/labelstatistics', function(req, res, next) {
+  transactionBusiness.getTotalTransactionsByLabel(req.query).then( result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+});
+
 router.get('/accountbalanceasofdate', function(req, res, next) {
   transactionBusiness.getAccountBalanceAsOfDate(req.query).then( result => {
     res.json(result);
