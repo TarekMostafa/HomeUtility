@@ -179,6 +179,16 @@ class TransctionRequest {
       fromId, toId 
     });
   }
+
+  static async updateTransactionLabels(id, label1, label2, label3, label4, label5) {
+    return await axios.put('/api/wealth/transactions/single/label/'+id, {
+      label1,
+      label2,
+      label3,
+      label4,
+      label5,
+    });
+  }
 }
 
 export default TransctionRequest;

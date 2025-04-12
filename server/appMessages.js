@@ -38,6 +38,7 @@ module.exports = {
   'TRANS_TYPE_INVALID' : 'Invalid transaction type',
   'TRANS_NOT_EXIST' : 'This transaction does not exist in the database',
   'TRANS_UPDATE_SUCCESS' : 'This transaction has been successfully updated',
+  'TRANS_LABELS_UPDATE_SUCCESS' : 'This transaction labels has been successfully updated',
   'TRANS_UPDATE_FAIL' : 'Failed to update this transaction',
   'TRANS_DELETE_SUCCESS' : 'This transaction has been successfully deleted',
   'TRANS_DELETE_FAIL' : 'Failed to delete this transaction',

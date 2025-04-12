@@ -10,7 +10,10 @@ module.exports = {
     LINK_MODULES_TO_DEBTOR: 'linkModulesToDebtors',
     FX_TRANSACTION_TYPE_FROM: 'fxTransactionTypeFrom',
     FX_TRANSACTION_TYPE_TO: 'fxTransactionTypeTo',
+    SHOW_TRANSACTION_LABELS: 'showTransactionLabels',
     //Values constants
     AUTOMATIC: 'Automatic',
-    MANUAL: 'Manual'
+    MANUAL: 'Manual',
+    YES: 'Yes',
+    NO: 'No',
 }

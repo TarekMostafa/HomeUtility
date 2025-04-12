@@ -184,4 +184,13 @@ router.post('/fx/delete/:id', function(req, res, next) {
   })
 })
 
+router.put('/single/label/:id', function(req, res, next) {
+  transactionBusiness.editTransactionLabels(req.params.id, req.body).then( result => {
+    res.messageCode = 'TRANS_LABELS_UPDATE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+})
+
 module.exports = router;

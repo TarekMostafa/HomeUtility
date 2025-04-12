@@ -216,12 +216,14 @@ class TransactionBusiness {
     } else { //in case of not a debtor module
       if(transaction.transactionRelatedTransactionId) {
         const debtor = await DebtorRepo.getDebtorByRelId(transaction.transactionRelatedTransactionId);
-        console.log(debtor);
         if(debtor) {
           debtorId = debtor.debtId;
         }
       }
     }
+
+    const showLabels = await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.SHOW_TRANSACTION_LABELS);
 
     transaction = {
       transactionId: transaction.transactionId,
@@ -240,6 +242,14 @@ class TransactionBusiness {
       currencyDecimalPlace: transaction.account.currency.currencyDecimalPlace,
       transactionModuleId: transaction.transactionModuleId,
       debtorId: debtorId,
+      isLabelActivated: (showLabels===AppParametersConstants.YES?true:false),
+      labels: (showLabels===AppParametersConstants.YES? {
+        label1: transaction.transactionLabel1,
+        label2: transaction.transactionLabel2,
+        label3: transaction.transactionLabel3,
+        label4: transaction.transactionLabel4,
+        label5: transaction.transactionLabel5,
+      } : null)
     };
     return transaction;
   }
@@ -453,6 +463,21 @@ class TransactionBusiness {
       AppParametersConstants.DEBT_TRANSACTION_DEBIT);
     await AppParametersRepo.getAppParameterValue(
       AppParametersConstants.LINK_MODULES_TO_DEBTOR);
+  }
+
+  async editTransactionLabels(id, {label1, label2, label3, label4, label5}) {
+    // Get Saved transaction that want to be updated
+    let _transaction = await TransactionRepo.getTransaction(id);
+    if(!_transaction) {
+      throw new Exception('TRANS_NOT_EXIST');
+    }
+
+    _transaction.transactionLabel1 = (label1? label1: null);
+    _transaction.transactionLabel2 = (label2? label2: null);
+    _transaction.transactionLabel3 = (label3? label3: null);
+    _transaction.transactionLabel4 = (label4? label4: null);
+    _transaction.transactionLabel5 = (label5? label5: null);
+    await _transaction.save();
   }
 }
 
