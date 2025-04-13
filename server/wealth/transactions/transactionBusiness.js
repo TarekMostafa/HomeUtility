@@ -18,7 +18,8 @@ const TransactionModules = transactionModules.Modules;
 class TransactionBusiness {
 
   async getTransactions({limit, skip, accountIds, typeIds, postingDateFrom,
-    postingDateTo, narrative, id, includeNarrative, currencies, dateType, payForOthers}) {
+    postingDateTo, narrative, id, includeNarrative, currencies, dateType, payForOthers,
+    label1, label2, label3, label4, label5}) {
 
     limit = Common.getNumber(limit, 10);
     skip = Common.getNumber(skip, 0);
@@ -80,6 +81,12 @@ class TransactionBusiness {
     //Pay for Others
     if(payForOthers!== null && payForOthers!== undefined)
       whereQuery.transactionPayForOthers = payForOthers;
+    //Labels
+    if(label1) whereQuery.transactionLabel1 = label1;
+    if(label2) whereQuery.transactionLabel2 = label2;
+    if(label3) whereQuery.transactionLabel3 = label3;
+    if(label4) whereQuery.transactionLabel4 = label4;
+    if(label5) whereQuery.transactionLabel5 = label5;
 
     let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery, accountWhereQuery);
     await this.loadParameters(); //to load parameters once
@@ -222,7 +229,9 @@ class TransactionBusiness {
     whereQuery.transactionPostingDate = { [Op.between] : [_dateFrom, _dateTo] };
 
     let details = await TransactionRepo.getTotalTransactionsGroupByLabel(label, currency, whereQuery);
+    let labelTotal = 0;
     details = details.map(detail => {
+      labelTotal += Number(detail.total);
       return {
         total: detail.total,
         totalFormatted: AmountHelper.formatAmount(detail.total, 
@@ -237,6 +246,9 @@ class TransactionBusiness {
       dateFrom: _dateFrom,
       dateTo: _dateTo,
       details,
+      labelTotal,
+      labelTotalFormatted: AmountHelper.formatAmount(labelTotal, 
+        currencyObj.currencyDecimalPlace)
     }
   }
 

@@ -9,6 +9,7 @@ import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import LabelDropDown from '../../common/LabelDropDown';
 
 import LabelTransactionTable from './LabelTransactionTable';
+import LabelLinkDetails from './LabelLinkDetails';
 import TransactionRequest from '../../../axios/TransactionRequest';
 
 const initialState = {
@@ -17,7 +18,7 @@ const initialState = {
     dateFrom: '',
     dateTo: '',
     message: '',
-    headers: ['Date From', 'Date To'],
+    headers: ['Total'],
     rows: [],
     isLoading: false,
 }
@@ -25,6 +26,9 @@ const initialState = {
 function LabelTransactionList () {
 
     const [formData, setFormData] = useState(initialState);
+    const [modalLabelDetailShow, setModalLabelDetailShow] = useState(false);
+    const [transactions, setTransactions] = useState([]);
+    const [transactionsData, setTransactionsData] = useState({});
 
     const handleChange = (event) => {
 
@@ -95,8 +99,7 @@ function LabelTransactionList () {
 
             let headers = [...formData.headers]
             let row = [];
-            row[0] = result.dateFrom;
-            row[1] = result.dateTo;
+            row[0] = result.labelTotalFormatted;
             for(const details of result.details) {
                 if(!headers.includes(details.label)) headers.push(details.label);
                 const index = headers.indexOf(details.label);
@@ -104,7 +107,7 @@ function LabelTransactionList () {
             }
             //fill gaps
             for(let counter =0; counter <headers.length; counter++){
-                if(!row[counter]) row[counter] = 0;
+                if(!row[counter]) row[counter] = '';
             }
             const rows = [...formData.rows, row];
 
@@ -126,6 +129,27 @@ function LabelTransactionList () {
 
     const handleResetClick = () => {
         setFormData({...initialState});
+    }
+
+    const handleDetailsClick = (labelNum, labelValue, currency, dateFrom, dateTo, total) => {
+        TransactionRequest.getTransactions(999, 0, [], [], dateFrom, 
+            dateTo, null, null, null, [currency], 'POST', null, 
+            (labelNum==="1"?labelValue:null), 
+            (labelNum==="2"?labelValue:null), 
+            (labelNum==="3"?labelValue:null), 
+            (labelNum==="4"?labelValue:null), 
+            (labelNum==="5"?labelValue:null) 
+        ).then( transactions => {
+            setTransactions(transactions);
+            setTransactionsData({
+                labelName: labelValue,
+                currency,
+                dateFrom,
+                dateTo,
+                total
+            })
+            setModalLabelDetailShow(true);
+        })
     }
 
     return (
@@ -181,8 +205,18 @@ function LabelTransactionList () {
                 </Form>
             </FormContainer>
             <FormContainer>
-                <LabelTransactionTable headers={formData.headers} rows={formData.rows}/>
+                <LabelTransactionTable
+                label={formData.label} currency={formData.currency}
+                dateFrom={formData.dateFrom} dateTo={formData.dateTo} 
+                headers={formData.headers} rows={formData.rows}
+                onDetailsClick={handleDetailsClick}/>
             </FormContainer>
+            {
+                modalLabelDetailShow && 
+                <LabelLinkDetails transactions={transactions}
+                data={transactionsData}
+                show={modalLabelDetailShow} onHide={() => setModalLabelDetailShow(false)}/>
+            }
         </React.Fragment>
     );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 
@@ -13,6 +13,7 @@ function LabelTransactionTable (props) {
             <thead>
                 <tr>
                 <th>#</th>
+                <th>Date Range</th>
                 {
                     headers && headers.map( (header, index) => {
                         return (
@@ -28,13 +29,30 @@ function LabelTransactionTable (props) {
                         return (
                             <tr key={index+1}>
                                 <td>{index+1}</td>
-                                <td>{moment(row[0]).format('DD/MM/YYYY')}</td>
-                                <td>{moment(row[1]).format('DD/MM/YYYY')}</td>
+                                <td>
+                                    <Row>
+                                        <Col>{moment(props.dateFrom).format('DD/MM/YYYY')}</Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>{moment(props.dateTo).format('DD/MM/YYYY')}</Col>
+                                    </Row>
+                                </td>
+                                <td>{row[0]}</td>
                                 {
-                                    row.filter((_, index) => index > 1)
+                                    row.filter((_, index) => index > 0)
                                     .map( (data, index) => {
                                         return (
-                                            <td key={index+1}>{data}</td>
+                                            <td key={index+1}>
+                                                <Button variant="link" 
+                                                onClick={() => props.onDetailsClick(
+                                                    props.label, headers[index+1], props.currency, 
+                                                    moment(props.dateFrom).format('DD/MM/YYYY'), 
+                                                    moment(props.dateTo).format('DD/MM/YYYY'),
+                                                    data
+                                                )}>
+                                                    {data}
+                                                </Button>
+                                            </td>
                                         )
                                     })
                                 }
