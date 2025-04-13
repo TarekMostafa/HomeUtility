@@ -46,8 +46,8 @@ function LabelTransactionTable (props) {
                                                 <Button variant="link" 
                                                 onClick={() => props.onDetailsClick(
                                                     props.label, headers[index+1], props.currency, 
-                                                    moment(props.dateFrom).format('DD/MM/YYYY'), 
-                                                    moment(props.dateTo).format('DD/MM/YYYY'),
+                                                    props.dateFrom, 
+                                                    props.dateTo,
                                                     data
                                                 )}>
                                                     {data}
