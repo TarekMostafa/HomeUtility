@@ -15,7 +15,8 @@ class TransactionRepo {
       limit: limit,
       attributes: ['transactionId', 'transactionPostingDate', 'transactionAmount',
         'transactionCRDR', 'transactionNarrative', 'transactionRelatedTransactionId',
-        'transactionModule', 'transactionTypeId'],
+        'transactionModule', 'transactionTypeId', 'transactionLabel1', 'transactionLabel2',
+        'transactionLabel3', 'transactionLabel4', 'transactionLabel5'],
       include: [
         { model: AccountModel, as: 'account', attributes: ['accountNumber','accountCurrency'],
           include: [

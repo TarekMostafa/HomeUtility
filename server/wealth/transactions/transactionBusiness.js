@@ -90,6 +90,9 @@ class TransactionBusiness {
 
     let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery, accountWhereQuery);
     await this.loadParameters(); //to load parameters once
+    const showLabels = await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.SHOW_TRANSACTION_LABELS);
+
     transactions = await Promise.all(transactions.map(async trans => {
       const migration = await this.getMigrationObject(trans);
       const module = transactionModules.getModule(trans.transactionModule);
@@ -113,6 +116,13 @@ class TransactionBusiness {
         relatedType: trans.relatedTransaction? trans.relatedTransaction.relatedTransactionType: '',
         isEditable: module? module.IsEditable: true,
         isDeletable: module? module.IsDeletable: true,
+        labels: (showLabels===AppParametersConstants.YES? {
+        label1: trans.transactionLabel1,
+        label2: trans.transactionLabel2,
+        label3: trans.transactionLabel3,
+        label4: trans.transactionLabel4,
+        label5: trans.transactionLabel5,
+      } : null) 
       }
     }));
     return transactions;

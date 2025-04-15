@@ -27,6 +27,7 @@ import ViewDebtTransactionModal from './ViewDebtTransactionModal';
 import ViewSingleTransactionModal from './ViewSingleTransactionModal';
 import ViewFXTransactionModal from './ViewFXTransactionModal';
 import DeleteFXTransactionModal from './DeleteFXTransactionModal';
+import LabelDropDown from '../../common/LabelDropDown';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -36,6 +37,8 @@ const initialState = {
   postingDateFrom: '',
   postingDateTo: '',
   narrative: '',
+  labelNumber: '',
+  labelValue: '',
   limit: 10,
   id: '',
   includeNarrative: true,
@@ -75,7 +78,13 @@ class WealthTransactionList extends Component {
       this.state.transactionTypes.map(typ=>typ.key),
       this.state.postingDateFrom, this.state.postingDateTo,
       this.state.narrative, this.state.id, this.state.includeNarrative,
-      this.state.currencies.map(ccy=>ccy.key))
+      this.state.currencies.map(ccy=>ccy.key), 'POST', null, 
+      (this.state.labelNumber==="1"?this.state.labelValue:null),
+      (this.state.labelNumber==="2"?this.state.labelValue:null),
+      (this.state.labelNumber==="3"?this.state.labelValue:null),
+      (this.state.labelNumber==="4"?this.state.labelValue:null),
+      (this.state.labelNumber==="5"?this.state.labelValue:null),
+    )
     .then( (transactions) => {
       let _transactions = [];
       if(append) {
@@ -170,19 +179,30 @@ class WealthTransactionList extends Component {
               </InputGroup>
             </Col>
             <Col xs={3}>
+                <InputGroup className="mb-3">
+                  <Form.Control as="select" size="sm" name="labelNumber" onChange={this.handleChange}
+                    value={this.state.labelNumber}>
+                    <option key=' ' value=' '>Labels</option>
+                    <LabelDropDown />
+                  </Form.Control>
+                  <Form.Control type="input" placeholder="Transaction Label" size="sm" name="labelValue"
+                  onChange={this.handleChange} value={this.state.labelValue}/>
+                </InputGroup>
+            </Col>
+            <Col xs={2}>
               <MultiSelectDropDown labelSelect={"Currencies"} 
                 selectedValues={this.state.currencies.map(ccy=>ccy.value)}>
                   <CurrenciesDropDown onSelect={this.handleCurrencies} 
                   selectedData={this.state.currencies.map(ccy=>ccy.key)}/>
               </MultiSelectDropDown>   
             </Col>
-            <Col xs={2}>
+            <Col xs={1}>
               <Form.Control as="select" size="sm" name="limit" onChange={this.handleChange}
                 value={this.state.limit}>
                 <TableLimiterDropDown />
               </Form.Control>
             </Col>
-            <Col xs={2}>
+            <Col xs={1}>
               <Form.Control type="number" placeholder="Id" size="sm" name="id"
               onChange={this.handleChange} value={this.state.id}/>
             </Col>
@@ -327,6 +347,11 @@ class WealthTransactionList extends Component {
   }
 
   handleChange = (event) => {
+    if(event.target.name==='labelNumber' && event.target.value===' ') {
+      this.setState({
+        labelValue: ''
+      });
+    }
     this.setState({
       [event.target.name] : (event.target.type==='checkbox' ? event.target.checked : event.target.value)
     })

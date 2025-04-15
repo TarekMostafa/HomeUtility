@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, OverlayTrigger, Tooltip, DropdownButton, 
-  Dropdown, Button, Badge } from 'react-bootstrap';
+  Dropdown, Button, Badge, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 // import amountFormatter from '../../../utilities/amountFormatter';
@@ -38,6 +38,11 @@ function WealthTransactionTable (props) {
             && props.onMigration;
             const isViewable = props.onViewTransaction;
             const isButtonColVisible = isEditable || isDeletable || isMigrable || isViewable;
+            const labelText = (transaction.labels&&transaction.labels.label1?'1/':'')
+                            + (transaction.labels&&transaction.labels.label2?'2/':'')
+                            + (transaction.labels&&transaction.labels.label3?'3/':'')
+                            + (transaction.labels&&transaction.labels.label4?'4/':'')
+                            + (transaction.labels&&transaction.labels.label5?'5/':'')
           return (
             <tr key={transaction.transactionId}>
               <td>{index+1}</td>
@@ -51,14 +56,31 @@ function WealthTransactionTable (props) {
               <td>{transaction.transactionCRDR}</td>
               <td>{transaction.typeName}</td>
               <td>
-                <OverlayTrigger placement="right"
-                  delay={{ show: 250, hide: 400 }} overlay={(
-                    <Tooltip>{transaction.transactionNarrative}</Tooltip>
-                  )}>
-                  <span className="textEllipsis">
-                    {transaction.transactionNarrative}
-                  </span>
-                </OverlayTrigger>
+                {
+                  transaction.transactionNarrative &&
+                  <Row>
+                    <Col>
+                      <OverlayTrigger placement="right"
+                      delay={{ show: 250, hide: 400 }} overlay={(
+                        <Tooltip>{transaction.transactionNarrative}</Tooltip>
+                      )}>
+                        <span className="textEllipsis">
+                          {transaction.transactionNarrative}
+                        </span>
+                      </OverlayTrigger>
+                    </Col>
+                  </Row>
+                }
+                {
+                  labelText && 
+                  <Row>
+                    <Col>
+                      <Badge pill variant="info">
+                        {labelText}
+                      </Badge>
+                    </Col>
+                  </Row>
+                }
               </td>
               <td>
                 {transaction.transactionId}
