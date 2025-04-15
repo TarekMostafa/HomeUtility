@@ -20,6 +20,7 @@ const initialState = {
     message: '',
     headers: ['Total'],
     rows: [],
+    rowsData: [],
     isLoading: false,
 }
 
@@ -110,11 +111,13 @@ function LabelTransactionList () {
                 if(!row[counter]) row[counter] = '';
             }
             const rows = [...formData.rows, row];
+            const rowsData = [...formData.rowsData, [formData.dateFrom, formData.dateTo]];
 
             setFormData({
                 ...formData,
                 headers,
                 rows,
+                rowsData,
                 isLoading: false
             });
         })
@@ -206,9 +209,9 @@ function LabelTransactionList () {
             </FormContainer>
             <FormContainer>
                 <LabelTransactionTable
-                label={formData.label} currency={formData.currency}
-                dateFrom={formData.dateFrom} dateTo={formData.dateTo} 
+                label={formData.label} currency={formData.currency} 
                 headers={formData.headers} rows={formData.rows}
+                rowsData={formData.rowsData}
                 onDetailsClick={handleDetailsClick}/>
             </FormContainer>
             {

@@ -26,15 +26,17 @@ function LabelTransactionTable (props) {
             <tbody>
                 {
                     rows && rows.map( (row, index) => {
+                        const dateFrom = props.rowsData[index][0];
+                        const dateTo = props.rowsData[index][1];
                         return (
                             <tr key={index+1}>
                                 <td>{index+1}</td>
                                 <td>
                                     <Row>
-                                        <Col>{moment(props.dateFrom).format('DD/MM/YYYY')}</Col>
+                                        <Col>{moment(dateFrom).format('DD/MM/YYYY')}</Col>
                                     </Row>
                                     <Row>
-                                        <Col>{moment(props.dateTo).format('DD/MM/YYYY')}</Col>
+                                        <Col>{moment(dateTo).format('DD/MM/YYYY')}</Col>
                                     </Row>
                                 </td>
                                 <td>{row[0]}</td>
@@ -46,8 +48,8 @@ function LabelTransactionTable (props) {
                                                 <Button variant="link" 
                                                 onClick={() => props.onDetailsClick(
                                                     props.label, headers[index+1], props.currency, 
-                                                    props.dateFrom, 
-                                                    props.dateTo,
+                                                    dateFrom, 
+                                                    dateTo,
                                                     data
                                                 )}>
                                                     {data}
