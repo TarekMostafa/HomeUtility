@@ -86,7 +86,15 @@ class Currency {
       throw new Exception('CURR_INV_MANUAL_RATE');
     }
 
+    let isAutomatic = true;
+    const automaticOrManual = await AppParametersRepo.getAppParameterValue(
+      AppParametersConstants.AUTOMATIC_OR_MANUAL_RATE);
+    if(automaticOrManual) {
+      isAutomatic = (automaticOrManual === AppParametersConstants.AUTOMATIC ||
+        automaticOrManual !== AppParametersConstants.MANUAL);
+    }
     currency.currencyManualRateAgainstBase = manualRate;
+    if(!isAutomatic) currency.currencyRateAgainstBase = manualRate;
     await CurrencyRepo.saveCurrency(currency);
   }
 
