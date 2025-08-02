@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, OverlayTrigger, Tooltip, DropdownButton, 
-  Dropdown, Button, Badge, Row, Col } from 'react-bootstrap';
+  Dropdown, Button, Badge, Row, Col, Popover } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 // import amountFormatter from '../../../utilities/amountFormatter';
@@ -43,6 +43,35 @@ function WealthTransactionTable (props) {
                             + (transaction.labels&&transaction.labels.label3?'3/':'')
                             + (transaction.labels&&transaction.labels.label4?'4/':'')
                             + (transaction.labels&&transaction.labels.label5?'5/':'')
+
+            const popover = (
+                <Popover id="popover-basic">
+                  <Popover.Title as="h3">Labels</Popover.Title>
+                  <Popover.Content>
+                    <Row>
+                      <Col>Label 1:</Col>
+                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label1:''}</Col>
+                    </Row>
+                    <Row>
+                       <Col>Label 2:</Col>
+                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label2:''}</Col>
+                    </Row>
+                    <Row>
+                       <Col>Label 3:</Col>
+                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label3:''}</Col>
+                    </Row>
+                    <Row>
+                       <Col>Label 4:</Col>
+                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label4:''}</Col>
+                    </Row>
+                    <Row>
+                       <Col>Label 5:</Col>
+                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label5:''}</Col>
+                    </Row>
+                  </Popover.Content>
+                </Popover>
+              );                
+
           return (
             <tr key={transaction.transactionId}>
               <td>{index+1}</td>
@@ -57,7 +86,7 @@ function WealthTransactionTable (props) {
               <td>{transaction.typeName}</td>
               <td>
                 {
-                  transaction.transactionNarrative &&
+                  // transaction.transactionNarrative &&
                   <Row>
                     <Col>
                       <OverlayTrigger placement="right"
@@ -69,9 +98,19 @@ function WealthTransactionTable (props) {
                         </span>
                       </OverlayTrigger>
                     </Col>
+                    {
+                      labelText &&
+                      <Col>
+                        <OverlayTrigger placement="bottom" overlay={popover}>
+                          <Badge pill variant="info">
+                            Labels
+                          </Badge>
+                        </OverlayTrigger>
+                      </Col>
+                    }
                   </Row>
                 }
-                {
+                {/* {
                   labelText && 
                   <Row>
                     <Col>
@@ -80,7 +119,7 @@ function WealthTransactionTable (props) {
                       </Badge>
                     </Col>
                   </Row>
-                }
+                } */}
               </td>
               <td>
                 {transaction.transactionId}
