@@ -1,9 +1,10 @@
 import React from 'react';
 import { Table, OverlayTrigger, Tooltip, DropdownButton, 
-  Dropdown, Button, Badge, Row, Col, Popover } from 'react-bootstrap';
+  Dropdown, Button, Badge, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 // import amountFormatter from '../../../utilities/amountFormatter';
+import LabelsOverlay from '../../common/LabelsOverlay';
 
 // function IsModuleAllowed(module) {
 //   return [null,'DBT'].includes(module);
@@ -42,31 +43,7 @@ function WealthTransactionTable (props) {
                             + (transaction.labels&&transaction.labels.label2?'2/':'')
                             + (transaction.labels&&transaction.labels.label3?'3/':'')
                             + (transaction.labels&&transaction.labels.label4?'4/':'')
-                            + (transaction.labels&&transaction.labels.label5?'5/':'')
-
-            const popover = (
-                <Popover id="popover-basic">
-                  <Popover.Title as="h3">Labels</Popover.Title>
-                  <Popover.Content>
-                    <Table size="sm" responsive="sm">
-                      <tbody>
-                      {
-                        transaction.labels && Object.keys(transaction.labels).map(
-                          key => {
-                            return(
-                            <tr key={key}>
-                              <td>{`Label ${key.substring(5,6)}: `}</td>
-                              <td>{transaction.labels[key]}</td>
-                            </tr>
-                            )
-                          }
-                        )
-                      }
-                      </tbody>
-                    </Table>
-                  </Popover.Content>
-                </Popover>
-              );                
+                            + (transaction.labels&&transaction.labels.label5?'5/':'')               
 
           return (
             <tr key={transaction.transactionId}>
@@ -97,11 +74,8 @@ function WealthTransactionTable (props) {
                     {
                       labelText &&
                       <Col>
-                        <OverlayTrigger placement="auto" overlay={popover} trigger="click">
-                          <Badge variant="light">
-                            Labels
-                          </Badge>
-                        </OverlayTrigger>
+                        <LabelsOverlay Labels={transaction.labels}
+                          isLoading={false} readOnly={true}/>
                       </Col>
                     }
                   </Row>

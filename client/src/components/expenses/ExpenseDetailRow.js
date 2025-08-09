@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import { Form, OverlayTrigger, Tooltip, Popover, Table, Row, Col, 
-    Badge, Button, Spinner } from 'react-bootstrap';
+import { Form, OverlayTrigger, Tooltip, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 
 import ExpenseTypesDropDown from './expensetypes/ExpenseTypesDropDown';
 import EditDeleteButton from '../common/EditDeleteButton';
 // import amountFormatter from '../../utilities/amountFormatter';
 import ExpenseDetailRequest from '../../axios/ExpenseDetailRequest';
+import LabelsOverlay from '../common/LabelsOverlay';
 
 const initialState = {
     mode: 'None',
@@ -16,16 +16,11 @@ const initialState = {
     messageClass:"",
     expenseType: 0,
     expenseDesc: "",
-    expenseLabel1: "",
-    expenseLabel2: "",
-    expenseLabel3: "",
-    expenseLabel4: "",
-    expenseLabel5: "",
 }
 
 function ExpenseDetailRow(props) {
     
-    const handleSaveLabels = (id) => {
+    const handleSaveLabels = (id,{Label1, Label2, Label3, Label4, Label5}) => {
         setFormData({
             isLoading: true,
             isDisabled: true,
@@ -33,9 +28,9 @@ function ExpenseDetailRow(props) {
             messageClass:""
         });
 
-        ExpenseDetailRequest.updateExpenseLabels(id, formData.expenseLabel1,
-            formData.expenseLabel2, formData.expenseLabel3, formData.expenseLabel4,
-            formData.expenseLabel5).then( result => {
+        ExpenseDetailRequest.updateExpenseLabels(id, Label1,
+            Label2, Label3, Label4,
+            Label5).then( result => {
                 if (typeof props.onEdit=== 'function') {
                     props.onEdit();
                 }
@@ -124,11 +119,6 @@ function ExpenseDetailRow(props) {
             ...initialState,
             expenseType: elem.expenseTypeId,
             expenseDesc: elem.expenseDescription,
-            expenseLabel1: elem.expenseLabels.expenseLabel1,
-            expenseLabel2: elem.expenseLabels.expenseLabel2,
-            expenseLabel3: elem.expenseLabels.expenseLabel3,
-            expenseLabel4: elem.expenseLabels.expenseLabel4,
-            expenseLabel5: elem.expenseLabels.expenseLabel5,
         })
     }
 
@@ -152,55 +142,7 @@ function ExpenseDetailRow(props) {
                         elem.expenseLabels.expenseLabel2 ||
                         elem.expenseLabels.expenseLabel3 ||
                         elem.expenseLabels.expenseLabel4 ||
-                        elem.expenseLabels.expenseLabel5);
-
-    const popover = (
-        <Popover id="popover-basic">
-            <Popover.Title as="h3">Labels</Popover.Title>
-            <Popover.Content>
-                <Table size="sm" responsive="sm">
-                      <tbody>
-                      {
-                        elem.expenseLabels && Object.keys(elem.expenseLabels).map(
-                          key => {
-                            return(
-                            <tr key={key}>
-                              <td>{`Label ${key.substring(12,13)}: `}</td>
-                              <td>
-                                {
-                                    props.readOnly ? elem.expenseLabels[key] :
-                                    <Form.Control size="sm" type="input" maxLength={20} 
-                                    name={key} value={formData[key]?formData[key]:""} 
-                                    onChange={(e)=>setFormData({...formData, [key]:e.target.value})}/>
-                                }
-                              </td>
-                            </tr>
-                            )
-                          }
-                        )
-                      }
-                      </tbody>
-                      <tfoot>
-                        {
-                            !props.readOnly && 
-                            <tr>
-                            <td colSpan={2}>
-                                <Button variant="primary" block size="sm" 
-                                    onClick={()=>handleSaveLabels(elem.expenseDetailId)}>
-                                    {
-                                        formData.isLoading?
-                                        <Spinner as="span" animation="border" size="sm" role="status"
-                                        aria-hidden="true"/> : 'Save'
-                                    }
-                                </Button>
-                            </td>
-                            </tr>
-                        }
-                      </tfoot>
-                </Table>
-            </Popover.Content>
-        </Popover>  
-    );                  
+                        elem.expenseLabels.expenseLabel5);    
 
     return (
         <tr key={elem.expenseDetailId} style={getRowColor(elem)}>
@@ -235,11 +177,15 @@ function ExpenseDetailRow(props) {
                         {
                             (hasLabel || !props.readOnly) &&
                             <Col>
-                            <OverlayTrigger placement="auto" overlay={popover} trigger="click">
-                                <Badge variant="light">
-                                    Labels
-                                </Badge>
-                            </OverlayTrigger>
+                                <LabelsOverlay Labels={{Label1: elem.expenseLabels.expenseLabel1,
+                                    Label2: elem.expenseLabels.expenseLabel2,
+                                    Label3: elem.expenseLabels.expenseLabel3,
+                                    Label4: elem.expenseLabels.expenseLabel4,
+                                    Label5: elem.expenseLabels.expenseLabel5
+                                    }} 
+                                    isLoading={formData.isLoading} 
+                                    onSaveLabels={(labels)=>handleSaveLabels(elem.expenseDetailId, labels)}
+                                    {...props}/>
                             </Col>
                         }
                     </Row>
