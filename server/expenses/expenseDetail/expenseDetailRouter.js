@@ -39,6 +39,15 @@ router.put('/:id', function(req, res, next) {
   })
 });
 
+router.put('/updateLabels/:id', function(req, res, next) {
+  expenseDetailBusiness.updateExpenseDetailLabels(req.params.id, req.body).then( () => {
+    res.messageCode = 'EXP_DET_UPDATE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+});
+
 router.delete('/:id', function(req, res, next) {
     expenseDetailBusiness.deleteExpenseDetail(req.params.id).then( result => {
       res.messageCode = 'EXP_DET_DELETE_SUCCESS';

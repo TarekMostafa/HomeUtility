@@ -38,6 +38,13 @@ class ExpenseDetailRequest {
     return await axios.delete('/api/expenseDetail/'+expenseDetailId);
   }
 
+  static async updateExpenseLabels(expenseDetailId, expenseLabel1, expenseLabel2, expenseLabel3,
+    expenseLabel4, expenseLabel5) {
+      return await axios.put('/api/expenseDetail/updateLabels/'+expenseDetailId, {
+        expenseLabel1, expenseLabel2, expenseLabel3, expenseLabel4, expenseLabel5
+      })
+  }
+
 }
 
 export default ExpenseDetailRequest;

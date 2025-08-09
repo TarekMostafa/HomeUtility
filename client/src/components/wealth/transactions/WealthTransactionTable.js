@@ -48,26 +48,22 @@ function WealthTransactionTable (props) {
                 <Popover id="popover-basic">
                   <Popover.Title as="h3">Labels</Popover.Title>
                   <Popover.Content>
-                    <Row>
-                      <Col>Label 1:</Col>
-                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label1:''}</Col>
-                    </Row>
-                    <Row>
-                       <Col>Label 2:</Col>
-                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label2:''}</Col>
-                    </Row>
-                    <Row>
-                       <Col>Label 3:</Col>
-                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label3:''}</Col>
-                    </Row>
-                    <Row>
-                       <Col>Label 4:</Col>
-                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label4:''}</Col>
-                    </Row>
-                    <Row>
-                       <Col>Label 5:</Col>
-                      <Col>{transaction.labels&&transaction.labels.label1?transaction.labels.label5:''}</Col>
-                    </Row>
+                    <Table size="sm" responsive="sm">
+                      <tbody>
+                      {
+                        transaction.labels && Object.keys(transaction.labels).map(
+                          key => {
+                            return(
+                            <tr key={key}>
+                              <td>{`Label ${key.substring(5,6)}: `}</td>
+                              <td>{transaction.labels[key]}</td>
+                            </tr>
+                            )
+                          }
+                        )
+                      }
+                      </tbody>
+                    </Table>
                   </Popover.Content>
                 </Popover>
               );                
@@ -101,8 +97,8 @@ function WealthTransactionTable (props) {
                     {
                       labelText &&
                       <Col>
-                        <OverlayTrigger placement="bottom" overlay={popover}>
-                          <Badge pill variant="info">
+                        <OverlayTrigger placement="auto" overlay={popover} trigger="click">
+                          <Badge variant="light">
                             Labels
                           </Badge>
                         </OverlayTrigger>

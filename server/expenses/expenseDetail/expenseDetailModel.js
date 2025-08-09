@@ -15,6 +15,11 @@ ExpenseDetailModel.init({
   expenseTypeId: { type: Sequelize.INTEGER, allowNull: true},
   expenseAdjusment: Sequelize.BOOLEAN,
   expenseDate: Sequelize.DATEONLY,
+  expenseLabel1: Sequelize.STRING(20),
+  expenseLabel2: Sequelize.STRING(20),
+  expenseLabel3: Sequelize.STRING(20),
+  expenseLabel4: Sequelize.STRING(20),
+  expenseLabel5: Sequelize.STRING(20),
 }, {
   tableName: 'expensesDetails',
   createdAt: false,

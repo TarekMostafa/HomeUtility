@@ -22,6 +22,13 @@ class expenseDetailBusiness {
         expenseTypeId: expDet.expenseTypeId,
         expenseAdjusment: expDet.expenseAdjusment,
         expenseDate: expDet.expenseDate,
+        expenseLabels: {
+          expenseLabel1: expDet.expenseLabel1,
+          expenseLabel2: expDet.expenseLabel2,
+          expenseLabel3: expDet.expenseLabel3,
+          expenseLabel4: expDet.expenseLabel4,
+          expenseLabel5: expDet.expenseLabel5,
+        },
         expenseType: {
           expenseTypeId: expDet.expenseType?expDet.expenseType.expenseTypeId:'',
           expenseTypeName: expDet.expenseType?expDet.expenseType.expenseTypeName:'',
@@ -62,6 +69,13 @@ class expenseDetailBusiness {
         expenseTypeId: expDet.expenseTypeId,
         expenseAdjusment: expDet.expenseAdjusment,
         expenseDate: expDet.expenseDate,
+        expenseLabels: {
+          expenseLabel1: expDet.expenseLabel1,
+          expenseLabel2: expDet.expenseLabel2,
+          expenseLabel3: expDet.expenseLabel3,
+          expenseLabel4: expDet.expenseLabel4,
+          expenseLabel5: expDet.expenseLabel5,
+        },
         expenseType: {
           expenseTypeId: expDet.expenseType?expDet.expenseType.expenseTypeId:'',
           expenseTypeName: expDet.expenseType?expDet.expenseType.expenseTypeName:'',
@@ -147,6 +161,23 @@ class expenseDetailBusiness {
       await dbTransaction.rollback();
       throw new Exception('EXP_DELETE_FAIL');
     }
+  }
+
+  async updateExpenseDetailLabels(id, {expenseLabel1, expenseLabel2, expenseLabel3, 
+    expenseLabel4, expenseLabel5}) {
+    let expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
+    if(!expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
+
+    let expense = await ExpenseRepo.getExpense(expenseDetail.expenseId);
+    if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
+    if(expense.expenseStatus === 'CLOSED') throw new Exception('EXP_STATUS_CLOSED');
+
+    expenseDetail.expenseLabel1 = expenseLabel1? expenseLabel1:null;
+    expenseDetail.expenseLabel2 = expenseLabel2? expenseLabel2:null;
+    expenseDetail.expenseLabel3 = expenseLabel3? expenseLabel3:null;
+    expenseDetail.expenseLabel4 = expenseLabel4? expenseLabel4:null;
+    expenseDetail.expenseLabel5 = expenseLabel5? expenseLabel5:null;
+    await expenseDetail.save();
   }
 }
 
