@@ -9,6 +9,7 @@ import TableLimiterDropDown from '../../common/TableLimiterDropDown';
 import ExpenseTypesDropDown from '../expensetypes/ExpenseTypesDropDown';
 import YesNoDropDown from '../../common/YesNoDropDown';
 import ExpenseDetailTable from '../ExpenseDetailTable';
+import LabelDropDown from '../../common/LabelDropDown';
 
 import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 import ExpenseTypeRequest from '../../../axios/ExpenseTypeRequest';
@@ -21,6 +22,8 @@ const initialState = {
     expDateTo: '',
     expTypes: '',
     adjusment: '',
+    labelNumber: '',
+    labelValue: '',
 }
 
 function ExpenseDetailSearchList(props) {
@@ -43,7 +46,13 @@ function ExpenseDetailSearchList(props) {
             formData.expDateFrom,
             formData.expDateTo,
             formData.adjusment,
-            formData.expTypes)
+            formData.expTypes,
+            (formData.labelNumber==="1"?formData.labelValue:null),
+            (formData.labelNumber==="2"?formData.labelValue:null),
+            (formData.labelNumber==="3"?formData.labelValue:null),
+            (formData.labelNumber==="4"?formData.labelValue:null),
+            (formData.labelNumber==="5"?formData.labelValue:null),
+        )
         .then(expsDetails => {
             setExpensesDetails(
                 append? [...expensesDetails, ...expsDetails] : expsDetails
@@ -127,7 +136,7 @@ function ExpenseDetailSearchList(props) {
                     </Row>
                     <br />
                     <Row>
-                    <Col xs={6}>
+                    <Col xs={3}>
                         <InputGroup className="mb-3">
                             <InputGroup.Prepend>
                             <InputGroup.Checkbox name="includeDescription"
@@ -136,7 +145,18 @@ function ExpenseDetailSearchList(props) {
                             <Form.Control type="input" placeholder="description" size="sm" name="description"
                                 onChange={handleChange} value={formData.description}/>
                         </InputGroup>
-                    </Col> 
+                    </Col>
+                    <Col xs={3}>
+                        <InputGroup className="mb-3">
+                            <Form.Control as="select" size="sm" name="labelNumber" onChange={handleChange}
+                                value={formData.labelNumber}>
+                                <option key=' ' value=' '>Labels</option>
+                                <LabelDropDown />
+                            </Form.Control>
+                            <Form.Control type="input" placeholder="Transaction Label" size="sm" name="labelValue"
+                                onChange={handleChange} value={formData.labelValue}/>
+                        </InputGroup>
+                    </Col>
                     <Col xs={2}>
                         <Form.Control as="select" size="sm" name="adjusment" onChange={handleChange}
                             value={formData.adjusment}>

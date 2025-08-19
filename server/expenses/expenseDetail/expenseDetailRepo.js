@@ -10,7 +10,7 @@ const Op = Sequelize.Op;
 class ExpenseDetailRepo {
 
   static async getExpensesDetails({description, includeDescription, expDateFrom, expDateTo,
-    expIsAdjusment, expTypes, skip, limit}){
+    expIsAdjusment, expTypes, skip, limit, label1, label2, label3, label4, label5}){
       limit = Common.getNumber(limit, 10);
       skip = Common.getNumber(skip, 0);
 
@@ -46,6 +46,12 @@ class ExpenseDetailRepo {
       if(expTypes) {
         query.expenseTypeId = expTypes;
       }
+      //Labels
+      if(label1) query.expenseLabel1 = label1;
+      if(label2) query.expenseLabel2 = label2;
+      if(label3) query.expenseLabel3 = label3;
+      if(label4) query.expenseLabel4 = label4;
+      if(label5) query.expenseLabel5 = label5;
 
       return await ExpenseDetailModel.findAll({
         offset: skip,

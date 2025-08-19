@@ -25,6 +25,18 @@ function LabelsOverlay(props) {
         })
     },[props.Labels])
 
+    const handleChange = (event) => {
+
+        const alphanumericWithUnderscore = /^[a-zA-Z0-9_]*$/;
+
+        if(alphanumericWithUnderscore.test(event.target.value)) {
+            setFormData({
+                ...formData,
+                [event.target.name] : event.target.value.toUpperCase()
+            })
+        }
+    }
+
     const popover = (
         <Popover id="popover-basic">
             <Popover.Title as="h3">Labels</Popover.Title>
@@ -42,7 +54,7 @@ function LabelsOverlay(props) {
                                     props.readOnly ? props.Labels[key] :
                                     <Form.Control size="sm" type="input" maxLength={20} 
                                     name={key} value={formData[key]?formData[key]:""} 
-                                    onChange={(e)=>setFormData({...formData, [key]:e.target.value})}/>
+                                    onChange={handleChange}/>
                                 }
                               </td>
                             </tr>

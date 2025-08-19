@@ -2,11 +2,13 @@ import axios from 'axios';
 
 class ExpenseDetailRequest {
   static async getExpensesDetails(limit, skip, description, includeDescription, 
-    expDateFrom, expDateTo, expIsAdjusment, expTypes) {
+    expDateFrom, expDateTo, expIsAdjusment, expTypes,
+    label1, label2, label3, label4, label5) {
     const response = await axios.get('/api/expenseDetail/search', {
       params: {
         limit, skip, description, includeDescription, 
-        expDateFrom, expDateTo, expIsAdjusment, expTypes
+        expDateFrom, expDateTo, expIsAdjusment, expTypes,
+        label1, label2, label3, label4, label5
       }
     });
     return response.data;

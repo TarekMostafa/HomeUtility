@@ -6,9 +6,9 @@ const AmountHelper = require('../../helper/AmountHelper');
 
 class expenseDetailBusiness {
   async getExpensesDetails({description, includeDescription, expDateFrom, expDateTo,
-    expIsAdjusment, expTypes, skip, limit}){
+    expIsAdjusment, expTypes, skip, limit, label1, label2, label3, label4, label5}){
     let expensesDetails = await ExpenseDetailRepo.getExpensesDetails({description, includeDescription, expDateFrom, 
-      expDateTo, expIsAdjusment, expTypes, skip, limit});
+      expDateTo, expIsAdjusment, expTypes, skip, limit, label1, label2, label3, label4, label5});
     expensesDetails = expensesDetails.map( expDet => {
       return {
         expenseDetailId: expDet.expenseDetailId,
