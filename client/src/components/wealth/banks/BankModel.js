@@ -1,7 +1,8 @@
 class BankModel {
-    constructor({bankCode, bankName}){
+    constructor({bankCode, bankName, bankStatus}){
         this.bankCode = bankCode;
         this.bankName = bankName;
+        this.bankStatus = bankStatus;
     }
 }
 

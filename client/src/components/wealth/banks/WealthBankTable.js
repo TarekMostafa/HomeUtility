@@ -13,6 +13,7 @@ function WealthBankTable(props) {
           <th>#</th>
           <th>Bank Code</th>
           <th>Bank Name</th>
+          <th>Status</th>
           <th></th>
         </tr>
       </thead>

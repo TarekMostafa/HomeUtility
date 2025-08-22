@@ -11,7 +11,7 @@ function BanksDropDown(props) {
     return (
       <option key={key} value={key} style={{...style}}
       onClick={()=>typeof(props.onSelect)==='function' && props.onSelect(key, value)}>
-        {value}
+        {bank.bankStatus === 'INACTIVE'?`${value} - ${bank.bankStatus}`:value}
       </option>
     )
   });

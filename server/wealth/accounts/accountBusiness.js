@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const AccountRepo = require('./accountRepo');
+const BankRepo = require('../banks/bankRepo');
 const AppParametersRepo = require('../../appSettings/appParametersRepo');
 const AppParametersConstants = require('../../appSettings/appParametersConstants');
 const Exception = require('../../features/exception');
@@ -104,19 +105,6 @@ class Account {
     return accountStatuses;
   }
 
-  // async addNewAccount(account) {
-  //   const appSettings = await AppSettingsRepo.getAppSettings();
-  //   if(!appSettings || !appSettings.baseCurrency)
-  //   {
-  //     return APIResponse.getAPIResponse(false, null, '039');
-  //   }
-  //   account.accountCurrentBalance = account.accountStartBalance;
-  //   account.accountStatus = 'ACTIVE';
-  //   account.accountUser = account.user.userId;
-  //   await AccountRepo.addAccount(account);
-  //   return APIResponse.getAPIResponse(true, null, '025');
-  // }
-
   async addNewAccount({accountNumber, accountStartBalance, accountBankCode, accountCurrency, 
     user, baseCurrency}) {
     //const baseCurrencyCode = await AppParametersRepo.getAppParameterValue(AppParametersConstants.BASE_CURRENCY);
@@ -124,6 +112,9 @@ class Account {
     if(!baseCurrency) {
       throw new Exception('CURR_INV_BASE');
     }
+
+    const bank = await BankRepo.getBank(accountBankCode);
+    if(!bank) throw new Exception('BANK_NOT_EXIST');
 
     const account = {
       accountNumber,
@@ -134,7 +125,17 @@ class Account {
       accountStatus: 'ACTIVE',
       accountUser: user.userId
     }
-    await AccountRepo.addAccount(account);
+
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      await AccountRepo.addAccount(account, dbTransaction);
+      await BankRepo.updateBankStatus(bank, 'ACTIVE', dbTransaction);
+      await dbTransaction.commit();
+    } catch (err) {
+      await dbTransaction.rollback();
+      throw new Exception('ACC_ADD_FAIL');
+    }
   }
 
   async getAccount(id) {
@@ -167,21 +168,57 @@ class Account {
     if(accountStatus === 'CLOSED'  && account.accountCurrentBalance != 0) {
       throw new Exception('ACC_NOT_CLOSE');
     }
-    await account.update({
-      accountNumber: accountNumber,
-      accountStartBalance: accountStartBalance,
-      accountStatus: accountStatus,
-      accountCurrentBalance: sequelize.literal('accountCurrentBalance-'+ account.accountStartBalance+'+'
-        +accountStartBalance)
-    });
+
+    const bank = await BankRepo.getBank(account.accountBankCode);
+    if(!bank) throw new Exception('BANK_NOT_EXIST');
+
+    let bankStatus = 'ACTIVE';
+    let accounts = await AccountRepo.getAccounts({accountBankCode: bank.bankCode, accountStatus: 'ACTIVE'});
+    accounts = accounts.filter(acc => acc.accountId !== account.accountId);
+    if(accounts.length === 0 && accountStatus === 'CLOSED')
+      bankStatus = 'INACTIVE';
+
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      await account.update({
+        accountNumber: accountNumber,
+        accountStartBalance: accountStartBalance,
+        accountStatus: accountStatus,
+        accountCurrentBalance: sequelize.literal('accountCurrentBalance-'+ account.accountStartBalance+'+'
+          +accountStartBalance)
+      },{transaction: dbTransaction});
+      await BankRepo.updateBankStatus(bank, bankStatus, dbTransaction);
+      await dbTransaction.commit();
+    } catch (err) {
+      await dbTransaction.rollback();
+      throw new Exception('ACC_UPDATE_FAIL');
+    }
   }
 
   async deleteAccount(id)  {
     const _account = await AccountRepo.getAccount(id);
-    if(_account === null) {
-      throw new Exception('ACC_NOT_EXIST')
+    if(_account === null) throw new Exception('ACC_NOT_EXIST');
+    
+    const bank = await BankRepo.getBank(_account.accountBankCode);
+    if(!bank) throw new Exception('BANK_NOT_EXIST');
+
+    let bankStatus = 'ACTIVE';
+    let accounts = await AccountRepo.getAccounts({accountBankCode: bank.bankCode, accountStatus: 'ACTIVE'});
+    accounts = accounts.filter(acc => acc.accountId !== _account.accountId);
+    if(accounts.length === 0)
+      bankStatus = 'INACTIVE';
+
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      await _account.destroy({transaction: dbTransaction});
+      await BankRepo.updateBankStatus(bank, bankStatus, dbTransaction);
+      await dbTransaction.commit();
+    } catch (err) {
+      await dbTransaction.rollback();
+      throw new Exception('ACC_DELETE_FAIL');
     }
-    await _account.destroy();
   }
 }
 

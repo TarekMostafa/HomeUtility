@@ -51,8 +51,8 @@ class AccountRepo {
     });
   }
 
-  static async addAccount(account) {
-    await AccountModel.build(account).save();
+  static async addAccount(account, dbTransaction) {
+    await AccountModel.build(account).save({transaction: dbTransaction});
   }
 
   static async updateAccountCurrentBalance(account, amount, dbTransaction) {

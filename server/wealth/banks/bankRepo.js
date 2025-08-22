@@ -20,6 +20,12 @@ class BankRepo {
   static async deleteBank(bank) {
     return await bank.destroy();
   }
+
+  static async updateBankStatus(bank, status, dbTransaction) {
+    await bank.update(
+      {bankStatus: status},
+      {transaction: dbTransaction});
+  }
 }
 
 module.exports = BankRepo;

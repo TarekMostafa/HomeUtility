@@ -9,7 +9,8 @@ class BankBusiness {
     banks = banks.map( bank => {
       return {
         bankCode: bank.bankCode,
-        bankName: bank.bankName
+        bankName: bank.bankName,
+        bankStatus: bank.bankStatus,
       }
     });
     return banks;

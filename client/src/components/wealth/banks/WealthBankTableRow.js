@@ -31,6 +31,7 @@ class WealthBankTableRow extends Component {
             : this.state.bankName
           }
         </td>
+        <td>{bank.bankStatus}</td>
         <td>
           <Row>
             <Col xs={6}>

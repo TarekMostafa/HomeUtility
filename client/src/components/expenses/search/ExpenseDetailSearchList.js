@@ -171,7 +171,7 @@ function ExpenseDetailSearchList(props) {
                         <Form.Control as="select" size="sm" name="adjusment" onChange={handleChange}
                             value={formData.adjusment}>
                             <option value=''>Adjusment</option>
-                            <YesNoDropDown yesText="Adjusment (Yes)" noText="Adjusment (No)"/>
+                            <YesNoDropDown yesText="Yes - Adjusment" noText="No - Adjusment"/>
                         </Form.Control>
                     </Col> 
                     <Col xs={1}>
