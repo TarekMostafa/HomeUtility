@@ -4,8 +4,8 @@ const TransactionRepo = require('../../wealth/transactions/transactionRepo');
 const AmountHelper = require('../../helper/AmountHelper');
 
 class expenseBusiness {
-  async getExpenses({year}) {
-    let expenses = await ExpenseRepo.getExpenses({year});
+  async getExpenses({year, currency}) {
+    let expenses = await ExpenseRepo.getExpenses({year, currency});
     expenses = await Promise.all(expenses.map( async expense => {
 
       let sumOfAccountDebits = 0;

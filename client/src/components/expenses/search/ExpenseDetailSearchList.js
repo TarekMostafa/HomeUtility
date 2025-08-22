@@ -10,6 +10,7 @@ import ExpenseTypesDropDown from '../expensetypes/ExpenseTypesDropDown';
 import YesNoDropDown from '../../common/YesNoDropDown';
 import ExpenseDetailTable from '../ExpenseDetailTable';
 import LabelDropDown from '../../common/LabelDropDown';
+import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 
 import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 import ExpenseTypeRequest from '../../../axios/ExpenseTypeRequest';
@@ -24,6 +25,7 @@ const initialState = {
     adjusment: '',
     labelNumber: '',
     labelValue: '',
+    expCurrency: '',
 }
 
 function ExpenseDetailSearchList(props) {
@@ -52,6 +54,7 @@ function ExpenseDetailSearchList(props) {
             (formData.labelNumber==="3"?formData.labelValue:null),
             (formData.labelNumber==="4"?formData.labelValue:null),
             (formData.labelNumber==="5"?formData.labelValue:null),
+            formData.expCurrency,
         )
         .then(expsDetails => {
             setExpensesDetails(
@@ -158,13 +161,20 @@ function ExpenseDetailSearchList(props) {
                         </InputGroup>
                     </Col>
                     <Col xs={2}>
+                        <Form.Control as="select" size="sm" name="expCurrency" onChange={handleChange}
+                            value={formData.expCurrency}>
+                            <option value=''>Currency</option>
+                            <CurrenciesDropDown />
+                        </Form.Control>        
+                    </Col>
+                    <Col xs={1}>
                         <Form.Control as="select" size="sm" name="adjusment" onChange={handleChange}
                             value={formData.adjusment}>
                             <option value=''>Adjusment</option>
                             <YesNoDropDown yesText="Adjusment (Yes)" noText="Adjusment (No)"/>
                         </Form.Control>
                     </Col> 
-                    <Col xs={2}>
+                    <Col xs={1}>
                         <Form.Control as="select" size="sm" name="limit" onChange={handleChange}
                             value={formData.limit}>
                             <TableLimiterDropDown />

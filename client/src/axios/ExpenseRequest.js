@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 class ExpenseRequest {
-  static async getExpenses(year) {
+  static async getExpenses(year, currency) {
     const response = await axios.get('/api/expenses', {
         params: {
-            year
+            year, currency
         }
       });
     return response.data;
