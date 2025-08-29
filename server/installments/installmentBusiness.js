@@ -35,6 +35,8 @@ class installmentBusiness {
             instEnteredAmountFormatted: AmountHelper.formatAmount(instEnteredAmount, currency.currencyDecimalPlace),
             instPaidAmount,
             instPaidAmountFormatted: AmountHelper.formatAmount(instPaidAmount, currency.currencyDecimalPlace),
+            instRemAmount: instEnteredAmount - instPaidAmount,
+            instRemAmountFormatted: AmountHelper.formatAmount((instEnteredAmount - instPaidAmount), currency.currencyDecimalPlace),
             instLastPaidUpdate,
             instNotes,
             decimalPlaces: currency.currencyDecimalPlace,

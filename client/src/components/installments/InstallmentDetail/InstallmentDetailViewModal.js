@@ -28,7 +28,7 @@ function InstallmentDetailViewModal(props) {
         if(instDet) setFormData({
             ...formData,
             instDetDate: instDet.instDetDate,
-            instDetAmount: instDet.instDetAmount,
+            instDetAmount: instDet.instDetAmountFormatted,
             instDetStatus: instDet.instDetStatus,
             instDetCheckNumber: instDet.instDetCheckNumber,
             instDetPaidDate: instDet.instDetPaidDate,
@@ -56,9 +56,9 @@ function InstallmentDetailViewModal(props) {
                 <Form.Group controlId="instDetAmount">
                     <Form.Label>Installment Amount</Form.Label>
                     <InputGroup>
-                        <Form.Control type="number" maxLength={20}
+                        <Form.Control type="input"
                         name="instDetAmount"
-                        value={Number(formData.instDetAmount).toFixed(formData.decimalPlaces)}
+                        value={formData.instDetAmount}
                         readOnly/>
                         <InputGroup.Prepend>
                             <InputGroup.Text id="inputGroupPrepend">

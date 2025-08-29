@@ -103,7 +103,7 @@ function InstallmentDetailList(props) {
                             <Form.Label>Entered Amount</Form.Label>
                             <InputGroup     >
                                 <Form.Control type="input" name="EnteredAmount"
-                                readOnly value={installment.instEnteredAmount}/>
+                                readOnly value={installment.instEnteredAmountFormatted}/>
                                 <InputGroup.Prepend>
                                     <InputGroup.Text id="inputGroupPrepend">
                                         {installment.instCurrency}
@@ -115,7 +115,19 @@ function InstallmentDetailList(props) {
                             <Form.Label>Paid Amount</Form.Label>
                             <InputGroup     >
                                 <Form.Control type="input" name="paidAmount"
-                                readOnly value={installment.instPaidAmount}/>
+                                readOnly value={installment.instPaidAmountFormatted}/>
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text id="inputGroupPrepend">
+                                        {installment.instCurrency}
+                                    </InputGroup.Text>
+                                </InputGroup.Prepend>
+                            </InputGroup>
+                        </Col>
+                        <Col xs={2}>
+                            <Form.Label>Remaining Amount</Form.Label>
+                            <InputGroup     >
+                                <Form.Control type="input" name="remAmount"
+                                readOnly value={installment.instRemAmountFormatted}/>
                                 <InputGroup.Prepend>
                                     <InputGroup.Text id="inputGroupPrepend">
                                         {installment.instCurrency}

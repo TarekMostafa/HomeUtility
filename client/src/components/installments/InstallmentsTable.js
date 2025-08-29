@@ -16,6 +16,7 @@ function InstallmentTable (props) {
           <th>Status</th>
           <th>Entered</th>
           <th>Paid</th>
+          <th>Remaining</th>
           <th>Last Paid Date</th>
           <th>Id</th>
           <th></th>
@@ -39,6 +40,9 @@ function InstallmentTable (props) {
               </td>
               <td className="text-right">
                 {inst.instPaidAmountFormatted}
+              </td>              
+              <td className="text-right">
+                {inst.instRemAmountFormatted}
               </td>
               <td>{inst.instLastPaidUpdate}</td>
               <td>{inst.instId}</td>

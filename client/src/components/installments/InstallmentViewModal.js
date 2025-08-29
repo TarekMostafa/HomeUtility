@@ -30,11 +30,11 @@ function InstallmentViewModal(props) {
             instName: inst.instName,
             instStartDate: inst.instStartDate,
             instEndDate: inst.instEndDate,
-            instAmount: inst.instAmount,
+            instAmount: inst.instAmountFormatted,
             instCurrency: inst.instCurrency,
             instNotes: inst.instNotes,
-            instEntered: inst.instEnteredAmount,
-            instPaid: inst.instPaidAmount,
+            instEntered: inst.instEnteredAmountFormatted,
+            instPaid: inst.instPaidAmountFormatted,
             decimalPlaces: inst.decimalPlaces,
             message: ''
         });
@@ -68,9 +68,9 @@ function InstallmentViewModal(props) {
                 <Form.Group controlId="instAmount">
                     <Form.Label>Total Amount</Form.Label>
                     <InputGroup>
-                        <Form.Control type="number"
+                        <Form.Control type="input"
                         name="instAmount"
-                        value={Number(formData.instAmount).toFixed(formData.decimalPlaces)}
+                        value={formData.instAmount}
                         readOnly/>
                         <InputGroup.Prepend>
                             <InputGroup.Text id="inputGroupPrepend">
@@ -82,9 +82,9 @@ function InstallmentViewModal(props) {
                 <Form.Group controlId="instEntered">
                     <Form.Label>Entered</Form.Label>
                     <InputGroup>
-                        <Form.Control type="number"
+                        <Form.Control type="input"
                         name="instEntered"
-                        value={Number(formData.instEntered).toFixed(formData.decimalPlaces)}
+                        value={formData.instEntered}
                         readOnly/>
                         <InputGroup.Prepend>
                             <InputGroup.Text id="inputGroupPrepend">
@@ -96,9 +96,9 @@ function InstallmentViewModal(props) {
                 <Form.Group controlId="instPaid">
                     <Form.Label>Paid</Form.Label>
                     <InputGroup>
-                        <Form.Control type="number"
+                        <Form.Control type="input"
                         name="instPaid"
-                        value={Number(formData.instPaid).toFixed(formData.decimalPlaces)}
+                        value={formData.instPaid}
                         readOnly/>
                         <InputGroup.Prepend>
                             <InputGroup.Text id="inputGroupPrepend">
