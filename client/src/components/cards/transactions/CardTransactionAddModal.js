@@ -80,10 +80,15 @@ function CardTransactionAddModal(props) {
     }
 
     const handleChange = (event) => {
-        setFormData({
+        let data = {
           ...formData,
-          [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value)
-        });
+          [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value),
+        };
+        
+        if(event.target.name === 'transAmount' && formData.cardCurrency===formData.transCurrency)
+          data['billAmount'] = event.target.value;
+
+        setFormData(data);
     }
 
     const handleCardChange = (event) => {

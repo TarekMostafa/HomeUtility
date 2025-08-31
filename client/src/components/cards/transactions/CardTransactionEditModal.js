@@ -22,7 +22,8 @@ const initialState = {
     transDesc: "",
     billAmount: 0,
     instId: "",
-    payForOthers: 0
+    payForOthers: 0,
+    cardCurrency: "",
 }
 
 function CardTransactionEditModal(props) {
@@ -43,7 +44,8 @@ function CardTransactionEditModal(props) {
                 billAmount: cardTrans.cardTransBillAmount,
                 instId: cardTrans.cardTransInstallmentId? 
                   cardTrans.cardTransInstallmentId:"",
-                payForOthers: cardTrans.cardTransPayForOthers
+                payForOthers: cardTrans.cardTransPayForOthers,
+                cardCurrency: cardTrans.cardCurrency,
             });
         });
 
@@ -96,10 +98,15 @@ function CardTransactionEditModal(props) {
     }
 
     const handleChange = (event) => {
-        setFormData({
+        let data = {
           ...formData,
-          [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value)
-        });
+          [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value),
+        };
+
+        if(event.target.name === 'transAmount' && formData.cardCurrency===formData.transCurrency)
+          data['billAmount'] = event.target.value;
+
+        setFormData(data);
     }
 
     const handleCurrencyChange = (event) => {
