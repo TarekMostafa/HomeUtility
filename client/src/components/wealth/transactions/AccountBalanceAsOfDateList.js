@@ -13,6 +13,7 @@ import TransactionRequest from '../../../axios/TransactionRequest';
 const initialState = {
     accountId: '',
     balanceDate: '',
+    dateType: 'POST',  //POST or VALUE
   }
 
 class AccountBalanceAsOfDateList extends Component {
@@ -48,6 +49,18 @@ class AccountBalanceAsOfDateList extends Component {
                             onClick={this.handleListClick} disabled={!this.isFilled}>List</Button>
                         </Col>
                     </Row>
+                    <Row>
+                        <Col xs={{span: 4, offset: 6}}>
+                            <div>
+                            <Form.Check inline type='radio' id={`default-radioPosting`} 
+                                label={`Posting Date`} checked={this.state.dateType!=='VALUE'} 
+                                onChange={this.handleChange} name='dateType' value='POST'/>
+                            <Form.Check inline type='radio' id={`default-radioValue`} 
+                                label={`Value Date`} checked={this.state.dateType==='VALUE'} 
+                                onChange={this.handleChange} name='dateType' value='VALUE'/>
+                            </div>
+                        </Col>
+                    </Row>
                     </Form>    
                 </FormContainer>
                 <FormContainer>
@@ -81,7 +94,8 @@ class AccountBalanceAsOfDateList extends Component {
     }
 
     handleListClick = () => {
-        TransactionRequest.getAccountBalanceAsOfDate(this.state.accountId, this.state.balanceDate)
+        TransactionRequest.getAccountBalanceAsOfDate(this.state.accountId, 
+            this.state.balanceDate, this.state.dateType)
         .then( res => {
             console.log(res);
             this.setState({

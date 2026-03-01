@@ -41,11 +41,12 @@ class TransctionRequest {
     return response.data;
   }
 
-  static async getAccountBalanceAsOfDate (accountId, balanceDate) {
+  static async getAccountBalanceAsOfDate (accountId, balanceDate, dateType) {
     const response = await axios.get('/api/wealth/transactions/accountbalanceasofdate', {
       params: {
         accountId,
-        balanceDate
+        balanceDate,
+        dateType
       }
     });
     return response.data;

@@ -492,15 +492,23 @@ class TransactionBusiness {
     return migration;
   }
 
-  async getAccountBalanceAsOfDate({accountId, balanceDate}){
+  async getAccountBalanceAsOfDate({accountId, balanceDate, dateType}){
     const account = await AccountRepo.getAccount(accountId);
     if(!account) throw new Exception('ACC_INVALID');
 
+    // Construct Where Condition
+    let whereQuery = {};
     const _balanceDate = Common.getDate(balanceDate, '');
-    const resultObj = await TransactionRepo.getAccountBalanceAsOfDate(accountId, balanceDate);
-
+    //Check dateType
+    if(dateType==='VALUE') {
+      whereQuery.transactionValueDate = { [Op.lte] : _balanceDate };
+    } else {
+      whereQuery.transactionPostingDate = { [Op.lte] : _balanceDate };
+    }
+    
+    const resultObj = await TransactionRepo.getAccountBalanceAsOfDate(accountId, whereQuery);
     const decimalPlace = account.currency.currencyDecimalPlace;
-    const transBalance = parseFloat(resultObj.balanceSum).toFixed(decimalPlace);
+    const transBalance = parseFloat((resultObj.balanceSum===null?0:resultObj.balanceSum)).toFixed(decimalPlace);
     const startBalance = parseFloat(account.accountStartBalance).toFixed(decimalPlace);
     const balance = (Number(transBalance)+Number(startBalance)).toFixed(decimalPlace);
     return {

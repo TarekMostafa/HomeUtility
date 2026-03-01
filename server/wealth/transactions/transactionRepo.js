@@ -174,7 +174,7 @@ class TransactionRepo {
     return transaction?true:false;
   }
 
-  static async getAccountBalanceAsOfDate(accountId, balanceDate){
+  static async getAccountBalanceAsOfDate(accountId, whereQuery){
     return await TransactionModel.findOne({
       attributes: [ [sequelize.fn("SUM", sequelize.literal(
         'Round(transactionAmount*(case when transactionCRDR = \'Credit\' then 1 else -1 end),3)'
@@ -182,9 +182,7 @@ class TransactionRepo {
       raw: true,
       where: {
         transactionAccount: accountId,
-        transactionPostingDate: {
-          [Op.lte]: balanceDate
-        }
+        ...whereQuery
       }
     });
   }
