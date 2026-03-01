@@ -120,16 +120,26 @@ class CardTransactionBusiness {
     let dbTransaction;
     try {
       dbTransaction = await sequelize.transaction();
-      await CardRepo.updateCardBalance(cardTrans.cardId, 
+      if(cardTrans.cardTransIsPaid) {
+        cardTrans.cardTransDesc = transDesc;
+        await cardTrans.save({transaction: dbTransaction});
+        //Update Account Transaction Narrative
+        const transactionBusiness = new TransactionBusiness();
+        let narrative = `${cardTrans.cardTransDesc} on ${DateHelper.getFullDateFormat(cardTrans.cardTransDate)}`
+        await transactionBusiness.editTransactionNarrative(
+          cardTrans.cardTransAccountTransId, {narrative}, dbTransaction);
+      } else {
+        await CardRepo.updateCardBalance(cardTrans.cardId, 
         cardTrans.cardTransBillAmount - billAmount, dbTransaction);
-      cardTrans.cardTransCurrency = transCurrency;
-      cardTrans.cardTransAmount = transAmount;
-      cardTrans.cardTransDate = Common.getDate(transDate, '');
-      cardTrans.cardTransDesc = transDesc;
-      cardTrans.cardTransBillAmount = billAmount;
-      cardTrans.cardTransInstallmentId = instId?instId:null;
-      cardTrans.cardTransPayForOthers = payForOthers;
-      await cardTrans.save({transaction: dbTransaction});
+        cardTrans.cardTransCurrency = transCurrency;
+        cardTrans.cardTransAmount = transAmount;
+        cardTrans.cardTransDate = Common.getDate(transDate, '');
+        cardTrans.cardTransDesc = transDesc;
+        cardTrans.cardTransBillAmount = billAmount;
+        cardTrans.cardTransInstallmentId = instId?instId:null;
+        cardTrans.cardTransPayForOthers = payForOthers;
+        await cardTrans.save({transaction: dbTransaction});
+      }
       await dbTransaction.commit();
     } catch (err) {
       console.log(`error ${err}`);
@@ -142,6 +152,7 @@ class CardTransactionBusiness {
     //var cardTrans = await this.getCardTransaction(cardTransId);
     let cardTrans = await CardTransactionRepo.getCardTransaction(cardTransId);
     if(!cardTrans) throw new Exception('CARD_TRANS_NOT_EXIST');
+    if(cardTrans.cardTransIsPaid) throw new Exception('CARD_TRANS_ISPAID');
 
     let dbTransaction;
     try {

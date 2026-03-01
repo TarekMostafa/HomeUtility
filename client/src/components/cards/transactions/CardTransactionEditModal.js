@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import { Form, Button, Spinner, InputGroup } from 'react-bootstrap';
+import { Form, Button, Spinner, InputGroup, Row, Col, Badge } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
+import moment from 'moment';
 
 import ModalContainer from '../../common/ModalContainer';
 import CardsDropDown from '../CardsDropDown';
@@ -24,6 +25,7 @@ const initialState = {
     instId: "",
     payForOthers: 0,
     cardCurrency: "",
+    isPaid: false,
 }
 
 function CardTransactionEditModal(props) {
@@ -46,11 +48,16 @@ function CardTransactionEditModal(props) {
                   cardTrans.cardTransInstallmentId:"",
                 payForOthers: cardTrans.cardTransPayForOthers,
                 cardCurrency: cardTrans.cardCurrency,
+                isPaid: cardTrans.cardTransIsPaid,
             });
         });
 
     useEffect(()=>{
         if(props.cardTransId) loadCardTransaction(props.cardTransId);
+        setFormData({
+          ...formData,
+          message: ""
+        })
     },[props.cardTransId])
 
     const handleClick = () => {
@@ -137,12 +144,19 @@ function CardTransactionEditModal(props) {
         {
           cardTransaction && 
           <form>
-          <Form.Group controlId="payForOthers">
-            <Form.Check name="payForOthers" type="checkbox" label="Pay for others" 
-            checked={formData.payForOthers} 
-            onChange={handleChange}>
-            </Form.Check>
-          </Form.Group>
+          <Row>
+            <Col xs={10}>
+            <Form.Group controlId="payForOthers">
+              <Form.Check name="payForOthers" type="checkbox" label="Pay for others" 
+              checked={formData.payForOthers} 
+              onChange={!formData.isPaid && handleChange}>
+              </Form.Check>
+            </Form.Group>
+            </Col>
+            <Col xs={2}>
+            {formData.isPaid && <Badge variant="warning">Paid</Badge>}
+            </Col>
+          </Row>
           <Form.Group controlId="cardId">
             <Form.Label>Card</Form.Label>
             <Form.Control as="select" name="cardId" readOnly
@@ -153,8 +167,9 @@ function CardTransactionEditModal(props) {
           </Form.Group>
           <Form.Group controlId="transCurrency">
             <Form.Label>Transaction Currency</Form.Label>
-            <Form.Control as="select" name="transCurrency" onChange={handleCurrencyChange}
-            value={formData.transCurrency}>
+            <Form.Control as="select" name="transCurrency" 
+            onChange={!formData.isPaid && handleCurrencyChange}
+            value={formData.transCurrency} readOnly={formData.isPaid}>
               <option value=''></option>
               <CurrenciesDropDown status={''}/>
             </Form.Control>
@@ -164,13 +179,23 @@ function CardTransactionEditModal(props) {
             <Form.Control type="number" maxLength={20}
             name="transAmount"
             value={Number(formData.transAmount).toFixed(formData.decimalPlaces)}
-            onChange={handleChange}/>
+            onChange={!formData.isPaid && handleChange} readOnly={formData.isPaid}  />
           </Form.Group>
-          <Form.Group controlId="transDate">
-            <Form.Label>Transaction Date</Form.Label>
-            <DatePickerInput value={formData.transDate}
-            onChange={handleTransDateChange} readOnly/>
-          </Form.Group>
+          {
+            formData.isPaid ? 
+            <Form.Group controlId="transDate">
+              <Form.Label>Transaction Date</Form.Label>
+              <Form.Control type="input"
+                name="transDate" 
+                value={moment(cardTransaction.cardTransDate).format('DD/MM/YYYY')} 
+                readOnly/>
+            </Form.Group> :
+            <Form.Group controlId="transDate">
+              <Form.Label>Transaction Date</Form.Label>
+              <DatePickerInput value={formData.transDate}
+              onChange={handleTransDateChange}/>
+            </Form.Group>
+          }
           <Form.Group controlId="transDesc">
             <Form.Label>Transaction Description</Form.Label>
             <Form.Control type="input" maxLength={200}
@@ -183,7 +208,7 @@ function CardTransactionEditModal(props) {
               name="billAmount"
               value={Number(formData.billAmount)
                   .toFixed(cardTransaction.cardCurrencyDecimalPlace)}
-              onChange={handleChange}/>
+              onChange={!formData.isPaid && handleChange} readOnly={formData.isPaid}/>
               <InputGroup.Prepend>
                 <InputGroup.Text id="inputGroupPrepend">
                     {cardTransaction.cardCurrency}
@@ -193,8 +218,9 @@ function CardTransactionEditModal(props) {
           </Form.Group>
           <Form.Group controlId="instId">
             <Form.Label>Attach to Card Installment</Form.Label>
-            <Form.Control as="select" name="instId" onChange={handleChange}
-              value={formData.instId}>
+            <Form.Control as="select" name="instId" 
+              onChange={!formData.isPaid && handleChange}
+              value={formData.instId} readOnly={formData.isPaid}>
               <option value=''>Card Installments</option>
               <CardsInstallmentsDropDown 
                 cardsInstallments={props.cardsInstallments} 

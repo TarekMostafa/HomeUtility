@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Form, Button, Spinner, InputGroup } from 'react-bootstrap';
+import { Form, Button, Spinner, InputGroup, Row, Col, Badge } from 'react-bootstrap';
 
 import moment from 'moment';
 
@@ -58,11 +58,18 @@ function CardTransactionDeleteModal(props) {
         {
           cardTransaction && 
           <form>
-            <Form.Group controlId="payForOthers">
-              <Form.Check name="payForOthers" type="checkbox" label="Pay for others" 
-              checked={cardTransaction.cardTransPayForOthers}>
-            </Form.Check>
-            </Form.Group>
+            <Row>
+              <Col xs={10}>
+              <Form.Group controlId="payForOthers">
+                <Form.Check name="payForOthers" type="checkbox" label="Pay for others" 
+                checked={cardTransaction.cardTransPayForOthers}>
+                </Form.Check>
+              </Form.Group>
+              </Col>
+              <Col xs={2}>
+              {cardTransaction.cardTransIsPaid && <Badge variant="warning">Paid</Badge>}
+              </Col>
+            </Row>
             <Form.Group controlId="cardId">
               <Form.Label>Card</Form.Label>
               <Form.Control as="select" name="cardId" readOnly

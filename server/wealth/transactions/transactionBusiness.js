@@ -535,6 +535,17 @@ class TransactionBusiness {
     _transaction.transactionLabel5 = (label5? label5: null);
     await _transaction.save();
   }
+
+  async editTransactionNarrative(id, {narrative}, dbTransaction) {
+    // Get Saved transaction that want to be updated
+    let _transaction = await TransactionRepo.getTransaction(id);
+    if(!_transaction) {
+      throw new Exception('TRANS_NOT_EXIST');
+    }
+
+    _transaction.transactionNarrative = narrative;
+    await _transaction.save({transaction: dbTransaction});
+  }
 }
 
 module.exports = TransactionBusiness;

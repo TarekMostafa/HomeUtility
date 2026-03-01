@@ -124,6 +124,7 @@ module.exports = {
   'CARD_TRANS_PAY_MIX': 'Invalid card transactions, can not process credit and debit together',
   'CARD_CLOSE_BALANCE': 'Invalid status, you cannot close this card as there is pending balance',
   'CARD_ACTIVE_LIMIT': 'Invalid limit, limit should be greater than zero',
+  'CARD_TRANS_ISPAID': 'This card transaction cannot be deleted as it was paid',
   'DEBT_NOT_EXIST': 'This debtor does not exist',
   'DEBT_CLOSE_BALANCE': 'Invalid status, you cannot close this debtor as there is pending balance',
   'DEBT_ADD_SUCCESS': 'This debtor has been successfully created', 
