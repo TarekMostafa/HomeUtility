@@ -23,6 +23,7 @@ const initialState = {
   currencyFrom: '',
   currencyTo: '',
   rate: 0,
+  purpose: '',
   message: '',
   isLoading: false,
 }
@@ -161,6 +162,15 @@ class AddFXTransactionModal extends Component {
               </Form.Group>
             </Col>
           </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="purpose">
+                <Form.Label>Purpose</Form.Label>
+                <Form.Control type="input" maxLength={50}
+                name="purpose" value={this.state.purpose} onChange={this.handleChange}/>
+              </Form.Group>
+            </Col>
+          </Row>
 
           <Form.Text className='text-danger'>{this.state.message}</Form.Text>
         </Form>
@@ -250,7 +260,7 @@ class AddFXTransactionModal extends Component {
     // Add internal transaction
     TransactionRequest.addFXTransaction(this.state.accountFrom, this.state.accountTo, 
       this.state.typeFrom, this.state.typeTo, this.state.postingDateFrom, this.state.rate, 
-      this.state.amountFrom, this.state.amountTo, this.state.postingDateTo)
+      this.state.amountFrom, this.state.amountTo, this.state.postingDateTo, this.state.purpose)
     .then( (response) => {
       if (typeof this.props.onSave=== 'function') {
         this.props.onSave();

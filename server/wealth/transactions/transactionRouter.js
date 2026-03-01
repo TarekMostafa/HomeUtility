@@ -183,6 +183,15 @@ router.post('/fx', function(req, res, next) {
   })
 })
 
+router.post('/fx/edit/:id', function(req, res, next) {
+  fxTransactionBusiness.editFXTransaction(req.params.id, req.body).then( result => {
+    res.messageCode = 'TRANS_UPDATE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+})
+
 router.post('/fx/delete/:id', function(req, res, next) {
   fxTransactionBusiness.deleteFXTransaction(req.params.id, req.body).then( result => {
     res.messageCode = 'TRANS_DELETE_SUCCESS';

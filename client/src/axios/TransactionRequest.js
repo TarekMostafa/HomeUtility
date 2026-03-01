@@ -180,7 +180,7 @@ class TransctionRequest {
   }
 
   static async addFXTransaction (accountFrom, accountTo, typeFrom, typeTo, postingDateFrom, 
-      rate, amountFrom, amountTo, postingDateTo) {
+      rate, amountFrom, amountTo, postingDateTo, purpose) {
     return await axios.post('/api/wealth/transactions/fx', {
       accountFrom,
       accountTo,
@@ -190,7 +190,13 @@ class TransctionRequest {
       rate,
       amountFrom,
       amountTo,
-      postingDateTo
+      postingDateTo,
+      purpose
+    });
+  }
+  static async updateFXTransaction(fxId, fromId, toId, purpose) {
+    return await axios.post('/api/wealth/transactions/fx/edit/'+fxId, {
+      fromId, toId, purpose 
     });
   }
 

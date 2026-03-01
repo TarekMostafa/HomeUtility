@@ -12,7 +12,8 @@ class FXTransactionRepo {
     static async getFXTransactions(whereQuery) {
         return await FXTransactionModel.findAll({
             attributes: ['fxId', 'fxAmountFrom', 'fxAmountTo', 'fxPostingDateFrom',
-                'fxRate', 'fxCurrencyFrom', 'fxCurrencyTo', 'fxPostingDateTo'
+                'fxRate', 'fxCurrencyFrom', 'fxCurrencyTo', 'fxPostingDateTo',
+                'fxPurpose'
             ],
             include: [
                 { 
@@ -36,7 +37,8 @@ class FXTransactionRepo {
     static async getFXTransaction(id) {
         return await FXTransactionModel.findByPk(id, {
             attributes: ['fxId', 'fxAmountFrom', 'fxAmountTo', 'fxPostingDateFrom',
-                'fxRate', 'fxCurrencyFrom', 'fxCurrencyTo', 'fxPostingDateTo', 'fxRelTransId'
+                'fxRate', 'fxCurrencyFrom', 'fxCurrencyTo', 'fxPostingDateTo', 'fxRelTransId',
+                'fxPurpose'
             ],
             include: [
                 { 

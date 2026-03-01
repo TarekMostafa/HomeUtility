@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, InputGroup, Row, Col } from 'react-bootstrap';
+import { Form, Button, Spinner, InputGroup, Row, Col } from 'react-bootstrap';
 
 import moment from 'moment';
 
@@ -9,6 +9,7 @@ import TransactionTypesDropDown from '../transactiontypes/TransactionTypesDropDo
 import TransactionRequest from '../../../axios/TransactionRequest';
 
 const initialState = {
+  fxId: 0,
   idFrom: 0,
   idTo: 0,
   accountFrom: '',
@@ -29,7 +30,7 @@ const initialState = {
   isLoading: false,
 }
 
-class ViewFXTransactionModal extends Component {
+class EditFXTransactionModal extends Component {
   state = {
     ...initialState
   }
@@ -40,6 +41,7 @@ class ViewFXTransactionModal extends Component {
     TransactionRequest.getFXTransaction(this.props.transactionId)
     .then(fxTransaction => {
       this.setState({
+        fxId: fxTransaction.fxId,
         idFrom: fxTransaction.fxFromId,
         idTo: fxTransaction.fxToId,
         accountFrom: fxTransaction.fxFromAccountId,
@@ -65,8 +67,17 @@ class ViewFXTransactionModal extends Component {
 
   render () {
     return (
-      <ModalContainer title="View FX Transaction" show={this.props.show}
-        onHide={this.props.onHide} onShow={this.handleOnShow}>
+      <ModalContainer title="Edit FX Transaction" show={this.props.show}
+        onHide={this.props.onHide} onShow={this.handleOnShow}
+        footer={
+            <Button variant="primary" block onClick={this.handleClick}>
+            {
+              this.state.isLoading?
+              <Spinner as="span" animation="border" size="sm" role="status"
+              aria-hidden="true"/> : 'Save'
+            }
+            </Button>
+          }>
         <Form>
           <Row>
             <Col>
@@ -173,7 +184,7 @@ class ViewFXTransactionModal extends Component {
               <Form.Group controlId="purpose">
                 <Form.Label>Purpose</Form.Label>
                 <Form.Control type="input" maxLength={50}
-                name="purpose" value={this.state.purpose} readOnly/>
+                name="purpose" value={this.state.purpose} onChange={this.handleChange}/>
               </Form.Group>
             </Col>
           </Row>
@@ -190,6 +201,35 @@ class ViewFXTransactionModal extends Component {
     })
   }
 
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name] : event.target.value
+    });
+  }
+
+  handleClick = () => {
+    this.setState({
+      message: '',
+      isLoading: true,
+    });
+    // update fx transaction
+    TransactionRequest.updateFXTransaction(this.state.fxId, 
+      this.state.idFrom, this.state.idTo, this.state.purpose)
+    .then( (response) => {
+      if (typeof this.props.onSave=== 'function') {
+        this.props.onSave();
+      }
+      this.setState({isLoading: false});
+      this.props.onHide();
+    })
+    .catch( err => {
+      console.log(err);
+      this.setState({
+        message: err.response.data,
+        isLoading: false,
+      })
+    })
+  }
 }
 
-export default ViewFXTransactionModal;
+export default EditFXTransactionModal;

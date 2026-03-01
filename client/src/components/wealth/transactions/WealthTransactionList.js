@@ -27,6 +27,7 @@ import ViewDebtTransactionModal from './ViewDebtTransactionModal';
 import ViewSingleTransactionModal from './ViewSingleTransactionModal';
 import ViewFXTransactionModal from './ViewFXTransactionModal';
 import DeleteFXTransactionModal from './DeleteFXTransactionModal';
+import EditFXTransactionModal from './EditFXTransactionModal';
 import LabelDropDown from '../../common/LabelDropDown';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
@@ -67,6 +68,7 @@ class WealthTransactionList extends Component {
     modalReleaseDebtShow: false,
     modalViewFXShow: false,
     modalDeleteFXShow: false,
+    modalEditFXShow: false,
     transactionId: '',
     ...initialState,
   }
@@ -298,6 +300,11 @@ class WealthTransactionList extends Component {
           <DeleteFXTransactionModal show={this.state.modalDeleteFXShow} onHide={this.handleHide}
           onDelete={this.handleListClick} transactionId={this.state.transactionId}/>
         }
+        {
+          this.state.modalEditFXShow &&
+          <EditFXTransactionModal show={this.state.modalEditFXShow} onHide={this.handleHide}
+          onSave={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
       </React.Fragment>
     )
   }// end of render
@@ -410,6 +417,7 @@ class WealthTransactionList extends Component {
       modalReleaseDebtShow: false,
       modalViewFXShow: false,
       modalDeleteFXShow: false,
+      modalEditFXShow: false,
     });
   }
 
@@ -417,6 +425,7 @@ class WealthTransactionList extends Component {
     this.setState({
       modalEditSingleShow: (!module),
       modalEditDebtShow: (module==='DBT'),
+      modalEditFXShow: (module==='FX'),
       transactionId
     });
   }

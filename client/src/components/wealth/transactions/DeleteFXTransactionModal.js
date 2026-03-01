@@ -25,6 +25,7 @@ const initialState = {
   currencyFrom: '',
   currencyTo: '',
   rate: 0,
+  purpose: '',
   message: '',
   isLoading: false,
 }
@@ -55,7 +56,8 @@ class DeleteFXTransactionModal extends Component {
         currencyTo: fxTransaction.fxToCurrency,
         decimalPlacesFrom: fxTransaction.fxFromCurrencyDecimal,
         decimalPlacesTo: fxTransaction.fxToCurrencyDecimal,
-        rate: fxTransaction.fxRate
+        rate: fxTransaction.fxRate,
+        purpose: fxTransaction.fxPurpose,
       })
     })
     .catch( (err) => {
@@ -174,6 +176,15 @@ class DeleteFXTransactionModal extends Component {
                     <InputGroup.Text id="inputGroupPrepend">{this.state.currencyTo}</InputGroup.Text>
                   </InputGroup.Prepend>
                 </InputGroup>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="purpose">
+                <Form.Label>Purpose</Form.Label>
+                <Form.Control type="input" maxLength={50}
+                name="purpose" value={this.state.purpose} readOnly/>
               </Form.Group>
             </Col>
           </Row>

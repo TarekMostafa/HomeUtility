@@ -39,7 +39,7 @@ class FXTransactionBusiness {
     }
 
     async addFXTransaction({accountFrom, accountTo, typeFrom, typeTo, postingDateFrom, 
-        rate, amountFrom, amountTo, postingDateTo}) {
+        rate, amountFrom, amountTo, postingDateTo, purpose}) {
         // Validation
         // Account From must not be equal to Account To
         if(accountFrom === accountTo) {
@@ -81,7 +81,8 @@ class FXTransactionBusiness {
                 fxAccountTo: accountTo,
                 fxCurrencyFrom: _accountFrom.accountCurrency,
                 fxCurrencyTo: _accountTo.accountCurrency,
-                fxPostingDateTo: Common.getDate(postingDateTo, '')
+                fxPostingDateTo: Common.getDate(postingDateTo, ''),
+                fxPurpose: purpose,
             }
             fxTransaction = await FXTransactionRepo.addTransaction(fxTransaction, dbTransaction);
             // Debit Side
@@ -97,6 +98,8 @@ class FXTransactionBusiness {
                 transactionModule: TransactionModules.FX.Code,
                 transactionModuleId: fxTransaction.fxId,
             }
+            if(purpose) transactionDR.transactionNarrative = 
+                transactionDR.transactionNarrative.trim() + ' - ' + purpose.trim();
             let savedTrans = await this.transactionBusiness.addTransaction(transactionDR, dbTransaction);
             if(!savedTrans){
                 await dbTransaction.rollback();
@@ -115,6 +118,8 @@ class FXTransactionBusiness {
                 transactionModule: TransactionModules.FX.Code,
                 transactionModuleId: fxTransaction.fxId,
             }
+            if(purpose) transactionCR.transactionNarrative = 
+                transactionCR.transactionNarrative.trim() + ' - ' + purpose.trim();
             savedTrans = await this.transactionBusiness.addTransaction(transactionCR, dbTransaction);
             if(savedTrans) {
                 await dbTransaction.commit();
@@ -317,6 +322,7 @@ class FXTransactionBusiness {
 
         retFxTransaction.fxRate = fxTransaction.fxRate;
         retFxTransaction.fxId = fxTransaction.fxId;
+        retFxTransaction.fxPurpose = fxTransaction.fxPurpose;
 
         return retFxTransaction;
     }
@@ -357,6 +363,67 @@ class FXTransactionBusiness {
             await dbTransaction.rollback();
             throw new Exception('TRANS_DELETE_FAIL');
         }    
+    }
+
+    async editFXTransaction(fxId, {fromId, toId, purpose}) {
+        //Check FX transaction
+        const fxTransaction = await FXTransactionRepo.getFXTransaction(fxId);
+        if(!fxTransaction) {
+            throw new Exception('TRANS_FX_INVALID');
+        }
+        //Check valid from transaction Id
+        let transactionFrom = await TransactionRepo.getTransaction(fromId);
+        if(!transactionFrom) {
+            throw new Exception('TRANS_INVALID');
+        }
+        //Check valid to transaction Id
+        let transactionTo = await TransactionRepo.getTransaction(toId);
+        if(!transactionTo) {
+            throw new Exception('TRANS_INVALID');
+        }
+        //Check related transaction
+        let relatedTransaction = await RelatedTransactionRepo.getRelatedTransaction(fxTransaction.fxRelTransId);
+        if(!relatedTransaction) {
+            throw new Exception('TRANS_INVALID');
+        }
+
+        // Begin Transaction
+        let dbTransaction;
+        try{
+            dbTransaction = await sequelize.transaction();
+            const amountTo = Number(fxTransaction.fxAmountTo)
+                .toFixed(transactionTo.account.currency.currencyDecimalPlace);
+            const narrativeFrom = this.recreateFXTransactionNarrative(
+                amountTo, fxTransaction.fxCurrencyTo, 
+                ' / ', fxTransaction.fxRate, purpose
+            );
+            await this.transactionBusiness.editTransactionNarrative(
+                fromId, {narrative: narrativeFrom}, dbTransaction
+            )
+            const amountFrom = Number(fxTransaction.fxAmountFrom)
+                .toFixed(transactionFrom.account.currency.currencyDecimalPlace);
+            const narrativeTo = this.recreateFXTransactionNarrative(
+                amountFrom, fxTransaction.fxCurrencyFrom, 
+                ' * ', fxTransaction.fxRate, purpose
+            );
+            await this.transactionBusiness.editTransactionNarrative(
+                toId, {narrative: narrativeTo}, dbTransaction
+            )
+            fxTransaction.fxPurpose = purpose;
+            await fxTransaction.save({transaction: dbTransaction});
+            await dbTransaction.commit();
+        } catch (err) {
+            console.log(err);
+            await dbTransaction.rollback();
+            throw new Exception('TRANS_UPDATE_FAIL');
+        } 
+    }
+
+    recreateFXTransactionNarrative(amount, accountCurrency, operator, rate, purpose) {
+        let narrative = 'Forex ('+ amount + ' ' +
+                accountCurrency + operator + rate + ')';
+        if(purpose) narrative = narrative.trim() + ' - ' + purpose.trim();
+        return narrative;
     }
 }
 

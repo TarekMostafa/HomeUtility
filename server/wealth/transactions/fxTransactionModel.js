@@ -16,6 +16,7 @@ FxTransactionModel.init({
   fxCurrencyFrom: Sequelize.STRING(3),
   fxCurrencyTo: Sequelize.STRING(3),
   fxPostingDateTo: Sequelize.DATEONLY,
+  fxPurpose: Sequelize.STRING(50),
 }, {
   tableName: 'fxtransactions',
   createdAt: false,

@@ -16,7 +16,7 @@ const Modules = {
     },
     FX: {
         Code: 'FX',
-        IsEditable: false,
+        IsEditable: true,
         IsDeletable: true,
     }
 }
