@@ -140,7 +140,8 @@ class FXTransactionBusiness {
                + `on ${postingDate.substring(0, 10)} with rate ${rate}`;
     }
 
-    async getFXTransactions({currency, againstCurrency, dateFrom, dateTo}) {
+    async getFXTransactions({currency, againstCurrency, dateFrom, dateTo, 
+        purposeFlag, purpose}) {
         const currencyObj = await CurrencyRepo.getCurrency(currency);
         if(!currencyObj) {
             throw new Exception('CURR_INVALID');
@@ -172,6 +173,16 @@ class FXTransactionBusiness {
             } else if(_dateTo !== '') {
                 whereQuery.fxPostingDateFrom = { [Op.lte] : _dateTo };
             }
+        }
+
+        //Check purpose flag
+        if(purposeFlag === 'true') {
+            if(purpose) 
+                whereQuery.fxPurpose = {
+                    [Op.substring] : '%'+purpose+'%'
+                };
+            else
+               whereQuery.fxPurpose = '';
         }
 
         let fxTransactions = await FXTransactionRepo.getFXTransactions(whereQuery);
@@ -226,7 +237,8 @@ class FXTransactionBusiness {
                 accountFrom: 
                     `${trans.accountFrom.accountNumber} (${trans.accountFrom.bank.bankCode})`,
                 accountTo: 
-                    `${trans.accountTo.accountNumber} (${trans.accountTo.bank.bankCode})`
+                    `${trans.accountTo.accountNumber} (${trans.accountTo.bank.bankCode})`,
+                fxPurpose: trans.fxPurpose
             }
         });
         return {

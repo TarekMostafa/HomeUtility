@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
@@ -16,6 +16,8 @@ const initialState = {
     againstCurrency: '',
     dateFrom: '',
     dateTo: '',
+    purposeFlag: false,
+    purpose: '',
     message: '',
 }
 
@@ -30,7 +32,8 @@ function FXTransactionList () {
             message: '',
         })
         TransactionRequest.getFXTransactions(formData.currency, formData.againstCurrency, 
-            formData.dateFrom, formData.dateTo)
+            formData.dateFrom, formData.dateTo, formData.purposeFlag,
+            formData.purpose)
         .then(fxTransactionsObj => setFXTransactionsObj(fxTransactionsObj))
         .catch( err => {
             console.log(err);
@@ -44,7 +47,7 @@ function FXTransactionList () {
     const handleChange = (event) => {
         setFormData({
             ...formData,
-            [event.target.name] : event.target.value
+            [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value)
           })
     }
 
@@ -100,6 +103,19 @@ function FXTransactionList () {
                         <DatePickerInput value={formData.dateTo}
                             onChange={handleDateToChange} readOnly 
                             placeholder="Posting Date From" small/>
+                        </Col>
+                    </Row>
+                    <br />
+                    <Row>
+                        <Col xs={6}>
+                        <InputGroup className="mb-3">
+                            <InputGroup.Prepend>
+                                <InputGroup.Checkbox name="purposeFlag"
+                                checked={formData.purposeFlag} onChange={handleChange}/>
+                            </InputGroup.Prepend>
+                            <Form.Control type="input" placeholder="Purpose" size="sm" name="purpose"
+                            onChange={handleChange} value={formData.purpose} readOnly={!formData.purposeFlag}/>
+                        </InputGroup>
                         </Col>
                         <Col xs={1}>
                         <Button variant="primary" size="sm" block onClick={handleListClick}>

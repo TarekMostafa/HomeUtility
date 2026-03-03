@@ -29,13 +29,16 @@ class TransctionRequest {
     return response.data;
   }
 
-  static async getFXTransactions (currency, againstCurrency, dateFrom, dateTo) {
+  static async getFXTransactions (currency, againstCurrency, dateFrom, dateTo,
+    purposeFlag, purpose) {
     const response = await axios.get('/api/wealth/transactions/fx', {
       params: {
         currency,
         againstCurrency,
         dateFrom,
-        dateTo
+        dateTo,
+        purposeFlag,
+        purpose
       }
     });
     return response.data;
@@ -194,6 +197,7 @@ class TransctionRequest {
       purpose
     });
   }
+
   static async updateFXTransaction(fxId, fromId, toId, purpose) {
     return await axios.post('/api/wealth/transactions/fx/edit/'+fxId, {
       fromId, toId, purpose 

@@ -19,6 +19,7 @@ function FXTransactionTable (props) {
           <th>Account From</th>
           <th>Account To</th>
           <th>Date To</th>
+          <th>Purpose</th>
           <th>Id</th>
         </tr>
       </thead>
@@ -43,6 +44,7 @@ function FXTransactionTable (props) {
               <td>{transaction.accountFrom}</td>
               <td>{transaction.accountTo}</td>
               <td>{moment(transaction.fxPostingDateTo).format('DD/MM/YYYY')}</td>
+              <td>{transaction.fxPurpose}</td>
               <td>{transaction.fxId}</td>
             </tr>
           )
