@@ -25,7 +25,7 @@ function BillTransDetailTable (props) {
             return (
                 <tr key={index}>
                     <td>{index+1}</td>
-                    <td>{transDetail.billItem.billItemName}</td>
+                    <td>{transDetail.billItemName}</td>
                     <td>{amountFormatter(transDetail.detAmount, props.currencyDecimalPlace)}</td>
                     <td>{transDetail.detQuantity}</td>
                     <td>{transDetail.detAmountType}</td>

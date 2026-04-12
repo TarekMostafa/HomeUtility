@@ -6,11 +6,7 @@ const billTrans = new BillTransaction();
 
 router.get('/', function(req, res, next) {
   billTrans.getBillTransactions(req.query).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.json(result);
   }).catch( err => {
     next(err);
   })
@@ -18,11 +14,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/:id', function(req, res, next) {
   billTrans.getBillTransaction(req.params.id).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.json(result);
   }).catch( err => {
     next(err);
   })
@@ -30,11 +22,8 @@ router.get('/:id', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
   billTrans.addNewBillTransaction(req.body).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.messageCode = 'BILLTRANS_CREATE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
@@ -42,11 +31,8 @@ router.post('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next) {
   billTrans.editBillTransaction(req.params.id, req.body).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.messageCode = 'BILLTRANS_UPDATE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
@@ -54,11 +40,8 @@ router.put('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
   billTrans.deleteBillTransaction(req.params.id).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.messageCode = 'BILLTRANS_DELETE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })

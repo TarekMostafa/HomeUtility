@@ -20,7 +20,12 @@ class EditBillItemsModal extends Component {
   }
 
   componentDidMount() {
-    this.setState({billItems: this.props.billItems});
+    let billItems = [...this.props.billItems];
+    setTimeout(
+      () => {
+        this.setState({billItems: billItems});
+      }
+    ,0);
   }
 
   render () {

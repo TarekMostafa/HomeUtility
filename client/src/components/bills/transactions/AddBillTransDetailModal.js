@@ -50,7 +50,7 @@ class AddBillTransDetailModal extends Component {
                     <InputGroup>
                       <Form.Control type="number"
                       name="amount" 
-                      value={Number(this.state.amount).toFixed(this.props.billInfo.currency.currencyDecimalPlace)}
+                      value={Number(this.state.amount).toFixed(this.props.billInfo.currencyDecimalPlace)}
                       onChange={this.handleChange}/>
                       <InputGroup.Prepend>
                         <InputGroup.Text id="inputGroupPrepend">{this.props.billInfo.billCurrency}</InputGroup.Text>
@@ -136,7 +136,7 @@ class AddBillTransDetailModal extends Component {
     }
 
     if (typeof this.props.onAdd=== 'function') {
-        this.props.onAdd({billItemId:Number(this.state.billItemId), billItemName: this.state.billItemName}, 
+        this.props.onAdd(Number(this.state.billItemId), this.state.billItemName, 
           this.state.amount, this.state.quantity, this.state.type);
     }
     this.props.onHide();

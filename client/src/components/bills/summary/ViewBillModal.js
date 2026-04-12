@@ -47,7 +47,7 @@ class ViewBillModal extends Component {
         billDefaultAmount: bill.billDefaultAmount,
         billIsTransDetailRequired: bill.billIsTransDetailRequired,
         billLastBillPaidDate: bill.billLastBillPaidDate,
-        decimalPlaces: bill.currency.currencyDecimalPlace,
+        decimalPlaces: bill.currencyDecimalPlace,
         items
       });
     })

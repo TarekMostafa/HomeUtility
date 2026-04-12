@@ -34,7 +34,7 @@ function BillTable (props) {
               </td>
               <td>{bill.billStatus}</td>
               <td className="text-right">
-                {amountFormatter(bill.billDefaultAmount, bill.currency.currencyDecimalPlace)}
+                {amountFormatter(bill.billDefaultAmount, bill.currencyDecimalPlace)}
               </td>
               <td>
                 {

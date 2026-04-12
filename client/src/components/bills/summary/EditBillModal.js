@@ -53,7 +53,7 @@ class EditBillModal extends Component {
         billDefaultAmount: bill.billDefaultAmount,
         billIsTransDetailRequired: bill.billIsTransDetailRequired,
         billLastBillPaidDate: bill.billLastBillPaidDate,
-        decimalPlaces: bill.currency.currencyDecimalPlace,
+        decimalPlaces: bill.currencyDecimalPlace,
         billItems: bill.billItems,
         items
       });

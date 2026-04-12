@@ -54,7 +54,7 @@ class BillTransDetailList extends Component {
                 <Row>
                     <Col> 
                         <BillTransDetailTable 
-                        currencyDecimalPlace={this.state.billInfo.currency.decimalPlaces} 
+                        currencyDecimalPlace={this.state.billInfo.currencyDecimalPlace} 
                         transDetails={this.props.transDetails} 
                         onRemove={this.props.onRemoveItem?this.handleRemoveItem:null}/>
                     </Col>
@@ -78,7 +78,7 @@ class BillTransDetailList extends Component {
             }
         });
         const totalFormat = 'Total: ' + amountFormatter( Math.abs(total) , 
-            this.state.billInfo.currency.decimalPlaces);
+            this.state.billInfo.currencydecimalPlaces);
         if(total <0) {
             return totalFormat+' Debit';
         }else if (total >0) {
@@ -102,14 +102,15 @@ class BillTransDetailList extends Component {
         this.setState({modalAddShow: false});
     }
 
-    handleAddItem = (billItem, amount, quantity, type) => {
+    handleAddItem = (billItemId, billItemName, amount, quantity, type) => {
         //Construct Object
         let transDetail = {
             detId: 0,
             detAmount: amount,
             detQuantity: quantity,
             detAmountType: type,
-            billItem: billItem
+            billItemId,
+            billItemName
         }
 
         this.props.onAddItem(transDetail);

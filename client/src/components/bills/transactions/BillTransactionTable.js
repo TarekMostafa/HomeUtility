@@ -26,7 +26,7 @@ function BillTransactionTable (props) {
           return (
             <tr key={transaction.transId}>
               <td>{index+1}</td>
-              <td>{transaction.bill.billName}</td>
+              <td>{transaction.billName}</td>
               <td>
                 <Row>
                   <Col>
@@ -40,7 +40,7 @@ function BillTransactionTable (props) {
                   </Col>
                 </Row>
               </td>
-              <td>{amountFormatter(transaction.transAmount, transaction.currency.currencyDecimalPlace)}</td>
+              <td>{amountFormatter(transaction.transAmount, transaction.currencyDecimalPlace)}</td>
               <td>{transaction.transAmountType}</td>
               <td>{moment(transaction.transPostingDate).format('DD/MM/YYYY')}</td>
               <td>

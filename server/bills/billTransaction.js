@@ -2,9 +2,9 @@ const Sequelize = require('sequelize');
 const sequelize = require('../db/dbConnection').getSequelize();
 const BillTransactionRepo = require('./billTransactionRepo');
 const BillRepo = require('./billRepo');
-const APIResponse = require('../utilities/apiResponse');
 const Frequency = require('./frequency');
 const Common = require('../utilities/common');
+const Exception = require('../features/exception');
 
 const Op = Sequelize.Op;
 
@@ -60,46 +60,75 @@ class BillTransaction {
     if(amountType){
       whereQuery.transAmountType = amountType.trim();
     }
-    const billTrans = await BillTransactionRepo.getBillTransactions(skip, limit, whereQuery);
-    return APIResponse.getAPIResponse(true, billTrans);
+    let billTrans = await BillTransactionRepo.getBillTransactions(skip, limit, whereQuery);
+    billTrans = billTrans.map(billTran => {
+      return {
+        transId: billTran.transId,
+        transAmount: billTran.transAmount,
+        transBillDate: billTran.transBillDate,
+        transNotes: billTran.transNotes,
+        transOutOfFreq: billTran.transOutOfFreq,
+        transAmountType: billTran.transAmountType,
+        billId: billTran.billId,
+        transPostingDate: billTran.transPostingDate,
+        transCurrency: billTran.transCurrency,
+        currencyDecimalPlace: billTran.currency.currencyDecimalPlace,
+        billName: billTran.bill.billName,
+      }
+    });
+    return billTrans;
   }
 
-  async addNewBillTransaction(billTrans) {
+  async addNewBillTransaction({transAmount, transBillDate, transNotes,
+    transOutOfFreq, transAmountType, billId, transPostingDate,
+    billTransactionDetails
+  }) {
     //Check bill Id
-    const _bill = await BillRepo.getBill(billTrans.billId);
+    const _bill = await BillRepo.getBill(billId);
     if(!_bill) {
-      return APIResponse.getAPIResponse(false, null, '058');
+      throw new Exception('BILL_NOT_EXIST');
     }
     //Bill Validation
     //Check bill start date against bill transaction bill date
-    if(billTrans.transBillDate < _bill.billStartDate) {
-      return APIResponse.getAPIResponse(false, null, '070', _bill.billStartDate);
+    if(transBillDate < _bill.billStartDate) {
+      throw new Exception('BILLTRANS_INVALID_BILLDATE', _bill.billStartDate);
     }
     //Check bill trans detail required with the trans details
-    if(_bill.billIsTransDetailRequired && billTrans.billTransactionDetails.length === 0) {
-      return APIResponse.getAPIResponse(false, null, '071');
+    if(_bill.billIsTransDetailRequired && billTransactionDetails.length === 0) {
+      throw new Exception('BILLTRANS_INVALID_DETAILS');
     }
     //Check bill date with Frequency incase it is in frequency
-    if(!billTrans.transOutOfFreq) {
-      const dateRange = Frequency.getDateRange(_bill.billFrequency, billTrans.transBillDate);
+    if(!transOutOfFreq) {
+      const dateRange = Frequency.getDateRange(_bill.billFrequency, transBillDate);
       let whereQuery = {};
       whereQuery.transBillDate = { [Op.between] : [dateRange.dateFrom, dateRange.dateTo] };
       whereQuery.transOutOfFreq = { [Op.not] : true};
       whereQuery.billId = _bill.billId;
       const tempTrans = await BillTransactionRepo.getBillTransactions(0, 999, whereQuery);
       if(tempTrans.length > 0) {
-        return APIResponse.getAPIResponse(false, null, '069', _bill.billFrequency);
+        throw new Exception('BILLTRANS_INVALID_FREQ', _bill.billFrequency);
       }
+    }
+
+    const billTrans = {
+      transAmount,
+      transBillDate,
+      transNotes,
+      transOutOfFreq,
+      transAmountType,
+      billId,
+      transPostingDate,
+      transCurrency: _bill.billCurrency,
+      billTransactionDetails
     }
 
     let dbTransaction;
     try{
       dbTransaction = await sequelize.transaction();
-      billTrans.transCurrency = _bill.billCurrency;
       // Check bill trans details
       if(billTrans.billTransactionDetails && Array.isArray(billTrans.billTransactionDetails)) {
         billTrans.billTransactionDetails = billTrans.billTransactionDetails.map( billTransDetail => {
-          return {...billTransDetail, billItemId: billTransDetail.billItem.billItemId}
+          return {...billTransDetail, billItemId: billTransDetail.billItemId}
         });
       }
       await BillTransactionRepo.addBillTransaction(billTrans, dbTransaction);
@@ -113,41 +142,70 @@ class BillTransaction {
         await _bill.save({transaction: dbTransaction});
       }
       await dbTransaction.commit();
-      return APIResponse.getAPIResponse(true, null, '063');
     } catch(err){
+      console.log(err);
       await dbTransaction.rollback();
-      return APIResponse.getAPIResponse(false, null, '064');
+      throw new Exception('BILLTRANS_CREATE_FAIL');
     }
   }
 
   async getBillTransaction(id) {
-    const billTrans = await BillTransactionRepo.getBillTransaction(id);
-    return APIResponse.getAPIResponse(true, billTrans);
+    let billTrans = await BillTransactionRepo.getBillTransaction(id);
+    const billTransactionDetails = billTrans.billTransactionDetails
+      .map( detail => {
+        return {
+          detId: detail.detId,
+          detAmount: detail.detAmount,
+          detQuantity: detail.detQuantity,
+          detAmountType: detail.detAmountType,
+          billItemId: detail.billItemId,
+          transId: detail.transId,
+          billItemName: detail.billItem.billItemName,
+        }
+    });
+    billTrans = {
+      transId: billTrans.transId,
+      transAmount: billTrans.transAmount,
+      transBillDate: billTrans.transBillDate,
+      transNotes: billTrans.transNotes,
+      transOutOfFreq: billTrans.transOutOfFreq,
+      transAmountType: billTrans.transAmountType,
+      billId: billTrans.billId,
+      transPostingDate: billTrans.transPostingDate,
+      transCurrency: billTrans.transCurrency,
+      currencyDecimalPlace: billTrans.currency.currencyDecimalPlace,
+      billName: billTrans.bill.billName,
+      billTransactionDetails: billTransactionDetails,
+    }
+    return billTrans;
   }
 
-  async editBillTransaction(id, billTrans) {
+  async editBillTransaction(id, {transAmount, transBillDate, transNotes,
+    transOutOfFreq, transAmountType, transPostingDate, 
+    billTransactionDetails
+  }) {
      //Check bill Transaction
     const _billTrans = await BillTransactionRepo.getBillTransaction(id);
     if(!_billTrans) {
-      return APIResponse.getAPIResponse(false, null, '065');
+      throw new Exception('BILLTRANS_NOT_EXIST');
     }
     //Check bill Id
     const _bill = await BillRepo.getBill(_billTrans.billId);
     if(!_bill) {
-      return APIResponse.getAPIResponse(false, null, '058');
+      throw new Exception('BILL_NOT_EXIST');
     }
     //Bill Validation
     //Check bill start date against bill transaction bill date
-    if(billTrans.transBillDate < _bill.billStartDate) {
-      return APIResponse.getAPIResponse(false, null, '070', _bill.billStartDate);
+    if(transBillDate < _bill.billStartDate) {
+      throw new Exception('BILLTRANS_INVALID_BILLDATE', _bill.billStartDate);
     }
     //Check bill trans detail required with the trans details
-    if(_bill.billIsTransDetailRequired && billTrans.billTransactionDetails.length === 0) {
-      return APIResponse.getAPIResponse(false, null, '071');
+    if(_bill.billIsTransDetailRequired && billTransactionDetails.length === 0) {
+      throw new Exception('BILLTRANS_INVALID_DETAILS');
     }
     //Check bill date with Frequency incase it is in frequency
-    if(!billTrans.transOutOfFreq) {
-      const dateRange = Frequency.getDateRange(_bill.billFrequency, billTrans.transBillDate);
+    if(!transOutOfFreq) {
+      const dateRange = Frequency.getDateRange(_bill.billFrequency, transBillDate);
       let whereQuery = {};
       whereQuery.transBillDate = { [Op.between] : [dateRange.dateFrom, dateRange.dateTo] };
       whereQuery.transOutOfFreq = { [Op.not] : true};
@@ -155,16 +213,16 @@ class BillTransaction {
       whereQuery.transId = { [Op.ne] : _billTrans.transId };
       const tempTrans = await BillTransactionRepo.getBillTransactions(0, 999, whereQuery);
       if(tempTrans.length > 0) {
-        return APIResponse.getAPIResponse(false, null, '069', _bill.billFrequency);
+        throw new Exception('BILLTRANS_INVALID_FREQ', _bill.billFrequency);
       }
     }
     //Set new Values
-    _billTrans.transAmount = billTrans.transAmount;
-    _billTrans.transBillDate = billTrans.transBillDate;
-    _billTrans.transNotes = billTrans.transNotes;
-    _billTrans.transOutOfFreq = billTrans.transOutOfFreq;
-    _billTrans.transAmountType = billTrans.transAmountType;
-    _billTrans.transPostingDate = billTrans.transPostingDate;
+    _billTrans.transAmount = transAmount;
+    _billTrans.transBillDate = transBillDate;
+    _billTrans.transNotes = transNotes;
+    _billTrans.transOutOfFreq = transOutOfFreq;
+    _billTrans.transAmountType = transAmountType;
+    _billTrans.transPostingDate = transPostingDate;
 
     let dbTransaction;
     try{
@@ -180,7 +238,7 @@ class BillTransaction {
       // Loop through Trans Details
       for(let counter = 0; counter < _transDetails.length; counter++){
         let elem = _transDetails[counter];
-        const findIndex = billTrans.billTransactionDetails.findIndex( billTransDetail => 
+        const findIndex = billTransactionDetails.findIndex( billTransDetail => 
           billTransDetail.detId === elem.detId    
         );
 
@@ -189,7 +247,7 @@ class BillTransaction {
         if(findIndex < 0) {
           await _billTrans.billTransactionDetails[counter].destroy({transaction: dbTransaction});
         } else {
-          const billTransDetail = billTrans.billTransactionDetails[findIndex];
+          const billTransDetail = billTransactionDetails[findIndex];
           _billTrans.billTransactionDetails[counter].detAmount = billTransDetail.detAmount;
           _billTrans.billTransactionDetails[counter].detQuantity = billTransDetail.detQuantity;
           _billTrans.billTransactionDetails[counter].detAmountType = billTransDetail.detAmountType;
@@ -198,29 +256,27 @@ class BillTransaction {
       }
 
       // filter in bill Trans and get item id = 0 
-      let filterBillTransDetail = billTrans.billTransactionDetails.filter( elem => elem.detId === 0);
+      let filterBillTransDetail = billTransactionDetails.filter( elem => elem.detId === 0);
       for(let counter = 0; counter < filterBillTransDetail.length; counter++){
         let elem =  filterBillTransDetail[counter];
-        elem.billItemId = elem.billItem.billItemId;
+        elem.billItemId = elem.billItemId;
         elem.transId = _billTrans.transId;
         await BillTransactionRepo.addBillTransactionDetail(elem, dbTransaction);
       }
       await dbTransaction.commit();
-      return APIResponse.getAPIResponse(true, null, '066');
     } catch(err){
       console.log(err);
       await dbTransaction.rollback();
-      return APIResponse.getAPIResponse(false, null, '067');
+      throw new Exception('BILLTRANS_UPDATE_FAIL');
     }
   }
 
   async deleteBillTransaction(id)  {
     const _billTrans = await BillTransactionRepo.getBillTransaction(id);
     if(!_billTrans) {
-      return APIResponse.getAPIResponse(false, null, '065');
+      throw new Exception('BILLTRANS_NOT_EXIST');
     }
     await _billTrans.destroy();
-    return APIResponse.getAPIResponse(true, null, '068');
   }
 }
 

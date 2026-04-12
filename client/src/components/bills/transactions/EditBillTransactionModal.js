@@ -40,7 +40,7 @@ class EditBillTransactionModal extends Component {
       this.setState({
         bill: trans.billId,
         currency: trans.transCurrency,
-        decimalPlaces: trans.currency.currencyDecimalPlace,
+        decimalPlaces: trans.currencyDecimalPlace,
         outOfFreq: trans.transOutOfFreq,
         amount: trans.transAmount,
         amountType: trans.transAmountType,
@@ -158,7 +158,7 @@ class EditBillTransactionModal extends Component {
     //Get Index of constructed object if exist
     let transDetails = [...this.state.transDetails];
     const index = transDetails.findIndex( _transDetail => {
-      return _transDetail.billItem.billItemId === transDetail.billItem.billItemId;
+      return _transDetail.billItemId === transDetail.billItemId;
     });
 
     if(index < 0) {

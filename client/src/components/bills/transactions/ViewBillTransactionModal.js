@@ -39,7 +39,7 @@ class ViewBillTransactionModal extends Component {
       this.setState({
         bill: trans.billId,
         currency: trans.transCurrency,
-        decimalPlaces: trans.currency.currencyDecimalPlace,
+        decimalPlaces: trans.currencyDecimalPlace,
         outOfFreq: trans.transOutOfFreq,
         amount: trans.transAmount,
         amountType: trans.transAmountType,

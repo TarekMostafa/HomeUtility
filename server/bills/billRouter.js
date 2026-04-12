@@ -5,24 +5,16 @@ const router = express.Router();
 const bill = new Bill();
 
 router.get('/dropdown', function(req, res, next) {
-    bill.getBillsForDropDown().then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bill.getBillsForDropDown().then( result => {
+    res.json(result);
   }).catch( err => {
     next(err);
   })
 });
 
 router.get('/billstatuses', function(req, res, next) {
-    bill.getBillStatuses().then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bill.getBillStatuses().then( result => {
+    res.json(result);
   }).catch( err => {
     next(err);
   })
@@ -30,11 +22,7 @@ router.get('/billstatuses', function(req, res, next) {
 
 router.get('/billfrequencies', function(req, res, next) {
   bill.getBillFrequencies().then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.json(result);
   }).catch( err => {
     next(err);
   })
@@ -42,11 +30,7 @@ router.get('/billfrequencies', function(req, res, next) {
 
 router.get('/getCountOfBillItemUsed/:id', function(req, res, next) {
   bill.getCountOfBillItemUsed(req.params.id).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.json(result);
   }).catch( err => {
     next(err);
   })
@@ -54,59 +38,42 @@ router.get('/getCountOfBillItemUsed/:id', function(req, res, next) {
 
 router.get('/', function(req, res, next) {
   bill.getBills(req.query).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+    res.json(result);
   }).catch( err => {
     next(err);
   })
 });
 
 router.get('/:id', function(req, res, next) {
-    bill.getBill(req.params.id).then( result => {
-    if(result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bill.getBill(req.params.id).then( result => {
+    res.json(result);
   }).catch( err => {
     next(err);
   })
 });
 
 router.post('/', function(req, res, next) {
-    bill.addNewBill(req.body).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bill.addNewBill(req.body).then( result => {
+    res.messageCode = 'BILL_CREATE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
 });
 
 router.put('/:id', function(req, res, next) {
-    bill.editBill(req.params.id, req.body).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bill.editBill(req.params.id, req.body).then( result => {
+    res.messageCode = 'BILL_UPDATE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
 });
 
 router.delete('/:id', function(req, res, next) {
-    bill.deleteBill(req.params.id).then( result => {
-    if(result.success) {
-      res.status(200).send(result.message);
-    } else {
-      res.status(400).send(result.message);
-    }
+  bill.deleteBill(req.params.id).then( result => {
+    res.messageCode = 'BILL_DELETE_SUCCESS';
+    next();
   }).catch( err => {
     next(err);
   })
