@@ -143,7 +143,6 @@ class AddBillTransactionModal extends Component {
   }//end of render
 
   handleAddItem = (transDetail) => {
-    console.log(transDetail);
     //Get Index of constructed object if exist
     let transDetails = [...this.state.transDetails];
     const index = transDetails.findIndex( _transDetail => {

@@ -139,9 +139,13 @@ class AddBillTransDetailModal extends Component {
       [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value)
     });
 
-    if(event.target.name === 'itemType'){
+    if(event.target.name === 'itemType' && event.target.value === 'FREE'){
       this.setState({
         billItemId:0, billItemName: ''
+      })
+    } else if(event.target.name === 'itemType' && event.target.value === 'REF'){
+      this.setState({
+        billItemText: ''
       })
     }
   }
