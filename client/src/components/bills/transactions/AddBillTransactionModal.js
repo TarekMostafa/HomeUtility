@@ -143,10 +143,12 @@ class AddBillTransactionModal extends Component {
   }//end of render
 
   handleAddItem = (transDetail) => {
+    console.log(transDetail);
     //Get Index of constructed object if exist
     let transDetails = [...this.state.transDetails];
     const index = transDetails.findIndex( _transDetail => {
-      return _transDetail.billItemId === transDetail.billItemId;
+      return (_transDetail.billItemId === transDetail.billItemId
+              && transDetail.detItemType==='REF');
     });
 
     if(index < 0) {

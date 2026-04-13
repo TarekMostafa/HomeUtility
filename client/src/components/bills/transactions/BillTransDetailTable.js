@@ -25,11 +25,17 @@ function BillTransDetailTable (props) {
             return (
                 <tr key={index}>
                     <td>{index+1}</td>
-                    <td>{transDetail.billItemName}</td>
+                    <td>
+                      {transDetail.detItemType === 'FREE' ? 
+                       transDetail.detItemText: transDetail.billItemName}
+                    </td>
                     <td>{amountFormatter(transDetail.detAmount, props.currencyDecimalPlace)}</td>
                     <td>{transDetail.detQuantity}</td>
                     <td>{transDetail.detAmountType}</td>
-                    <td>{transDetail.billItemId}</td>
+                    <td>
+                      {transDetail.detItemType === 'FREE' ? 
+                       'FREE' : transDetail.billItemId}
+                    </td>
                     {
                       props.onRemove &&
                       <td>

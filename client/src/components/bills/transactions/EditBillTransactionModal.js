@@ -158,7 +158,8 @@ class EditBillTransactionModal extends Component {
     //Get Index of constructed object if exist
     let transDetails = [...this.state.transDetails];
     const index = transDetails.findIndex( _transDetail => {
-      return _transDetail.billItemId === transDetail.billItemId;
+      return (_transDetail.billItemId === transDetail.billItemId
+              && transDetail.detItemType==='REF');
     });
 
     if(index < 0) {

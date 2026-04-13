@@ -28,7 +28,9 @@ BillTransactionDetailModel.init({
   detQuantity: Sequelize.INTEGER,
   detAmountType: Sequelize.ENUM('Credit', 'Debit'),
   billItemId: Sequelize.INTEGER,
-  transId: Sequelize.BIGINT(20)
+  transId: Sequelize.BIGINT(20),
+  detItemText: Sequelize.STRING(35),
+  detItemType: Sequelize.ENUM('REF', 'FREE'),
 }, {
   tableName: 'billtransactiondetails',
   createdAt: false,

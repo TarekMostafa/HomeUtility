@@ -102,15 +102,18 @@ class BillTransDetailList extends Component {
         this.setState({modalAddShow: false});
     }
 
-    handleAddItem = (billItemId, billItemName, amount, quantity, type) => {
+    handleAddItem = (itemType, billItemId, billItemName, billItemText,
+        amount, quantity, type) => {
         //Construct Object
         let transDetail = {
             detId: 0,
             detAmount: amount,
             detQuantity: quantity,
             detAmountType: type,
-            billItemId,
-            billItemName
+            billItemId: (billItemId===0? null: billItemId),
+            billItemName,
+            detItemType: itemType,
+            detItemText: billItemText,
         }
 
         this.props.onAddItem(transDetail);

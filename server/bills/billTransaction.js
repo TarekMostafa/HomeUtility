@@ -160,7 +160,10 @@ class BillTransaction {
           detAmountType: detail.detAmountType,
           billItemId: detail.billItemId,
           transId: detail.transId,
-          billItemName: detail.billItem.billItemName,
+          billItemName: (detail.detItemType==='FREE'? 
+            null:detail.billItem.billItemName),
+          detItemText: detail.detItemText,
+          detItemType: detail.detItemType,
         }
     });
     billTrans = {

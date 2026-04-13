@@ -7,7 +7,9 @@ const initialState = {
   billItemId: 0,
   billItemName: '',
   amount: 0,
-  quantity: 0,
+  quantity: 1,
+  itemType: 'REF',
+  billItemText: '',
   type: '',
   message: '',
   isLoading: false,
@@ -33,13 +35,31 @@ class AddBillTransDetailModal extends Component {
         }>
         <Form>
             <Row>
+              <Col>
+                <Form.Check inline type="radio" label="Reference" 
+                name="itemType" value="REF" onChange={this.handleChange}
+                checked={this.state.itemType==='REF'}/>
+              </Col>
+              <Col>
+                <Form.Check inline type="radio" label="Free Text" 
+                name="itemType" value="FREE" onChange={this.handleChange}
+                checked={this.state.itemType==='FREE'}/>
+              </Col>
+            </Row>
+            <Row>
                 <Col>
                     <Form.Group controlId="billItem">
                         <Form.Label>Bill Item</Form.Label>
-                        <Form.Control as="select" name="billItem" onChange={this.handleBillItemChange}>
+                        {
+                          this.state.itemType==='FREE' ?
+                          <Form.Control type="input" maxLength={35}
+                          name="billItemText" value={this.state.billItemText} onChange={this.handleChange}/>
+                          :
+                          <Form.Control as="select" name="billItem" onChange={this.handleBillItemChange}>
                             <option value=''></option>
                             {this.getBillItems()}
-                        </Form.Control>
+                          </Form.Control>
+                        }
                     </Form.Group>
                 </Col>
             </Row>
@@ -118,10 +138,19 @@ class AddBillTransDetailModal extends Component {
     this.setState({
       [event.target.name] : (event.target.type === "checkbox" ? event.target.checked : event.target.value)
     });
+
+    if(event.target.name === 'itemType'){
+      this.setState({
+        billItemId:0, billItemName: ''
+      })
+    }
   }
 
   handleClick = () => {
-    if(!this.state.billItemId){
+    if(!this.state.billItemId && this.state.itemType==='REF'){
+      this.setState({message: 'Invalid bill Item, should not be empty'});
+      return;
+    } else if(!this.state.billItemText && this.state.itemType==='FREE'){
       this.setState({message: 'Invalid bill Item, should not be empty'});
       return;
     } else if (!this.state.amount) {
@@ -136,7 +165,9 @@ class AddBillTransDetailModal extends Component {
     }
 
     if (typeof this.props.onAdd=== 'function') {
-        this.props.onAdd(Number(this.state.billItemId), this.state.billItemName, 
+        this.props.onAdd(this.state.itemType,
+          Number(this.state.billItemId), this.state.billItemName,
+          this.state.billItemText, 
           this.state.amount, this.state.quantity, this.state.type);
     }
     this.props.onHide();

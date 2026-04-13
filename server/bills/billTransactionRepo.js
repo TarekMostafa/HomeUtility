@@ -22,7 +22,7 @@ class BillTransactionRepo {
         { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] },
         { model: BillModel, as: 'bill', attributes: ['billName']},
         { model: BillTransactionDetailModel, as: 'billTransactionDetails', 
-          include: { model: BillItemModel, as: 'billItem'},
+          include: { model: BillItemModel, as: 'billItem', required: false},
         },
       ]
     });

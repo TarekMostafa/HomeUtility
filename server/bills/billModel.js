@@ -23,7 +23,7 @@ BillModel.init({
 class BillItemModel extends Sequelize.Model {}
 BillItemModel.init({
   billItemId: { type: Sequelize.INTEGER, primaryKey: true },
-  billItemName: Sequelize.STRING(15),
+  billItemName: Sequelize.STRING(35),
 }, {
   tableName: 'billitems',
   createdAt: false,
