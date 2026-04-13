@@ -2,6 +2,7 @@ const sequelize = require('../db/dbConnection').getSequelize();
 const BillRepo = require('./billRepo');
 const BillTransactionRepo = require('./billTransactionRepo');
 const Exception = require('../features/exception');
+const AmountHelper = require('../helper/AmountHelper');
 
 class Bill {
   async getBillsForDropDown() {
@@ -35,6 +36,8 @@ class Bill {
         billCurrency: bill.billCurrency,
         billFrequency: bill.billFrequency,
         billDefaultAmount: bill.billDefaultAmount,
+        billDefaultAmountFormatted: AmountHelper.formatAmount(bill.billDefaultAmount,
+          bill.currency.currencyDecimalPlace),
         billStartDate: bill.billStartDate,
         billLastBillPaidDate: bill.billLastBillPaidDate,
         billIsTransDetailRequired: bill.billIsTransDetailRequired,

@@ -3,7 +3,7 @@ import { Table, DropdownButton, Dropdown, OverlayTrigger,
   Tooltip, Badge, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+//import amountFormatter from '../../../utilities/amountFormatter';
 
 function BillTransactionTable (props) {
   return (
@@ -40,7 +40,10 @@ function BillTransactionTable (props) {
                   </Col>
                 </Row>
               </td>
-              <td>{amountFormatter(transaction.transAmount, transaction.currencyDecimalPlace)}</td>
+              <td>
+                {/*amountFormatter(transaction.transAmount, transaction.currencyDecimalPlace)*/}
+                {transaction.transAmountFormatted}
+              </td>
               <td>{transaction.transAmountType}</td>
               <td>{moment(transaction.transPostingDate).format('DD/MM/YYYY')}</td>
               <td>

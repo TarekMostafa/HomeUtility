@@ -5,6 +5,7 @@ const BillRepo = require('./billRepo');
 const Frequency = require('./frequency');
 const Common = require('../utilities/common');
 const Exception = require('../features/exception');
+const AmountHelper = require('../helper/AmountHelper');
 
 const Op = Sequelize.Op;
 
@@ -65,6 +66,8 @@ class BillTransaction {
       return {
         transId: billTran.transId,
         transAmount: billTran.transAmount,
+        transAmountFormatted: AmountHelper.formatAmount(billTran.transAmount,
+          billTran.currency.currencyDecimalPlace),
         transBillDate: billTran.transBillDate,
         transNotes: billTran.transNotes,
         transOutOfFreq: billTran.transOutOfFreq,

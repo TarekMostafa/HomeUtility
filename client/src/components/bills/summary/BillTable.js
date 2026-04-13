@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import moment from 'moment';
 
-import amountFormatter from '../../../utilities/amountFormatter';
+//import amountFormatter from '../../../utilities/amountFormatter';
 
 function BillTable (props) {
   return (
@@ -34,7 +34,8 @@ function BillTable (props) {
               </td>
               <td>{bill.billStatus}</td>
               <td className="text-right">
-                {amountFormatter(bill.billDefaultAmount, bill.currencyDecimalPlace)}
+                {/*amountFormatter(bill.billDefaultAmount, bill.currencyDecimalPlace)*/}
+                {bill.billDefaultAmountFormatted}
               </td>
               <td>
                 {
