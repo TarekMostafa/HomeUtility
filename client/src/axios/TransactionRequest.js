@@ -219,6 +219,12 @@ class TransctionRequest {
       label5,
     });
   }
+
+  static async addTransactionToBillTransaction (id, billId) {
+    return await axios.post('/api/wealth/transactions/addbilltransaction/'+id, {
+      billId
+    });
+  }
 }
 
 export default TransctionRequest;

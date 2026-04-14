@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, DropdownButton, Dropdown, OverlayTrigger, 
-  Tooltip, Badge, Row, Col } from 'react-bootstrap';
+  Tooltip, Badge, Row, Col, Button } from 'react-bootstrap';
 import moment from 'moment';
 
 //import amountFormatter from '../../../utilities/amountFormatter';
@@ -35,7 +35,7 @@ function BillTransactionTable (props) {
                   <Col>
                     {
                     transaction.transOutOfFreq ? 
-                    <Badge variant='info'>Out Of Frequency</Badge> : null
+                    <Badge variant='info'>Out Of Freq</Badge> : null
                     } 
                   </Col>
                 </Row>
@@ -47,14 +47,28 @@ function BillTransactionTable (props) {
               <td>{transaction.transAmountType}</td>
               <td>{moment(transaction.transPostingDate).format('DD/MM/YYYY')}</td>
               <td>
-                <OverlayTrigger placement="right"
-                  delay={{ show: 250, hide: 400 }} overlay={(
-                    <Tooltip>{transaction.transNotes}</Tooltip>
-                  )}>
-                  <span className="textEllipsis">
-                    {transaction.transNotes}
-                  </span>
-                </OverlayTrigger>
+                <Row>
+                  <Col>
+                    <OverlayTrigger placement="right"
+                      delay={{ show: 250, hide: 400 }} overlay={(
+                        <Tooltip>{transaction.transNotes}</Tooltip>
+                      )}>
+                      <span className="textEllipsis">
+                        {transaction.transNotes}
+                      </span>
+                    </OverlayTrigger>
+                  </Col>
+                  <Col>
+                    {
+                      transaction.transReview &&
+                      <Button variant="link">
+                        <Badge pill variant="danger">
+                        Review
+                        </Badge>
+                      </Button>
+                    }
+                  </Col>
+                </Row>
               </td>
               <td>{transaction.transId}</td>
               <td>

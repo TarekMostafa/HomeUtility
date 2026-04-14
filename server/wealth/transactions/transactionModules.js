@@ -3,21 +3,25 @@ const Modules = {
         Code: 'DEP',
         IsEditable: false,
         IsDeletable: false,
+        IsAddToBillTrans: false,
     },
     CREDIT_CARD: {
         Code: 'CRD',
         IsEditable: false,
         IsDeletable: false,
+        IsAddToBillTrans: true,
     },
     DEBT: {
         Code: 'DBT',
         IsEditable: true,
         IsDeletable: true,
+        IsAddToBillTrans: false,
     },
     FX: {
         Code: 'FX',
         IsEditable: true,
         IsDeletable: true,
+        IsAddToBillTrans: false,
     }
 }
 

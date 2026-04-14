@@ -176,6 +176,8 @@ module.exports = {
   'BILLTRANS_INVALID_FREQ' : 'This bill transaction exceed bill frequency (?)',
   'BILLTRANS_INVALID_BILLDATE' : 'This tranasction bill date is less than the bill start date (?)',
   'BILLTRANS_INVALID_DETAILS' : 'Invalid bill transaction Details, you must enter at least one detail',
+  'TRANS_BILL_CREATE_FAIL': 'Failed to add this transaciton to the bill',
+  'TRANS_BILL_CREATE_SUCCESS': 'This transaction has been successfully added to the bill',
   '001' : 'An error occurred while retrieving application settings',
   '002' : 'Application settings have been successfully updated',
 }

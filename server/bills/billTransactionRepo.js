@@ -35,7 +35,7 @@ class BillTransactionRepo {
   }
 
   static async addBillTransaction(billTransaction, dbTransaction) {
-    await BillTransactionModel.build(billTransaction, {
+    return await BillTransactionModel.build(billTransaction, {
       include: [{model: BillTransactionDetailModel, as: 'billTransactionDetails'}]
     }).save({transaction: dbTransaction});
   }

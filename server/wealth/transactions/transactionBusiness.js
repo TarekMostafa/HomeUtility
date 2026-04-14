@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 //const APIResponse = require('../../utilities/apiResponse');
+const sequelize = require('../../db/dbConnection').getSequelize();
 const TransactionRepo = require('./transactionRepo');
 const AccountRepo = require('../accounts/accountRepo');
 const Common = require('../../utilities/common');
@@ -11,6 +12,8 @@ const DebtorRepo = require('../../debtors/debtorRepo');
 const transactionModules = require('./transactionModules');
 const AmountHelper = require('../../helper/AmountHelper');
 const CurrencyRepo = require('../../currencies/currencyRepo');
+const BillRepo = require('../../bills/billRepo');
+const BillTransactionRepo = require('../../bills/billTransactionRepo');
 
 const Op = Sequelize.Op;
 const TransactionModules = transactionModules.Modules;
@@ -117,12 +120,14 @@ class TransactionBusiness {
         isEditable: module? module.IsEditable: true,
         isDeletable: module? module.IsDeletable: true,
         labels: (showLabels===AppParametersConstants.YES? {
-        label1: trans.transactionLabel1,
-        label2: trans.transactionLabel2,
-        label3: trans.transactionLabel3,
-        label4: trans.transactionLabel4,
-        label5: trans.transactionLabel5,
-      } : null) 
+          label1: trans.transactionLabel1,
+          label2: trans.transactionLabel2,
+          label3: trans.transactionLabel3,
+          label4: trans.transactionLabel4,
+          label5: trans.transactionLabel5,
+        } : null),
+        transactionBillTransId: trans.transactionBillTransId,
+        isAddToBilltrans: module? module.IsAddToBillTrans:true,
       }
     }));
     return transactions;
@@ -305,7 +310,8 @@ class TransactionBusiness {
         label3: transaction.transactionLabel3,
         label4: transaction.transactionLabel4,
         label5: transaction.transactionLabel5,
-      } : null)
+      } : null),
+      transactionBillTransId: transaction.transactionBillTransId,
     };
     return transaction;
   }
@@ -553,6 +559,38 @@ class TransactionBusiness {
 
     _transaction.transactionNarrative = narrative;
     await _transaction.save({transaction: dbTransaction});
+  }
+
+  async addTransactionToBillTransaction(id, {billId}) {
+    let transaction = await TransactionRepo.getTransaction(id);
+    if(!transaction) throw new Exception('TRANS_NOT_EXIST');
+
+    let bill = await BillRepo.getBill(billId);
+    if(!bill) throw new Exception('BILL_NOT_EXIST');
+
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      const savedBillTrans = await BillTransactionRepo.addBillTransaction({
+        transAmount: transaction.transactionAmount,
+        transBillDate: transaction.transactionPostingDate,
+        transNotes: transaction.transactionNarrative,
+        transOutOfFreq: true,
+        transAmountType: transaction.transactionCRDR,
+        billId: bill.billId,
+        transPostingDate: transaction.transactionValueDate,
+        transCurrency: transaction.account.accountCurrency,
+        transSource: 'ACC',
+        transExternalId: transaction.transactionId,
+        transReview: 1,
+      }, dbTransaction);
+      transaction.transactionBillTransId = savedBillTrans.transId;
+      await transaction.save({transaction: dbTransaction});
+      await dbTransaction.commit();
+    } catch (err) {
+      await dbTransaction.rollback();
+      throw new Exception('TRANS_BILL_CREATE_FAIL');
+    }
   }
 }
 

@@ -38,7 +38,10 @@ function WealthTransactionTable (props) {
             const isMigrable = transaction.migrationType
             && props.onMigration;
             const isViewable = props.onViewTransaction;
-            const isButtonColVisible = isEditable || isDeletable || isMigrable || isViewable;
+            const isAddToBillTrans = !transaction.transactionBillTransId
+            && props.onAddToBillTransaction && transaction.isAddToBilltrans;
+            const isButtonColVisible = isEditable || isDeletable 
+            || isMigrable || isViewable || isAddToBillTrans;
             const labelText = (transaction.labels&&transaction.labels.label1?'1/':'')
                             + (transaction.labels&&transaction.labels.label2?'2/':'')
                             + (transaction.labels&&transaction.labels.label3?'3/':'')
@@ -78,6 +81,19 @@ function WealthTransactionTable (props) {
                           isLoading={false} readOnly={true}/>
                       </Col>
                     }
+                    {
+                      transaction.transactionBillTransId &&
+                      <OverlayTrigger placement="right"
+                      delay={{ show: 250, hide: 400 }} overlay={(
+                        <Tooltip>Bill Transaction Id</Tooltip>
+                      )}>
+                        <Button variant="link">
+                          <Badge pill variant="warning">
+                          {transaction.transactionBillTransId}
+                          </Badge>
+                        </Button>
+                      </OverlayTrigger>
+                    }
                   </Row>
                 }
                 {/* {
@@ -95,24 +111,34 @@ function WealthTransactionTable (props) {
                 {transaction.transactionId}
                 {
                   transaction.transactionRelatedTransactionId &&
-                  <Button variant="link"
-                  onClick={() => {
-                      if (typeof props.onRelatedTransaction === 'function') {
-                        props.onRelatedTransaction(transaction.transactionRelatedTransactionId)
-                      }
-                    }}>
-                    <Badge pill variant="success">
-                      {transaction.transactionRelatedTransactionId}
-                    </Badge>
-                  </Button>
+                  <OverlayTrigger placement="right"
+                      delay={{ show: 250, hide: 400 }} overlay={(
+                        <Tooltip>Related Transaction Id</Tooltip>
+                      )}>
+                    <Button variant="link"
+                    onClick={() => {
+                        if (typeof props.onRelatedTransaction === 'function') {
+                          props.onRelatedTransaction(transaction.transactionRelatedTransactionId)
+                        }
+                      }}>
+                      <Badge pill variant="success">
+                        {transaction.transactionRelatedTransactionId}
+                      </Badge>
+                    </Button>
+                  </OverlayTrigger>
                 }
               </td>
               <td>
                 {
                   transaction.transactionModule &&
-                  <Badge pill variant="info">
-                    {transaction.transactionModule}
-                  </Badge>
+                  <OverlayTrigger placement="right"
+                      delay={{ show: 250, hide: 400 }} overlay={(
+                        <Tooltip>Module</Tooltip>
+                      )}>
+                    <Badge pill variant="info">
+                      {transaction.transactionModule}
+                    </Badge>
+                  </OverlayTrigger>
                 }
               </td>
               <td>
@@ -156,6 +182,12 @@ function WealthTransactionTable (props) {
                       <Dropdown.Item onClick={() => props.onViewTransaction(transaction.transactionId, 
                         transaction.transactionModule)}>
                       View
+                      </Dropdown.Item>
+                    }
+                    {
+                      isAddToBillTrans &&
+                      <Dropdown.Item onClick={() => props.onAddToBillTransaction(transaction.transactionId)}>
+                        Add To Bill Transaction
                       </Dropdown.Item>
                     }
                     {

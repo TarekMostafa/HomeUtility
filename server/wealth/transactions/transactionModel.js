@@ -23,6 +23,7 @@ TransactionModel.init({
   transactionLabel3: Sequelize.STRING(20),
   transactionLabel4: Sequelize.STRING(20),
   transactionLabel5: Sequelize.STRING(20),
+  transactionBillTransId: Sequelize.BIGINT(20),
 }, {
   tableName: 'transactions',
   createdAt: false,

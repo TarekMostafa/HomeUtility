@@ -13,7 +13,10 @@ BillTransactionModel.init({
   transAmountType: Sequelize.ENUM('Credit', 'Debit'),
   billId: Sequelize.INTEGER,
   transPostingDate: Sequelize.DATEONLY,
-  transCurrency: Sequelize.STRING(3)
+  transCurrency: Sequelize.STRING(3),
+  transSource: Sequelize.STRING(3),
+  transExternalId: Sequelize.BIGINT(20),
+  transReview: Sequelize.BOOLEAN,
 }, {
   tableName: 'billtransactions',
   createdAt: false,

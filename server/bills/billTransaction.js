@@ -77,6 +77,9 @@ class BillTransaction {
         transCurrency: billTran.transCurrency,
         currencyDecimalPlace: billTran.currency.currencyDecimalPlace,
         billName: billTran.bill.billName,
+        transSource: billTran.transSource,
+        transExternalId: billTran.transExternalId,
+        transReview: billTran.transReview,
       }
     });
     return billTrans;
@@ -182,6 +185,9 @@ class BillTransaction {
       currencyDecimalPlace: billTrans.currency.currencyDecimalPlace,
       billName: billTrans.bill.billName,
       billTransactionDetails: billTransactionDetails,
+      transSource: billTrans.transSource,
+      transExternalId: billTrans.transExternalId,
+      transReview: billTrans.transReview,
     }
     return billTrans;
   }
@@ -229,6 +235,7 @@ class BillTransaction {
     _billTrans.transOutOfFreq = transOutOfFreq;
     _billTrans.transAmountType = transAmountType;
     _billTrans.transPostingDate = transPostingDate;
+    _billTrans.transReview = 0;
 
     let dbTransaction;
     try{

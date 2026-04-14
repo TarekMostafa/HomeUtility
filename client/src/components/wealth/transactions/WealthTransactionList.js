@@ -29,6 +29,7 @@ import ViewFXTransactionModal from './ViewFXTransactionModal';
 import DeleteFXTransactionModal from './DeleteFXTransactionModal';
 import EditFXTransactionModal from './EditFXTransactionModal';
 import LabelDropDown from '../../common/LabelDropDown';
+import AddTransactionToBillTransactionModal from './AddTransactionToBillTransactionModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -69,6 +70,7 @@ class WealthTransactionList extends Component {
     modalViewFXShow: false,
     modalDeleteFXShow: false,
     modalEditFXShow: false,
+    modalAddToBillShow: false,
     transactionId: '',
     ...initialState,
   }
@@ -223,7 +225,8 @@ class WealthTransactionList extends Component {
           onDeleteTransaction={this.handleDeleteTransaction}
           onViewTransaction={this.handleViewTransaction}
           onRelatedTransaction={this.handleRelatedTransaction}
-          onMigration={this.handleMigration}/>
+          onMigration={this.handleMigration}
+          onAddToBillTransaction={this.handleAddToBillTransaction}/>
           <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
             hidden={!this.state.appearMoreButton}>
             more...</Button>
@@ -303,6 +306,11 @@ class WealthTransactionList extends Component {
         {
           this.state.modalEditFXShow &&
           <EditFXTransactionModal show={this.state.modalEditFXShow} onHide={this.handleHide}
+          onSave={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
+        {
+          this.state.modalAddToBillShow && 
+          <AddTransactionToBillTransactionModal show={this.state.modalAddToBillShow} onHide={this.handleHide}
           onSave={this.handleListClick} transactionId={this.state.transactionId}/>
         }
       </React.Fragment>
@@ -418,6 +426,7 @@ class WealthTransactionList extends Component {
       modalViewFXShow: false,
       modalDeleteFXShow: false,
       modalEditFXShow: false,
+      modalAddToBillShow: false,
     });
   }
 
@@ -445,6 +454,13 @@ class WealthTransactionList extends Component {
       modalViewSingleShow: !['DBT','FX'].includes(module),
       modalViewDebtShow: (module==='DBT'),
       modalViewFXShow: (module==='FX'),
+      transactionId
+    });
+  }
+
+  handleAddToBillTransaction = (transactionId) => {
+    this.setState({
+      modalAddToBillShow: true,
       transactionId
     });
   }

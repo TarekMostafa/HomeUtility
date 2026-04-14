@@ -44,6 +44,15 @@ router.get('/accountbalanceasofdate', function(req, res, next) {
   })
 });
 
+router.post('/addbilltransaction/:id', function(req, res, next) {
+  transactionBusiness.addTransactionToBillTransaction(req.params.id, req.body).then( result => {
+    res.messageCode = 'TRANS_BILL_CREATE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+})
+
 router.post('/single', function(req, res, next) {
   singleTransactionBusiness.addSingleTransaction(req.body).then( result => {
     res.messageCode = 'TRANS_ADD_SUCCESS';
