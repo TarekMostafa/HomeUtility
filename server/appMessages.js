@@ -173,6 +173,7 @@ module.exports = {
   'BILLTRANS_UPDATE_SUCCESS' : 'This bill transaction has been successfully updated',
   'BILLTRANS_UPDATE_FAIL' : 'Failed to update this bill transaction',
   'BILLTRANS_DELETE_SUCCESS' : 'This bill transaction has been successfully deleted',
+  'BILLTRANS_DELETE_FAIL': 'Failed to delete this bill transaction',
   'BILLTRANS_INVALID_FREQ' : 'This bill transaction exceed bill frequency (?)',
   'BILLTRANS_INVALID_BILLDATE' : 'This tranasction bill date is less than the bill start date (?)',
   'BILLTRANS_INVALID_DETAILS' : 'Invalid bill transaction Details, you must enter at least one detail',

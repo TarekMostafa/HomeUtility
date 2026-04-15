@@ -6,6 +6,7 @@ const Frequency = require('./frequency');
 const Common = require('../utilities/common');
 const Exception = require('../features/exception');
 const AmountHelper = require('../helper/AmountHelper');
+const TransactionRepo = require('../wealth/transactions/transactionRepo');
 
 const Op = Sequelize.Op;
 
@@ -289,7 +290,22 @@ class BillTransaction {
     if(!_billTrans) {
       throw new Exception('BILLTRANS_NOT_EXIST');
     }
-    await _billTrans.destroy();
+
+    let dbTransaction;
+    try {
+      dbTransaction = await sequelize.transaction();
+      if(_billTrans.transSource === 'ACC' && _billTrans.transExternalId) {
+        await TransactionRepo.updateBillTransactionId(_billTrans.transExternalId,
+          null, dbTransaction
+        );
+      }
+      await _billTrans.destroy({transaction: dbTransaction});
+      await dbTransaction.commit();
+    } catch(err){
+      console.log(err);
+      await dbTransaction.rollback();
+      throw new Exception('BILLTRANS_DELETE_FAIL');
+    }
   }
 }
 

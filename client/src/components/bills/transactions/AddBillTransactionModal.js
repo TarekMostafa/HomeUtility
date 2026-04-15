@@ -48,14 +48,14 @@ class AddBillTransactionModal extends Component {
         }>
         <Form>
           <Row>
-            <Col xs={9}>
+            <Col xs={11}>
               <Form.Control as="select" name="bill" onChange={this.handleBillChange} 
                 readOnly={!this.state.isBillSelectable} value={this.state.bill}>
                 <option value=''>Bills</option>
                 <BillDropDown status="ACTIVE"/>
               </Form.Control>
             </Col>
-            <Col xs={3}>
+            <Col xs={1}>
               { this.state.isBillSelectable &&
                 <Button variant="info" size="sm" onClick={this.handleOkClick}>
                 { this.state.isLoading?
@@ -71,8 +71,6 @@ class AddBillTransactionModal extends Component {
             <React.Fragment>
             <hr />
             <Row>
-            <Col>
-              <Row>
                 <Col>
                   <Form.Group controlId="amount">
                     <Form.Label>Amount</Form.Label>
@@ -96,8 +94,6 @@ class AddBillTransactionModal extends Component {
                     </Form.Control>
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row>
                 <Col>
                   <Form.Group controlId="billDate">
                     <Form.Label>Bill Date</Form.Label>
@@ -112,8 +108,8 @@ class AddBillTransactionModal extends Component {
                     onChange={this.handlePostingDateChange} readOnly/>
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row>
+            </Row>
+            <Row>
                 <Col>
                   <Form.Group controlId="notes">
                     <Form.Label>Notes</Form.Label>
@@ -124,17 +120,17 @@ class AddBillTransactionModal extends Component {
                       name="outOfFreq"/>
                   </Form.Group>
                 </Col>
-              </Row>
-            </Col>
-            <Col>
-            { 
-              this.state.bill && <BillTransDetailList billId={this.state.bill} 
-              transDetails={this.state.transDetails} onAddItem={this.handleAddItem}
-              onRemoveItem={this.handleRemoveItem}/>
-            }
-            </Col>
-          </Row>
-          </React.Fragment>
+            </Row>
+            <Row>
+              <Col>
+              { 
+                this.state.bill && <BillTransDetailList billId={this.state.bill} 
+                transDetails={this.state.transDetails} onAddItem={this.handleAddItem}
+                onRemoveItem={this.handleRemoveItem} onEditItem={this.handleEditItem}/>
+              }
+              </Col>
+            </Row>
+            </React.Fragment>
           }
           <Form.Text className='text-danger'>{this.state.message}</Form.Text>
         </Form>
@@ -145,19 +141,34 @@ class AddBillTransactionModal extends Component {
   handleAddItem = (transDetail) => {
     //Get Index of constructed object if exist
     let transDetails = [...this.state.transDetails];
-    const index = transDetails.findIndex( _transDetail => {
-      return (_transDetail.billItemId === transDetail.billItemId
-              && transDetail.detItemType==='REF');
-    });
+    //const index = transDetails.findIndex( _transDetail => {
+    //  return (_transDetail.billItemId === transDetail.billItemId
+    //          && transDetail.detItemType==='REF');
+    //});
 
-    if(index < 0) {
+    //if(index < 0) {
       transDetails.push(transDetail);
-    } else {
-      transDetails[index].detAmount = transDetail.detAmount;
-      transDetails[index].detQuantity = transDetail.detQuantity;
-      transDetails[index].detAmountType = transDetail.detAmountType;
-    }
+    //} else {
+    //  transDetails[index].detAmount = transDetail.detAmount;
+    //  transDetails[index].detQuantity = transDetail.detQuantity;
+    //  transDetails[index].detAmountType = transDetail.detAmountType;
+    //}
     
+    this.setState({
+      transDetails
+    });
+  }
+
+  handleEditItem = (index, transDetail) => {
+    let transDetails = [...this.state.transDetails];
+    transDetails[index].detAmount = transDetail.detAmount;
+    transDetails[index].detQuantity = transDetail.detQuantity;
+    transDetails[index].detAmountType = transDetail.detAmountType;
+    transDetails[index].billItemId = transDetail.billItemId;
+    transDetails[index].billItemName = transDetail.billItemName;
+    transDetails[index].detItemText = transDetail.detItemText;
+    transDetails[index].detItemType = transDetail.detItemType;
+
     this.setState({
       transDetails
     });

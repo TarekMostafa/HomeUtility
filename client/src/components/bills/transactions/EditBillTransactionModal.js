@@ -73,78 +73,74 @@ class EditBillTransactionModal extends Component {
         <Form>
           <Row>
             <Col>
-              <Row>
-                <Col>
-                  <Form.Group controlId="bills">
-                    <Form.Label>Bill</Form.Label>
-                    <Form.Control as="select" name="bill" readOnly
-                      value={this.state.bill}>
-                      <option value=''></option>
-                      <BillDropDown status="ACTIVE"/>
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Form.Group controlId="amount">
-                    <Form.Label>Amount</Form.Label>
-                    <InputGroup>
-                      <Form.Control type="number"
-                      name="amount" value={Number(this.state.amount).toFixed(this.state.decimalPlaces)}
-                      onChange={this.handleChange}/>
-                      <InputGroup.Prepend>
-                        <InputGroup.Text id="inputGroupPrepend">{this.state.currency}</InputGroup.Text>
-                      </InputGroup.Prepend>
-                    </InputGroup>
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group controlId="amountType">
-                    <Form.Label>Amount Type</Form.Label>
-                    <Form.Control as="select" name="amountType" onChange={this.handleChange}
-                    value={this.state.amountType}>
-                      <option value=''></option>
-                      <option value='Credit'>Credit</option>
-                      <option value='Debit'>Debit</option>
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Form.Group controlId="billDate">
-                    <Form.Label>Bill Date</Form.Label>
-                    <DatePickerInput value={this.state.billDate}
-                    onChange={this.handleBillDateChange} readOnly/>
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group controlId="postingDate">
-                    <Form.Label>Posting Date</Form.Label>
-                    <DatePickerInput value={this.state.postingDate}
-                    onChange={this.handlePostingDateChange} readOnly/>
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Form.Group controlId="notes">
-                    <Form.Label>Notes</Form.Label>
-                    <Form.Control as="textarea" maxLength={255} rows="3" style={{resize:"none"}}
-                    name="notes" value={this.state.notes} onChange={this.handleChange}/>
-                    <Form.Check type="checkbox" label="Out Of Frequency" 
-                      checked={this.state.outOfFreq} onChange={this.handleChange}
-                      name="outOfFreq"/>
-                  </Form.Group>
-                </Col>
-              </Row>
+              <Form.Group controlId="bills">
+                <Form.Label>Bill</Form.Label>
+                <Form.Control as="select" name="bill" readOnly
+                  value={this.state.bill}>
+                  <option value=''></option>
+                  <BillDropDown status="ACTIVE"/>
+                </Form.Control>
+              </Form.Group>
             </Col>
+          </Row>
+          <Row>  
+            <Col>
+              <Form.Group controlId="amount">
+                <Form.Label>Amount</Form.Label>
+                <InputGroup>
+                  <Form.Control type="number"
+                    name="amount" value={Number(this.state.amount).toFixed(this.state.decimalPlaces)}
+                    onChange={this.handleChange}/>
+                  <InputGroup.Prepend>
+                    <InputGroup.Text id="inputGroupPrepend">{this.state.currency}</InputGroup.Text>
+                  </InputGroup.Prepend>
+                </InputGroup>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group controlId="amountType">
+                <Form.Label>Amount Type</Form.Label>
+                <Form.Control as="select" name="amountType" onChange={this.handleChange}
+                  value={this.state.amountType}>
+                  <option value=''></option>
+                  <option value='Credit'>Credit</option>
+                  <option value='Debit'>Debit</option>
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group controlId="billDate">
+                <Form.Label>Bill Date</Form.Label>
+                <DatePickerInput value={this.state.billDate}
+                  onChange={this.handleBillDateChange} readOnly/>
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group controlId="postingDate">
+                <Form.Label>Posting Date</Form.Label>
+                <DatePickerInput value={this.state.postingDate}
+                  onChange={this.handlePostingDateChange} readOnly/>
+              </Form.Group>
+            </Col>                       
+          </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="notes">
+                <Form.Label>Notes</Form.Label>
+                <Form.Control as="textarea" maxLength={255} rows="3" style={{resize:"none"}}
+                  name="notes" value={this.state.notes} onChange={this.handleChange}/>
+                <Form.Check type="checkbox" label="Out Of Frequency" 
+                  checked={this.state.outOfFreq} onChange={this.handleChange}
+                  name="outOfFreq"/>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
             <Col>
             { 
               this.state.bill && <BillTransDetailList billId={this.state.bill} 
               transDetails={this.state.transDetails} onAddItem={this.handleAddItem}
-              onRemoveItem={this.handleRemoveItem}/>
+              onRemoveItem={this.handleRemoveItem} onEditItem={this.handleEditItem}/>
             }
             </Col>
           </Row>
@@ -157,19 +153,34 @@ class EditBillTransactionModal extends Component {
   handleAddItem = (transDetail) => {
     //Get Index of constructed object if exist
     let transDetails = [...this.state.transDetails];
-    const index = transDetails.findIndex( _transDetail => {
-      return (_transDetail.billItemId === transDetail.billItemId
-              && transDetail.detItemType==='REF');
-    });
+    //const index = transDetails.findIndex( _transDetail => {
+    //  return (_transDetail.billItemId === transDetail.billItemId
+    //          && transDetail.detItemType==='REF');
+    //});
 
-    if(index < 0) {
+    //if(index < 0) {
       transDetails.push(transDetail);
-    } else {
-      transDetails[index].detAmount = transDetail.detAmount;
-      transDetails[index].detQuantity = transDetail.detQuantity;
-      transDetails[index].detAmountType = transDetail.detAmountType;
-    }
+    //} else {
+    //  transDetails[index].detAmount = transDetail.detAmount;
+    //  transDetails[index].detQuantity = transDetail.detQuantity;
+    //  transDetails[index].detAmountType = transDetail.detAmountType;
+    //}
     
+    this.setState({
+      transDetails
+    });
+  }
+
+  handleEditItem = (index, transDetail) => {
+    let transDetails = [...this.state.transDetails];
+    transDetails[index].detAmount = transDetail.detAmount;
+    transDetails[index].detQuantity = transDetail.detQuantity;
+    transDetails[index].detAmountType = transDetail.detAmountType;
+    transDetails[index].billItemId = transDetail.billItemId;
+    transDetails[index].billItemName = transDetail.billItemName;
+    transDetails[index].detItemText = transDetail.detItemText;
+    transDetails[index].detItemType = transDetail.detItemType;
+
     this.setState({
       transDetails
     });

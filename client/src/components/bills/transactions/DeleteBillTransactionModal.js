@@ -70,9 +70,7 @@ class DeleteBillTransactionModal extends Component {
           </Button>
         }>
         <Form>
-          <Row>
-            <Col>
-              <Row>
+            <Row>
               <Col>
                 <Form.Group controlId="bills">
                   <Form.Label>Bill</Form.Label>
@@ -103,8 +101,6 @@ class DeleteBillTransactionModal extends Component {
                   value={this.state.amountType}/>
                 </Form.Group>
               </Col>
-            </Row>
-            <Row>
               <Col>
                 <Form.Group controlId="billDate">
                     <Form.Label>Bill Date</Form.Label>
@@ -133,14 +129,14 @@ class DeleteBillTransactionModal extends Component {
                 </Form.Group>
               </Col>
             </Row>
-            </Col>
-            <Col>
-            {
-              this.state.bill && <BillTransDetailList billId={this.state.bill} 
-              transDetails={this.state.transDetails} />
-            }
-            </Col>
-          </Row>
+            <Row>
+              <Col>
+              {
+                this.state.bill && <BillTransDetailList billId={this.state.bill} 
+                transDetails={this.state.transDetails} />
+              }
+              </Col>
+            </Row>
           <Form.Text className='text-danger'>{this.state.message}</Form.Text>
         </Form>
       </ModalContainer>

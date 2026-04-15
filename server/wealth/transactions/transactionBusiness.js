@@ -573,12 +573,12 @@ class TransactionBusiness {
       dbTransaction = await sequelize.transaction();
       const savedBillTrans = await BillTransactionRepo.addBillTransaction({
         transAmount: transaction.transactionAmount,
-        transBillDate: transaction.transactionPostingDate,
+        transBillDate: transaction.transactionValueDate,
         transNotes: transaction.transactionNarrative,
         transOutOfFreq: true,
         transAmountType: transaction.transactionCRDR,
         billId: bill.billId,
-        transPostingDate: transaction.transactionValueDate,
+        transPostingDate: transaction.transactionPostingDate,
         transCurrency: transaction.account.accountCurrency,
         transSource: 'ACC',
         transExternalId: transaction.transactionId,

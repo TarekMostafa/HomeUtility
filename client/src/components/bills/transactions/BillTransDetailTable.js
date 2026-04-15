@@ -16,7 +16,7 @@ function BillTransDetailTable (props) {
             <th>Type</th>
             <th>Id</th>
             {
-              props.onRemove && <th></th>
+              (props.onEdit || props.onRemove) && <th></th>
             }
           </tr>
         </thead>
@@ -36,14 +36,20 @@ function BillTransDetailTable (props) {
                       {transDetail.detItemType === 'FREE' ? 
                        'FREE' : transDetail.billItemId}
                     </td>
-                    {
-                      props.onRemove &&
-                      <td>
-                        <Button variant="link" size="sm" onClick={() => props.onRemove(index)}>
-                          Remove
+                    <td>
+                      {
+                        props.onEdit &&
+                        <Button variant="link" size="sm" onClick={() => props.onEdit(index)}>
+                          Edit
                         </Button>
-                      </td>
-                    }
+                      }
+                      {
+                          props.onRemove &&
+                          <Button variant="link" size="sm" onClick={() => props.onRemove(index)}>
+                            Remove
+                          </Button>
+                      }
+                    </td>
                 </tr>
             )
           })}
@@ -53,10 +59,12 @@ function BillTransDetailTable (props) {
 }
 
 BillTransDetailTable.propTypes = {
+  onEdit: PropTypes.func,
   onRemove: PropTypes.func,
 };
 
 BillTransDetailTable.defaultProps = {
+  onEdit: null,
   onRemove: null,
 }
 

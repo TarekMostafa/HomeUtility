@@ -186,6 +186,14 @@ class TransactionRepo {
       }
     });
   }
+
+  static async updateBillTransactionId(transactionId, billTransId, dbTransaction) {
+    let transaction = await this.getTransaction(transactionId);
+    if(!transaction) throw new Exception('TRANS_NOT_EXIST');
+
+    transaction.transactionBillTransId = billTransId;
+    transaction.save({transaction: dbTransaction});
+  }
 }
 
 module.exports = TransactionRepo;

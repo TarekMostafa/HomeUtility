@@ -60,9 +60,7 @@ class ViewBillTransactionModal extends Component {
       <ModalContainer title={"View Bill Transaction (Id=" + this.state.transId + ")"}  
         show={this.props.show} onHide={this.props.onHide} onShow={this.handleOnShow} size='lg'>
         <Form>
-          <Row>
-            <Col>
-              <Row>
+            <Row>
               <Col>
                 <Form.Group controlId="bills">
                   <Form.Label>Bill</Form.Label>
@@ -73,7 +71,7 @@ class ViewBillTransactionModal extends Component {
                 </Form.Group>
               </Col>
             </Row>
-              <Row>
+            <Row>
               <Col>
                 <Form.Group controlId="amount">
                   <Form.Label>Amount</Form.Label>
@@ -93,8 +91,6 @@ class ViewBillTransactionModal extends Component {
                   value={this.state.amountType} />
                 </Form.Group>
               </Col>
-            </Row>
-              <Row>
               <Col>
                 <Form.Group controlId="billDate">
                     <Form.Label>Bill Date</Form.Label>
@@ -112,25 +108,25 @@ class ViewBillTransactionModal extends Component {
                 </Form.Group>
               </Col>
             </Row>
-              <Row>
-            <Col>
-              <Form.Group controlId="notes">
-                <Form.Label>Notes</Form.Label>
-                <Form.Control as="textarea" maxLength={255} rows="3" style={{resize:"none"}}
-                name="notes" value={this.state.notes} readOnly/>
-                <Form.Check type="checkbox" label="Out Of Frequency" 
-                     checked={this.state.outOfFreq} readOnly/>
-              </Form.Group>
+            <Row>
+              <Col>
+                <Form.Group controlId="notes">
+                  <Form.Label>Notes</Form.Label>
+                  <Form.Control as="textarea" maxLength={255} rows="3" style={{resize:"none"}}
+                  name="notes" value={this.state.notes} readOnly/>
+                  <Form.Check type="checkbox" label="Out Of Frequency" 
+                       checked={this.state.outOfFreq} readOnly/>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+              {
+                this.state.bill && <BillTransDetailList billId={this.state.bill} 
+                transDetails={this.state.transDetails}/>
+              }
             </Col>
-          </Row>
-            </Col>
-            <Col>
-            {
-              this.state.bill && <BillTransDetailList billId={this.state.bill} 
-              transDetails={this.state.transDetails}/>
-            }
-            </Col>
-          </Row>
+            </Row>        
           <Form.Text className='text-danger'>{this.state.message}</Form.Text>
         </Form>
       </ModalContainer>
