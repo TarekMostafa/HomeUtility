@@ -7,6 +7,7 @@ const Common = require('../utilities/common');
 const Exception = require('../features/exception');
 const AmountHelper = require('../helper/AmountHelper');
 const TransactionRepo = require('../wealth/transactions/transactionRepo');
+const ExpenseDetailRepo = require('../expenses/expenseDetail/expenseDetailRepo');
 
 const Op = Sequelize.Op;
 
@@ -296,6 +297,10 @@ class BillTransaction {
       dbTransaction = await sequelize.transaction();
       if(_billTrans.transSource === 'ACC' && _billTrans.transExternalId) {
         await TransactionRepo.updateBillTransactionId(_billTrans.transExternalId,
+          null, dbTransaction
+        );
+      } else if (_billTrans.transSource === 'EXP' && _billTrans.transExternalId) {
+        await ExpenseDetailRepo.updateBillTransactionId(_billTrans.transExternalId,
           null, dbTransaction
         );
       }

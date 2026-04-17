@@ -3,6 +3,8 @@ const ExpenseDetailRepo = require('./expenseDetailRepo');
 const ExpenseRepo = require('../expenseHeader/expenseRepo');
 const Exception = require('../../features/exception');
 const AmountHelper = require('../../helper/AmountHelper');
+const BillRepo = require('../../bills/billRepo');
+const BillTransactionRepo = require('../../bills/billTransactionRepo');
 
 class expenseDetailBusiness {
   async getExpensesDetails({description, includeDescription, expDateFrom, expDateTo,
@@ -22,6 +24,7 @@ class expenseDetailBusiness {
         expenseTypeId: expDet.expenseTypeId,
         expenseAdjusment: expDet.expenseAdjusment,
         expenseDate: expDet.expenseDate,
+        expenseBillTransId: expDet.expenseBillTransId,
         expenseLabels: {
           expenseLabel1: expDet.expenseLabel1,
           expenseLabel2: expDet.expenseLabel2,
@@ -69,6 +72,7 @@ class expenseDetailBusiness {
         expenseTypeId: expDet.expenseTypeId,
         expenseAdjusment: expDet.expenseAdjusment,
         expenseDate: expDet.expenseDate,
+        expenseBillTransId: expDet.expenseBillTransId,
         expenseLabels: {
           expenseLabel1: expDet.expenseLabel1,
           expenseLabel2: expDet.expenseLabel2,
@@ -178,6 +182,54 @@ class expenseDetailBusiness {
     expenseDetail.expenseLabel4 = expenseLabel4? expenseLabel4:null;
     expenseDetail.expenseLabel5 = expenseLabel5? expenseLabel5:null;
     await expenseDetail.save();
+  }
+
+  async addExpenseDetailToBillTransaction(id, {billId}) {
+    let expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
+    if(!expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
+
+    let expense = await ExpenseRepo.getExpense(expenseDetail.expenseId);
+    if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
+
+    let bill = await BillRepo.getBill(billId);
+    if(!bill) throw new Exception('BILL_NOT_EXIST');
+
+    const expDetDate = new Date(expense.expenseYear, 
+      expense.expenseMonth-1,
+      expenseDetail.expenseDay
+    );
+
+    let amountType = "";
+    if (expenseDetail.expenseAdjusment) {
+      amountType = (expenseDetail.expenseAmount > 0? "Credit":"Debit");
+    } else {
+      amountType = (expenseDetail.expenseAmount > 0? "Debit":"Credit");
+    }
+
+    let dbTransaction;
+    try{
+      dbTransaction = await sequelize.transaction();
+      const savedBillTrans = await BillTransactionRepo.addBillTransaction({
+        transAmount: expenseDetail.expenseAmount,
+        transBillDate: expDetDate,
+        transNotes: expenseDetail.expenseDescription,
+        transOutOfFreq: true,
+        transAmountType: amountType,
+        billId: bill.billId,
+        transPostingDate: expDetDate,
+        transCurrency: expenseDetail.expenseCurrency,
+        transSource: 'EXP',
+        transExternalId: expenseDetail.expenseDetailId,
+        transReview: 1,
+      }, dbTransaction);
+      expenseDetail.expenseBillTransId = savedBillTrans.transId;
+      await expenseDetail.save({transaction: dbTransaction});
+      await dbTransaction.commit();
+    } catch (err) {
+      console.log(err);
+      await dbTransaction.rollback();
+      throw new Exception('EXPDET_BILL_CREATE_FAIL');
+    }
   }
 }
 

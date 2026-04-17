@@ -18,7 +18,7 @@ function ExpenseDetailTable(props) {
                     <th>Expense Type</th>
                     <th>Adjusment</th>
                     <th>Id</th>
-                    {!props.readOnly && <th></th>}
+                    <th></th>
                 </tr>
             </thead>
             <tbody>

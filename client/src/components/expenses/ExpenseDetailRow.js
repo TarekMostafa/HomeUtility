@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { Form, OverlayTrigger, Tooltip, Row, Col } from 'react-bootstrap';
+import { Form, OverlayTrigger, Tooltip, Row, Col, 
+    DropdownButton, Dropdown, Button, Badge } from 'react-bootstrap';
 import moment from 'moment';
 
 import ExpenseTypesDropDown from './expensetypes/ExpenseTypesDropDown';
@@ -142,7 +143,9 @@ function ExpenseDetailRow(props) {
                         elem.expenseLabels.expenseLabel2 ||
                         elem.expenseLabels.expenseLabel3 ||
                         elem.expenseLabels.expenseLabel4 ||
-                        elem.expenseLabels.expenseLabel5);    
+                        elem.expenseLabels.expenseLabel5);
+                        
+    const isAddToBillTrans = !elem.expenseBillTransId;
 
     return (
         <tr key={elem.expenseDetailId} style={getRowColor(elem)}>
@@ -202,20 +205,54 @@ function ExpenseDetailRow(props) {
                     : (elem.expenseType?elem.expenseType.expenseTypeName:"")
                 }
             </td>
-            <td>{elem.expenseAdjusment?'YES':'NO'}</td>
+            <td>
+                <Row>
+                    <Col>
+                        {elem.expenseAdjusment?'YES':'NO'}
+                    </Col>
+                    <Col>
+                        {
+                            elem.expenseBillTransId &&
+                            <OverlayTrigger placement="right"
+                            delay={{ show: 250, hide: 400 }} overlay={(
+                                <Tooltip>Bill Transaction Id</Tooltip>
+                            )}>
+                                <Button variant="link">
+                                <Badge pill variant="warning">
+                                {elem.expenseBillTransId}
+                                </Badge>
+                                </Button>
+                            </OverlayTrigger>
+                        }
+                    </Col>
+                </Row>
+            </td>
             <td>{elem.expenseDetailId}</td>
-            { !props.readOnly && 
-                <td>
-                    <EditDeleteButton 
-                        onEditClick={()=>handleExpenseDetailEdit(elem.expenseDetailId)}
-                        onDeleteClick={()=>handleExpenseDetailDelete(elem.expenseDetailId)}
-                        onCancelClick={()=>initializeFormData()}
-                        disabled={formData.isDisabled}
-                        isLoading={formData.isLoading}
-                        mode={formData.mode}/>
-                    <Form.Text className={formData.messageClass}>{formData.message}</Form.Text>
-                </td>
-            }
+            <td>
+                { 
+                    props.readOnly ?
+                    <DropdownButton id="dropdown-basic-button" title="Actions"
+                    size="sm" variant="secondary">
+                        {
+                            isAddToBillTrans && 
+                            <Dropdown.Item onClick={() => props.onAddToBillTransaction(elem)}>
+                            Add To Bill Transaction
+                            </Dropdown.Item>
+                        }
+                    </DropdownButton>
+                    :
+                    <React.Fragment>
+                        <EditDeleteButton 
+                            onEditClick={()=>handleExpenseDetailEdit(elem.expenseDetailId)}
+                            onDeleteClick={()=>handleExpenseDetailDelete(elem.expenseDetailId)}
+                            onCancelClick={()=>initializeFormData()}
+                            disabled={formData.isDisabled}
+                            isLoading={formData.isLoading}
+                            mode={formData.mode}/>
+                        <Form.Text className={formData.messageClass}>{formData.message}</Form.Text>
+                    </React.Fragment>
+                }
+            </td>
         </tr>
     );
 }

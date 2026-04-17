@@ -57,4 +57,13 @@ router.delete('/:id', function(req, res, next) {
   })
 });
 
+router.post('/addbilltransaction/:id', function(req, res, next) {
+  expenseDetailBusiness.addExpenseDetailToBillTransaction(req.params.id, req.body).then( result => {
+    res.messageCode = 'EXPDET_BILL_CREATE_SUCCESS';
+    next();
+  }).catch( err => {
+    next(err);
+  })
+})
+
 module.exports = router;

@@ -11,6 +11,7 @@ import YesNoDropDown from '../../common/YesNoDropDown';
 import ExpenseDetailTable from '../ExpenseDetailTable';
 import LabelDropDown from '../../common/LabelDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
+import AddExpenseDetailToBillTransactionModal from './AddExpenseDetailToBillTransactionModal';
 
 import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 import ExpenseTypeRequest from '../../../axios/ExpenseTypeRequest';
@@ -34,6 +35,8 @@ function ExpenseDetailSearchList(props) {
     const [expensesDetails, setExpensesDetails] = useState([]);
     const [expenseTypes, setExpenseTypes] = useState([]);
     const [appearMoreButton, setAppearMoreButton] = useState(true);
+    const [modalAddToBillShow, setModalAddToBillShow] = useState(false);
+    const [expenseDetail, setExpenseDetail] = useState({});
 
     const loadExpenseTypes = () => 
         ExpenseTypeRequest.getExpenseTypes()
@@ -99,6 +102,15 @@ function ExpenseDetailSearchList(props) {
             ...formData,
             expDateTo: date
         });
+    }
+
+    const handleAddToBillTransaction = (expenseDetail) => {
+        setModalAddToBillShow(true);
+        setExpenseDetail(expenseDetail);
+    }
+
+    const handleHide = () => {
+        setModalAddToBillShow(false);
     }
 
     //const handleExpTypes = (key, value) => {
@@ -192,11 +204,16 @@ function ExpenseDetailSearchList(props) {
                 </Form>
             </FormContainer>
             <FormContainer>
-                <ExpenseDetailTable expenseDetails={expensesDetails} readOnly/>
+                <ExpenseDetailTable expenseDetails={expensesDetails} 
+                onAddToBillTransaction={handleAddToBillTransaction} readOnly/>
                 <Button variant="primary" size="sm" block onClick={handleMoreClick}
                     hidden={!appearMoreButton}>
                     more...</Button>
             </FormContainer>
+            {
+                modalAddToBillShow && <AddExpenseDetailToBillTransactionModal show={modalAddToBillShow} 
+                onHide={handleHide} onSave={handleListClick} expenseDetail={expenseDetail}/>
+            }
         </React.Fragment>
     )
 }

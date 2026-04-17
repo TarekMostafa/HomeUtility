@@ -100,10 +100,6 @@ class AddTransactionToBillTransactionModal extends Component {
         isLoading: true,
       });
     }
-    this.setState({
-      message: '',
-      isLoading: true,
-    });
     // add transaction to bill transaction
     TransactionRequest.addTransactionToBillTransaction(
       this.props.transactionId, this.state.bill)

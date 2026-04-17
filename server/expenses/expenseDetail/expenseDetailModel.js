@@ -20,6 +20,7 @@ ExpenseDetailModel.init({
   expenseLabel3: Sequelize.STRING(20),
   expenseLabel4: Sequelize.STRING(20),
   expenseLabel5: Sequelize.STRING(20),
+  expenseBillTransId: Sequelize.BIGINT(20),
 }, {
   tableName: 'expensesDetails',
   createdAt: false,

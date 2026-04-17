@@ -47,6 +47,13 @@ class ExpenseDetailRequest {
       })
   }
 
+  
+  static async addTransactionToBillTransaction (id, billId) {
+    return await axios.post('/api/expenseDetail/addbilltransaction/'+id, {
+      billId
+    });
+  }
+
 }
 
 export default ExpenseDetailRequest;

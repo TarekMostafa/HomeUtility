@@ -89,6 +89,14 @@ class ExpenseDetailRepo {
   static async addExpenseDetail(expenseDetail, dbTransaction) {
     await ExpenseDetailModel.build(expenseDetail).save({transaction: dbTransaction});
   }
+
+  static async updateBillTransactionId(expenseDetailId, billTransId, dbTransaction) {
+    let expenseDetail = await this.getExpenseDetail(expenseDetailId);
+    if(!expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
+
+    expenseDetail.expenseBillTransId = billTransId;
+    expenseDetail.save({transaction: dbTransaction});
+  }
 }
 
 module.exports = ExpenseDetailRepo;

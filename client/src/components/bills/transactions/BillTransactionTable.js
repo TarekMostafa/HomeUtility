@@ -60,10 +60,17 @@ function BillTransactionTable (props) {
                   </Col>
                   <Col>
                     {
-                      transaction.transReview &&
+                      transaction.transReview ?
                       <Button variant="link">
                         <Badge pill variant="danger">
-                        Review
+                        Review - {
+                        transaction.transSource?transaction.transSource+'-'+transaction.transExternalId:""}
+                        </Badge>
+                      </Button>
+                      :
+                      <Button variant="link">
+                        <Badge pill variant="warning">
+                        {transaction.transSource?transaction.transSource+'-'+transaction.transExternalId:""}
                         </Badge>
                       </Button>
                     }
