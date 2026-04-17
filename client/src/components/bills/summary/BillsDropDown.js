@@ -17,7 +17,7 @@ function BillsDropDown(props) {
       <option key={bill.billId} value={bill.billId} status={bill.billStatus}
       currency={bill.billCurrency} frequency={bill.billFrequency}
       decimalplaces={bill.currencyDecimalPlace}
-      defaultAmount={bill.billDefaultAmount}>
+      billdefaultamount={bill.billDefaultAmount}>
         {bill.billName}
       </option>
     )

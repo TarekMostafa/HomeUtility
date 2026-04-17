@@ -35,24 +35,24 @@ class BillRequest {
     return response.data;
   }
 
-  static async addNewBill(name, frequency, currency, startDate, defaultAmount, isRequired, items){
+  static async addNewBill(name, frequency, currency, startDate, billDefaultAmount, isRequired, items){
     return await axios.post('/api/bills', {
       billName: name,
       billFrequency: frequency,
       billCurrency: currency,
       billStartDate: startDate,
-      billDefaultAmount: defaultAmount,
+      billDefaultAmount: billDefaultAmount,
       billIsTransDetailRequired: isRequired,
       items: items
     });
   }
 
-  static async updateBill(id, name, frequency, startDate, defaultAmount, status, isRequired, billItems){
+  static async updateBill(id, name, frequency, startDate, billDefaultAmount, status, isRequired, billItems){
     return await axios.put('/api/bills/'+id, {
       billName: name,
       billFrequency: frequency,
       billStartDate: startDate,
-      billDefaultAmount: defaultAmount,
+      billDefaultAmount: billDefaultAmount,
       billStatus: status,
       billIsTransDetailRequired: isRequired,
       billItems: billItems

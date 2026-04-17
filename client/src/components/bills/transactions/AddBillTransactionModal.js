@@ -15,7 +15,7 @@ const initialState = {
   bill: '',
   currency: '',
   decimalPlaces: 0,
-  defaultAmount: 0,
+  billDefaultAmount: 0,
   outOfFreq: false,
   amount: 0,
   amountType: '',
@@ -192,7 +192,7 @@ class AddBillTransactionModal extends Component {
     this.setState({
       isBillSelectable: false, 
       message: '',
-      amount: this.state.defaultAmount
+      amount: this.state.billDefaultAmount
     });
   }
 
@@ -207,12 +207,12 @@ class AddBillTransactionModal extends Component {
 
     const decimalPlaces = event.target[event.target.selectedIndex].getAttribute('decimalplaces');
     const currency = event.target[event.target.selectedIndex].getAttribute('currency');
-    const defaultAmount = event.target[event.target.selectedIndex].getAttribute('defaultAmount');
+    const billDefaultAmount = event.target[event.target.selectedIndex].getAttribute('billdefaultamount');
     this.setState({
       bill : event.target.value,
       decimalPlaces,
       currency,
-      defaultAmount
+      billDefaultAmount
     });
   }
 

@@ -15,6 +15,7 @@ class Bill {
         billCurrency: bill.billCurrency,
         billFrequency: bill.billFrequency,
         billDefaultAmount: bill.billDefaultAmount,
+        currencyDecimalPlace: bill.currency.currencyDecimalPlace,
       }
     });
     return bills;
