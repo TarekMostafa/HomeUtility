@@ -146,7 +146,7 @@ class ViewFXTransactionModal extends Component {
                 <Form.Label>Amount From</Form.Label>
                 <InputGroup>
                   <Form.Control type="number"
-                  name="amountFrom" value={Number(this.state.amountFrom).toFixed(this.state.decimalPlaces)}
+                  name="amountFrom" value={Number(this.state.amountFrom).toFixed(this.state.decimalPlacesFrom)}
                   readOnly/>
                   <InputGroup.Prepend>
                     <InputGroup.Text id="inputGroupPrepend">{this.state.currencyFrom}</InputGroup.Text>
@@ -159,7 +159,7 @@ class ViewFXTransactionModal extends Component {
                 <Form.Label>Amount To</Form.Label>
                 <InputGroup>
                   <Form.Control type="number"
-                  name="amountTo" value={Number(this.state.amountTo).toFixed(this.state.decimalPlaces)}
+                  name="amountTo" value={Number(this.state.amountTo).toFixed(this.state.decimalPlacesTo)}
                   readOnly/>
                   <InputGroup.Prepend>
                     <InputGroup.Text id="inputGroupPrepend">{this.state.currencyTo}</InputGroup.Text>
