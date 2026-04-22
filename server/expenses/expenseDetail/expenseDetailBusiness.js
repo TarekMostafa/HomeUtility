@@ -184,7 +184,7 @@ class expenseDetailBusiness {
     await expenseDetail.save();
   }
 
-  async addExpenseDetailToBillTransaction(id, {billId}) {
+  async addExpenseDetailToBillTransaction(id, {billId, billTransId}) {
     let expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
     if(!expenseDetail) throw new Exception('EXP_DET_NOTEXIST');
 
@@ -193,6 +193,14 @@ class expenseDetailBusiness {
 
     let bill = await BillRepo.getBill(billId);
     if(!bill) throw new Exception('BILL_NOT_EXIST');
+
+    let isBillTransExist = false;
+    let billTrans = null;
+    if(billTransId) {
+      billTrans = await BillTransactionRepo.getBillTransaction(billTransId);
+      if (!billTrans) throw new Exception('BILLTRANS_NOT_EXIST');
+      else isBillTransExist = true;
+    }
 
     const expDetDate = new Date(expense.expenseYear, 
       expense.expenseMonth-1,
@@ -209,21 +217,29 @@ class expenseDetailBusiness {
     let dbTransaction;
     try{
       dbTransaction = await sequelize.transaction();
-      const savedBillTrans = await BillTransactionRepo.addBillTransaction({
-        transAmount: expenseDetail.expenseAmount,
-        transBillDate: expDetDate,
-        transNotes: expenseDetail.expenseDescription,
-        transOutOfFreq: true,
-        transAmountType: amountType,
-        billId: bill.billId,
-        transPostingDate: expDetDate,
-        transCurrency: expenseDetail.expenseCurrency,
-        transSource: 'EXP',
-        transExternalId: expenseDetail.expenseDetailId,
-        transReview: 1,
-      }, dbTransaction);
-      expenseDetail.expenseBillTransId = savedBillTrans.transId;
-      await expenseDetail.save({transaction: dbTransaction});
+      if(isBillTransExist) {
+        await BillTransactionRepo.updateBillTransactionExternalId(
+          billTrans, 'EXP', expenseDetail.expenseDetailId, dbTransaction
+        )
+        expenseDetail.expenseBillTransId = billTransId;
+        await expenseDetail.save({transaction: dbTransaction});
+      } else {
+        const savedBillTrans = await BillTransactionRepo.addBillTransaction({
+          transAmount: expenseDetail.expenseAmount,
+          transBillDate: expDetDate,
+          transNotes: expenseDetail.expenseDescription,
+          transOutOfFreq: true,
+          transAmountType: amountType,
+          billId: bill.billId,
+          transPostingDate: expDetDate,
+          transCurrency: expenseDetail.expenseCurrency,
+          transSource: 'EXP',
+          transExternalId: expenseDetail.expenseDetailId,
+          transReview: 1,
+        }, dbTransaction);
+        expenseDetail.expenseBillTransId = savedBillTrans.transId;
+        await expenseDetail.save({transaction: dbTransaction});
+      }
       await dbTransaction.commit();
     } catch (err) {
       console.log(err);

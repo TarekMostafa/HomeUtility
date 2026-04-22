@@ -43,6 +43,13 @@ class BillTransactionRepo {
   static async addBillTransactionDetail(billTransactionDetail, dbTransaction) {
     await BillTransactionDetailModel.build(billTransactionDetail).save({transaction: dbTransaction});
   }
+
+  static async updateBillTransactionExternalId(billTrans, source, externalId, dbTransaction) {
+    await billTrans.update(
+      {transSource: source,
+      transExternalId: externalId},
+      {transaction: dbTransaction});
+  }
 }
 
 module.exports = BillTransactionRepo;

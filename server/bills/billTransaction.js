@@ -13,7 +13,7 @@ const Op = Sequelize.Op;
 
 class BillTransaction {
   async getBillTransactions({limit, skip, billId, billDateFrom, billDateTo,
-    postingDateFrom, postingDateTo, includeNotes, notes, amountType}) {
+    postingDateFrom, postingDateTo, includeNotes, notes, amountType, includeExternal}) {
 
     limit = Common.getNumber(limit, 10);
     skip = Common.getNumber(skip, 0);
@@ -62,6 +62,18 @@ class BillTransaction {
     // Check Type (Credit/Debit)
     if(amountType){
       whereQuery.transAmountType = amountType.trim();
+    }
+    // Check include external (true/false)
+    if(includeExternal!==null && includeExternal!==undefined){
+      if(includeExternal=='true') {
+        whereQuery.transExternalId = {
+          [Op.ne] : null
+        }
+      } else {
+        whereQuery.transExternalId = {
+          [Op.eq] : null
+        }
+      }
     }
     let billTrans = await BillTransactionRepo.getBillTransactions(skip, limit, whereQuery);
     billTrans = billTrans.map(billTran => {

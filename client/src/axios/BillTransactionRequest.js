@@ -2,7 +2,7 @@ import axios from 'axios';
 
 class BillTransactionRequest {
   static async getBillsTransactions(limit, skip, billId, billDateFrom, billDateTo, 
-    postingDateFrom, postingDateTo, includeNotes, notes, amountType) {
+    postingDateFrom, postingDateTo, includeNotes, notes, amountType, includeExternal) {
     const response = await axios.get('/api/billsTransactions', {
       params: {
         limit,
@@ -14,7 +14,8 @@ class BillTransactionRequest {
         postingDateTo,
         includeNotes,
         notes,
-        amountType
+        amountType,
+        includeExternal
       }
     });
     return response.data;

@@ -1,15 +1,17 @@
 import React, {useState} from 'react';
-import { Form, Button, Spinner, InputGroup } from 'react-bootstrap';
+import { Form, Button, Spinner, Row, Col, InputGroup } from 'react-bootstrap';
 import moment from 'moment';
 
 import ModalContainer from '../../common/ModalContainer';
 import BillDropDown from '../../bills/summary/BillsDropDown';
 import ExpenseTypesDropDown from '../expensetypes/ExpenseTypesDropDown';
+import BillTransactionListModal from '../../bills/transactions/BillTransactionListModal';
 
 import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 
 const initialState = {
     bill: '',
+    billTransId: 0,
     message: '',
     isLoading: false,
 }
@@ -18,6 +20,7 @@ function AddExpenseDetailToBillTransactionModal(props) {
 
     const data = props.expenseDetail;
     const [formData, setFormData] = useState(initialState);
+    const [modalBillSearchShow, setModalBillSearchShow] = useState(false);
 
     const handleOnShow = () => {
         setFormData(initialState);
@@ -28,6 +31,44 @@ function AddExpenseDetailToBillTransactionModal(props) {
             ...formData,
             [event.target.name] : (event.target.type==='checkbox' ? event.target.checked : event.target.value)
         })
+    }
+
+    const handleHide = () => {
+        setFormData({
+            ...formData,
+            billTransId: 0,
+            isLoading: false,
+        });
+
+        setModalBillSearchShow(false);
+    }
+
+    const handleSearchClick = () => {
+        // Validate Input
+        if(!formData.bill) {
+            setFormData({
+                ...formData,
+                message: 'Invalid bill, should not be empty'
+            });
+            return;
+        } else {
+            setFormData({
+                ...formData,
+                message: '',
+            });
+        }
+
+        setModalBillSearchShow(true);
+    }
+    
+    const handleSelectClick = (transId) => {
+        setFormData({
+            ...formData,
+            billTransId: transId,
+            isLoading: false,
+        });
+
+        setModalBillSearchShow(false);
     }
 
     const handleClick = () => {
@@ -48,7 +89,7 @@ function AddExpenseDetailToBillTransactionModal(props) {
 
         // add expense detail to bill transaction
         ExpenseDetailRequest.addTransactionToBillTransaction(
-            data.expenseDetailId, formData.bill)
+            data.expenseDetailId, formData.bill, formData.billTransId)
         .then( (response) => {
             if (typeof props.onSave=== 'function') {
                 props.onSave();
@@ -68,6 +109,14 @@ function AddExpenseDetailToBillTransactionModal(props) {
         })
     }
 
+    const getDebitOrCredit = () => {
+        if (data.expenseAdjusment) {
+            return (data.expenseAmount > 0? "Credit":"Debit");
+        } else {
+            return (data.expenseAmount > 0? "Debit":"Credit");
+        }
+    } 
+
     return (
         <ModalContainer title="Add Expense Detail To Bill Transaction" show={props.show}
             onHide={props.onHide} onShow={handleOnShow}
@@ -81,14 +130,34 @@ function AddExpenseDetailToBillTransactionModal(props) {
                 </Button>
             }>
             <Form>
-                <Form.Group controlId="bills">
-                    <Form.Label>Bill</Form.Label>
-                    <Form.Control as="select" name="bill" onChange={handleChange}
-                    value={formData.bill}>
-                        <option value=''></option>
-                        <BillDropDown status="ACTIVE"/>
-                    </Form.Control>
-                </Form.Group>
+                <Row>
+                    <Col xs={9}>
+                        <Form.Group controlId="bills">
+                            <Form.Label>Bill</Form.Label>
+                            <Form.Control as="select" name="bill" onChange={handleChange}
+                            value={formData.bill}>
+                                <option value=''></option>
+                                <BillDropDown status="ACTIVE"/>
+                            </Form.Control>
+                        </Form.Group>
+                    </Col>
+                    <Col xs={3}>
+                        <Form>
+                            <Form.Group controlId="billTransId">
+                            <Form.Label>Bill Trans. Id</Form.Label>
+                            <InputGroup>
+                                <Form.Control type="input"
+                                name="billTransId"
+                                value={formData.billTransId}
+                                readOnly/>
+                                <InputGroup.Prepend>
+                                <Button variant="secondary" onClick={handleSearchClick}>...</Button>
+                                </InputGroup.Prepend>
+                            </InputGroup>
+                            </Form.Group>
+                        </Form>
+                    </Col>
+                </Row>
                 <Form.Group controlId="expDetDate">
                     <Form.Label>Date</Form.Label>
                     <Form.Control type="input"
@@ -127,6 +196,11 @@ function AddExpenseDetailToBillTransactionModal(props) {
                 </Form.Group>
                 <Form.Text className='text-danger'>{formData.message}</Form.Text>
             </Form>
+            {
+                modalBillSearchShow && 
+                <BillTransactionListModal show={modalBillSearchShow} onHide={handleHide}
+                onSelect={handleSelectClick} bill={formData.bill} amountType={getDebitOrCredit()}/>
+            }
         </ModalContainer>
     );
 }

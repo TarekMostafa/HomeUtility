@@ -561,31 +561,47 @@ class TransactionBusiness {
     await _transaction.save({transaction: dbTransaction});
   }
 
-  async addTransactionToBillTransaction(id, {billId}) {
+  async addTransactionToBillTransaction(id, {billId, billTransId}) {
     let transaction = await TransactionRepo.getTransaction(id);
     if(!transaction) throw new Exception('TRANS_NOT_EXIST');
 
     let bill = await BillRepo.getBill(billId);
     if(!bill) throw new Exception('BILL_NOT_EXIST');
 
+    let isBillTransExist = false;
+    let billTrans = null;
+    if(billTransId) {
+      billTrans = await BillTransactionRepo.getBillTransaction(billTransId);
+      if (!billTrans) throw new Exception('BILLTRANS_NOT_EXIST');
+      else isBillTransExist = true;
+    }
+
     let dbTransaction;
     try{
       dbTransaction = await sequelize.transaction();
-      const savedBillTrans = await BillTransactionRepo.addBillTransaction({
-        transAmount: transaction.transactionAmount,
-        transBillDate: transaction.transactionValueDate,
-        transNotes: transaction.transactionNarrative,
-        transOutOfFreq: true,
-        transAmountType: transaction.transactionCRDR,
-        billId: bill.billId,
-        transPostingDate: transaction.transactionPostingDate,
-        transCurrency: transaction.account.accountCurrency,
-        transSource: 'ACC',
-        transExternalId: transaction.transactionId,
-        transReview: 1,
-      }, dbTransaction);
-      transaction.transactionBillTransId = savedBillTrans.transId;
-      await transaction.save({transaction: dbTransaction});
+      if(isBillTransExist) {
+        await BillTransactionRepo.updateBillTransactionExternalId(
+          billTrans, 'ACC', transaction.transactionId, dbTransaction
+        )
+        transaction.transactionBillTransId = billTransId;
+        await transaction.save({transaction: dbTransaction});
+      } else {
+        const savedBillTrans = await BillTransactionRepo.addBillTransaction({
+            transAmount: transaction.transactionAmount,
+            transBillDate: transaction.transactionValueDate,
+            transNotes: transaction.transactionNarrative,
+            transOutOfFreq: true,
+            transAmountType: transaction.transactionCRDR,
+            billId: bill.billId,
+            transPostingDate: transaction.transactionPostingDate,
+            transCurrency: transaction.account.accountCurrency,
+            transSource: 'ACC',
+            transExternalId: transaction.transactionId,
+            transReview: 1,
+          }, dbTransaction);
+        transaction.transactionBillTransId = savedBillTrans.transId;
+        await transaction.save({transaction: dbTransaction});
+      }
       await dbTransaction.commit();
     } catch (err) {
       await dbTransaction.rollback();

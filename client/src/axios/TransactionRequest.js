@@ -220,9 +220,10 @@ class TransctionRequest {
     });
   }
 
-  static async addTransactionToBillTransaction (id, billId) {
+  static async addTransactionToBillTransaction (id, billId, billTransId) {
     return await axios.post('/api/wealth/transactions/addbilltransaction/'+id, {
-      billId
+      billId,
+      billTransId
     });
   }
 }

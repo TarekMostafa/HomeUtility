@@ -79,18 +79,25 @@ function BillTransactionTable (props) {
               </td>
               <td>{transaction.transId}</td>
               <td>
-                <DropdownButton id="dropdown-basic-button" title="Actions"
-                  size="sm" variant="secondary">
-                    <Dropdown.Item onClick={() => props.onViewBillTransaction(transaction.transId)}>
-                      View
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={() => props.onEditBillTransaction(transaction.transId)}>
-                      Edit
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={() => props.onDeleteBillTransaction(transaction.transId)}>
-                      Delete
-                    </Dropdown.Item>
-                </DropdownButton>
+                {
+                  props.selectable ? 
+                  <Button variant="secondary" onClick={() => props.onSelectBillTransaction(transaction.transId)}>
+                    Select
+                  </Button> 
+                  : 
+                  <DropdownButton id="dropdown-basic-button" title="Actions"
+                    size="sm" variant="secondary">
+                      <Dropdown.Item onClick={() => props.onViewBillTransaction(transaction.transId)}>
+                        View
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => props.onEditBillTransaction(transaction.transId)}>
+                        Edit
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => props.onDeleteBillTransaction(transaction.transId)}>
+                        Delete
+                      </Dropdown.Item>
+                  </DropdownButton>
+                }
               </td>
             </tr>
           )
