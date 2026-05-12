@@ -32,16 +32,18 @@ function WealthTransactionTable (props) {
         {
           props.transactions && props.transactions.map( (transaction, index) => {
             const isEditable = transaction.isEditable
-            && props.onEditTransaction; 
+              && props.onEditTransaction; 
             const isDeletable = transaction.isDeletable
-            && props.onDeleteTransaction;
+              && props.onDeleteTransaction;
             const isMigrable = transaction.migrationType
-            && props.onMigration;
+              && props.onMigration;
             const isViewable = props.onViewTransaction;
             const isAddToBillTrans = !transaction.transactionBillTransId
-            && props.onAddToBillTransaction && transaction.isAddToBilltrans;
+              && props.onAddToBillTransaction && transaction.isAddToBilltrans;
+            const isTransactionLabel = transaction.isTransactionLabel
+              && props.onTransactionLabel;
             const isButtonColVisible = isEditable || isDeletable 
-            || isMigrable || isViewable || isAddToBillTrans;
+            || isMigrable || isViewable || isAddToBillTrans || isTransactionLabel;
             const labelText = (transaction.labels&&transaction.labels.label1?'1/':'')
                             + (transaction.labels&&transaction.labels.label2?'2/':'')
                             + (transaction.labels&&transaction.labels.label3?'3/':'')
@@ -182,6 +184,12 @@ function WealthTransactionTable (props) {
                       <Dropdown.Item onClick={() => props.onViewTransaction(transaction.transactionId, 
                         transaction.transactionModule)}>
                       View
+                      </Dropdown.Item>
+                    }
+                    {
+                      isTransactionLabel &&
+                      <Dropdown.Item onClick={() => props.onTransactionLabel(transaction.transactionId)}>
+                        Labels
                       </Dropdown.Item>
                     }
                     {

@@ -56,11 +56,15 @@ function AddTransactionLabels(props) {
             formData.label1, formData.label2, formData.label3,
             formData.label4, formData.label5
         ).then( response => {
+            if (typeof props.onSave=== 'function') {
+                props.onSave();
+            }
             setFormData({
                 ...formData,
                 isLoading : false,
                 message: '',
             })
+            props.onHide();
         }).catch( err => {
             setFormData({
                 ...formData,

@@ -119,6 +119,7 @@ class TransactionBusiness {
         relatedType: trans.relatedTransaction? trans.relatedTransaction.relatedTransactionType: '',
         isEditable: module? module.IsEditable: true,
         isDeletable: module? module.IsDeletable: true,
+        isTransactionLabel: module? module.IsTransactionLabel: true,
         labels: (showLabels===AppParametersConstants.YES? {
           label1: trans.transactionLabel1,
           label2: trans.transactionLabel2,

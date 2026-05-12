@@ -30,6 +30,7 @@ import DeleteFXTransactionModal from './DeleteFXTransactionModal';
 import EditFXTransactionModal from './EditFXTransactionModal';
 import LabelDropDown from '../../common/LabelDropDown';
 import AddTransactionToBillTransactionModal from './AddTransactionToBillTransactionModal';
+import EditTransactionLabelsModal from './EditTransactionLabelsModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -71,6 +72,7 @@ class WealthTransactionList extends Component {
     modalDeleteFXShow: false,
     modalEditFXShow: false,
     modalAddToBillShow: false,
+    modalEditTransLabelShow: false,
     transactionId: '',
     ...initialState,
   }
@@ -226,7 +228,8 @@ class WealthTransactionList extends Component {
           onViewTransaction={this.handleViewTransaction}
           onRelatedTransaction={this.handleRelatedTransaction}
           onMigration={this.handleMigration}
-          onAddToBillTransaction={this.handleAddToBillTransaction}/>
+          onAddToBillTransaction={this.handleAddToBillTransaction}
+          onTransactionLabel={this.handleTransactionLabel}/>
           <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
             hidden={!this.state.appearMoreButton}>
             more...</Button>
@@ -313,6 +316,11 @@ class WealthTransactionList extends Component {
           <AddTransactionToBillTransactionModal show={this.state.modalAddToBillShow} onHide={this.handleHide}
           onSave={this.handleListClick} transactionId={this.state.transactionId}/>
         }
+        {
+          this.state.modalEditTransLabelShow &&
+          <EditTransactionLabelsModal show={this.state.modalEditTransLabelShow} onHide={this.handleHide}
+          onSave={this.handleListClick} transactionId={this.state.transactionId}/>
+        }
       </React.Fragment>
     )
   }// end of render
@@ -384,6 +392,13 @@ class WealthTransactionList extends Component {
     });
   }
 
+  handleTransactionLabel = (transactionId) => {
+    this.setState({
+      modalEditTransLabelShow: true,
+      transactionId
+    });
+  }
+
   handleAddSingleTransaction = () => {
     this.setState({
       modalAddSingleShow: true
@@ -427,6 +442,7 @@ class WealthTransactionList extends Component {
       modalDeleteFXShow: false,
       modalEditFXShow: false,
       modalAddToBillShow: false,
+      modalEditTransLabelShow: false,
     });
   }
 

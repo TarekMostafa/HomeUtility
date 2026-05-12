@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Tabs, Tab } from 'react-bootstrap';
 import ModalContainer from '../../common/ModalContainer';
 import TransactionRequest from '../../../axios/TransactionRequest';
-import AddTransactionLabels from './AddTransactionLabels';
 import ViewSingleTransactionData from './ViewSingleTransactionData';
 // import amountFormatter from '../../../utilities/amountFormatter';
 
@@ -17,8 +15,6 @@ const initialState = {
   currency: '',
   message: '',
   isLoading: false,
-  isLabelActivated: false,
-  labels: null,
 }
 
 class ViewSingleTransactionModal extends Component {
@@ -40,8 +36,6 @@ class ViewSingleTransactionModal extends Component {
         narrative: transaction.transactionNarrative,
         accountCurrencyDecimalPlaces: transaction.currencyDecimalPlace,
         currency: transaction.accountCurrency,
-        isLabelActivated: transaction.isLabelActivated,
-        labels: transaction.labels,
       });
     })
     .catch( (err) => {
@@ -53,19 +47,7 @@ class ViewSingleTransactionModal extends Component {
     return (
       <ModalContainer title="View Single Transaction" show={this.props.show}
         onHide={this.props.onHide} onShow={this.handleOnShow}>
-          {
-            this.state.isLabelActivated? 
-            <Tabs defaultActiveKey="main">
-              <Tab eventKey="main" title="Transaction">
-                <ViewSingleTransactionData data={this.state}/>
-              </Tab>
-              <Tab eventKey="labels" title="Labels">
-                <AddTransactionLabels transactionId={this.props.transactionId} labels={this.state.labels}/>
-              </Tab>
-            </Tabs>
-            :
             <ViewSingleTransactionData data={this.state}/>
-          }
       </ModalContainer>
     )
   }//end of render
