@@ -234,6 +234,18 @@ function ExpenseDetailRow(props) {
                     <DropdownButton id="dropdown-basic-button" title="Actions"
                     size="sm" variant="secondary">
                         {
+                            props.onEditExpenseDetail &&
+                            <Dropdown.Item onClick={() => props.onEditExpenseDetail(elem)}>
+                                Edit Expense Detail
+                            </Dropdown.Item>
+                        }
+                        {
+                            props.onEditExpenseDetailLabels &&
+                            <Dropdown.Item onClick={() => props.onEditExpenseDetailLabels(elem)}>
+                                Edit Labels
+                            </Dropdown.Item>
+                        }
+                        {
                             isAddToBillTrans && 
                             <Dropdown.Item onClick={() => props.onAddToBillTransaction(elem)}>
                             Add To Bill Transaction

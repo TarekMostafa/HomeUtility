@@ -177,12 +177,12 @@ function AddExpenseDetailToBillTransactionModal(props) {
                     </InputGroup>
                 </Form.Group>
                 <Form.Group controlId="description">
-                    <Form.Label>Narrative</Form.Label>
+                    <Form.Label>Description</Form.Label>
                     <Form.Control type="input" maxLength={200}
                     name="description" value={data.expenseDescription} readOnly/>
                 </Form.Group>
                 <Form.Group controlId="expenseType">
-                    <Form.Label>Type</Form.Label>
+                    <Form.Label>Expense Type</Form.Label>
                     <Form.Control as="select" name="expenseType" readOnly
                         value={data.expenseTypeId}>
                         <option value=''></option>

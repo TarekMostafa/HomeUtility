@@ -32,8 +32,8 @@ class EditTransactionLabelsModal extends Component {
 
   render () {
     return (
-      <ModalContainer title="Transaction Labels" show={this.props.show}
-        onHide={this.props.onHide} onShow={this.handleOnShow}>
+      <ModalContainer title={"Transaction Labels (" + this.props.transactionId + ")"} 
+      show={this.props.show} onHide={this.props.onHide} onShow={this.handleOnShow}>
           {
             <AddTransactionLabels transactionId={this.props.transactionId} 
               labels={this.state.labels} {...this.props}/>

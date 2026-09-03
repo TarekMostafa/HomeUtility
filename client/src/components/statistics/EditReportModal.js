@@ -22,6 +22,7 @@ function EditReportModal ({reportId, transactionTypes, show, onHide, onSave}) {
         ReportRequest.getReportDetails(reportId)
         .then( report => {
             setFormData({
+                ...formData,
                 reportName: report.reportName,
                 creditTransTypes: report.transTypesCR? 
                     transactionTypes.filter(e => report.transTypesCR.split(',').includes(e.typeId+'')) : [],

@@ -20,6 +20,14 @@ router.get('/search', function(req, res, next) {
   })
 });
 
+router.get('/:id', (req,res,next) => {
+    expenseDetailBusiness.getExpenseDetail(req.params.id).then( result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+})
+
 router.post('/', function(req, res, next) {
   console.log(`req body ${JSON.stringify(req.body)}`)
     expenseDetailBusiness.addExpenseDetail(req.body).then( () => {

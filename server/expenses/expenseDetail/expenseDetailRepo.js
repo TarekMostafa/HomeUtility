@@ -83,7 +83,11 @@ class ExpenseDetailRepo {
   }
 
   static async getExpenseDetail(id) {
-    return await ExpenseDetailModel.findByPk(id);
+    return await ExpenseDetailModel.findByPk(id, {
+      include: [
+        { model: CurrencyModel, as: 'currency', attributes: ['currencyDecimalPlace'] },
+      ]
+    });
   }
 
   static async addExpenseDetail(expenseDetail, dbTransaction) {

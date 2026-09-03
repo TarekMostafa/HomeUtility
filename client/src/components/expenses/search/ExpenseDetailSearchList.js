@@ -12,6 +12,8 @@ import ExpenseDetailTable from '../ExpenseDetailTable';
 import LabelDropDown from '../../common/LabelDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import AddExpenseDetailToBillTransactionModal from './AddExpenseDetailToBillTransactionModal';
+import ExpenseDetailEditModal from './ExpenseDetailEditModal';
+import EditExpenseDetailLabelsModal from './EditExpenseDetailLabelsModal';
 
 import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 import ExpenseTypeRequest from '../../../axios/ExpenseTypeRequest';
@@ -36,6 +38,8 @@ function ExpenseDetailSearchList(props) {
     const [expenseTypes, setExpenseTypes] = useState([]);
     const [appearMoreButton, setAppearMoreButton] = useState(true);
     const [modalAddToBillShow, setModalAddToBillShow] = useState(false);
+    const [modalEditShow, setModalEditShow] = useState(false);
+    const [modalEditLabelShow, setModalEditLabelShow] = useState(false);
     const [expenseDetail, setExpenseDetail] = useState({});
 
     const loadExpenseTypes = () => 
@@ -109,8 +113,20 @@ function ExpenseDetailSearchList(props) {
         setExpenseDetail(expenseDetail);
     }
 
+    const handleEdit = (expenseDetail) => {
+        setModalEditShow(true);
+        setExpenseDetail(expenseDetail);
+    }
+
+    const handleEditLabel = (expenseDetail) => {
+        setModalEditLabelShow(true);
+        setExpenseDetail(expenseDetail);
+    }
+
     const handleHide = () => {
         setModalAddToBillShow(false);
+        setModalEditShow(false);
+        setModalEditLabelShow(false);
     }
 
     //const handleExpTypes = (key, value) => {
@@ -205,7 +221,9 @@ function ExpenseDetailSearchList(props) {
             </FormContainer>
             <FormContainer>
                 <ExpenseDetailTable expenseDetails={expensesDetails} 
-                onAddToBillTransaction={handleAddToBillTransaction} readOnly/>
+                onAddToBillTransaction={handleAddToBillTransaction} 
+                onEditExpenseDetail={handleEdit} 
+                onEditExpenseDetailLabels={handleEditLabel} readOnly/>
                 <Button variant="primary" size="sm" block onClick={handleMoreClick}
                     hidden={!appearMoreButton}>
                     more...</Button>
@@ -213,6 +231,14 @@ function ExpenseDetailSearchList(props) {
             {
                 modalAddToBillShow && <AddExpenseDetailToBillTransactionModal show={modalAddToBillShow} 
                 onHide={handleHide} onSave={handleListClick} expenseDetail={expenseDetail}/>
+            }
+            {
+                modalEditShow && <ExpenseDetailEditModal show={modalEditShow}
+                onHide={handleHide} onSave={handleListClick} expenseDetailId={expenseDetail.expenseDetailId}/>
+            }
+            {
+                modalEditLabelShow && <EditExpenseDetailLabelsModal show={modalEditLabelShow}
+                onHide={handleHide} onSave={handleListClick} expenseDetailId={expenseDetail.expenseDetailId}/>
             }
         </React.Fragment>
     )

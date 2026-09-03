@@ -23,6 +23,11 @@ class ExpenseDetailRequest {
     return response.data;
   }
 
+  static async getExpenseDetail(expenseDetailId) {
+    const response = await axios.get('/api/expenseDetail/'+expenseDetailId);
+    return response.data;
+  }
+
   static async addExpenseDetail(expenseId, expenseDay, expenseAmount, expenseDescription, 
     expenseTypeId, expenseAdjusment) {
     return await axios.post('/api/expenseDetail', {

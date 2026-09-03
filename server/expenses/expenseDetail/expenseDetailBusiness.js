@@ -104,6 +104,31 @@ class expenseDetailBusiness {
     return expenseDetails;
   }
 
+  async getExpenseDetail(id) {
+    let expenseDetail = await ExpenseDetailRepo.getExpenseDetail(id);
+    expenseDetail = {
+      expenseDetailId: expenseDetail.expenseDetailId,
+      expenseId: expenseDetail.expenseId,
+      expenseDay: expenseDetail.expenseDay,
+      expenseAmount: expenseDetail.expenseAmount,
+      expenseAmountFormatted: AmountHelper.formatAmount(expenseDetail.expenseAmount, 
+          expenseDetail.currency.currencyDecimalPlace),
+      expenseCurrency: expenseDetail.expenseCurrency,
+      expenseDescription: expenseDetail.expenseDescription,
+      expenseTypeId: expenseDetail.expenseTypeId,
+      expenseAdjusment: expenseDetail.expenseAdjusment,
+      expenseDate: expenseDetail.expenseDate,
+      expenseLabel1: expenseDetail.expenseLabel1,
+      expenseLabel2: expenseDetail.expenseLabel2,
+      expenseLabel3: expenseDetail.expenseLabel3,
+      expenseLabel4: expenseDetail.expenseLabel4,
+      expenseLabel5: expenseDetail.expenseLabel5,
+      expenseBillTransId: expenseDetail.expenseBillTransId,
+      currencyDecimalPlace: expenseDetail.currency.currencyDecimalPlace,
+    }
+    return expenseDetail;
+  }
+
   async addExpenseDetail({expenseId, expenseDay, expenseAmount, expenseDescription, 
     expenseTypeId, expenseAdjusment}) {
     let expense = await ExpenseRepo.getExpense(expenseId);
@@ -137,7 +162,7 @@ class expenseDetailBusiness {
 
     let expense = await ExpenseRepo.getExpense(expenseDetail.expenseId);
     if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
-    if(expense.expenseStatus === 'CLOSED') throw new Exception('EXP_STATUS_CLOSED');
+    //if(expense.expenseStatus === 'CLOSED') throw new Exception('EXP_STATUS_CLOSED');
 
     expenseDetail.expenseTypeId = expenseTypeId;
     expenseDetail.expenseDescription = expenseDescription;
