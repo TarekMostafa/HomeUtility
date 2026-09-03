@@ -7,6 +7,11 @@ ReportDetailModel.init({
   detailReportId: Sequelize.INTEGER(11),
   detailName: Sequelize.STRING(45),
   detailTypes: Sequelize.STRING(200),
+  detailLabel1: Sequelize.STRING(200),
+  detailLabel2: Sequelize.STRING(200),
+  detailLabel3: Sequelize.STRING(200),
+  detailLabel4: Sequelize.STRING(200),
+  detailLabel5: Sequelize.STRING(200),
 }, {
   tableName: 'reportdetails',
   createdAt: false,

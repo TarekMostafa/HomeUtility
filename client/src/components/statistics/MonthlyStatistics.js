@@ -177,10 +177,33 @@ class MonthlyStatistics extends Component {
     )
   }//end of render
 
-  handleTransactionTypeClick = (typeId, fromDate, toDate, typeName, currency, totalFormatted) => {
-    //console.log(typeId, fromDate, toDate);
+  handleTransactionTypeClick = (typeId, fromDate, toDate, typeName, currency, 
+    totalFormatted, label1, label2, label3, label4, label5) => {
+    let labelsOps = [];
+    labelsOps[0] = "";
+    labelsOps[1] = label1.split(":")[0];
+    labelsOps[2] = label2.split(":")[0];
+    labelsOps[3] = label3.split(":")[0];
+    labelsOps[4] = label4.split(":")[0];
+    labelsOps[5] = label5.split(":")[0];
+    let _label1 = [];
+    if(label1.split(":").length > 1)
+      _label1 = label1.split(":")[1].split(",")
+    let _label2 = [];
+    if(label2.split(":").length > 1)
+      _label2 = label2.split(":")[1].split(",")
+    let _label3 = [];
+    if(label3.split(":").length > 1)
+      _label3 = label3.split(":")[1].split(",")
+    let _label4 = [];
+    if(label4.split(":").length > 1)
+      _label4 = label4.split(":")[1].split(",")
+    let _label5 = [];
+    if(label5.split(":").length > 1)
+      _label5 = label5.split(":")[1].split(",")
     TransactionRequest.getTransactions(999, 0, [], [typeId], fromDate, toDate, 
-      null, null, null, [currency], this.state.dateType, false)
+      null, null, null, [currency], this.state.dateType, false,
+      _label1, _label2, _label3, _label4, _label5, labelsOps)
       .then((transactions) => {
         this.setState({
           transactions,

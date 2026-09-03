@@ -11,9 +11,12 @@ class ReportRequest {
     return response.data;
   }
 
-  static async editReport(id, reportName, crTransTypes, drTransTypes) {
+  static async editReport(id, reportName, crTransTypes, drTransTypes,
+    label1List, label2List, label3List, label4List, label5List
+  ) {
     return await axios.post('/api/wealth/reports/editReport/'+id, {
-      reportName, crTransTypes, drTransTypes
+      reportName, crTransTypes, drTransTypes,
+      label1List, label2List, label3List, label4List, label5List
     });
   }
 

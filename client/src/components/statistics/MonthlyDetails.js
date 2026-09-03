@@ -41,7 +41,9 @@ class MonthlyDetails extends Component {
                                 <Button variant="link" size="sm" 
                                 onClick={() => this.onTransactionTypeClick(detail.typeId, 
                                 this.props.data.fromDate, this.props.data.toDate, detail.typeName,
-                                this.props.data.currency, detail.totalFormatted)}>
+                                this.props.data.currency, detail.totalFormatted, 
+                                detail.detailLabel1, detail.detailLabel2, detail.detailLabel3,
+                                detail.detailLabel4, detail.detailLabel5)}>
                                   {detail.typeName}
                                 </Button>
                                  : <Button variant="link" size="sm">No Transaction Type</Button>
@@ -79,9 +81,11 @@ class MonthlyDetails extends Component {
     )
   }
 
-  onTransactionTypeClick = (typeId, fromDate, toDate, typeName, currency, totalFormatted) => {
+  onTransactionTypeClick = (typeId, fromDate, toDate, typeName, currency, 
+    totalFormatted, label1, label2, label3, label4, label5) => {
     if (typeof this.props.onTransactionTypeClick === 'function') {
-      this.props.onTransactionTypeClick(typeId, fromDate, toDate, typeName, currency, totalFormatted);
+      this.props.onTransactionTypeClick(typeId, fromDate, toDate, typeName, currency, 
+        totalFormatted, label1, label2, label3, label4, label5);
     }
   }
 }

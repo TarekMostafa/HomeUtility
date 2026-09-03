@@ -30,6 +30,11 @@ class Report {
         report.transTypesCR = detail.detailTypes;
       else if(detail.detailName === 'Debit')
         report.transTypesDR = detail.detailTypes;
+      report.detailLabel1 = detail.detailLabel1;
+      report.detailLabel2 = detail.detailLabel2;
+      report.detailLabel3 = detail.detailLabel3;
+      report.detailLabel4 = detail.detailLabel4;
+      report.detailLabel5 = detail.detailLabel5;
     }
 
     return report;
@@ -69,7 +74,9 @@ class Report {
     }
   }
 
-  async editReport(id, {reportName, crTransTypes, drTransTypes}) {
+  async editReport(id, {reportName, crTransTypes, drTransTypes, 
+    label1List, label2List, label3List, label4List, label5List
+  }) {
     let report = await ReportRepo.getReport(id);
     if(!report) {
       throw new Exception('REPORT_INVALID');
@@ -86,8 +93,18 @@ class Report {
         let detail = details[index];
         if(detail.detailName === 'Credit') {
           detail.detailTypes = crTransTypes;
+          detail.detailLabel1 = label1List;
+          detail.detailLabel2 = label2List;
+          detail.detailLabel3 = label3List;
+          detail.detailLabel4 = label4List;
+          detail.detailLabel5 = label5List;
         } else if(detail.detailName === 'Debit') {
           detail.detailTypes = drTransTypes;
+          detail.detailLabel1 = label1List;
+          detail.detailLabel2 = label2List;
+          detail.detailLabel3 = label3List;
+          detail.detailLabel4 = label4List;
+          detail.detailLabel5 = label5List;
         }
         await detail.save({transaction: dbTransaction});
       }

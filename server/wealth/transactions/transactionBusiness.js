@@ -22,7 +22,7 @@ class TransactionBusiness {
 
   async getTransactions({limit, skip, accountIds, typeIds, postingDateFrom,
     postingDateTo, narrative, id, includeNarrative, currencies, dateType, payForOthers,
-    label1, label2, label3, label4, label5}) {
+    label1, label2, label3, label4, label5, labelsOps}) {
 
     limit = Common.getNumber(limit, 10);
     skip = Common.getNumber(skip, 0);
@@ -84,12 +84,91 @@ class TransactionBusiness {
     //Pay for Others
     if(payForOthers!== null && payForOthers!== undefined)
       whereQuery.transactionPayForOthers = payForOthers;
-    //Labels
-    if(label1) whereQuery.transactionLabel1 = label1;
-    if(label2) whereQuery.transactionLabel2 = label2;
-    if(label3) whereQuery.transactionLabel3 = label3;
-    if(label4) whereQuery.transactionLabel4 = label4;
-    if(label5) whereQuery.transactionLabel5 = label5;
+    //Label 1
+    if(label1) {
+      if(Array.isArray(label1)){
+        if(labelsOps && labelsOps[1] === 'NIN'){
+          whereQuery.transactionLabel1 = { [Op.or] : [
+            {[Op.notIn] : label1},
+            {[Op.eq] : null}
+          ]};
+        } else {
+          whereQuery.transactionLabel1 = {
+            [Op.in] : label1
+          }
+        }
+      } else {
+        whereQuery.transactionLabel1 = label1;
+      }
+    }
+    //Label 2
+    if(label2) {
+      if(Array.isArray(label2)){
+        if(labelsOps && labelsOps[2] === 'NIN'){
+          whereQuery.transactionLabel2 = { [Op.or] : [
+            {[Op.notIn] : label2},
+            {[Op.eq] : null}
+          ]};
+        } else {
+          whereQuery.transactionLabel2 = {
+            [Op.in] : label2
+          }
+        }
+      } else {
+        whereQuery.transactionLabel2 = label2;
+      }
+    }
+    //Label 3
+    if(label3) {
+      if(Array.isArray(label3)){
+        if(labelsOps && labelsOps[3] === 'NIN'){
+          whereQuery.transactionLabel3 = { [Op.or] : [
+            {[Op.notIn] : label3},
+            {[Op.eq] : null}
+          ]};
+        } else {
+          whereQuery.transactionLabel3 = {
+            [Op.in] : label3
+          }
+        }
+      } else {
+        whereQuery.transactionLabel3 = label3;
+      }
+    }
+    //Label 4
+    if(label4) {
+      if(Array.isArray(label4)){
+        if(labelsOps && labelsOps[4] === 'NIN'){
+          whereQuery.transactionLabel4 = { [Op.or] : [
+            {[Op.notIn] : label4},
+            {[Op.eq] : null}
+          ]};
+        } else {
+          whereQuery.transactionLabel4 = {
+            [Op.in] : label4
+          }
+        }
+      } else {
+        whereQuery.transactionLabel4 = label4;
+      }
+    }
+    //Label 5
+    if(label5) {
+      if(Array.isArray(label5)){
+        if(labelsOps && labelsOps[5] === 'NIN'){
+          whereQuery.transactionLabel5 = { [Op.or] : [
+            {[Op.notIn] : label5},
+            {[Op.eq] : null}
+          ]};
+        } else {
+          whereQuery.transactionLabel5 = {
+            [Op.in] : label5
+          }
+        }
+      } else {
+        whereQuery.transactionLabel5 = label5;
+      }
+    }
 
     let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery, accountWhereQuery);
     await this.loadParameters(); //to load parameters once
@@ -199,6 +278,68 @@ class TransactionBusiness {
           {[Op.in] : reportdetails[counter].detailTypes.split(',')},
           {[Op.eq] : null}
         ]};
+
+        //Label 1
+        const label1Op = reportdetails[counter].detailLabel1.split(':')[0];
+        if(label1Op==='IN'){
+          whereQuery.transactionLabel1 = {
+            [Op.in] : reportdetails[counter].detailLabel1.split(':')[1].split(',')
+          };
+        }else if(label1Op==='NIN'){
+          whereQuery.transactionLabel1 = { [Op.or] : [
+            {[Op.notIn] : reportdetails[counter].detailLabel1.split(':')[1].split(',')},
+            {[Op.eq] : null}
+          ]};
+        }
+        //Label 2
+        const label2Op = reportdetails[counter].detailLabel2.split(':')[0];
+        if(label2Op==='IN'){
+          whereQuery.transactionLabel2 = {
+            [Op.in] : reportdetails[counter].detailLabel2.split(':')[1].split(',')
+          };
+        }else if(label2Op==='NIN'){
+          whereQuery.transactionLabel2 = { [Op.or] : [
+            {[Op.notIn] : reportdetails[counter].detailLabel2.split(':')[1].split(',')},
+            {[Op.eq] : null}
+          ]};
+        }
+        //Label 3
+        const label3Op = reportdetails[counter].detailLabel3.split(':')[0];
+        if(label3Op==='IN'){
+          whereQuery.transactionLabel3 = {
+            [Op.in] : reportdetails[counter].detailLabel3.split(':')[1].split(',')
+          };
+        }else if(label3Op==='NIN'){
+          whereQuery.transactionLabel3 = { [Op.or] : [
+            {[Op.notIn] : reportdetails[counter].detailLabel3.split(':')[1].split(',')},
+            {[Op.eq] : null}
+          ]};
+        }
+        //Label 4
+        const label4Op = reportdetails[counter].detailLabel4.split(':')[0];
+        if(label4Op==='IN'){
+          whereQuery.transactionLabel4 = {
+            [Op.in] : reportdetails[counter].detailLabel4.split(':')[1].split(',')
+          };
+        }else if(label4Op==='NIN'){
+          whereQuery.transactionLabel4 = { [Op.or] : [
+            {[Op.notIn] : reportdetails[counter].detailLabel4.split(':')[1].split(',')},
+            {[Op.eq] : null}
+          ]};
+        }
+        //Label 5
+        const label5Op = reportdetails[counter].detailLabel5.split(':')[0];
+        if(label5Op==='IN'){
+          whereQuery.transactionLabel5 = {
+            [Op.in] : reportdetails[counter].detailLabel5.split(':')[1].split(',')
+          };
+        }else if(label5Op==='NIN'){
+          whereQuery.transactionLabel5 = { [Op.or] : [
+            {[Op.notIn] : reportdetails[counter].detailLabel5.split(':')[1].split(',')},
+            {[Op.eq] : null}
+          ]};
+        }
+
         let details = await TransactionRepo.getTotalTransactionsGroupByType(whereQuery, currency);
         details = details.map( detail => {
           currencyDecimalPlace = detail.currencyDecimalPlace;
@@ -209,7 +350,12 @@ class TransactionBusiness {
             totalFormatted: AmountHelper.formatAmount(Math.abs(detail.total), 
               currencyObj.currencyDecimalPlace),
             typeName: detail.typeName,
-            typeId: detail.typeId
+            typeId: detail.typeId,
+            detailLabel1: reportdetails[counter].detailLabel1,
+            detailLabel2: reportdetails[counter].detailLabel2,
+            detailLabel3: reportdetails[counter].detailLabel3,
+            detailLabel4: reportdetails[counter].detailLabel4,
+            detailLabel5: reportdetails[counter].detailLabel5,
           }
         });
         resultDetails.monthlyStatistics.push({
