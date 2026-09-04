@@ -228,26 +228,28 @@ class TransactionBusiness {
     if(!currencyObj) throw new Exception('CURR_NOT_EXIST', currency);
     // Get Report Information
     const report = await ReportRepo.getReport(reportId);
-    if(!report) {
-      throw new Exception('REPORT_ID_INVALID');
-    }
+    if(!report) throw new Exception('REPORT_ID_INVALID');
     const reportdetails = report.reportdetails;
     // Format Result
     const result = [];
+    let grandTotal = 0;
+    let grandCreditTotal =0;
+    let grandDebitTotal = 0;
     let from = null;
     let to = null;
     do {
       if(from) {
-        //from = new Date(from.getFullYear(), from.getMonth()+1, 1);
-        from.setMonth(from.getMonth()+1);
+        from.setUTCMonth(from.getMonth()+1);
+        from.setUTCDate(1);
       } else {
         from = new Date(_dateFrom);
+        from.setUTCHours(0, 0, 0, 0);
       }
-      //to = new Date(from.getFullYear(), from.getMonth()+1, 0);
       to = new Date(_dateFrom);
-      to.setFullYear(from.getFullYear());
-      to.setMonth(from.getMonth()+1);
-      to.setDate(0);
+      to.setUTCFullYear(from.getFullYear());
+      to.setUTCMonth(from.getMonth()+1);
+      to.setUTCDate(0);
+      to.setUTCHours(0, 0, 0, 0);
       if(to > new Date(_dateTo)){
         to = new Date(_dateTo);
       }
@@ -280,64 +282,74 @@ class TransactionBusiness {
         ]};
 
         //Label 1
-        const label1Op = reportdetails[counter].detailLabel1.split(':')[0];
-        if(label1Op==='IN'){
-          whereQuery.transactionLabel1 = {
-            [Op.in] : reportdetails[counter].detailLabel1.split(':')[1].split(',')
-          };
-        }else if(label1Op==='NIN'){
-          whereQuery.transactionLabel1 = { [Op.or] : [
-            {[Op.notIn] : reportdetails[counter].detailLabel1.split(':')[1].split(',')},
-            {[Op.eq] : null}
-          ]};
+        if(reportdetails[counter].detailLabel1) {
+          const label1Op = reportdetails[counter].detailLabel1.split(':')[0];
+          if(label1Op==='IN'){
+            whereQuery.transactionLabel1 = {
+              [Op.in] : reportdetails[counter].detailLabel1.split(':')[1].split(',')
+            };
+          }else if(label1Op==='NIN'){
+            whereQuery.transactionLabel1 = { [Op.or] : [
+              {[Op.notIn] : reportdetails[counter].detailLabel1.split(':')[1].split(',')},
+              {[Op.eq] : null}
+            ]};
+          }
         }
         //Label 2
-        const label2Op = reportdetails[counter].detailLabel2.split(':')[0];
-        if(label2Op==='IN'){
-          whereQuery.transactionLabel2 = {
-            [Op.in] : reportdetails[counter].detailLabel2.split(':')[1].split(',')
-          };
-        }else if(label2Op==='NIN'){
-          whereQuery.transactionLabel2 = { [Op.or] : [
-            {[Op.notIn] : reportdetails[counter].detailLabel2.split(':')[1].split(',')},
-            {[Op.eq] : null}
-          ]};
+        if(reportdetails[counter].detailLabel2) {
+          const label2Op = reportdetails[counter].detailLabel2.split(':')[0];
+          if(label2Op==='IN'){
+            whereQuery.transactionLabel2 = {
+              [Op.in] : reportdetails[counter].detailLabel2.split(':')[1].split(',')
+            };
+          }else if(label2Op==='NIN'){
+            whereQuery.transactionLabel2 = { [Op.or] : [
+              {[Op.notIn] : reportdetails[counter].detailLabel2.split(':')[1].split(',')},
+              {[Op.eq] : null}
+            ]};
+          }
         }
         //Label 3
-        const label3Op = reportdetails[counter].detailLabel3.split(':')[0];
-        if(label3Op==='IN'){
-          whereQuery.transactionLabel3 = {
-            [Op.in] : reportdetails[counter].detailLabel3.split(':')[1].split(',')
-          };
-        }else if(label3Op==='NIN'){
-          whereQuery.transactionLabel3 = { [Op.or] : [
-            {[Op.notIn] : reportdetails[counter].detailLabel3.split(':')[1].split(',')},
-            {[Op.eq] : null}
-          ]};
+        if(reportdetails[counter].detailLabel3) {
+          const label3Op = reportdetails[counter].detailLabel3.split(':')[0];
+          if(label3Op==='IN'){
+            whereQuery.transactionLabel3 = {
+              [Op.in] : reportdetails[counter].detailLabel3.split(':')[1].split(',')
+            };
+          }else if(label3Op==='NIN'){
+            whereQuery.transactionLabel3 = { [Op.or] : [
+              {[Op.notIn] : reportdetails[counter].detailLabel3.split(':')[1].split(',')},
+              {[Op.eq] : null}
+            ]};
+          }
         }
         //Label 4
-        const label4Op = reportdetails[counter].detailLabel4.split(':')[0];
-        if(label4Op==='IN'){
-          whereQuery.transactionLabel4 = {
-            [Op.in] : reportdetails[counter].detailLabel4.split(':')[1].split(',')
-          };
-        }else if(label4Op==='NIN'){
-          whereQuery.transactionLabel4 = { [Op.or] : [
-            {[Op.notIn] : reportdetails[counter].detailLabel4.split(':')[1].split(',')},
-            {[Op.eq] : null}
-          ]};
+        if(reportdetails[counter].detailLabel4) {
+          const label4Op = reportdetails[counter].detailLabel4.split(':')[0];
+          if(label4Op==='IN'){
+            whereQuery.transactionLabel4 = {
+              [Op.in] : reportdetails[counter].detailLabel4.split(':')[1].split(',')
+            };
+          }else if(label4Op==='NIN'){
+            whereQuery.transactionLabel4 = { [Op.or] : [
+              {[Op.notIn] : reportdetails[counter].detailLabel4.split(':')[1].split(',')},
+              {[Op.eq] : null}
+            ]};
+          }
         }
         //Label 5
-        const label5Op = reportdetails[counter].detailLabel5.split(':')[0];
-        if(label5Op==='IN'){
-          whereQuery.transactionLabel5 = {
-            [Op.in] : reportdetails[counter].detailLabel5.split(':')[1].split(',')
-          };
-        }else if(label5Op==='NIN'){
-          whereQuery.transactionLabel5 = { [Op.or] : [
-            {[Op.notIn] : reportdetails[counter].detailLabel5.split(':')[1].split(',')},
-            {[Op.eq] : null}
-          ]};
+        if(reportdetails[counter].detailLabel5) {
+          const label5Op = reportdetails[counter].detailLabel5.split(':')[0];
+          if(label5Op==='IN'){
+            whereQuery.transactionLabel5 = {
+              [Op.in] : reportdetails[counter].detailLabel5.split(':')[1].split(',')
+            };
+          }else if(label5Op==='NIN'){
+            whereQuery.transactionLabel5 = { [Op.or] : [
+              {[Op.notIn] : reportdetails[counter].detailLabel5.split(':')[1].split(',')},
+              {[Op.eq] : null}
+            ]};
+          }
         }
 
         let details = await TransactionRepo.getTotalTransactionsGroupByType(whereQuery, currency);
@@ -365,14 +377,34 @@ class TransactionBusiness {
             currencyObj.currencyDecimalPlace),
           details
         });
-      }
+        //Calculate Grand Credit and Debit
+        if(reportdetails[counter].detailName === 'Credit')
+          grandCreditTotal += totalItem;
+        else
+          grandDebitTotal += totalItem;        
+      } //end for
       resultDetails.finalTotal = finalTotal;
+      grandTotal += finalTotal;
       resultDetails.finalTotalFormatted = AmountHelper.formatAmount(finalTotal, 
         currencyObj.currencyDecimalPlace); 
       result.push(resultDetails);
     } while(to < new Date(_dateTo))
 
-    return result;
+    return {
+      result,
+      durationFrom: _dateFrom,
+      durationTo: _dateTo,
+      grandTotal: grandTotal,
+      grandTotalCurrency: currencyObj.currencyCode,
+      grandTotalFormatted: AmountHelper.formatAmount(grandTotal, 
+        currencyObj.currencyDecimalPlace),
+      grandCreditTotal: grandCreditTotal,
+      grandDebitTotal: grandDebitTotal,
+      grandCreditTotalFormatted: AmountHelper.formatAmount(grandCreditTotal, 
+        currencyObj.currencyDecimalPlace),
+      grandDebitTotalFormatted: AmountHelper.formatAmount(grandDebitTotal, 
+        currencyObj.currencyDecimalPlace),
+    };
   }
 
   async getTotalTransactionsByLabel({label, currency, dateFrom, dateTo}) {

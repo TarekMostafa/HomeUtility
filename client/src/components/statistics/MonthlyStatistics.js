@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Row, Col, Button, Spinner } from 'react-bootstrap';
+import { Form, Row, Col, Button, Spinner, Alert } from 'react-bootstrap';
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
@@ -23,6 +23,7 @@ const initialState = {
   dateType: 'POST',  //POST or VALUE
   message: '',
   isLoading: false,
+  grandInfo: '',
 }
 
 class MonthlyStatistics extends Component {
@@ -137,6 +138,14 @@ class MonthlyStatistics extends Component {
             </Row>
           </Form>
         </FormContainer>
+        {
+          this.state.stat && 
+          <FormContainer>
+            <Alert variant="dark" className="text-center">
+              <h5>{this.state.grandInfo}</h5>
+            </Alert>
+          </FormContainer>
+        }
         <FormContainer>
           <Row>
           {
@@ -281,9 +290,13 @@ class MonthlyStatistics extends Component {
     TransactionRequest.getMonthlyStatistics(this.state.postingDateFrom,
       this.state.postingDateTo, this.state.reportId, this.state.currency,
       this.state.dateType)
-    .then( (result) => {
+    .then( (response) => {
       this.setState({
-        stat: result,
+        stat: response.result,
+        grandInfo: `Grand total = ${response.grandTotalFormatted}` +
+                    ` ${response.grandTotalCurrency}` +
+                    ` with total credit = ${response.grandCreditTotalFormatted}` + 
+                    ` and total debit = ${response.grandDebitTotalFormatted}`,
         isLoading: false
       });
     })
