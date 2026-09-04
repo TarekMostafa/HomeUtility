@@ -233,7 +233,7 @@ class TransactionBusiness {
     // Format Result
     const result = [];
     let grandTotal = 0;
-    let grandCreditTotal =0;
+    let grandCreditTotal = 0;
     let grandDebitTotal = 0;
     let from = null;
     let to = null;
@@ -363,11 +363,16 @@ class TransactionBusiness {
               currencyObj.currencyDecimalPlace),
             typeName: detail.typeName,
             typeId: detail.typeId,
-            detailLabel1: reportdetails[counter].detailLabel1,
-            detailLabel2: reportdetails[counter].detailLabel2,
-            detailLabel3: reportdetails[counter].detailLabel3,
-            detailLabel4: reportdetails[counter].detailLabel4,
-            detailLabel5: reportdetails[counter].detailLabel5,
+            detailLabel1: reportdetails[counter].detailLabel1?
+                          reportdetails[counter].detailLabel1:"",
+            detailLabel2: reportdetails[counter].detailLabel2?
+                          reportdetails[counter].detailLabel2:"",
+            detailLabel3: reportdetails[counter].detailLabel3?
+                          reportdetails[counter].detailLabel3:"",
+            detailLabel4: reportdetails[counter].detailLabel4?
+                          reportdetails[counter].detailLabel4:"",
+            detailLabel5: reportdetails[counter].detailLabel5?
+                          reportdetails[counter].detailLabel5:"",
           }
         });
         resultDetails.monthlyStatistics.push({
