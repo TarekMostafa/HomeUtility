@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'react-bootstrap'; 
+import { Dropdown } from 'react-bootstrap'; 
 import PropTypes from 'prop-types';
 
 function MultiSelectDropDown (props){
@@ -8,10 +8,15 @@ function MultiSelectDropDown (props){
         text=text+ ' ('+props.selectedValues.length+')';
     return (
         <React.Fragment>
-        <Form.Control as="select" size="sm" value='' onChange={()=>{''}}>
-            <option value=''>{text}</option>
-            {props.children}
-        </Form.Control>
+        <Dropdown>
+            <Dropdown.Toggle variant="outline-secondary"
+            className="w-100 text-start d-flex align-items-center justify-content-between">
+                {text}
+            </Dropdown.Toggle>
+            <Dropdown.Menu className="p-2" style={{maxHeight: '250px', overflowY: 'auto', overflowX: 'hidden', minWidth: '100%' }}>
+                {props.children}
+            </Dropdown.Menu>
+        </Dropdown>
         {props.selectedValues.join(', ')}
         </React.Fragment>
     )
@@ -26,5 +31,14 @@ MultiSelectDropDown.defaultProps = {
     labelSelect: "Select Options",
     selectedValues: [],
 }
-  
+
 export default MultiSelectDropDown;
+
+export const SetMultiSelectItem = (list, key, value) => {
+    let _list = list;
+    if(_list.some(item=>item.key === key)) 
+        _list = _list.filter(item=>item.key!==key);
+    else
+        _list = [..._list, {key, value}];
+    return _list;
+}

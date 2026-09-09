@@ -15,7 +15,7 @@ import AddSingleTransactionModal from './AddSingleTransactionModal';
 import AddInternalTransactionModal from './AddInternalTransactionModal';
 import EditSingleTransactionModal from './EditSingleTransactionModal';
 import DeleteSingleTransactionModal from './DeleteSingleTransactionModal';
-import MultiSelectDropDown from '../../common/MultiSelectDropDown';
+import MultiSelectDropDown, {SetMultiSelectItem} from '../../common/MultiSelectDropDown';
 import AddDebtTransactionModal from './AddDebtTransactionModal';
 import EditDebtTransactionModal from './EditDebtTransactionModal';
 import DeleteDebtTransactionModal from './DeleteDebtTransactionModal';
@@ -114,12 +114,6 @@ class WealthTransactionList extends Component {
       <React.Fragment>
         <FormContainer title="Accounts Transactions" toolbar={
           <ButtonToolbar aria-label="Toolbar with button groups">
-            {/* <ButtonGroup className="mr-2" aria-label="First group">
-              <Button variant="info" size="sm" onClick={this.handleAddSingleTransaction}>Add Single Transaction</Button>
-            </ButtonGroup>
-            <ButtonGroup className="mr-2" aria-label="Second group">
-              <Button variant="info" size="sm" onClick={this.handleAddInternalTransaction}>Add Internal Transaction</Button>
-            </ButtonGroup> */}
             <DropdownButton variant="info" id="dropdown-basic-button" title="Actions"
               size="sm">
                 <Dropdown.Item onClick={this.handleAddSingleTransaction}>
@@ -326,33 +320,15 @@ class WealthTransactionList extends Component {
   }// end of render
 
   handleAccounts = (key, value) => {
-    let _accounts = this.state.accounts;
-    if(_accounts.some(acc=>acc.key === key)) {
-      _accounts = _accounts.filter(acc=>acc.key!==key);
-    } else {
-      _accounts = [..._accounts, {key, value}];
-    }
-    this.setState({accounts: _accounts});
+    this.setState({accounts: SetMultiSelectItem(this.state.accounts, key, value)});
   }
 
   handleCurrencies = (key, value) => {
-    let _currencies = this.state.currencies;
-    if(_currencies.some(acc=>acc.key === key)) {
-      _currencies = _currencies.filter(acc=>acc.key!==key);
-    } else {
-      _currencies = [..._currencies, {key, value}];
-    }
-    this.setState({currencies: _currencies});
+    this.setState({currencies: SetMultiSelectItem(this.state.currencies, key, value)});
   }
 
   handleTransactionTypes = (key, value) => {
-    let _transactionTypes = this.state.transactionTypes;
-    if(_transactionTypes.some(typ=>typ.key === key)) {
-      _transactionTypes = _transactionTypes.filter(typ=>typ.key!==key);
-    } else {
-      _transactionTypes = [..._transactionTypes, {key, value}];
-    }
-    this.setState({transactionTypes: _transactionTypes});
+    this.setState({transactionTypes: SetMultiSelectItem(this.state.transactionTypes, key, value)});
   }
 
   handleListClick = () => {

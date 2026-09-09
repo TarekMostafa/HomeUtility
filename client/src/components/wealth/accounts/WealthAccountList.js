@@ -12,7 +12,7 @@ import FormContainer from '../../common/FormContainer';
 import BanksDropDown from '../banks/BanksDropDown';
 import AccountStatusesDropDown from './AccountStatusesDropDown';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
-import MultiSelectDropDown from '../../common/MultiSelectDropDown';
+import MultiSelectDropDown, {SetMultiSelectItem} from '../../common/MultiSelectDropDown';
 
 import AccountRequest from '../../../axios/AccountRequest';
 
@@ -152,33 +152,15 @@ class WealthAccountList extends Component {
   }//end of render
 
   handleBankSelect = (key, value) => {
-    let _selectedBanks = this.state.selectedBanks;
-    if(_selectedBanks.some(bank=>bank.key === key)) {
-      _selectedBanks = _selectedBanks.filter(bank=>bank.key!==key);
-    } else {
-      _selectedBanks = [..._selectedBanks, {key, value}];
-    }
-    this.setState({selectedBanks: _selectedBanks});
+    this.setState({selectedBanks: SetMultiSelectItem(this.state.selectedBanks, key, value)});
   }
 
   handleCurrencySelect = (key, value) => {
-    let _selectedCurrencies = this.state.selectedCurrencies;
-    if(_selectedCurrencies.some(ccy=>ccy.key === key)) {
-      _selectedCurrencies = _selectedCurrencies.filter(ccy=>ccy.key!==key);
-    } else {
-      _selectedCurrencies = [..._selectedCurrencies, {key, value}];
-    }
-    this.setState({selectedCurrencies: _selectedCurrencies});
+    this.setState({selectedCurrencies: SetMultiSelectItem(this.state.selectedCurrencies, key, value)});
   }
 
   handleStatusSelect = (key, value) => {
-    let _selectedStatuses = this.state.selectedStatuses;
-    if(_selectedStatuses.some(sts=>sts.key === key)) {
-      _selectedStatuses = _selectedStatuses.filter(sts=>sts.key!==key);
-    } else {
-      _selectedStatuses = [..._selectedStatuses, {key, value}];
-    }
-    this.setState({selectedStatuses: _selectedStatuses});
+    this.setState({selectedStatuses: SetMultiSelectItem(this.state.selectedStatuses, key, value)});
   }
 
   handleAddNewAccount = () => {
