@@ -67,12 +67,16 @@ function CardTransactionPaymentList(props) {
     const handleOnPay = (isPaid, trans) => {
         if(isPaid) {
             //add payment
-            setCardPayments([...cardPayments, trans]);
+            if(Array.isArray(trans)) setCardPayments(trans);
+            else setCardPayments([...cardPayments, trans]);
         } else {
             //remove payment
-            let tmpCardPayment = [...cardPayments];
-            tmpCardPayment = tmpCardPayment.filter(pay => pay.cardTransId !== trans.cardTransId);
-            setCardPayments(tmpCardPayment);
+            if(Array.isArray(trans)) setCardPayments([]);
+            else {
+                let tmpCardPayment = [...cardPayments];
+                tmpCardPayment = tmpCardPayment.filter(pay => pay.cardTransId !== trans.cardTransId);
+                setCardPayments(tmpCardPayment);
+            }
         }
     }
 

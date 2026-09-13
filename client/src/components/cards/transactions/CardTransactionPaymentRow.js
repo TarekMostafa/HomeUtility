@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { Form } from 'react-bootstrap';
 import moment from 'moment';
 
@@ -6,12 +6,10 @@ import moment from 'moment';
 
 function CardTransactionPaymentRow (props) {
 
-    const [isSelected, setIsSelected] = useState(false); 
     const trans = props.cardTransaction;
 
     const handleCheckBoxChange = (event) => {
-        setIsSelected(event.target.checked);
-        if (typeof props.onPay=== 'function') props.onPay(event.target.checked, trans)
+        if (typeof props.onSelect=== 'function') props.onSelect(event.target.checked, trans)
     }
 
     return (
@@ -40,7 +38,7 @@ function CardTransactionPaymentRow (props) {
                         type='checkbox'
                         id={`checkbox-${trans.cardTransId}`}
                         onChange={handleCheckBoxChange}
-                        value={isSelected}
+                        checked={props.isSelected}
                     />
                     </Form>
                 </td>

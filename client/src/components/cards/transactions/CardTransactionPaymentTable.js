@@ -1,9 +1,24 @@
-import React from 'react';
-import { Table } from 'react-bootstrap';
+import React, {useState} from 'react';
+import { Table, Form } from 'react-bootstrap';
 
 import CardTransactionPaymentRow from './CardTransactionPaymentRow';
 
 function CardTransactionPaymentTable (props) {
+
+    const [selectedPaymentIds, setSelectedPaymentIds] = useState([]);
+
+    const handleOnSelect = (checked, trans) => {
+        if(checked) setSelectedPaymentIds((paymentIds) => [...paymentIds, trans.cardTransId]);
+        else setSelectedPaymentIds((paymentIds) => paymentIds.filter(id=> id !== trans.cardTransId));
+        if(props.onPay) props.onPay(checked, trans);
+    }
+
+    const handleOnSelectAll = (event) => {
+        if(event.target.checked) setSelectedPaymentIds(props.cardTransactions.map(trans=>trans.cardTransId));
+        else setSelectedPaymentIds([]);
+        if(props.onPay) props.onPay(event.target.checked, props.cardTransactions);
+    }
+
     return (
       <Table hover bordered size="sm" responsive="sm">
         <thead>
@@ -16,7 +31,9 @@ function CardTransactionPaymentTable (props) {
             <th>Bill Amount</th>
             <th>Is Installment?</th>
             <th>Id</th>
-            { props.appearPayCol && <th>Pay</th>}
+            { props.appearPayCol && <th><Form.Check type="checkbox" 
+                label="Pay" checked={(selectedPaymentIds.length>0 && selectedPaymentIds.length===props.cardTransactions.length)} 
+                onChange={handleOnSelectAll}/></th>}
             </tr>
         </thead>
         <tbody>
@@ -25,7 +42,9 @@ function CardTransactionPaymentTable (props) {
                 return (
                     <CardTransactionPaymentRow key={index}
                         cardTransaction={cardTransaction} index={index} 
-                        onPay={props.onPay} appearPayCol={props.appearPayCol}/>
+                        onSelect={handleOnSelect} 
+                        appearPayCol={props.appearPayCol}
+                        isSelected={selectedPaymentIds.includes(cardTransaction.cardTransId)}/>
                 )
             })
         }
