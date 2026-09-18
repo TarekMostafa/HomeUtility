@@ -181,6 +181,7 @@ module.exports = {
   'TRANS_BILL_CREATE_SUCCESS': 'This transaction has been successfully added to the bill',
   'EXPDET_BILL_CREATE_FAIL': 'Failed to add this transaciton to the bill',
   'EXPDET_BILL_CREATE_SUCCESS': 'This transaction has been successfully added to the bill',
+  'LABEL_GEN_FAIL': 'Failed to generate label data',
   '001' : 'An error occurred while retrieving application settings',
   '002' : 'Application settings have been successfully updated',
 }

@@ -34,6 +34,7 @@ const debtorRouter = require('./server/debtors/debtorRouter');
 const homeRouter = require('./server/home/homeRouter');
 const installmentRouter = require('./server/installments/installmentRouter');
 const installmentDetailRouter = require('./server/installments/installmentDetailRouter');
+const LabelRouter = require('./server/label/labelRouter');
 //Constant Variables
 const port = Config.port || 5000;
 // Initialize App Message Transalation
@@ -134,6 +135,7 @@ app.use('/api/debt/debtor', debtorRouter);
 app.use('/api/home', homeRouter);
 app.use('/api/installments', installmentRouter);
 app.use('/api/installmentDetail', installmentDetailRouter);
+app.use('/api/labels', LabelRouter);
 //Middleware for Success
 app.use(function(req, res, next){
   const message = appMessageTranslation.translate(res.messageCode, res.params);
