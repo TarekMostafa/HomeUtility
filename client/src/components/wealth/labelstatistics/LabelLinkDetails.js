@@ -8,9 +8,13 @@ import ModalContainer from '../../common/ModalContainer';
 function LabelLinkDetails({transactions, show, onHide, data}) {
 
     const getTitle = () => {
-        return `'"${data.labelName}"' label transactions from 
-            ${moment(data.dateFrom).format('DD/MM/YYYY')} to 
-            ${moment(data.dateTo).format('DD/MM/YYYY')} in ${data.currency}`
+        if(data.dateFrom) {
+            return `"${data.labelName}" label transactions from 
+                    ${moment(data.dateFrom).format('DD/MM/YYYY')} to 
+                    ${moment(data.dateTo).format('DD/MM/YYYY')} in ${data.currency}`
+        }
+
+        return `"${data.labelName}" label transactions in ${data.currency}`
     }
 
     return (

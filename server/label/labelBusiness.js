@@ -36,7 +36,8 @@ class Label {
                     label.currency.currencyDecimalPlace),
                 labelSumTotalFormatted: AmountHelper.formatAmount(
                     label.labelCRSum - label.labelDRSum,
-                    label.currency.currencyDecimalPlace)
+                    label.currency.currencyDecimalPlace),
+                labelLastUpdate: label.labelLastUpdate
             }
         });
 

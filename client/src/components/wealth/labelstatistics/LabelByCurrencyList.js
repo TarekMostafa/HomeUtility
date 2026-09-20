@@ -1,13 +1,17 @@
 import React, {useState} from 'react';
 import { Form, Row, Col, SplitButton, 
     Dropdown, Spinner, Card, Container, CardColumns,
-    Table, Badge } from 'react-bootstrap';
+    Table, Badge, Button } from 'react-bootstrap';
+
+import moment from 'moment';
 
 import FormContainer from '../../common/FormContainer';
 import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import LabelDropDown from '../../common/LabelDropDown';
 
 import LabelRequest from '../../../axios/LabelRequest';
+import LabelLinkDetails from './LabelLinkDetails';
+import TransactionRequest from '../../../axios/TransactionRequest';
 
 const initialState = {
     label: '',
@@ -17,8 +21,12 @@ const initialState = {
 }
 
 function LabelByCurrencyList () {
+
     const [labelData, setLabelData] = useState([]);
     const [formData, setFormData] = useState(initialState);
+    const [modalLabelDetailShow, setModalLabelDetailShow] = useState(false);
+    const [transactions, setTransactions] = useState([]);
+    const [transactionsData, setTransactionsData] = useState({});
 
     const handleChange = (event) => {
         setFormData({
@@ -74,6 +82,25 @@ function LabelByCurrencyList () {
         )
     }
 
+    const handleLabelClick = (labelNumber, labelValue, labelCurrency, total) => {
+        TransactionRequest.getTransactions(999, 0, [], [], null, 
+            null, null, null, null, [labelCurrency], 'POST', null, 
+            (labelNumber===1?labelValue:null), 
+            (labelNumber===2?labelValue:null), 
+            (labelNumber===3?labelValue:null), 
+            (labelNumber===4?labelValue:null), 
+            (labelNumber===5?labelValue:null) 
+        ).then( transactions => {
+            setTransactions(transactions);
+            setTransactionsData({
+                labelName: labelValue,
+                currency: labelCurrency,
+                total
+            })
+            setModalLabelDetailShow(true);
+        })
+    }
+
     return (
         <React.Fragment>
             <FormContainer>
@@ -121,21 +148,23 @@ function LabelByCurrencyList () {
                                 <Card.Body>
                                      <Card.Title>
                                         <Row>
-                                            <Col xs={8}>
-                                                <h4>{l.labelText}</h4>
+                                            <Col xs={7}>
+                                                <Button variant="link" 
+                                                onClick={() => handleLabelClick(
+                                                    l.labelNumber, l.labelText, l.labelCurrency,
+                                                    l.labelSumTotalFormatted
+                                                )}>
+                                                    <h4>{l.labelText}</h4>
+                                                </Button>
                                             </Col>
-                                            <Col xs={4}>
-                                                <h4><Badge variant="primary" className="fs-4">
+                                            <Col xs={5} className="d-flex justify-content-end">
+                                                <h6><Badge variant="light">
                                                     {l.labelSumTotalFormatted}
-                                                </Badge></h4>
-
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={{ span: 4, offset: 8 }}>
-                                                <h4><Badge variant="info" >
+                                                </Badge>
+                                                /
+                                                <Badge variant="light" >
                                                     {l.labelCRCount + l.labelDRCount}
-                                                </Badge></h4>
+                                                </Badge></h6>
                                             </Col>
                                         </Row>
                                     </Card.Title>
@@ -156,12 +185,21 @@ function LabelByCurrencyList () {
                                         </tbody>
                                      </Table>
                                 </Card.Body>
+                                <Card.Footer>
+                                    <h6>{moment(l.labelLastUpdate).format('DD/MMM/YYYY HH:mm:ss')}</h6>
+                                </Card.Footer>
                             </Card>
                         )
                     })  
                 }
                 </CardColumns>
             </Container>
+            {
+                modalLabelDetailShow && 
+                <LabelLinkDetails transactions={transactions}
+                data={transactionsData}
+                show={modalLabelDetailShow} onHide={() => setModalLabelDetailShow(false)}/>
+            }
         </React.Fragment>
     );
 }

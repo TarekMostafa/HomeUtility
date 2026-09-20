@@ -13,6 +13,7 @@ LabelModel.init({
     labelDRCount: Sequelize.BIGINT,
     labelCRSum: Sequelize.BIGINT,
     labelDRSum: Sequelize.BIGINT,
+    labelLastUpdate: {type: Sequelize.DATE, allowNull: true},
 }, {
   tableName: 'labels',
   createdAt: false,
