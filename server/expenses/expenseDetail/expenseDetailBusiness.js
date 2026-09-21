@@ -199,7 +199,7 @@ class expenseDetailBusiness {
 
     let expense = await ExpenseRepo.getExpense(expenseDetail.expenseId);
     if(!expense) throw new Exception('EXP_HEAD_NOTEXIST');
-    if(expense.expenseStatus === 'CLOSED') throw new Exception('EXP_STATUS_CLOSED');
+    //if(expense.expenseStatus === 'CLOSED') throw new Exception('EXP_STATUS_CLOSED');
 
     expenseDetail.expenseLabel1 = expenseLabel1? expenseLabel1:null;
     expenseDetail.expenseLabel2 = expenseLabel2? expenseLabel2:null;

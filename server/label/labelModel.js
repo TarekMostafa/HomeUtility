@@ -11,8 +11,8 @@ LabelModel.init({
     labelCurrency: Sequelize.STRING(3),
     labelCRCount: Sequelize.BIGINT,
     labelDRCount: Sequelize.BIGINT,
-    labelCRSum: Sequelize.BIGINT,
-    labelDRSum: Sequelize.BIGINT,
+    labelCRSum: Sequelize.DECIMAL(18, 3),
+    labelDRSum: Sequelize.DECIMAL(18, 3),
     labelLastUpdate: {type: Sequelize.DATE, allowNull: true},
 }, {
   tableName: 'labels',

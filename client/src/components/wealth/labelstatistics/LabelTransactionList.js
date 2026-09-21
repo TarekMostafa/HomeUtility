@@ -15,9 +15,11 @@ function LabelTransactionList () {
             <FormContainer title="Label Transactions/Expenses Statistics">
                 <Tabs id="controlled-tab" activeKey={tabKey} onSelect={(k) => setTabKey(k)}>
                     <Tab eventKey="labelList" title="Label List">
+                        <br />
                         <LabelByCurrencyList />
                     </Tab>
                     <Tab eventKey="labelSearch" title="Label Search">
+                        <br />
                         <LabelTransactionSearch />
                     </Tab>
                 </Tabs>

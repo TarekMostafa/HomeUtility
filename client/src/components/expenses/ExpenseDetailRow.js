@@ -147,6 +147,10 @@ function ExpenseDetailRow(props) {
                         
     const isAddToBillTrans = !elem.expenseBillTransId;
 
+    const hasActionButton = props.onEditExpenseDetail ||
+                            props.onEditExpenseDetailLabels ||
+                            props.onAddToBillTransaction;
+
     return (
         <tr key={elem.expenseDetailId} style={getRowColor(elem)}>
             <td>{props.index}</td>
@@ -231,8 +235,9 @@ function ExpenseDetailRow(props) {
             <td>
                 { 
                     props.readOnly ?
-                    <DropdownButton id="dropdown-basic-button" title="Actions"
-                    size="sm" variant="secondary">
+                        hasActionButton && <DropdownButton 
+                        id="dropdown-basic-button" title="Actions"
+                        size="sm" variant="secondary">
                         {
                             props.onEditExpenseDetail &&
                             <Dropdown.Item onClick={() => props.onEditExpenseDetail(elem)}>
@@ -246,12 +251,12 @@ function ExpenseDetailRow(props) {
                             </Dropdown.Item>
                         }
                         {
-                            isAddToBillTrans && 
+                            (isAddToBillTrans && props.onAddToBillTransaction) && 
                             <Dropdown.Item onClick={() => props.onAddToBillTransaction(elem)}>
                             Add To Bill Transaction
                             </Dropdown.Item>
                         }
-                    </DropdownButton>
+                        </DropdownButton>
                     :
                     <React.Fragment>
                         <EditDeleteButton 

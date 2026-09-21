@@ -14,8 +14,9 @@ class LabelRepo {
     }
 
     static async generateLabelData(labelNumber, labelCurrency) {
-        const labelField = `transactionLabel${labelNumber}`;
         const now = new Date();
+        //Generate Transactions Label Data
+        let labelField = `transactionLabel${labelNumber}`;
         await sequelize.query(
             `INSERT INTO labels (labelNumber, labelText, labelCurrency,
             labelCRCount, labelDRCount, labelCRSum, labelDRSum, 
@@ -47,6 +48,60 @@ class LabelRepo {
             }
         );
 
+        //Initializing unupdated fields generated from transacitons
+        await sequelize.query(
+            `UPDATE labels
+            SET labelCRCount = 0,
+            labelDRCount = 0,
+            labelCRSum = 0,
+            labelDRSum = 0
+            WHERE labelNumber=:labelNumber
+            AND labelCurrency=:labelCurrency
+            AND (labelLastUpdate < :labelLastUpdate
+            or labelLastUpdate is null)`,
+            {
+                replacements: {
+                    labelNumber: labelNumber,
+                    labelCurrency: labelCurrency,
+                    labelLastUpdate: now,
+                },
+                type: QueryTypes.UPDATE
+            }
+        );
+
+        //Generate Expenses Label Data
+        labelField = `expenseLabel${labelNumber}`;
+        await sequelize.query(
+            `INSERT INTO labels (labelNumber, labelText, labelCurrency,
+            labelCRCount, labelDRCount, labelCRSum, labelDRSum, 
+            labelLastUpdate)
+            SELECT :labelNumber, ${labelField}, :labelCurrency,
+            count(case when expenseAmount < 0 then 1 else null end),
+            count(case when expenseAmount >= 0 then 1 else null end),
+            sum(case when expenseAmount < 0 then expenseAmount else 0 end),
+            sum(case when expenseAmount >= 0 then expenseAmount else 0 end),
+            :labelLastUpdate 
+            FROM expensesdetails
+            WHERE expenseCurrency = :labelCurrency AND
+            ${labelField} is not null AND ${labelField} != ''
+            GROUP BY ${labelField}
+            ON DUPLICATE KEY UPDATE 
+            labelCRCount = labelCRCount + VALUES(labelCRCount),
+            labelDRCount = labelDRCount + VALUES(labelDRCount),
+            labelCRSum = labelCRSum + VALUES(labelCRSum),
+            labelDRSum = labelDRSum + VALUES(labelDRSum),
+            labelLastUpdate = :labelLastUpdate`,
+            {
+                replacements: {
+                    labelNumber: labelNumber,
+                    labelCurrency: labelCurrency,
+                    labelLastUpdate: now,
+                },
+                type: QueryTypes.INSERT
+            }
+        );
+
+        //Deleting unupdated fields generated from transacitons & expenses
         await sequelize.query(
             `DELETE FROM labels
             WHERE labelNumber=:labelNumber

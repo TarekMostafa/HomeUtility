@@ -12,6 +12,7 @@ import LabelDropDown from '../../common/LabelDropDown';
 import LabelRequest from '../../../axios/LabelRequest';
 import LabelLinkDetails from './LabelLinkDetails';
 import TransactionRequest from '../../../axios/TransactionRequest';
+import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 
 const initialState = {
     label: '',
@@ -27,6 +28,8 @@ function LabelByCurrencyList () {
     const [modalLabelDetailShow, setModalLabelDetailShow] = useState(false);
     const [transactions, setTransactions] = useState([]);
     const [transactionsData, setTransactionsData] = useState({});
+    const [modalLabelDetailExpenseShow, setModalLabelDetailExpenseShow] = useState(false);
+    const [expDetails, setExpDetails] = useState([]);
 
     const handleChange = (event) => {
         setFormData({
@@ -98,7 +101,20 @@ function LabelByCurrencyList () {
                 total
             })
             setModalLabelDetailShow(true);
-        })
+        });
+
+        ExpenseDetailRequest.getExpensesDetails(
+            999, 0, null, null, null, null, null, null,
+            (labelNumber===1?labelValue:null),
+            (labelNumber===2?labelValue:null),
+            (labelNumber===3?labelValue:null),
+            (labelNumber===4?labelValue:null),
+            (labelNumber===5?labelValue:null),
+            labelCurrency,
+        ).then(expsDetails => {
+            setExpDetails(expsDetails);
+            setModalLabelDetailExpenseShow(true);
+        });
     }
 
     return (
@@ -195,10 +211,10 @@ function LabelByCurrencyList () {
                 </CardColumns>
             </Container>
             {
-                modalLabelDetailShow && 
+                (modalLabelDetailShow && modalLabelDetailExpenseShow) && 
                 <LabelLinkDetails transactions={transactions}
-                data={transactionsData}
-                show={modalLabelDetailShow} onHide={() => setModalLabelDetailShow(false)}/>
+                data={transactionsData} expenseDetails={expDetails}
+                show={modalLabelDetailShow} onHide={() => { setModalLabelDetailShow(false); setModalLabelDetailExpenseShow(false); }}/>
             }
         </React.Fragment>
     );
