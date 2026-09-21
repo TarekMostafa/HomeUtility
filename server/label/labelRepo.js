@@ -78,7 +78,7 @@ class LabelRepo {
             SELECT :labelNumber, ${labelField}, :labelCurrency,
             count(case when expenseAmount < 0 then 1 else null end),
             count(case when expenseAmount >= 0 then 1 else null end),
-            sum(case when expenseAmount < 0 then expenseAmount else 0 end),
+            sum(case when expenseAmount < 0 then abs(expenseAmount) else 0 end),
             sum(case when expenseAmount >= 0 then expenseAmount else 0 end),
             :labelLastUpdate 
             FROM expensesdetails
