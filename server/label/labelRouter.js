@@ -12,4 +12,12 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/labelstatistics', function(req, res, next) {
+  labelBusiness.getLabelsByDates(req.query).then( result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+});
+
 module.exports = router;

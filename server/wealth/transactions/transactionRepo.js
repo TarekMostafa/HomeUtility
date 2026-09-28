@@ -95,12 +95,7 @@ class TransactionRepo {
   }
 
   static async getTotalTransactionsGroupByLabel(label, currency, whereQuery) {
-
-    let labelField = "transactionLabel1";
-    if(label==="2") labelField = "transactionLabel2";
-    else if(label==="3") labelField = "transactionLabel3";
-    else if(label==="4") labelField = "transactionLabel4";
-    else if(label==="5") labelField = "transactionLabel5";
+    let labelField = `transactionLabel${label}`;
 
     return await TransactionModel.findAll({
       attributes: [

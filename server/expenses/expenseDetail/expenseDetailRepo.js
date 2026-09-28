@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const sequelize = require('../../db/dbConnection').getSequelize();
 const ExpenseDetailModel = require('./expenseDetailModel');
 const ExpenseTypeModel = require('../expenseType/expenseTypeModel');
 const CurrencyModel = require('../../currencies/currencyModel');
@@ -100,6 +101,32 @@ class ExpenseDetailRepo {
 
     expenseDetail.expenseBillTransId = billTransId;
     expenseDetail.save({transaction: dbTransaction});
+  }
+
+  //Same as getTotalTransactionsGroupByLabel in transactionRepo
+  static async getTotalExpensesGroupByLabel(label, currency, whereQuery) {
+    let labelField = `expenseLabel${label}`;
+
+    return await ExpenseDetailModel.findAll({
+      attributes: [
+        [sequelize.fn('sum', sequelize.literal(
+          'Round(expenseAmount*(case when (expenseAmount < 0 and expenseAdjusment = 0) or (expenseAmount > 0 and expenseAdjusment = 1) then 1 else -1 end),3)')), "total"]
+        ,[labelField, "label"]],
+        include: [
+            { model: CurrencyModel, as: 'currency', attributes: [] }
+        ], 
+        where: {
+          expenseCurrency: currency
+        },
+      group: [labelField],
+      where: {
+        ...whereQuery,
+        [labelField]: {
+          [Op.ne]: null
+        }
+      },
+      raw: true
+    });
   }
 }
 

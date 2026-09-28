@@ -71,15 +71,19 @@ class LabelRepo {
 
         //Generate Expenses Label Data
         labelField = `expenseLabel${labelNumber}`;
+        const creditCondition = `(expenseAmount < 0 and expenseAdjusment = 0)
+        or (expenseAmount > 0 and expenseAdjusment = 1)`;
+        const debitCondition = `(expenseAmount >= 0 and expenseAdjusment = 0)
+        or (expenseAmount <= 0 and expenseAdjusment = 1)`;
         await sequelize.query(
             `INSERT INTO labels (labelNumber, labelText, labelCurrency,
             labelCRCount, labelDRCount, labelCRSum, labelDRSum, 
             labelLastUpdate)
             SELECT :labelNumber, ${labelField}, :labelCurrency,
-            count(case when expenseAmount < 0 then 1 else null end),
-            count(case when expenseAmount >= 0 then 1 else null end),
-            sum(case when expenseAmount < 0 then abs(expenseAmount) else 0 end),
-            sum(case when expenseAmount >= 0 then expenseAmount else 0 end),
+            count(case when ${creditCondition} then 1 else null end),
+            count(case when ${debitCondition} then 1 else null end),
+            sum(case when ${creditCondition} then abs(expenseAmount) else 0 end),
+            sum(case when ${debitCondition} then abs(expenseAmount) else 0 end),
             :labelLastUpdate 
             FROM expensesdetails
             WHERE expenseCurrency = :labelCurrency AND

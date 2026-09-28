@@ -12,6 +12,8 @@ import LabelDropDown from '../../common/LabelDropDown';
 import LabelTransactionTable from './LabelTransactionTable';
 import LabelLinkDetails from './LabelLinkDetails';
 import TransactionRequest from '../../../axios/TransactionRequest';
+import LabelRequest from '../../../axios/LabelRequest';
+import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 
 const initialState = {
     label: '',
@@ -30,6 +32,8 @@ function LabelTransactionSearch () {
     const [modalLabelDetailShow, setModalLabelDetailShow] = useState(false);
     const [transactions, setTransactions] = useState([]);
     const [transactionsData, setTransactionsData] = useState({});
+    const [modalLabelDetailExpenseShow, setModalLabelDetailExpenseShow] = useState(false);
+    const [expDetails, setExpDetails] = useState([]);
 
     const handleChange = (event) => {
 
@@ -94,7 +98,7 @@ function LabelTransactionSearch () {
             });
         }
         // Get Label Statistics
-        TransactionRequest.getLabelStatistics(formData.label,
+        LabelRequest.getLabelStatistics(formData.label,
             formData.currency, formData.dateFrom, formData.dateTo)
         .then( (result) => {
 
@@ -154,6 +158,19 @@ function LabelTransactionSearch () {
             })
             setModalLabelDetailShow(true);
         })
+
+        ExpenseDetailRequest.getExpensesDetails(999, 0, null, null, dateFrom, 
+            dateTo, null, null,
+            (labelNum==="1"?labelValue:null),
+            (labelNum==="2"?labelValue:null),
+            (labelNum==="3"?labelValue:null),
+            (labelNum==="4"?labelValue:null),
+            (labelNum==="5"?labelValue:null),
+            currency,
+        ).then(expsDetails => {
+            setExpDetails(expsDetails);
+            setModalLabelDetailExpenseShow(true);
+        });
     }
 
     return (
@@ -216,10 +233,10 @@ function LabelTransactionSearch () {
                 onDetailsClick={handleDetailsClick}/>
         </FormContainer>
         {
-                modalLabelDetailShow && 
+                (modalLabelDetailShow && modalLabelDetailExpenseShow) && 
                 <LabelLinkDetails transactions={transactions}
-                data={transactionsData}
-                show={modalLabelDetailShow} onHide={() => setModalLabelDetailShow(false)}/>
+                data={transactionsData} expenseDetails={expDetails}
+                show={modalLabelDetailShow} onHide={() => {setModalLabelDetailShow(false); setModalLabelDetailExpenseShow(false);}}/>
         }
         </React.Fragment>
     );
