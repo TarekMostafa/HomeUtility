@@ -1,3 +1,4 @@
+const Sequelize = require('sequelize');
 const sequelize = require('../../db/dbConnection').getSequelize();
 const ExpenseDetailRepo = require('./expenseDetailRepo');
 const ExpenseRepo = require('../expenseHeader/expenseRepo');
@@ -6,6 +7,8 @@ const AmountHelper = require('../../helper/AmountHelper');
 const BillRepo = require('../../bills/billRepo');
 const BillTransactionRepo = require('../../bills/billTransactionRepo');
 const Common = require('../../utilities/common');
+
+const Op = Sequelize.Op;
 
 class expenseDetailBusiness {
   async getExpensesDetails({description, includeDescription, expDateFrom, expDateTo,
