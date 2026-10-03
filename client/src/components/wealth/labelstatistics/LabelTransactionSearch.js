@@ -167,8 +167,8 @@ function LabelTransactionSearch () {
             (labelNum==="4"?labelValue:null),
             (labelNum==="5"?labelValue:null),
             currency,
-        ).then(expsDetails => {
-            setExpDetails(expsDetails);
+        ).then(response => {
+            setExpDetails(response.expensesDetails);
             setModalLabelDetailExpenseShow(true);
         });
     }

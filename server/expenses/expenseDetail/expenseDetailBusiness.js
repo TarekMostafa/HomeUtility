@@ -5,12 +5,59 @@ const Exception = require('../../features/exception');
 const AmountHelper = require('../../helper/AmountHelper');
 const BillRepo = require('../../bills/billRepo');
 const BillTransactionRepo = require('../../bills/billTransactionRepo');
+const Common = require('../../utilities/common');
 
 class expenseDetailBusiness {
   async getExpensesDetails({description, includeDescription, expDateFrom, expDateTo,
     expIsAdjusment, expTypes, skip, limit, label1, label2, label3, label4, label5, expCurrency}){
-    let expensesDetails = await ExpenseDetailRepo.getExpensesDetails({description, includeDescription, expDateFrom, 
-      expDateTo, expIsAdjusment, expTypes, skip, limit, label1, label2, label3, label4, label5, expCurrency});
+    limit = Common.getNumber(limit, 10);
+    skip = Common.getNumber(skip, 0);
+      
+    let query = {};
+    // Description
+    if(description) {
+      if(includeDescription==='true') {
+        query.expenseDescription = {
+          [Op.substring] : description
+        }
+      } else {
+        query.expenseDescription = {
+          [Op.notLike] : '%'+description.trim()+'%'
+        }
+      }
+    }
+    // Check expense Date from and expense Date To
+    let _dateFrom = Common.getDate(expDateFrom, '');
+    let _dateTo = Common.getDate(expDateTo, '');
+    if( _dateFrom !== '' && _dateTo !== '') {
+      query.expenseDate = { [Op.between] : [_dateFrom, _dateTo] };
+    } else {
+      if(_dateFrom !== '') {
+        query.expenseDate = { [Op.gte] : _dateFrom };
+      } else if(_dateTo !== '') {
+        query.expenseDate = { [Op.lte] : _dateTo };
+      }
+    }
+    //Adjusment
+    if(['Y', 'y'].indexOf(expIsAdjusment) > -1) query.expenseAdjusment = 1;
+    else if(['N', 'n'].indexOf(expIsAdjusment) > -1) query.expenseAdjusment = 0;
+    //Expense Type
+    if(expTypes) {
+      query.expenseTypeId = expTypes;
+    }
+    //Labels
+    if(label1) query.expenseLabel1 = label1;
+    if(label2) query.expenseLabel2 = label2;
+    if(label3) query.expenseLabel3 = label3;
+    if(label4) query.expenseLabel4 = label4;
+    if(label5) query.expenseLabel5 = label5;
+    //Currency
+    if(expCurrency) query.expenseCurrency = expCurrency;
+
+    let expensesDetailsCount = -1
+    if(skip===0)
+      expensesDetailsCount = await ExpenseDetailRepo.getExpensesDetailsCount(query);
+    let expensesDetails = await ExpenseDetailRepo.getExpensesDetails({skip, limit, query});
     expensesDetails = expensesDetails.map( expDet => {
       return {
         expenseDetailId: expDet.expenseDetailId,
@@ -53,7 +100,10 @@ class expenseDetailBusiness {
         }
       }
     });
-    return expensesDetails;
+    return {
+      totalCount: expensesDetailsCount,
+      expensesDetails
+    };
   }
 
   async getExpenseDetails({expenseId}) {
@@ -270,6 +320,19 @@ class expenseDetailBusiness {
       console.log(err);
       await dbTransaction.rollback();
       throw new Exception('EXPDET_BILL_CREATE_FAIL');
+    }
+  }
+
+  async updateBulkExpenseDetailLabel({expenseDetailIds, label, labelValue, forceUpdate}){
+    if(!Array.isArray(expenseDetailIds) || expenseDetailIds.length < 1)
+    {
+      throw new Exception('INVALID_REQUEST');
+    }
+    
+    const updateRecords = 
+      await ExpenseDetailRepo.updateBulkExpenseDetailLabel(expenseDetailIds, label, labelValue, forceUpdate);
+    return {
+      numberOfUpdated: updateRecords[0]
     }
   }
 }

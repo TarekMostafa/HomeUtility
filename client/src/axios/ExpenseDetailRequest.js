@@ -52,7 +52,6 @@ class ExpenseDetailRequest {
       })
   }
 
-  
   static async addTransactionToBillTransaction (id, billId, billTransId) {
     return await axios.post('/api/expenseDetail/addbilltransaction/'+id, {
       billId,
@@ -60,6 +59,12 @@ class ExpenseDetailRequest {
     });
   }
 
+  static async updateBulkExpenseDetailLabel(expenseDetailIds, label, labelValue, forceUpdate) {
+    const response = await axios.post('/api/expenseDetail/updateBulk/labels', {
+      expenseDetailIds, label, labelValue, forceUpdate
+    });
+    return response.data;  
+  }
 }
 
 export default ExpenseDetailRequest;

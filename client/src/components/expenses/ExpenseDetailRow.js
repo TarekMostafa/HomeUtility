@@ -153,6 +153,15 @@ function ExpenseDetailRow(props) {
 
     return (
         <tr key={elem.expenseDetailId} style={getRowColor(elem)}>
+            { (props.onSelect && props.selectedExpenseDetailsId) &&
+                <td>
+                  <Form.Check type="checkbox" 
+                    id={`checkbox-${elem.expenseDetailId}`} 
+                    onChange={e => props.onSelect(e.target.checked, elem)}
+                    checked={props.selectedExpenseDetailsId.includes(elem.expenseDetailId)}
+                    label="" />
+                </td>
+            }
             <td>{props.index}</td>
             <td>
                 {moment(new Date(elem.expense.expenseYear, elem.expense.expenseMonth-1, 

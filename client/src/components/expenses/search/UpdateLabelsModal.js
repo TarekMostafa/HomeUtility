@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import { Button, Alert, Spinner, InputGroup, Form, Row, Col } from 'react-bootstrap';
 
 import ModalContainer from '../../common/ModalContainer';
-import WealthTransactionTable from './WealthTransactionTable';
+import ExpenseDetailTable from '../ExpenseDetailTable';
 import LabelDropDown from '../../common/LabelDropDown';
 
-import TransactionRequest from '../../../axios/TransactionRequest';
+import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 
-function UpdateLabelsModal({selectedTransactions, show, onHide, onUpdate}) {
+function UpdateLabelsModal({selectedExpenseDetails, show, onHide, onUpdate}) {
 
     const [formData, setFormData] = useState({labelNumber: '', labelValue: '', forceUpdate: false});
     const [isLoading, setIsLoading] = useState(false);
@@ -48,8 +48,8 @@ function UpdateLabelsModal({selectedTransactions, show, onHide, onUpdate}) {
         }
 
         //Update Labels
-        TransactionRequest.updateBulkTransactionLabel(
-            selectedTransactions.map(t => t.transactionId),
+        ExpenseDetailRequest.updateBulkExpenseDetailLabel(
+            selectedExpenseDetails.map(e => e.expenseDetailId),
             formData.labelNumber, formData.labelValue, formData.forceUpdate)
             .then( response => {
                 if (typeof onUpdate=== 'function') {
@@ -61,11 +61,11 @@ function UpdateLabelsModal({selectedTransactions, show, onHide, onUpdate}) {
             .catch( err => {
                 setIsLoading(false);
                 setMessage({text: err.response.data, variant: 'text-danger'});
-            });
+        });
     }
 
     const getModalFooter = () => {
-        if(selectedTransactions && selectedTransactions.length > 0) {
+        if(selectedExpenseDetails && selectedExpenseDetails.length > 0) {
             return (
                 <Button variant="primary" block onClick={handleClick}>
                 {
@@ -81,10 +81,10 @@ function UpdateLabelsModal({selectedTransactions, show, onHide, onUpdate}) {
     }
 
     return (
-        <ModalContainer title="Update Transactions Label" show={show}
+        <ModalContainer title="Update Expense Details Label" show={show}
         onHide={onHide} size='xl' footer={getModalFooter()}>
         {
-            (selectedTransactions && selectedTransactions.length > 0) ?
+            (selectedExpenseDetails && selectedExpenseDetails.length > 0) ?
             <>
             <Row>
                 <Col xs={9}>
@@ -95,7 +95,7 @@ function UpdateLabelsModal({selectedTransactions, show, onHide, onUpdate}) {
                         <option key=' ' value=' '>Labels</option>
                         <LabelDropDown />
                     </Form.Control>
-                    <Form.Control type="input" placeholder="Transaction Label" size="sm" name="labelValue"
+                    <Form.Control type="input" placeholder="Expense Label" size="sm" name="labelValue"
                     onChange={handleChange} value={formData.labelValue} maxLength={20}/>
                 </InputGroup>
                 </Col>
@@ -109,7 +109,7 @@ function UpdateLabelsModal({selectedTransactions, show, onHide, onUpdate}) {
             </Row>
             <Row>
                 <Col>
-                <WealthTransactionTable transactions={selectedTransactions} />
+                <ExpenseDetailTable expenseDetails={selectedExpenseDetails} readOnly={true}/>
                 </Col>
             </Row>
             <Row>
@@ -120,7 +120,7 @@ function UpdateLabelsModal({selectedTransactions, show, onHide, onUpdate}) {
             </>
             :           
             <Alert variant="danger" className="text-center">
-                There are no selected transactions, please select one or more to update their label
+                There are no selected expenses, please select one or more to update their label
             </Alert>
         } 
         </ModalContainer>

@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import { Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
+import { Form, Row, Col, Button, InputGroup, ButtonToolbar,
+    Dropdown, DropdownButton
+ } from 'react-bootstrap';
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
@@ -14,6 +16,7 @@ import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 import AddExpenseDetailToBillTransactionModal from './AddExpenseDetailToBillTransactionModal';
 import ExpenseDetailEditModal from './ExpenseDetailEditModal';
 import EditExpenseDetailLabelsModal from './EditExpenseDetailLabelsModal';
+import UpdateLabelsModal from './UpdateLabelsModal';
 
 import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 import ExpenseTypeRequest from '../../../axios/ExpenseTypeRequest';
@@ -29,6 +32,7 @@ const initialState = {
     labelNumber: '',
     labelValue: '',
     expCurrency: '',
+    selectedExpenseDetailsId: [],
 }
 
 function ExpenseDetailSearchList(props) {
@@ -40,7 +44,9 @@ function ExpenseDetailSearchList(props) {
     const [modalAddToBillShow, setModalAddToBillShow] = useState(false);
     const [modalEditShow, setModalEditShow] = useState(false);
     const [modalEditLabelShow, setModalEditLabelShow] = useState(false);
+    const [modalUpdateLabelsShow, setModalUpdateLabelsShow] = useState(false);
     const [expenseDetail, setExpenseDetail] = useState({});
+    const [totalCount, setTotalCount] = useState(0);
 
     const loadExpenseTypes = () => 
         ExpenseTypeRequest.getExpenseTypes()
@@ -63,11 +69,20 @@ function ExpenseDetailSearchList(props) {
             (formData.labelNumber==="5"?formData.labelValue:null),
             formData.expCurrency,
         )
-        .then(expsDetails => {
+        .then(response => {
+            let _selectedExpenseDetailsId = [...formData.selectedExpenseDetailsId];
             setExpensesDetails(
-                append? [...expensesDetails, ...expsDetails] : expsDetails
+                append? [...expensesDetails, ...response.expensesDetails] : response.expensesDetails
             );
-            setAppearMoreButton((expsDetails.length >= formData.limit));
+            if(!append) {
+                _selectedExpenseDetailsId = _selectedExpenseDetailsId.filter(s => response.expensesDetails.some( e => e.expenseDetailId === s));
+            }
+            setFormData({
+                ...formData,
+                selectedExpenseDetailsId: _selectedExpenseDetailsId
+            });
+            setTotalCount(response.totalCount===-1?totalCount:response.totalCount);
+            setAppearMoreButton((response.expensesDetails.length >= formData.limit));
         });
 
     useEffect(()=>{
@@ -127,6 +142,44 @@ function ExpenseDetailSearchList(props) {
         setModalAddToBillShow(false);
         setModalEditShow(false);
         setModalEditLabelShow(false);
+        setModalUpdateLabelsShow(false);
+    }
+
+    const handleUpdateLabels = () => {
+        setModalUpdateLabelsShow(true);
+    }
+
+    const handleOnSelect = (isSelected, expenseDetail) => {
+        if(isSelected) {
+            //add expenseDetailId
+            if(Array.isArray(expenseDetail)) {
+                const _expenseDetail = expenseDetail.map( expDet => expDet.expenseDetailId);
+                setFormData({
+                    ...formData,
+                    selectedExpenseDetailsId: _expenseDetail
+                })
+            } else {
+                setFormData({
+                    ...formData,
+                    selectedExpenseDetailsId: [...formData.selectedExpenseDetailsId, expenseDetail.expenseDetailId]
+                })
+            }
+        } else {
+            //remove expenseDetailId
+            if(Array.isArray(expenseDetail)) {
+                setFormData({
+                    ...formData,
+                    selectedExpenseDetailsId: []
+                })
+            } else {
+                let _expenseDetail = [...formData.selectedExpenseDetailsId];
+                _expenseDetail = _expenseDetail.filter(id => id !== expenseDetail.expenseDetailId);
+                setFormData({
+                    ...formData,
+                    selectedExpenseDetailsId: _expenseDetail
+                })
+            }
+        }
     }
 
     //const handleExpTypes = (key, value) => {
@@ -144,7 +197,15 @@ function ExpenseDetailSearchList(props) {
 
     return (
         <React.Fragment>
-            <FormContainer title="Expenses Details Search">
+            <FormContainer title="Expenses Details Search" toolbar={
+                <ButtonToolbar aria-label="Toolbar with button groups">
+                    <DropdownButton variant="info" id="dropdown-basic-button" title="Actions" size="sm">
+                        <Dropdown.Item onClick={handleUpdateLabels}>
+                            Update Labels
+                        </Dropdown.Item>
+                    </DropdownButton>
+                </ButtonToolbar>
+                }>
                 <Form>
                     <Row>
                     <Col xs={6}>
@@ -220,10 +281,13 @@ function ExpenseDetailSearchList(props) {
                 </Form>
             </FormContainer>
             <FormContainer>
-                <ExpenseDetailTable expenseDetails={expensesDetails} 
+                <ExpenseDetailTable expenseDetails={expensesDetails}
+                selectedExpenseDetailsId ={formData.selectedExpenseDetailsId}
+                totalCount={totalCount} 
                 onAddToBillTransaction={handleAddToBillTransaction} 
                 onEditExpenseDetail={handleEdit} 
-                onEditExpenseDetailLabels={handleEditLabel} readOnly/>
+                onEditExpenseDetailLabels={handleEditLabel} 
+                onSelect={handleOnSelect} readOnly/>
                 <Button variant="primary" size="sm" block onClick={handleMoreClick}
                     hidden={!appearMoreButton}>
                     more...</Button>
@@ -239,6 +303,12 @@ function ExpenseDetailSearchList(props) {
             {
                 modalEditLabelShow && <EditExpenseDetailLabelsModal show={modalEditLabelShow}
                 onHide={handleHide} onSave={handleListClick} expenseDetailId={expenseDetail.expenseDetailId}/>
+            }
+            {
+                modalUpdateLabelsShow &&
+                <UpdateLabelsModal show={modalUpdateLabelsShow} 
+                onHide={handleHide} onUpdate={handleListClick}
+                selectedExpenseDetails={expensesDetails.filter(e => formData.selectedExpenseDetailsId.includes(e.expenseDetailId))}/>
             }
         </React.Fragment>
     )

@@ -111,8 +111,8 @@ function LabelByCurrencyList () {
             (labelNumber===4?labelValue:null),
             (labelNumber===5?labelValue:null),
             labelCurrency,
-        ).then(expsDetails => {
-            setExpDetails(expsDetails);
+        ).then(response => {
+            setExpDetails(response.expensesDetails);
             setModalLabelDetailExpenseShow(true);
         });
     }

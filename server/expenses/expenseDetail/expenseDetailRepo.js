@@ -4,58 +4,12 @@ const ExpenseDetailModel = require('./expenseDetailModel');
 const ExpenseTypeModel = require('../expenseType/expenseTypeModel');
 const CurrencyModel = require('../../currencies/currencyModel');
 const ExpenseModel = require('../expenseHeader/expenseModel');
-const Common = require('../../utilities/common');
 
 const Op = Sequelize.Op;
 
 class ExpenseDetailRepo {
 
-  static async getExpensesDetails({description, includeDescription, expDateFrom, expDateTo,
-    expIsAdjusment, expTypes, skip, limit, label1, label2, label3, label4, label5, expCurrency}){
-      limit = Common.getNumber(limit, 10);
-      skip = Common.getNumber(skip, 0);
-
-      let query = {};
-      // Description
-      if(description) {
-        if(includeDescription==='true') {
-          query.expenseDescription = {
-            [Op.substring] : description
-          }
-        } else {
-          query.expenseDescription = {
-            [Op.notLike] : '%'+description.trim()+'%'
-          }
-        }
-      }
-      // Check expense Date from and expense Date To
-      let _dateFrom = Common.getDate(expDateFrom, '');
-      let _dateTo = Common.getDate(expDateTo, '');
-      if( _dateFrom !== '' && _dateTo !== '') {
-        query.expenseDate = { [Op.between] : [_dateFrom, _dateTo] };
-      } else {
-        if(_dateFrom !== '') {
-          query.expenseDate = { [Op.gte] : _dateFrom };
-        } else if(_dateTo !== '') {
-          query.expenseDate = { [Op.lte] : _dateTo };
-        }
-      }
-      //Adjusment
-      if(['Y', 'y'].indexOf(expIsAdjusment) > -1) query.expenseAdjusment = 1;
-      else if(['N', 'n'].indexOf(expIsAdjusment) > -1) query.expenseAdjusment = 0;
-      //Expense Type
-      if(expTypes) {
-        query.expenseTypeId = expTypes;
-      }
-      //Labels
-      if(label1) query.expenseLabel1 = label1;
-      if(label2) query.expenseLabel2 = label2;
-      if(label3) query.expenseLabel3 = label3;
-      if(label4) query.expenseLabel4 = label4;
-      if(label5) query.expenseLabel5 = label5;
-      //Currency
-      if(expCurrency) query.expenseCurrency = expCurrency;
-
+  static async getExpensesDetails({skip, limit, query}){
       return await ExpenseDetailModel.findAll({
         offset: skip,
         limit: limit,
@@ -67,6 +21,12 @@ class ExpenseDetailRepo {
         where: query,
         order: [ ['expenseDate', 'DESC'] , ['expenseDetailId', 'DESC'] ]
       })
+  }
+
+  static async getExpensesDetailsCount(query){
+    return await ExpenseDetailModel.count({
+      where: query,
+    })
   }
 
   static async getExpenseDetails({expenseId}) {
@@ -125,6 +85,28 @@ class ExpenseDetailRepo {
       },
       raw: true
     });
+  }
+
+  static async updateBulkExpenseDetailLabel(expenseDetailIds, label, labelValue, forceUpdate) {
+    let labelField = `expenseLabel${label}`;
+
+    let whereQuery = {};
+    whereQuery.expenseDetailId = {
+      [Op.in]: expenseDetailIds
+    };
+
+    if(!forceUpdate) whereQuery[labelField] = {
+      [Op.or] : [
+        {[Op.eq]: null},
+        {[Op.eq]: ''}
+      ]
+    }
+
+    return await ExpenseDetailModel.update({
+      [labelField]: labelValue
+    },{
+      where: whereQuery  
+    })
   }
 }
 

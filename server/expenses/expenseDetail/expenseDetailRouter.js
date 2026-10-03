@@ -74,4 +74,12 @@ router.post('/addbilltransaction/:id', function(req, res, next) {
   })
 })
 
+router.post('/updateBulk/labels', function(req, res, next){
+  expenseDetailBusiness.updateBulkExpenseDetailLabel(req.body).then(result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+})
+
 module.exports = router;
