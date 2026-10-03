@@ -112,15 +112,13 @@ class ExpenseDetailRepo {
         [sequelize.fn('sum', sequelize.literal(
           'Round(expenseAmount*(case when (expenseAmount < 0 and expenseAdjusment = 0) or (expenseAmount > 0 and expenseAdjusment = 1) then 1 else -1 end),3)')), "total"]
         ,[labelField, "label"]],
-        include: [
+      include: [
             { model: CurrencyModel, as: 'currency', attributes: [] }
-        ], 
-        where: {
-          expenseCurrency: currency
-        },
+      ], 
       group: [labelField],
       where: {
         ...whereQuery,
+        expenseCurrency: currency,
         [labelField]: {
           [Op.ne]: null
         }
