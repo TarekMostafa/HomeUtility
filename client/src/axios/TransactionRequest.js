@@ -227,6 +227,13 @@ class TransctionRequest {
       billTransId
     });
   }
+
+  static async updateBulkTransactionLabel(transactionIds, label, labelValue, forceUpdate) {
+    const response = await axios.post('/api/wealth/transactions/updateBulk/labels', {
+      transactionIds, label, labelValue, forceUpdate
+    });
+    return response.data;
+  }
 }
 
 export default TransctionRequest;

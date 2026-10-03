@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Row, Col, Button, ButtonToolbar, /*ButtonGroup,*/ InputGroup, 
+import { Form, Row, Col, Button, ButtonToolbar, InputGroup, 
   Dropdown, DropdownButton } from 'react-bootstrap';
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
@@ -31,6 +31,7 @@ import EditFXTransactionModal from './EditFXTransactionModal';
 import LabelDropDown from '../../common/LabelDropDown';
 import AddTransactionToBillTransactionModal from './AddTransactionToBillTransactionModal';
 import EditTransactionLabelsModal from './EditTransactionLabelsModal';
+import UpdateLabelsModal from './UpdateLabelsModal';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
@@ -48,6 +49,7 @@ const initialState = {
   transactionTypes: [],
   accounts: [],
   currencies: [],
+  selectedTransactionsId: [],
 }
 
 class WealthTransactionList extends Component {
@@ -73,7 +75,9 @@ class WealthTransactionList extends Component {
     modalEditFXShow: false,
     modalAddToBillShow: false,
     modalEditTransLabelShow: false,
+    modalUpdateLabelsShow: false,
     transactionId: '',
+    totalCount: 0,
     ...initialState,
   }
 
@@ -91,16 +95,20 @@ class WealthTransactionList extends Component {
       (this.state.labelNumber==="4"?this.state.labelValue:null),
       (this.state.labelNumber==="5"?this.state.labelValue:null),
     )
-    .then( (transactions) => {
+    .then( (response) => {
       let _transactions = [];
+      let _selectedTransactionsId = [...this.state.selectedTransactionsId];
       if(append) {
-        _transactions = [...this.state.transactions, ...transactions];
+        _transactions = [...this.state.transactions, ...response.transactions];
       } else {
-        _transactions = [...transactions];
+        _transactions = [...response.transactions];
+        _selectedTransactionsId = _selectedTransactionsId.filter(s => response.transactions.some( t => t.transactionId === s));
       }
       this.setState({
+        totalCount: (response.totalCount===-1?this.state.totalCount:response.totalCount),
         transactions: _transactions,
-        appearMoreButton: (transactions.length >= this.state.limit)
+        selectedTransactionsId: _selectedTransactionsId,
+        appearMoreButton: (response.transactions.length >= this.state.limit)
       });
     });
   }
@@ -127,6 +135,10 @@ class WealthTransactionList extends Component {
                 </Dropdown.Item>
                 <Dropdown.Item onClick={this.handleAddFXTransaction}>
                   Add FX Transaction
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={this.handleUpdateLabels}>
+                  Update Labels
                 </Dropdown.Item>
             </DropdownButton>
           </ButtonToolbar>
@@ -217,13 +229,16 @@ class WealthTransactionList extends Component {
         </FormContainer>
         <FormContainer>
           <WealthTransactionTable transactions={this.state.transactions}
+          selectedTransactionsId ={this.state.selectedTransactionsId}
+          totalCount={this.state.totalCount}
           onEditTransaction={this.handleEditTransaction}
           onDeleteTransaction={this.handleDeleteTransaction}
           onViewTransaction={this.handleViewTransaction}
           onRelatedTransaction={this.handleRelatedTransaction}
           onMigration={this.handleMigration}
           onAddToBillTransaction={this.handleAddToBillTransaction}
-          onTransactionLabel={this.handleTransactionLabel}/>
+          onTransactionLabel={this.handleTransactionLabel}
+          onSelect={this.handleOnSelect}/>
           <Button variant="primary" size="sm" block onClick={this.handleMoreClick}
             hidden={!this.state.appearMoreButton}>
             more...</Button>
@@ -315,6 +330,12 @@ class WealthTransactionList extends Component {
           <EditTransactionLabelsModal show={this.state.modalEditTransLabelShow} onHide={this.handleHide}
           onSave={this.handleListClick} transactionId={this.state.transactionId}/>
         }
+        {
+          this.state.modalUpdateLabelsShow &&
+          <UpdateLabelsModal show={this.state.modalUpdateLabelsShow} 
+          onHide={this.handleHide} onUpdate={this.handleListClick}
+          selectedTransactions={this.state.transactions.filter(t => this.state.selectedTransactionsId.includes(t.transactionId))}/>
+        }
       </React.Fragment>
     )
   }// end of render
@@ -399,6 +420,12 @@ class WealthTransactionList extends Component {
     });
   }
 
+  handleUpdateLabels = () => {
+    this.setState({
+      modalUpdateLabelsShow: true
+    });
+  }
+
   handleHide = () => {
     this.setState({
       modalAddSingleShow: false,
@@ -419,6 +446,7 @@ class WealthTransactionList extends Component {
       modalEditFXShow: false,
       modalAddToBillShow: false,
       modalEditTransLabelShow: false,
+      modalUpdateLabelsShow: false,
     });
   }
 
@@ -478,6 +506,35 @@ class WealthTransactionList extends Component {
 
   handleRelatedTransaction = (relatedId) => {
     this.props.history.push('relatedtransactiondetails/'+relatedId)
+  }
+
+  handleOnSelect = (isSelected, trans) => {
+    if(isSelected) {
+      //add transId
+      if(Array.isArray(trans)) {
+        const _trans = trans.map( trans => trans.transactionId);
+        this.setState({
+          selectedTransactionsId: _trans
+        })
+      } else {
+        this.setState({
+          selectedTransactionsId: [...this.state.selectedTransactionsId, trans.transactionId]
+        })
+      }
+    } else {
+      //remove transId
+      if(Array.isArray(trans)) {
+        this.setState({
+          selectedTransactionsId: []
+        })
+      } else {
+        let _trans = [...this.state.selectedTransactionsId];
+        _trans = _trans.filter(id => id !== trans.transactionId);
+        this.setState({
+          selectedTransactionsId: _trans
+        })
+      }
+    }
   }
 
 }

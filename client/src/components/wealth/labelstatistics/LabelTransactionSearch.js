@@ -147,8 +147,8 @@ function LabelTransactionSearch () {
             (labelNum==="3"?labelValue:null), 
             (labelNum==="4"?labelValue:null), 
             (labelNum==="5"?labelValue:null) 
-        ).then( transactions => {
-            setTransactions(transactions);
+        ).then( response => {
+            setTransactions(response.transactions);
             setTransactionsData({
                 labelName: labelValue,
                 currency,

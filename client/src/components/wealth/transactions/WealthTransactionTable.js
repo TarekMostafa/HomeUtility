@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, OverlayTrigger, Tooltip, DropdownButton, 
-  Dropdown, Button, Badge, Row, Col } from 'react-bootstrap';
+  Dropdown, Button, Badge, Row, Col, Form, Alert } from 'react-bootstrap';
 import moment from 'moment';
 import '../../../App.css';
 // import amountFormatter from '../../../utilities/amountFormatter';
@@ -11,10 +11,43 @@ import LabelsOverlay from '../../common/LabelsOverlay';
 // }
 
 function WealthTransactionTable (props) {
+  const handleCheckBoxChange = (event, trans) => {
+    if (typeof props.onSelect=== 'function') 
+      props.onSelect(event.target.checked, trans)
+  }  
+
+  let alertText = "";
+  if (props.totalCount || props.totalCount === 0) {
+    alertText = `Number of records ${props.transactions.length} out of ${props.totalCount} `;
+  }
+  if (props.selectedTransactionsId) {
+    if(alertText !== '') alertText += "and "
+    alertText += `Number of selected records = ${props.selectedTransactionsId.length}`
+  }
+
   return (
+    <>
+    {
+      alertText && 
+      <Row>
+        <Col>
+          <Alert variant="info" className="text-center py-1 px-2 small">
+            {alertText}
+          </Alert>
+        </Col>
+      </Row>
+    }
     <Table hover bordered size="sm" responsive="sm">
       <thead>
         <tr>
+          { (props.onSelect && props.selectedTransactionsId) &&
+            <th>
+              <Form.Check type="checkbox" 
+              onChange={e => handleCheckBoxChange(e, props.transactions)}
+              checked={props.transactions.length === props.selectedTransactionsId.length}
+              id="checkbox-all" label="" />
+            </th>
+          }
           <th>#</th>
           <th>Account Number</th>
           <th>Posting Date</th>
@@ -52,6 +85,15 @@ function WealthTransactionTable (props) {
 
           return (
             <tr key={transaction.transactionId}>
+              { (props.onSelect && props.selectedTransactionsId) &&
+                <td>
+                  <Form.Check type="checkbox" 
+                    id={`checkbox-${transaction.transactionId}`} 
+                    onChange={e => handleCheckBoxChange(e, transaction)}
+                    checked={props.selectedTransactionsId.includes(transaction.transactionId)}
+                    label="" />
+                </td>
+              }
               <td>{index+1}</td>
               <td>{transaction.accountNumber}</td>
               <td>{moment(transaction.transactionPostingDate).format('DD/MM/YYYY')}</td>
@@ -212,6 +254,7 @@ function WealthTransactionTable (props) {
         })}
       </tbody>
     </Table>
+    </>
   )
 }
 

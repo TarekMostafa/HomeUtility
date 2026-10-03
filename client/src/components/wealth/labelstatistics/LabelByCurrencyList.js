@@ -93,8 +93,8 @@ function LabelByCurrencyList () {
             (labelNumber===3?labelValue:null), 
             (labelNumber===4?labelValue:null), 
             (labelNumber===5?labelValue:null) 
-        ).then( transactions => {
-            setTransactions(transactions);
+        ).then( response => {
+            setTransactions(response.transactions);
             setTransactionsData({
                 labelName: labelValue,
                 currency: labelCurrency,

@@ -35,6 +35,17 @@ class TransactionRepo {
     });
   }
 
+  static async getTransactionsCount(whereQuery, accountWhereQuery) {
+    return await TransactionModel.count({
+      include: [
+        { model: AccountModel, as: 'account', attributes: ['accountNumber','accountCurrency'], 
+          where: accountWhereQuery
+        }
+      ],
+      where: whereQuery
+    })
+  }
+
   static async getTransaction(id) {
     return await TransactionModel.findByPk(id, {
       include: [
@@ -188,6 +199,28 @@ class TransactionRepo {
 
     transaction.transactionBillTransId = billTransId;
     transaction.save({transaction: dbTransaction});
+  }
+
+  static async updateBulkTransactionLabel(transactionIds, label, labelValue, forceUpdate){
+    let labelField = `transactionLabel${label}`;
+    
+    let whereQuery = {};
+    whereQuery.transactionId = {
+      [Op.in]: transactionIds
+    };
+
+    if(!forceUpdate) whereQuery[labelField] = {
+      [Op.or] : [
+        {[Op.eq]: null},
+        {[Op.eq]: ''}
+      ]
+    };
+
+    return await TransactionModel.update({
+      [labelField]: labelValue
+    },{
+      where: whereQuery
+    })
   }
 }
 

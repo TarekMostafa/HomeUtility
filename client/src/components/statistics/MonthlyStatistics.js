@@ -213,9 +213,9 @@ class MonthlyStatistics extends Component {
     TransactionRequest.getTransactions(999, 0, [], [typeId], fromDate, toDate, 
       null, null, null, [currency], this.state.dateType, false,
       _label1, _label2, _label3, _label4, _label5, labelsOps)
-      .then((transactions) => {
+      .then((response) => {
         this.setState({
-          transactions,
+          transactions: response.transactions,
           modalLinkDetailShow: true,
           transactionsData: {
             typeId, fromDate, toDate, typeName, currency, totalFormatted

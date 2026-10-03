@@ -219,4 +219,12 @@ router.put('/single/label/:id', function(req, res, next) {
   })
 })
 
+router.post('/updateBulk/labels', function(req, res, next){
+  transactionBusiness.updateBulkTransactionLabel(req.body).then(result => {
+    res.json(result);
+  }).catch( err => {
+    next(err);
+  })
+})
+
 module.exports = router;

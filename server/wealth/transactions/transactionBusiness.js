@@ -170,6 +170,9 @@ class TransactionBusiness {
       }
     }
 
+    let transactionsCount = -1
+    if(skip===0)
+      transactionsCount = await TransactionRepo.getTransactionsCount(whereQuery, accountWhereQuery);
     let transactions = await TransactionRepo.getTransactions(skip, limit, whereQuery, accountWhereQuery);
     await this.loadParameters(); //to load parameters once
     const showLabels = await AppParametersRepo.getAppParameterValue(
@@ -210,7 +213,10 @@ class TransactionBusiness {
         isAddToBilltrans: module? module.IsAddToBillTrans:true,
       }
     }));
-    return transactions;
+    return {
+      totalCount: transactionsCount,
+      transactions
+    };
   }
 
   async getTotalTransactionsByType({reportId, postingDateFrom, postingDateTo, currency, dateType}) {
@@ -790,6 +796,19 @@ class TransactionBusiness {
     } catch (err) {
       await dbTransaction.rollback();
       throw new Exception('TRANS_BILL_CREATE_FAIL');
+    }
+  }
+
+  async updateBulkTransactionLabel({transactionIds, label, labelValue, forceUpdate}){
+    if(!Array.isArray(transactionIds) || transactionIds.length < 1)
+    {
+      throw new Exception('INVALID_REQUEST');
+    }
+    
+    const updateRecords = 
+      await TransactionRepo.updateBulkTransactionLabel(transactionIds, label, labelValue, forceUpdate);
+    return {
+      numberOfUpdated: updateRecords[0]
     }
   }
 }
