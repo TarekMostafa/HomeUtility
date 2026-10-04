@@ -225,7 +225,7 @@ function LabelTransactionSearch () {
                 </Row>  
             </Form>
         </FormContainer>
-        <FormContainer>
+        <FormContainer hscroll="true">
             <LabelTransactionTable
                 label={formData.label} currency={formData.currency} 
                 headers={formData.headers} rows={formData.rows}

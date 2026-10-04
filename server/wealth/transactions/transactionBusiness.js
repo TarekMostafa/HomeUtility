@@ -184,6 +184,7 @@ class TransactionBusiness {
       return {
         transactionId: trans.transactionId,
         transactionPostingDate: trans.transactionPostingDate,
+        transactionValueDate: trans.transactionValueDate,
         transactionAmount: trans.transactionAmount,
         transactionAmountFormatted: 
           AmountHelper.formatAmount(trans.transactionAmount, trans.account.currency.currencyDecimalPlace),

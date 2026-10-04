@@ -13,7 +13,7 @@ class TransactionRepo {
     return await TransactionModel.findAll({
       offset: skip,
       limit: limit,
-      attributes: ['transactionId', 'transactionPostingDate', 'transactionAmount',
+      attributes: ['transactionId', 'transactionPostingDate', 'transactionValueDate', 'transactionAmount',
         'transactionCRDR', 'transactionNarrative', 'transactionRelatedTransactionId',
         'transactionModule', 'transactionTypeId', 'transactionLabel1', 'transactionLabel2',
         'transactionLabel3', 'transactionLabel4', 'transactionLabel5', 'transactionBillTransId'],

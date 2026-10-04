@@ -5,10 +5,11 @@ import moment from 'moment';
 import ModalContainer from '../../common/ModalContainer';
 import WealthTransactionTable from '../transactions/WealthTransactionTable';
 import ExpenseDetailTable from '../../expenses/ExpenseDetailTable';
+import TransactionExpenseTable from './TransactionExpenseTable';
 
 function LabelLinkDetails({transactions, expenseDetails, show, onHide, data}) {
 
-    const [tabKey, setTabKey] = useState('transactionData');
+    const [tabKey, setTabKey] = useState('combineData');
 
     const getTitle = () => {
         if(data.dateFrom) {
@@ -24,6 +25,11 @@ function LabelLinkDetails({transactions, expenseDetails, show, onHide, data}) {
         <ModalContainer title={getTitle()} show={show}
         onHide={onHide} size='xl'>
             <Tabs id="controlled-tab" activeKey={tabKey} onSelect={(k) => setTabKey(k)}>
+                <Tab eventKey="combineData" title="Transactions & Expenses Data">
+                    <br />
+                    <TransactionExpenseTable transactions={transactions}
+                    expenseDetails={expenseDetails} />
+                </Tab>
                 <Tab eventKey="transactionData" title="Transactions Data">
                     <br />
                     <WealthTransactionTable transactions={transactions} />

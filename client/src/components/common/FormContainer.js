@@ -14,7 +14,7 @@ function FormContainer(props){
         </Card.Header>
       }
       {
-        props.children && <Card.Body>{props.children}</Card.Body>
+        props.children && <Card.Body className={props.hscroll?"text-nowrap overflow-auto":""}>{props.children}</Card.Body>
       }
     </Card>
   )
