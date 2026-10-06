@@ -12,13 +12,16 @@ class LabelRequest {
         return response.data;
     }
 
-    static async getLabelStatistics(label, currency, dateFrom, dateTo) {
+    static async getLabelStatistics(label, labelValues, currency, 
+        dateFrom, dateTo, mode) {
         const response = await axios.get('/api/labels/labelstatistics', {
         params: {
-            label, 
+            label,
+            labelValues, 
             currency,
             dateFrom,
             dateTo,
+            mode
         }
         });
         return response.data;

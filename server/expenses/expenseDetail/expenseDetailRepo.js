@@ -78,10 +78,7 @@ class ExpenseDetailRepo {
       group: [labelField],
       where: {
         ...whereQuery,
-        expenseCurrency: currency,
-        [labelField]: {
-          [Op.ne]: null
-        }
+        expenseCurrency: currency
       },
       raw: true
     });

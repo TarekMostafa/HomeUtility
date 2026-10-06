@@ -125,10 +125,7 @@ class TransactionRepo {
       ],
       group: [labelField],
       where: {
-        ...whereQuery,
-        [labelField]: {
-          [Op.ne]: null
-        }
+        ...whereQuery
       },
       raw: true
     });

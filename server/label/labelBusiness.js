@@ -50,7 +50,8 @@ class Label {
         return labels;
     }
 
-    async getLabelsByDates({label, currency, dateFrom, dateTo}) {
+    async getLabelsByDates({label, labelValues, currency, 
+        dateFrom, dateTo, mode}) {
         //Check Currency
         const currencyObj = await CurrencyRepo.getCurrency(currency);
         if(!currencyObj) throw new Exception('CURR_NOT_EXIST', currency);
@@ -61,12 +62,58 @@ class Label {
             throw new Exception('POST_DATE_INVALID');
         }
 
+        let detailsList = [];
+        const dateRanges = this.getDateRanges(_dateFrom, _dateTo, mode);
+        for(let i=0; i<dateRanges.length; i++) {
+            let {labelTotal, details} = await this.getDetails(label, 
+                labelValues, currency, 
+            dateRanges[i].dateFrom, dateRanges[i].dateTo, 
+            currencyObj.currencyDecimalPlace);
+            
+            detailsList.push({
+                dateFrom: dateRanges[i].dateFrom,
+                dateTo: dateRanges[i].dateTo,
+                details,
+                labelTotal,
+                labelTotalFormatted: AmountHelper.formatAmount(labelTotal,
+                currencyObj.currencyDecimalPlace)
+            })
+        }
+
+        return {
+            label,
+            currency,
+            detailsList
+        }
+    }
+
+    async getDetails(label, labelValues, currency, dateFrom, dateTo,
+        currencyDecimalPlace
+    ) {
         // Construct Where Condition
         let whereQuery = {};
-        whereQuery.transactionPostingDate = { [Op.between] : [_dateFrom, _dateTo] };
+        whereQuery.transactionPostingDate = { [Op.between] : [dateFrom, dateTo] };
+        if(labelValues) {
+            whereQuery[`transactionLabel${label}`] = {
+                [Op.in] : labelValues
+            }
+        } else {
+            whereQuery[`transactionLabel${label}`] = {
+                [Op.ne]: null
+            }
+        }
         let trans_details = await TransactionRepo.getTotalTransactionsGroupByLabel(label, currency, whereQuery);
         whereQuery = {};
-        whereQuery.expenseDate = { [Op.between] : [_dateFrom, _dateTo] };
+        whereQuery.expenseDate = { [Op.between] : [dateFrom, dateTo] };
+        if(labelValues) {
+            whereQuery[`expenseLabel${label}`] = {
+                [Op.in] : labelValues
+            }
+        } else {
+            whereQuery[`expenseLabel${label}`] = {
+                [Op.ne]: null
+            } 
+        }
         let exp_details = await ExpenseDetailRepo.getTotalExpensesGroupByLabel(label, currency, whereQuery);
 
         let labelTotal = 0;
@@ -75,7 +122,7 @@ class Label {
             return {
                 total: detail.total,
                 totalFormatted: AmountHelper.formatAmount(detail.total, 
-                 currencyObj.currencyDecimalPlace),
+                 currencyDecimalPlace),
                 label: detail.label,
             }
         });
@@ -86,27 +133,84 @@ class Label {
             if(prvDetail) {
                 prvDetail.total = Number(prvDetail.total) + Number(detail.total);
                 prvDetail.totalFormatted = AmountHelper.formatAmount(prvDetail.total, 
-                 currencyObj.currencyDecimalPlace);
+                 currencyDecimalPlace);
             } else {
                 details.push({
                     total: detail.total,
                     totalFormatted: AmountHelper.formatAmount(detail.total, 
-                        currencyObj.currencyDecimalPlace),
+                        currencyDecimalPlace),
                     label: detail.label,
                 })
             }
         });
 
         return {
-            label,
-            currency,
-            dateFrom: _dateFrom,
-            dateTo: _dateTo,
-            details,
             labelTotal,
-            labelTotalFormatted: AmountHelper.formatAmount(labelTotal,
-                currencyObj.currencyDecimalPlace)
+            details
         }
+    }
+
+    getDateRanges(dateFrom, dateTo, mode) {
+        let dateRanges = [];
+
+        if(!mode || mode===' ') {
+            dateRanges.push({
+                dateFrom, dateTo
+            })
+            return dateRanges;
+        } 
+        
+        let from = null;
+        let to = null;
+        if(mode==='M') {
+            do {
+                if(from) {
+                    from.setUTCMonth(from.getMonth()+1);
+                    from.setUTCDate(1);
+                } else {
+                    from = new Date(dateFrom);
+                    from.setUTCHours(0, 0, 0, 0);
+                }
+
+                to = new Date(dateFrom);
+                to.setUTCFullYear(from.getFullYear());
+                to.setUTCMonth(from.getMonth()+1);
+                to.setUTCDate(0);
+                to.setUTCHours(0, 0, 0, 0);
+
+                if(to > new Date(dateTo)) to = new Date(dateTo);
+
+                dateRanges.push({
+                    dateFrom: Common.getDate(from.toISOString(), ''), 
+                    dateTo: Common.getDate(to.toISOString(), '')
+                });
+            } while(to < new Date(dateTo))
+        } else if(mode==='Y') {
+            do {
+                if(from) {
+                    from.setUTCFullYear(from.getFullYear()+1);
+                    from.setUTCMonth(0);
+                    from.setUTCDate(1);
+                } else {
+                    from = new Date(dateFrom);
+                    from.setUTCHours(0, 0, 0, 0);
+                }
+
+                to = new Date(dateFrom);
+                to.setUTCFullYear(from.getFullYear());
+                to.setUTCMonth(12);
+                to.setUTCDate(0);
+                to.setUTCHours(0, 0, 0, 0);
+
+                if(to > new Date(dateTo)) to = new Date(dateTo);
+
+                dateRanges.push({
+                    dateFrom: Common.getDate(from.toISOString(), ''), 
+                    dateTo: Common.getDate(to.toISOString(), '')
+                });
+            } while(to < new Date(dateTo))
+        }
+        return dateRanges;
     }
 }
 

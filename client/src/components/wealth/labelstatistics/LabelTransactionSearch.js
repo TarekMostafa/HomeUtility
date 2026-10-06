@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import { Form, Row, Col, Button, Spinner } from 'react-bootstrap';
+import { Form, Row, Col, Spinner, SplitButton, 
+    Dropdown } from 'react-bootstrap';
 
 import 'moment/locale/en-gb.js';
 import { DatePickerInput } from 'rc-datepicker';
@@ -11,13 +12,16 @@ import LabelDropDown from '../../common/LabelDropDown';
 
 import LabelTransactionTable from './LabelTransactionTable';
 import LabelLinkDetails from './LabelLinkDetails';
+import LabelsChips from '../../statistics/LabelsChips';
 import TransactionRequest from '../../../axios/TransactionRequest';
 import LabelRequest from '../../../axios/LabelRequest';
 import ExpenseDetailRequest from '../../../axios/ExpenseDetailRequest';
 
 const initialState = {
     label: '',
+    labelValues: [],
     currency: '',
+    mode: '',
     dateFrom: '',
     dateTo: '',
     message: '',
@@ -35,14 +39,14 @@ function LabelTransactionSearch () {
     const [modalLabelDetailExpenseShow, setModalLabelDetailExpenseShow] = useState(false);
     const [expDetails, setExpDetails] = useState([]);
 
-    const handleChange = (event) => {
+    const handleChange = (event, allow) => {
 
-        if(formData.rows.length > 0) return;
+        if(formData.rows.length > 0 && !allow) return;
 
         setFormData({
             ...formData,
             [event.target.name] : event.target.value
-          })
+        })
     }
 
     const handleDateFromChange = (jsDate, date) => {
@@ -98,24 +102,40 @@ function LabelTransactionSearch () {
             });
         }
         // Get Label Statistics
-        LabelRequest.getLabelStatistics(formData.label,
-            formData.currency, formData.dateFrom, formData.dateTo)
+        LabelRequest.getLabelStatistics(formData.label, formData.labelValues,
+            formData.currency, formData.dateFrom, formData.dateTo, 
+            formData.mode)
         .then( (result) => {
 
-            let headers = [...formData.headers]
-            let row = [];
-            row[0] = result.labelTotalFormatted;
-            for(const details of result.details) {
-                if(!headers.includes(details.label)) headers.push(details.label);
-                const index = headers.indexOf(details.label);
-                row[index] = details.totalFormatted;
+            let rows = [...formData.rows];
+            let rowsData = [...formData.rowsData];
+            let headers = [...formData.headers];
+            let highestRowIndex = 0;
+            for(let i=0; i<result.detailsList.length; i++) {
+                let row = [];
+                row[0] = result.detailsList[i].labelTotalFormatted;
+                for(const details of result.detailsList[i].details) {
+                    if(!headers.includes(details.label)) headers.push(details.label);
+                    const index = headers.indexOf(details.label);
+                    row[index] = details.totalFormatted;
+                }
+                //fill gaps
+                for(let counter =0; counter <headers.length; counter++){
+                    if(!row[counter]) row[counter] = '';
+                }
+                rows = [...rows, row];
+                rowsData = [...rowsData, [result.detailsList[i].dateFrom, result.detailsList[i].dateTo]];
+
+                if(row.length>highestRowIndex) highestRowIndex=row.length;
             }
+
             //fill gaps
-            for(let counter =0; counter <headers.length; counter++){
-                if(!row[counter]) row[counter] = '';
+            for(let i=0; i<rows.length; i++) {
+                let row = rows[i];
+                for(let c=row.length; c<highestRowIndex; c++) {
+                    row.push('');
+                }
             }
-            const rows = [...formData.rows, row];
-            const rowsData = [...formData.rowsData, [formData.dateFrom, formData.dateTo]];
 
             setFormData({
                 ...formData,
@@ -173,12 +193,30 @@ function LabelTransactionSearch () {
         });
     }
 
+    const renderButtonTitle = (buttonText) => {
+        return (
+            formData.isLoading?
+            <Spinner as="span" animation="border" size="sm" role="status"
+            aria-hidden="true"/> : buttonText
+        )
+    }
+
+    const handleLabelChipChange = (chips) => {
+        if(formData.rows.length > 0) return;
+        const uppercaseChips = chips.map(chip => chip.toUpperCase());
+
+        setFormData({
+            ...formData,
+            labelValues: uppercaseChips
+        })
+    }
+
     return (
         <React.Fragment>
         <FormContainer>
             <Form>
                 <Row>
-                    <Col>
+                    <Col xs={4}>
                         <Form.Control as="select" size="sm" name="label" 
                             onChange={handleChange}
                             value={formData.label} readOnly={formData.rows.length > 0}>
@@ -186,7 +224,7 @@ function LabelTransactionSearch () {
                             <LabelDropDown />
                         </Form.Control> 
                     </Col>
-                    <Col>
+                    <Col xs={2}>
                         <Form.Control as="select" size="sm" name="currency" 
                             onChange={handleChange}
                             value={formData.currency} readOnly={formData.rows.length > 0}>
@@ -194,28 +232,42 @@ function LabelTransactionSearch () {
                             <CurrenciesDropDown />
                         </Form.Control>                           
                     </Col>
-                    <Col>
+                    <Col xs={2}>
                         <DatePickerInput value={formData.dateFrom}
                             onChange={handleDateFromChange} readOnly 
-                            placeholder="Posting Date From" small/>
+                            placeholder="Date From" small/>
                     </Col>
-                    <Col>
+                    <Col xs={2}>
                         <DatePickerInput value={formData.dateTo}
                             onChange={handleDateToChange} readOnly 
-                            placeholder="Posting Date From" small/>
+                            placeholder="Date From" small/>
                     </Col>
-                    <Col xs={1}>
-                        <Button variant="primary" size="sm" block onClick={handleAddClick}>
-                        {
-                            formData.isLoading?
-                            <Spinner as="span" animation="border" size="sm" role="status"
-                            aria-hidden="true"/> : 'Run/Add'
-                        }
-                        </Button>
+                    <Col xs={2}>
+                        <SplitButton id="dropdown-split-variants-primary" 
+                        size="sm" variant="primary" 
+                        disabled={formData.isLoading} 
+                        title={renderButtonTitle("Run/Add")} 
+                        onClick={handleAddClick}>
+                            <Dropdown.Item onClick={handleResetClick}>
+                                {renderButtonTitle("Reset")}
+                            </Dropdown.Item>
+                        </SplitButton>
                     </Col>
-                    <Col xs={1}>
-                        <Button variant="secondary" size="sm" block onClick={handleResetClick}>
-                            Reset</Button>
+                </Row>
+                <Row>
+                    <Col xs={4}>
+                        <LabelsChips value={formData.labelValues} 
+                        onChange={handleLabelChipChange} name="labelValues"
+                        placeholder="label values"/>
+                    </Col>
+                    <Col xs={{ span: 2, offset: 4 }}>
+                        <Form.Control as="select" size="sm" name="mode" 
+                            onChange={e=>handleChange(e, true)}
+                            value={formData.mode}>
+                            <option key=' ' value=''>Date Mode (No Mode)</option>
+                            <option key='M' value='M'>Monthly</option>
+                            <option key='Y' value='Y'>Yearly</option>
+                        </Form.Control> 
                     </Col>
                 </Row>
                 <Row>
