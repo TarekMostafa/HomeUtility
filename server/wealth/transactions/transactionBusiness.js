@@ -84,89 +84,49 @@ class TransactionBusiness {
     //Pay for Others
     if(payForOthers!== null && payForOthers!== undefined)
       whereQuery.transactionPayForOthers = payForOthers;
-    //Label 1
-    if(label1) {
-      if(Array.isArray(label1)){
+    //Labels
+    for(let counter = 1; counter <=5; counter++){
+      let _labelValue = null;
+      switch(counter) {
+        case 1:
+          _labelValue = label1;
+          break;
+        case 2:
+          _labelValue = label2;
+          break;
+        case 3:
+          _labelValue = label3;
+          break;
+        case 4:
+          _labelValue = label4;
+          break;
+        case 5:
+          _labelValue = label5;
+          break;        
+      }
+
+      if(Array.isArray(_labelValue)){
         if(labelsOps && labelsOps[1] === 'NIN'){
-          whereQuery.transactionLabel1 = { [Op.or] : [
-            {[Op.notIn] : label1},
+          whereQuery[`transactionLabel${counter}`] = { [Op.or] : [
+            {[Op.notIn] : _labelValue},
             {[Op.eq] : null}
-          ]};
-        } else {
-          whereQuery.transactionLabel1 = {
-            [Op.in] : label1
+          ]}; 
+        } else { 
+          whereQuery[`transactionLabel${counter}`] = {
+            [Op.in] : _labelValue
           }
         }
       } else {
-        whereQuery.transactionLabel1 = label1;
-      }
-    }
-    //Label 2
-    if(label2) {
-      if(Array.isArray(label2)){
-        if(labelsOps && labelsOps[2] === 'NIN'){
-          whereQuery.transactionLabel2 = { [Op.or] : [
-            {[Op.notIn] : label2},
-            {[Op.eq] : null}
-          ]};
-        } else {
-          whereQuery.transactionLabel2 = {
-            [Op.in] : label2
+        if(_labelValue != null && _labelValue != undefined) {
+          if(_labelValue.trim() === '') {
+            whereQuery[`transactionLabel${counter}`] = { [Op.or] : [
+              {[Op.eq] : ''},
+              {[Op.eq] : null}
+            ]};
+          } else {
+            whereQuery[`transactionLabel${counter}`] = _labelValue;
           }
         }
-      } else {
-        whereQuery.transactionLabel2 = label2;
-      }
-    }
-    //Label 3
-    if(label3) {
-      if(Array.isArray(label3)){
-        if(labelsOps && labelsOps[3] === 'NIN'){
-          whereQuery.transactionLabel3 = { [Op.or] : [
-            {[Op.notIn] : label3},
-            {[Op.eq] : null}
-          ]};
-        } else {
-          whereQuery.transactionLabel3 = {
-            [Op.in] : label3
-          }
-        }
-      } else {
-        whereQuery.transactionLabel3 = label3;
-      }
-    }
-    //Label 4
-    if(label4) {
-      if(Array.isArray(label4)){
-        if(labelsOps && labelsOps[4] === 'NIN'){
-          whereQuery.transactionLabel4 = { [Op.or] : [
-            {[Op.notIn] : label4},
-            {[Op.eq] : null}
-          ]};
-        } else {
-          whereQuery.transactionLabel4 = {
-            [Op.in] : label4
-          }
-        }
-      } else {
-        whereQuery.transactionLabel4 = label4;
-      }
-    }
-    //Label 5
-    if(label5) {
-      if(Array.isArray(label5)){
-        if(labelsOps && labelsOps[5] === 'NIN'){
-          whereQuery.transactionLabel5 = { [Op.or] : [
-            {[Op.notIn] : label5},
-            {[Op.eq] : null}
-          ]};
-        } else {
-          whereQuery.transactionLabel5 = {
-            [Op.in] : label5
-          }
-        }
-      } else {
-        whereQuery.transactionLabel5 = label5;
       }
     }
 
@@ -418,45 +378,6 @@ class TransactionBusiness {
         currencyObj.currencyDecimalPlace),
     };
   }
-
-  // async getTotalTransactionsByLabel({label, currency, dateFrom, dateTo}) {
-  //   // Construct Where Condition
-  //   let whereQuery = {};
-  //   //Check Currency
-  //   const currencyObj = await CurrencyRepo.getCurrency(currency);
-  //   if(!currencyObj) throw new Exception('CURR_NOT_EXIST', currency);
-  //   // Check Posting Date from and Posting Date To
-  //   const _dateFrom = Common.getDate(dateFrom, '');
-  //   const _dateTo = Common.getDate(dateTo, '');
-  //   if( _dateFrom === '' || _dateTo === '') {
-  //       throw new Exception('POST_DATE_INVALID');
-  //   }
-
-  //   whereQuery.transactionPostingDate = { [Op.between] : [_dateFrom, _dateTo] };
-
-  //   let details = await TransactionRepo.getTotalTransactionsGroupByLabel(label, currency, whereQuery);
-  //   let labelTotal = 0;
-  //   details = details.map(detail => {
-  //     labelTotal += Number(detail.total);
-  //     return {
-  //       total: detail.total,
-  //       totalFormatted: AmountHelper.formatAmount(detail.total, 
-  //               currencyObj.currencyDecimalPlace),
-  //       label: detail.label,
-  //     }
-  //   });
-
-  //   return {
-  //     label,
-  //     currency,
-  //     dateFrom: _dateFrom,
-  //     dateTo: _dateTo,
-  //     details,
-  //     labelTotal,
-  //     labelTotalFormatted: AmountHelper.formatAmount(labelTotal, 
-  //       currencyObj.currencyDecimalPlace)
-  //   }
-  // }
 
   async getTransaction(id) {
     let transaction = await TransactionRepo.getTransaction(id);

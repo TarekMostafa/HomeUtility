@@ -49,11 +49,37 @@ class expenseDetailBusiness {
       query.expenseTypeId = expTypes;
     }
     //Labels
-    if(label1) query.expenseLabel1 = label1;
-    if(label2) query.expenseLabel2 = label2;
-    if(label3) query.expenseLabel3 = label3;
-    if(label4) query.expenseLabel4 = label4;
-    if(label5) query.expenseLabel5 = label5;
+    for(let counter = 1; counter <=5; counter++){
+      let _labelValue = null;
+            switch(counter) {
+        case 1:
+          _labelValue = label1;
+          break;
+        case 2:
+          _labelValue = label2;
+          break;
+        case 3:
+          _labelValue = label3;
+          break;
+        case 4:
+          _labelValue = label4;
+          break;
+        case 5:
+          _labelValue = label5;
+          break;        
+      }
+      
+      if(_labelValue != null && _labelValue != undefined) {
+        if(_labelValue.trim() === '') {
+          query[`expenseLabel${counter}`] = { [Op.or] : [
+              {[Op.eq] : ''},
+              {[Op.eq] : null}
+          ]};
+        } else {
+          query[`expenseLabel${counter}`] = _labelValue;
+        }
+      }
+    }
     //Currency
     if(expCurrency) query.expenseCurrency = expCurrency;
 
