@@ -99,7 +99,8 @@ class Label {
             }
         } else {
             whereQuery[`transactionLabel${label}`] = {
-                [Op.ne]: null
+                //[Op.ne]: null
+                [Op.ne]: ''
             }
         }
         let trans_details = await TransactionRepo.getTotalTransactionsGroupByLabel(label, currency, whereQuery);
@@ -111,7 +112,8 @@ class Label {
             }
         } else {
             whereQuery[`expenseLabel${label}`] = {
-                [Op.ne]: null
+                //[Op.ne]: null
+                [Op.ne]: ''
             } 
         }
         let exp_details = await ExpenseDetailRepo.getTotalExpensesGroupByLabel(label, currency, whereQuery);
