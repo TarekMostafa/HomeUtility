@@ -70,7 +70,7 @@ class ExpenseDetailRepo {
     return await ExpenseDetailModel.findAll({
       attributes: [
         [sequelize.fn('sum', sequelize.literal(
-          'Round(expenseAmount*(case when (expenseAmount < 0 and expenseAdjusment = 0) or (expenseAmount > 0 and expenseAdjusment = 1) then 1 else -1 end),3)')), "total"]
+          'Round(expenseAmount*(case when expenseAmount < 0 then 1 else -1 end),3)')), "total"]
         ,[labelField, "label"]],
       include: [
             { model: CurrencyModel, as: 'currency', attributes: [] }
