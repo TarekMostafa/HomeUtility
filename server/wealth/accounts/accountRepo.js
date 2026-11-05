@@ -51,6 +51,18 @@ class AccountRepo {
     });
   }
 
+  static async getStartBalanceTotalByCurrency(currencyCode) {
+    return await AccountModel.findOne({
+      attributes: [ 
+        [sequelize.fn('sum', sequelize.literal('accountStartBalance')), 'startBalance'],
+      ],
+      where: {
+        accountCurrency: currencyCode
+      },
+      raw: true
+    });
+  }
+
   static async addAccount(account, dbTransaction) {
     await AccountModel.build(account).save({transaction: dbTransaction});
   }

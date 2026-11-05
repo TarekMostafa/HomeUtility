@@ -36,8 +36,8 @@ router.get('/monthlystatistics', function(req, res, next) {
 //  })
 //});
 
-router.get('/accountbalanceasofdate', function(req, res, next) {
-  transactionBusiness.getAccountBalanceAsOfDate(req.query).then( result => {
+router.get('/balanceasofdate', function(req, res, next) {
+  transactionBusiness.getBalanceAsOfDate(req.query).then( result => {
     res.json(result);
   }).catch( err => {
     next(err);

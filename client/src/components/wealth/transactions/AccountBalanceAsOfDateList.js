@@ -7,13 +7,16 @@ import 'rc-datepicker/lib/style.css';
 import FormContainer from '../../common/FormContainer';
 import AccountsDropDown from '../accounts/AccountsDropDown';
 import AccountBalanceAsOfDate from './AccountBalanceAsOfDate';
+import CurrenciesDropDown from '../../currencies/CurrenciesDropDown';
 
 import TransactionRequest from '../../../axios/TransactionRequest';
 
 const initialState = {
     accountId: '',
+    currencyCode: '',
     balanceDate: '',
     dateType: 'POST',  //POST or VALUE
+    balanceType: 'ACC',  //ACC or CCY 
   }
 
 class AccountBalanceAsOfDateList extends Component {
@@ -28,16 +31,26 @@ class AccountBalanceAsOfDateList extends Component {
     render() {
         return (
             <React.Fragment>
-                <FormContainer title="Account Balance As Of Date">
+                <FormContainer title="Balance As Of Date">
                     <Form>
                     <Row>
                         <Col>
+                        {
+                            this.state.balanceType === 'ACC' ?
                             <Form.Control as="select" size="sm" name="accountId" 
                                 onChange={this.handleChange}
                                 value={this.state.accountId}>
                                 <option value=''>Accounts</option>
                                 <AccountsDropDown />
                             </Form.Control>
+                            :
+                            <Form.Control as="select" size="sm" name="currencyCode"
+                                onChange={this.handleChange}
+                                value={this.state.currencyCode}>
+                                <option value=''>Currencies</option>
+                                <CurrenciesDropDown />
+                            </Form.Control>
+                        }
                         </Col>
                         <Col>
                             <DatePickerInput value={this.state.balanceDate}
@@ -46,11 +59,21 @@ class AccountBalanceAsOfDateList extends Component {
                         </Col>
                         <Col xs={1}>
                             <Button variant="primary" size="sm" block 
-                            onClick={this.handleListClick} disabled={!this.isFilled}>List</Button>
+                            onClick={this.handleListClick} disabled={!this.isFilled()}>List</Button>
                         </Col>
                     </Row>
                     <Row>
-                        <Col xs={{span: 4, offset: 6}}>
+                        <Col xs={{span: 4, offset: 1}}>
+                            <div>
+                            <Form.Check inline type='radio' id={`default-radioAccount`} 
+                                label={`Account`} checked={this.state.balanceType!=='CCY'} 
+                                onChange={this.handleChange} name='balanceType' value='ACC'/>
+                            <Form.Check inline type='radio' id={`default-radioCurrency`} 
+                                label={`Currency`} checked={this.state.balanceType==='CCY'} 
+                                onChange={this.handleChange} name='balanceType' value='CCY'/>
+                            </div>
+                        </Col>
+                        <Col xs={{span: 4, offset: 1}}>
                             <div>
                             <Form.Check inline type='radio' id={`default-radioPosting`} 
                                 label={`Posting Date`} checked={this.state.dateType!=='VALUE'} 
@@ -90,11 +113,18 @@ class AccountBalanceAsOfDateList extends Component {
     }
 
     isFilled = () => {
-        return (this.state.accountId && this.statebalanceDate);
+        if(this.state.balanceType==='ACC')
+            return (this.state.accountId && this.state.balanceDate);
+        else if(this.state.balanceType='CCY')
+            return (this.state.currencyCode && this.state.balanceDate); 
+        else
+            return false;    
     }
 
     handleListClick = () => {
-        TransactionRequest.getAccountBalanceAsOfDate(this.state.accountId, 
+        TransactionRequest.getBalanceAsOfDate(
+            (this.state.balanceType==='ACC'?this.state.accountId:null),
+            (this.state.balanceType==='CCY'?this.state.currencyCode:null), 
             this.state.balanceDate, this.state.dateType)
         .then( res => {
             console.log(res);

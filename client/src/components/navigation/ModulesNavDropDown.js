@@ -20,7 +20,7 @@ function ModulesNavDropDown(props) {
             <NavDropdown.Item>Related Transactions</NavDropdown.Item>
           </LinkContainer>
           <LinkContainer to="/accountbalanceasofdate">
-            <NavDropdown.Item>Account Balance As Of Date</NavDropdown.Item>
+            <NavDropdown.Item>Balance As Of Date</NavDropdown.Item>
           </LinkContainer>
           <LinkContainer to="/statistics">
             <NavDropdown.Item>Monthly Statistics</NavDropdown.Item>
@@ -29,7 +29,7 @@ function ModulesNavDropDown(props) {
             <NavDropdown.Item>FX Statistics</NavDropdown.Item>
           </LinkContainer>
           <LinkContainer to="/labelstatistics">
-            <NavDropdown.Item>Label Transactions Statistics</NavDropdown.Item>
+            <NavDropdown.Item>Label Statistics</NavDropdown.Item>
           </LinkContainer>
         </Dropdown.Menu>
       </Dropdown>

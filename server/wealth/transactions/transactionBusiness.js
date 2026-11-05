@@ -610,12 +610,23 @@ class TransactionBusiness {
     return migration;
   }
 
-  async getAccountBalanceAsOfDate({accountId, balanceDate, dateType}){
-    const account = await AccountRepo.getAccount(accountId);
-    if(!account) throw new Exception('ACC_INVALID');
+  async getBalanceAsOfDate({accountId, currencyCode, balanceDate, dateType}){
+    let account = null;
+    let currency = null;
+    if(accountId) {
+      account = await AccountRepo.getAccount(accountId);
+      if(!account) throw new Exception('ACC_INVALID');
+    } else if(currencyCode) {
+      currency = await CurrencyRepo.getCurrency(currencyCode);
+      if(!currency) throw new Exception('CURR_INVALID');
+    } else {
+      throw new Exception('INVALID_REQUEST');
+    }
 
     // Construct Where Condition
     let whereQuery = {};
+    if(account) whereQuery.transactionAccount = accountId;
+    if(currency) whereQuery["$account.accountCurrency$"] = currencyCode;
     const _balanceDate = Common.getDate(balanceDate, '');
     //Check dateType
     if(dateType==='VALUE') {
@@ -624,15 +635,24 @@ class TransactionBusiness {
       whereQuery.transactionPostingDate = { [Op.lte] : _balanceDate };
     }
     
-    const resultObj = await TransactionRepo.getAccountBalanceAsOfDate(accountId, whereQuery);
-    const decimalPlace = account.currency.currencyDecimalPlace;
+    const resultObj = await TransactionRepo.getBalanceAsOfDate(whereQuery);
+    let decimalPlace = 0;
+    if(account) decimalPlace = account.currency.currencyDecimalPlace;
+    else if(currency) decimalPlace = currency.currencyDecimalPlace;
+
+    let startBalance = 0;
+    if(account) startBalance = parseFloat(account.accountStartBalance).toFixed(decimalPlace);
+    else if(currency) {
+      const startBalanceResult = await AccountRepo.getStartBalanceTotalByCurrency(currencyCode);
+      startBalance = parseFloat(startBalanceResult.startBalance).toFixed(decimalPlace);
+    }
+
     const transBalance = parseFloat((resultObj.balanceSum===null?0:resultObj.balanceSum)).toFixed(decimalPlace);
-    const startBalance = parseFloat(account.accountStartBalance).toFixed(decimalPlace);
     const balance = (Number(transBalance)+Number(startBalance)).toFixed(decimalPlace);
     return {
       balance: balance,
       balanceFormatted: AmountHelper.formatAmount(balance, decimalPlace),
-      currency: account.accountCurrency,
+      currency: (account?account.accountCurrency:currencyCode),
       currencyDecimalPlace: decimalPlace,
       balanceDate: _balanceDate
     }
